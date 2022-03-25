@@ -62,7 +62,7 @@ const RegistPage: React.FC = () => {
       <Row
         justify="center"
         align="middle"
-        style={{ minHeight: "100vh", backgroundColor: "#93dbbd" }}
+        style={{ minHeight: "100vh",padding:40, backgroundColor: "#93dbbd" }}
       >
         <Col span={4} />
         <Col span={16} className="login-form">

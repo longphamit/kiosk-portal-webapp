@@ -55,6 +55,13 @@ const routes: Route[] = [
     authen: true,
     breadcrumb:""
   },
+  {
+    component: ForgotPassPage,
+    path: "/forgot-pass",
+    isLayout: false,
+    authen: false,
+    breadcrumb:""
+  },
 ];
 
 export default routes;
