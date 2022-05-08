@@ -51,12 +51,12 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
       <Header className="header">
         <div className="logo" />
         <h2
-          style={{ fontWeight: "bold" }}
+          style={{ fontWeight: "bold",color:"#fff" }}
           onClick={() => {
             onNavigate("/admin-home");
           }}
         >
-          Hotel Management - {localStorage.getItem(USER_NAME)}
+          TIKA Management - {localStorage.getItem(USER_NAME)}
         </h2>
       </Header>
       <Layout>

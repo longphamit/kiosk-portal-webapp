@@ -16,5 +16,5 @@
     min-height: 100vh;
   }
   .header{
-    background-color: #93dbbd;
+    background-color: var(--primary-color);
   }

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import HomePage from "../../kiosk_portal/pages/home";
 
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
@@ -59,6 +60,14 @@ const routes: Route[] = [
     component: ForgotPassPage,
     path: "/forgot-pass",
     isLayout: false,
+    authen: false,
+    breadcrumb:""
+  },
+  {
+    component: HomePage,
+    path: "/admin-home",
+    isLayout: true,
+    layout:AuthenLayout,
     authen: false,
     breadcrumb:""
   },
