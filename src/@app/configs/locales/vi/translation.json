@@ -1,0 +1,8 @@
+{
+    "welcome": {
+        "title": "hello to {{framework}}",
+        "intro": "Để bắt đầu, chỉnh sửa <1><0></0></1> và lưu để tải lại"
+    },
+    "signin":"Đăng nhập",
+    "signup":"Đăng ký"
+}
