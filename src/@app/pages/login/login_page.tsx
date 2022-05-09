@@ -20,6 +20,7 @@ import { loginAction } from "../../redux/actions/login_action";
 import { ROLE_ADMIN } from "../../constants/role";
 import { localStorageGetReduxState } from "../../services/localstorage_service";
 import { getUserInfoService } from "../../services/user_service";
+import { useTranslation } from "react-i18next";
 const validateMessages:ValidateMessages = {
   required: '${label} is required!',
   string: {
@@ -31,6 +32,7 @@ const validateMessages:ValidateMessages = {
   },
 };
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
@@ -114,7 +116,7 @@ const LoginPage: React.FC = () => {
             <Row justify="center" align="middle">
               <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
                 <Button style={{ margin: 10 }} type="primary" htmlType="submit">
-                  Sign in
+                  {t('signin')}
                 </Button>
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
@@ -124,7 +126,7 @@ const LoginPage: React.FC = () => {
                   danger
                   onClick={() => navigate("/signup")}
                 >
-                  Sign up
+                  {t('signup')}
                 </Button>
               </Form.Item>
               
