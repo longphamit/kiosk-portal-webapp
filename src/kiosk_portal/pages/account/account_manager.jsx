@@ -1,43 +1,9 @@
-import { AutoComplete, Button, Cascader, Checkbox, Col, DatePicker, Form, Input, InputNumber, Modal, Row, Select, Space, Table, Tag } from "antd";
+import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Row, Select, Space, Table } from "antd";
 import { useState } from "react";
 
 
 const AccountManager = () => {
     const { Option } = Select;
-    const residences = [
-        {
-            value: 'zhejiang',
-            label: 'Zhejiang',
-            children: [
-                {
-                    value: 'hangzhou',
-                    label: 'Hangzhou',
-                    children: [
-                        {
-                            value: 'xihu',
-                            label: 'West Lake',
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            value: 'jiangsu',
-            label: 'Jiangsu',
-            children: [
-                {
-                    value: 'nanjing',
-                    label: 'Nanjing',
-                    children: [
-                        {
-                            value: 'zhonghuamen',
-                            label: 'Zhong Hua Men',
-                        },
-                    ],
-                },
-            ],
-        },
-    ];
     const formItemLayout = {
         labelCol: {
             xs: { span: 24 },
@@ -62,7 +28,7 @@ const AccountManager = () => {
     };
     const [form] = Form.useForm();
 
-    const onFinish = (values) => {
+    const onFinishCreateAccount = (values) => {
         console.log('Received values of form: ', values);
     };
 
@@ -75,41 +41,17 @@ const AccountManager = () => {
         </Form.Item>
     );
 
-    const suffixSelector = (
-        <Form.Item name="suffix" noStyle>
-            <Select style={{ width: 70 }}>
-                <Option value="USD">$</Option>
-                <Option value="CNY">¥</Option>
-            </Select>
-        </Form.Item>
-    );
-
-    const [autoCompleteResult, setAutoCompleteResult] = useState([]);
-
-    const onWebsiteChange = (value) => {
-        if (!value) {
-            setAutoCompleteResult([]);
-        } else {
-            setAutoCompleteResult(['.com', '.org', '.net'].map(domain => `${value}${domain}`));
-        }
-    };
-
-    const websiteOptions = autoCompleteResult.map(website => ({
-        label: website,
-        value: website,
-    }));
-
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const showModal = () => {
-        setIsModalVisible(true);
+    const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] = useState(false);
+    const showModalCreateAccount = () => {
+        setIsCreateAccountModalVisible(true);
         form.resetFields();
     };
-    const handleOk = () => {
-        setIsModalVisible(false);
+    const handleOkCreateAccount = () => {
+        setIsCreateAccountModalVisible(false);
     };
 
-    const handleCancel = () => {
-        setIsModalVisible(false);
+    const handleCancelCreateAccount = () => {
+        setIsCreateAccountModalVisible(false);
     };
     const columns = [
         {
@@ -212,18 +154,18 @@ const AccountManager = () => {
         <Row style={{ padding: 10 }}>
             <Col span={20}></Col>
             <Col span={4}>
-                <Button type="primary" shape="round" size={"large"} onClick={showModal}>
+                <Button type="primary" shape="round" size={"large"} onClick={showModalCreateAccount}>
                     Create Account
                 </Button>
             </Col>
         </Row>
         <Table columns={columns} dataSource={data} />;
-        <Modal title="Create Account" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title="Create Account" visible={isCreateAccountModalVisible} onOk={handleOkCreateAccount} onCancel={handleCancelCreateAccount}>
             <Form
                 {...formItemLayout}
                 form={form}
                 name="register"
-                onFinish={onFinish}
+                onFinish={onFinishCreateAccount}
                 initialValues={{
                     residence: ['zhejiang', 'hangzhou', 'xihu'],
                     prefix: '86',
