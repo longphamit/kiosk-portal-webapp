@@ -42,16 +42,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const roles: string[] | null = useSelector(
     (state: AppState) => state.auth.roles
   );
- 
+
   useEffect(() => {
     setInterval(() => setTime(new Date().toLocaleString()), 1000);
   });
   return (
+
     <Layout>
       <Header className="header">
         <div className="logo" />
         <h2
-          style={{ fontWeight: "bold",color:"#fff" }}
+          style={{ fontWeight: "bold", color: "#fff" }}
           onClick={() => {
             onNavigate("/admin-home");
           }}
@@ -70,7 +71,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
           >
             <Menu.Item disabled>
               <div
-                style={{ marginTop: 20, marginBottom: 20, color: "#3753ad",fontSize:12 }}
+                style={{ marginTop: 20, marginBottom: 20, color: "#3753ad", fontSize: 12 }}
               >
                 <ClockCircleOutlined style={{ marginRight: 10 }} />
                 {time}
@@ -102,10 +103,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<FundOutlined />}
               key="2"
               onClick={() => {
-                onNavigate("/admin-category-room");
+                onNavigate("/accountmanager");
               }}
             >
-              Room Category
+              Account Manager
             </Menu.Item>
             <Menu.Item
               icon={<BlockOutlined />}
