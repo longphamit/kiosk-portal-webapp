@@ -40,5 +40,10 @@
     "reqgender": "Please select gender!",
     "reqrole": "Please select role!",
     "reqcaptcha": "Please input the captcha you got!",
-    "reqcheckbox": "Should accept agreement"
+    "reqcheckbox": "Should accept agreement",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "accountmanager": "Account Manager",
+    "home": "Home"
 }

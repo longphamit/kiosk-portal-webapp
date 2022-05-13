@@ -40,5 +40,10 @@
     "reqgender": "Vui lòng chọn giới tính của bạn!",
     "reqrole": "Vui lòng chọn vai trò của bạn!",
     "reqcaptcha": "Vui lòng nhập vào captcha bạn đã nhận!",
-    "reqcheckbox": "Bạn cần phải bấm ô để xác nhận bạn đã đọc các điều khoản của chúng tôi!"
+    "reqcheckbox": "Bạn cần phải bấm ô để xác nhận bạn đã đọc các điều khoản của chúng tôi!",
+    "male": "Nam",
+    "female": "Nữ",
+    "other": "Khác",
+    "accountmanager": "Quản lý tài khoản",
+    "home": "Trang chủ"
 }

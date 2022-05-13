@@ -23,6 +23,7 @@ import { ROLE_ADMIN } from "../../constants/role";
 import { localStorageClearService } from "../../services/localstorage_service";
 
 import routes from "../../routers/routes";
+import { t } from "i18next";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -97,7 +98,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 onNavigate("/admin-home");
               }}
             >
-              Home
+              {t('home')}
             </Menu.Item>
             <Menu.Item
               icon={<FundOutlined />}
@@ -106,7 +107,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 onNavigate("/accountmanager");
               }}
             >
-              Account Manager
+              {t('accountmanager')}
             </Menu.Item>
             <Menu.Item
               icon={<BlockOutlined />}

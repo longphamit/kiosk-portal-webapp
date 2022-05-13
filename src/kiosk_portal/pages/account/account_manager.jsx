@@ -217,7 +217,7 @@ const AccountManager = () => {
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item name="date-picker" label={t('dob')} {...config}>
+                <Form.Item name="date-picker" label={t('dob')} {...config} >
                     <DatePicker />
                 </Form.Item>
                 <Form.Item
@@ -280,9 +280,9 @@ const AccountManager = () => {
                     rules={[{ required: true, message: t('reqgender') }]}
                 >
                     <Select placeholder={t('selectgender')}>
-                        <Option value="male">Male</Option>
-                        <Option value="female">Female</Option>
-                        <Option value="other">Other</Option>
+                        <Option value="abc">{t('male')}</Option>
+                        <Option value="female">{t('female')}</Option>
+                        <Option value="other">{t('other')}</Option>
                     </Select>
                 </Form.Item>
 
