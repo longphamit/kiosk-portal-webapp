@@ -1,9 +1,11 @@
 import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Row, Select, Space, Table } from "antd";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 
 const AccountManager = () => {
     const { Option } = Select;
+    const { t } = useTranslation();
     const formItemLayout = {
         labelCol: {
             xs: { span: 24 },
@@ -55,55 +57,55 @@ const AccountManager = () => {
     };
     const columns = [
         {
-            title: 'Full Name',
+            title: t('fullname'),
             dataIndex: 'fullname',
             key: 'fullname',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'Phone Number',
+            title: t('phonenumber'),
             dataIndex: 'phonenumber',
             key: 'phonenumber',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'Gender',
+            title: t('gender'),
             dataIndex: 'gender',
             key: 'gender',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'Email',
+            title: t('email'),
             dataIndex: 'email',
             key: 'email',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'Address',
+            title: t('address'),
             dataIndex: 'address',
             key: 'address',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'DOB',
+            title: t('dob'),
             dataIndex: 'dob',
             key: 'dob',
             render: text => <a>{text}</a>,
         },
         {
-            title: 'Status',
+            title: t('status'),
             dataIndex: 'status',
             key: 'status',
             render: text => <a>{text}</a>,
         },
 
         {
-            title: 'Action',
+            title: t('action'),
             key: 'action',
             render: (text, record) => (
                 <Space size="middle">
                     <Button type="primary" shape="default" size={"large"} onClick={{}}>
-                        Edit
+                        {t('edit')}
                     </Button>
                 </Space>
             ),
@@ -145,7 +147,7 @@ const AccountManager = () => {
             {
                 type: 'object',
                 required: true,
-                message: 'Please select time!',
+                message: t('reqdob'),
             },
         ],
     };
@@ -155,12 +157,12 @@ const AccountManager = () => {
             <Col span={20}></Col>
             <Col span={4}>
                 <Button type="primary" shape="round" size={"large"} onClick={showModalCreateAccount}>
-                    Create Account
+                    {t('createaccount')}
                 </Button>
             </Col>
         </Row>
         <Table columns={columns} dataSource={data} />;
-        <Modal title="Create Account" visible={isCreateAccountModalVisible} onOk={handleOkCreateAccount} onCancel={handleCancelCreateAccount}>
+        <Modal title={t('createaccount')} visible={isCreateAccountModalVisible} onOk={handleOkCreateAccount} onCancel={handleCancelCreateAccount}>
             <Form
                 {...formItemLayout}
                 form={form}
@@ -174,11 +176,11 @@ const AccountManager = () => {
             >
                 <Form.Item
                     name="firstName"
-                    label="First Name"
+                    label={t('firstname')}
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your first name!',
+                            message: t('reqfirstname'),
                         },
                     ]}
                 >
@@ -186,11 +188,11 @@ const AccountManager = () => {
                 </Form.Item>
                 <Form.Item
                     name="lastName"
-                    label="Last Name"
+                    label={t('lastname')}
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your last name!',
+                            message: t('reqlastname'),
                         },
                     ]}
                 >
@@ -198,29 +200,29 @@ const AccountManager = () => {
                 </Form.Item>
                 <Form.Item
                     name="phone"
-                    label="Phone Number"
-                    rules={[{ required: true, message: 'Please input your phone number!' }]}
+                    label={t('phonenumber')}
+                    rules={[{ required: true, message: t('reqphonenumber') }]}
                 >
                     <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item
                     name="address"
-                    label="Address"
+                    label={t('address')}
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your address!',
+                            message: t('reqaddress'),
                         },
                     ]}
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item name="date-picker" label="DatePicker" {...config}>
+                <Form.Item name="date-picker" label={t('dob')} {...config}>
                     <DatePicker />
                 </Form.Item>
                 <Form.Item
                     name="email"
-                    label="E-mail"
+                    label={t('email')}
                     rules={[
                         {
                             type: 'email',
@@ -228,7 +230,7 @@ const AccountManager = () => {
                         },
                         {
                             required: true,
-                            message: 'Please input your E-mail!',
+                            message: t('reqemail'),
                         },
                     ]}
                 >
@@ -237,11 +239,11 @@ const AccountManager = () => {
 
                 <Form.Item
                     name="password"
-                    label="Password"
+                    label={t('password')}
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your password!',
+                            message: t('reqpassword'),
                         },
                     ]}
                     hasFeedback
@@ -251,20 +253,20 @@ const AccountManager = () => {
 
                 <Form.Item
                     name="confirm"
-                    label="Confirm Password"
+                    label={t('confirmpassword')}
                     dependencies={['password']}
                     hasFeedback
                     rules={[
                         {
                             required: true,
-                            message: 'Please confirm your password!',
+                            message: t('reqconfpassword'),
                         },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
                                 if (!value || getFieldValue('password') === value) {
                                     return Promise.resolve();
                                 }
-                                return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                                return Promise.reject(new Error(t('reqsamepassword')));
                             },
                         }),
                     ]}
@@ -274,10 +276,10 @@ const AccountManager = () => {
 
                 <Form.Item
                     name="gender"
-                    label="Gender"
-                    rules={[{ required: true, message: 'Please select gender!' }]}
+                    label={t('gender')}
+                    rules={[{ required: true, message: t('reqgender') }]}
                 >
-                    <Select placeholder="select your gender">
+                    <Select placeholder={t('selectgender')}>
                         <Option value="male">Male</Option>
                         <Option value="female">Female</Option>
                         <Option value="other">Other</Option>
@@ -286,29 +288,29 @@ const AccountManager = () => {
 
                 <Form.Item
                     name="role"
-                    label="Role"
-                    rules={[{ required: true, message: 'Please select role!' }]}
+                    label={t('role')}
+                    rules={[{ required: true, message: t('reqrole') }]}
                 >
-                    <Select placeholder="select your role">
+                    <Select placeholder={t('selectrole')}>
                         <Option value="a">a</Option>
                         <Option value="b">b</Option>
                         <Option value="c">c</Option>
                     </Select>
                 </Form.Item>
 
-                <Form.Item label="Captcha" extra="We must make sure that your are a human.">
+                <Form.Item label={t('captcha')} extra={t('hintcaptcha')}>
                     <Row gutter={8}>
                         <Col span={12}>
                             <Form.Item
                                 name="captcha"
                                 noStyle
-                                rules={[{ required: true, message: 'Please input the captcha you got!' }]}
+                                rules={[{ required: true, message: t('reqcaptcha') }]}
                             >
                                 <Input />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Button>Get captcha</Button>
+                            <Button>{t('getcaptcha')}</Button>
                         </Col>
                     </Row>
                 </Form.Item>
@@ -319,18 +321,18 @@ const AccountManager = () => {
                     rules={[
                         {
                             validator: (_, value) =>
-                                value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
+                                value ? Promise.resolve() : Promise.reject(new Error(t('reqcheckbox'))),
                         },
                     ]}
                     {...tailFormItemLayout}
                 >
                     <Checkbox>
-                        I have read the <a href="">agreement</a>
+                        {t('checkboxcreateaccount')}<a href="">{t('checkboxcreateaccount2')}</a>
                     </Checkbox>
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
-                        Register
+                        {t('register')}
                     </Button>
                 </Form.Item>
             </Form>
