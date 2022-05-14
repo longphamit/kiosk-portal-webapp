@@ -4,5 +4,7 @@
         "intro": "Để bắt đầu, chỉnh sửa <1><0></0></1> và lưu để tải lại"
     },
     "signin":"Đăng nhập",
-    "signup":"Đăng ký"
+    "signup":"Đăng ký",
+    "forgot-password":"Quên mật khẩu?",
+    "warning-wrong-email-or-password":"Sai email hoặc mật khẩu"
 }

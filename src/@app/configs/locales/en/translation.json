@@ -4,5 +4,7 @@
         "intro": "To get started, edit <1><0></0></1> and save to reload."
     },
     "signin":"Sign in",
-    "signup":"Sign up"
+    "signup":"Sign up",
+    "forgot-password":"Forgot password?",
+    "warning-wrong-email-or-password":"Wrong Username or password"
 }

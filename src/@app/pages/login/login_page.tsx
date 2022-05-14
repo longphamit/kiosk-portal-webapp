@@ -17,18 +17,19 @@ import {
 import useDispatch from "../../hooks/use_dispatch";
 import { loginAction } from "../../redux/actions/login_action";
 
-import { ROLE_ADMIN } from "../../constants/role";
+import  "../../constants/role";
 import { localStorageGetReduxState } from "../../services/localstorage_service";
 import { getUserInfoService } from "../../services/user_service";
 import { useTranslation } from "react-i18next";
-const validateMessages:ValidateMessages = {
-  required: '${label} is required!',
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../constants/role";
+const validateMessages: ValidateMessages = {
+  required: "${label} is required!",
   string: {
-    len:'${label} must be have length with exact ${len}',
-    min:'${label} must be at least ${min} characters'
+    len: "${label} must be have length with exact ${len}",
+    // min: "${label} must be at least ${min} characters {signin}",
   },
   number: {
-    range: '${label} must be between ${min} and ${max}',
+    range: "${label} must be between ${min} and ${max}",
   },
 };
 const LoginPage: React.FC = () => {
@@ -37,31 +38,35 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
     dispatch(
-      loginAction({ username: values.username, password: values.password })
+      loginAction({ email: values.email, password: values.password })
     )
       .then(async (response: any) => {
         console.log(response);
         if (response.error) {
-          toast.error("Wrong Username or password");
+          // toast.error({t("warning-wrong-email-or-password")});
         } else {
-          const access_token = response.payload.data.access_token;
+          console.log(response.payload);
+          const access_token = response.payload.data.token;
           console.log(access_token);
-          const refresh_token = response.payload.data.refresh_token;
           localStorage.setItem(ACCESS_TOKEN, access_token);
-          localStorage.setItem(REFRESH_TOKEN, refresh_token);
           await getUserInfoService()
             .then((responseUserInfo: any) => {
               toast.success("Sign in successfull");
               console.log(responseUserInfo);
               localStorage.setItem(USER_ID, responseUserInfo.data.id);
-              localStorage.setItem(USER_NAME, responseUserInfo.data.username);
-              localStorage.setItem(USER_AVATAR, responseUserInfo.data.avatar);
-              const roles = localStorageGetReduxState().auth.roles;
-              roles
-                ? roles.includes(ROLE_ADMIN)
-                  ? navigate("/admin-home")
-                  : navigate("/admin-home")
-                : navigate("/admin-home");
+              // localStorage.setItem(USER_NAME, responseUserInfo.data.username);
+              // localStorage.setItem(USER_AVATAR, responseUserInfo.data.avatar);
+              const role = localStorageGetReduxState().auth.role;
+              switch(role){
+                case ROLE_ADMIN:
+                  break;
+                case ROLE_LOCATION_OWNER:
+                  break;
+                case ROLE_SERVICE_PROVIDER:
+                  break;
+                default:
+                  return;
+              }
             })
             .catch((error: any) => {
               toast.error("Get user info fail");
@@ -86,7 +91,9 @@ const LoginPage: React.FC = () => {
       >
         <Col span={8} />
         <Col span={8} className="login-form">
-          <h2 style={{ textAlign: "center", fontWeight: "bold" }}>Sign in</h2>
+          <h2 style={{ textAlign: "center", fontWeight: "bold", padding: 15 }}>
+            {t("singin")}
+          </h2>
           <Form
             validateMessages={validateMessages}
             className="admin-login-form"
@@ -99,9 +106,9 @@ const LoginPage: React.FC = () => {
             autoComplete="off"
           >
             <Form.Item
-              label="Username"
-              name="username"
-              rules={[{ required: true,type:"string" }]}
+              label="Email"
+              name="email"
+              rules={[{ required: true, type: "string" }]}
             >
               <Input />
             </Form.Item>
@@ -109,30 +116,27 @@ const LoginPage: React.FC = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, type: "string", min: 8 }]}
+             rules={[{ required: true, type: "string", min: 7 }]}
+             style={{marginBottom:0}}
             >
               <Input.Password />
             </Form.Item>
-            <Row justify="center" align="middle">
-              <Form.Item wrapperCol={{ offset: 12, span: 16 }}>
-                <Button style={{ margin: 10 }} type="primary" htmlType="submit">
-                  {t('signin')}
-                </Button>
-              </Form.Item>
-              <Form.Item wrapperCol={{ offset: 20, span: 16 }}>
-                <Button
-                  type="link"
-                  style={{ margin: 10 }}
-                  danger
-                  onClick={() => navigate("/signup")}
-                >
-                  {t('signup')}
-                </Button>
-              </Form.Item>
-              
+            <Row justify="end" align="middle">
+              <a
+                onClick={() => {
+                  navigate("/forgot-pass");
+                }}
+                style={{ paddingRight: 50 }}
+              >
+                {t("forgot-password")}
+              </a>
             </Row>
             <Row justify="center" align="middle">
-            <a onClick={()=>{navigate("/forgot-pass")}}>Forgot password?</a>
+              <Form.Item style={{marginTop:10}}>
+                <Button type="primary" htmlType="submit">
+                  {t("signin")}
+                </Button>
+              </Form.Item>
             </Row>
           </Form>
         </Col>

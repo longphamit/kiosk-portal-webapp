@@ -40,7 +40,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   };
 
   const roles: string[] | null = useSelector(
-    (state: AppState) => state.auth.roles
+    (state: AppState) => state.auth.role
   );
  
   useEffect(() => {
