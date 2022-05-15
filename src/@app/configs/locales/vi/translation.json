@@ -45,5 +45,7 @@
     "female": "Nữ",
     "other": "Khác",
     "accountmanager": "Quản lý tài khoản",
-    "home": "Trang chủ"
+    "home": "Trang chủ",
+    "back": "Trở về",
+    "formatphonenumber": "Vui lòng nhập vào số điện thoại với đúng định dạng vào ô này"
 }

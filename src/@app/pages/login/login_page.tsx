@@ -21,11 +21,11 @@ import { ROLE_ADMIN } from "../../constants/role";
 import { localStorageGetReduxState } from "../../services/localstorage_service";
 import { getUserInfoService } from "../../services/user_service";
 import { useTranslation } from "react-i18next";
-const validateMessages:ValidateMessages = {
+const validateMessages: ValidateMessages = {
   required: '${label} is required!',
   string: {
-    len:'${label} must be have length with exact ${len}',
-    min:'${label} must be at least ${min} characters'
+    len: '${label} must be have length with exact ${len}',
+    min: '${label} must be at least ${min} characters'
   },
   number: {
     range: '${label} must be between ${min} and ${max}',
@@ -101,7 +101,7 @@ const LoginPage: React.FC = () => {
             <Form.Item
               label="Username"
               name="username"
-              rules={[{ required: true,type:"string" }]}
+              rules={[{ required: true, type: "string" }]}
             >
               <Input />
             </Form.Item>
@@ -129,10 +129,10 @@ const LoginPage: React.FC = () => {
                   {t('signup')}
                 </Button>
               </Form.Item>
-              
+
             </Row>
             <Row justify="center" align="middle">
-            <a onClick={()=>{navigate("/forgot-pass")}}>Forgot password?</a>
+              <a onClick={() => { navigate("/forgot-pass") }}>Forgot password?</a>
             </Row>
           </Form>
         </Col>

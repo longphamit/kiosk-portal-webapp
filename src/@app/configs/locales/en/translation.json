@@ -45,5 +45,7 @@
     "female": "Female",
     "other": "Other",
     "accountmanager": "Account Manager",
-    "home": "Home"
+    "home": "Home",
+    "back": "Back",
+    "formatphonenumber": "Please input phone number with right format in this field"
 }

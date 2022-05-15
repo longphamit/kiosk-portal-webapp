@@ -1,11 +1,41 @@
 import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Row, Select, Space, Table } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { createAccountService, getListAccountService, getListRoleService } from "../../../@app/services/user_service";
 
 const AccountManager = () => {
+
     const { Option } = Select;
     const { t } = useTranslation();
+    const [listAccount, setListAccount] = useState([]);
+    const [listRole, setListRole] = useState([]);
+    const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] = useState(false);
+    const getListAccountFunction = async () => {
+        try {
+            await getListAccountService()
+                .then(res => {
+                    setListAccount(res.data);
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const listRoleFunction = async () => {
+        try {
+            await getListRoleService()
+                .then(res => {
+                    setListRole(res.data);
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        getListAccountFunction();
+        listRoleFunction();
+    }, []);
+
+
     const formItemLayout = {
         labelCol: {
             xs: { span: 24 },
@@ -29,42 +59,52 @@ const AccountManager = () => {
         },
     };
     const [form] = Form.useForm();
+    const onFinishCreateAccount = async (values) => {
+        const newAccount = {
+            "firstName": values.firstName,
+            "lastName": values.lastName,
+            "phoneNumber": values.phoneNumber,
+            "email": values.email,
+            "address": values.address,
+            "dateOfBirth": values.dateOfBirth,
+            "roleId": values.roleId
+        }
+        try {
+            createAccountService(newAccount);
+            getListAccountFunction();
+            setIsCreateAccountModalVisible(false);
+        } catch (error) {
+            console.log(error);
+        }
 
-    const onFinishCreateAccount = (values) => {
-        console.log('Received values of form: ', values);
     };
 
-    const prefixSelector = (
-        <Form.Item name="prefix" noStyle>
-            <Select style={{ width: 70 }}>
-                <Option value="86">+86</Option>
-                <Option value="87">+87</Option>
-            </Select>
-        </Form.Item>
-    );
-
-    const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] = useState(false);
     const showModalCreateAccount = () => {
         setIsCreateAccountModalVisible(true);
         form.resetFields();
     };
-    const handleOkCreateAccount = () => {
-        setIsCreateAccountModalVisible(false);
-    };
+
+
 
     const handleCancelCreateAccount = () => {
         setIsCreateAccountModalVisible(false);
     };
     const columns = [
         {
-            title: t('fullname'),
-            dataIndex: 'fullname',
-            key: 'fullname',
+            title: t('firstname'),
+            dataIndex: 'firstName',
+            key: 'firstname',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: t('lastname'),
+            dataIndex: 'lastName',
+            key: 'lastname',
             render: text => <a>{text}</a>,
         },
         {
             title: t('phonenumber'),
-            dataIndex: 'phonenumber',
+            dataIndex: 'phoneNumber',
             key: 'phonenumber',
             render: text => <a>{text}</a>,
         },
@@ -88,8 +128,14 @@ const AccountManager = () => {
         },
         {
             title: t('dob'),
-            dataIndex: 'dob',
+            dataIndex: 'dateOfBirth',
             key: 'dob',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: t('role'),
+            dataIndex: 'roleName',
+            key: 'role',
             render: text => <a>{text}</a>,
         },
         {
@@ -112,36 +158,6 @@ const AccountManager = () => {
         },
     ];
 
-    const data = [
-        {
-            fullname: '1',
-            phonenumber: 'John Brown',
-            gender: 'Man',
-            email: 32,
-            address: 'New York No. 1 Lake Park',
-            dob: ['nice', 'developer'],
-            status: 'a',
-        },
-        {
-            fullname: '1',
-            phonenumber: 'John Brown',
-            gender: 'Man',
-            email: 32,
-            address: 'New York No. 1 Lake Park',
-            dob: ['nice', 'developer'],
-            status: 'a',
-        },
-        {
-            fullname: '1',
-            phonenumber: 'John Brown',
-            gender: 'Man',
-            email: 32,
-            address: 'New York No. 1 Lake Park',
-            dob: ['nice', 'developer'],
-            status: 'a',
-        },
-    ];
-
     const config = {
         rules: [
             {
@@ -161,8 +177,10 @@ const AccountManager = () => {
                 </Button>
             </Col>
         </Row>
-        <Table columns={columns} dataSource={data} />;
-        <Modal title={t('createaccount')} visible={isCreateAccountModalVisible} onOk={handleOkCreateAccount} onCancel={handleCancelCreateAccount}>
+        <Table columns={columns} dataSource={listAccount} />;
+        <Modal title={t('createaccount')} visible={isCreateAccountModalVisible} onCancel={handleCancelCreateAccount}
+            footer={null}
+        >
             <Form
                 {...formItemLayout}
                 form={form}
@@ -199,11 +217,20 @@ const AccountManager = () => {
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    name="phone"
+                    name="phoneNumber"
                     label={t('phonenumber')}
-                    rules={[{ required: true, message: t('reqphonenumber') }]}
+                    rules={[
+                        {
+                            pattern: new RegExp("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"),
+                            message: t('formatphonenumber')
+                        },
+                        {
+                            required: true,
+                            message: t('reqphonenumber')
+                        }
+                    ]}
                 >
-                    <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
+                    <Input style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item
                     name="address"
@@ -217,7 +244,7 @@ const AccountManager = () => {
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item name="date-picker" label={t('dob')} {...config} >
+                <Form.Item name="dateOfBirth" label={t('dob')} {...config} >
                     <DatePicker />
                 </Form.Item>
                 <Form.Item
@@ -280,41 +307,23 @@ const AccountManager = () => {
                     rules={[{ required: true, message: t('reqgender') }]}
                 >
                     <Select placeholder={t('selectgender')}>
-                        <Option value="abc">{t('male')}</Option>
+                        <Option value="male">{t('male')}</Option>
                         <Option value="female">{t('female')}</Option>
                         <Option value="other">{t('other')}</Option>
                     </Select>
                 </Form.Item>
 
                 <Form.Item
-                    name="role"
+                    name="roleId"
                     label={t('role')}
                     rules={[{ required: true, message: t('reqrole') }]}
                 >
-                    <Select placeholder={t('selectrole')}>
-                        <Option value="a">a</Option>
-                        <Option value="b">b</Option>
-                        <Option value="c">c</Option>
+                    <Select placeholder={t('selectrole')} >
+                        {listRole.map((item) => {
+                            return <Option value={item.id}>{item.name}</Option>
+                        })}
                     </Select>
                 </Form.Item>
-
-                <Form.Item label={t('captcha')} extra={t('hintcaptcha')}>
-                    <Row gutter={8}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="captcha"
-                                noStyle
-                                rules={[{ required: true, message: t('reqcaptcha') }]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Button>{t('getcaptcha')}</Button>
-                        </Col>
-                    </Row>
-                </Form.Item>
-
                 <Form.Item
                     name="agreement"
                     valuePropName="checked"
