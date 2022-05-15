@@ -5,6 +5,5 @@
     },
     "signin":"Sign in",
     "signup":"Sign up",
-    "forgot-password":"Forgot password?",
-    "warning-wrong-email-or-password":"Wrong Username or password"
+    "forgot-password":"Forgot password?"
 }

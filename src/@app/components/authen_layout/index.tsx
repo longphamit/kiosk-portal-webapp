@@ -15,7 +15,7 @@ import { Fragment, ReactNode, useEffect, useState } from "react";
 import "./styles.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { USER_NAME } from "../../constants/key";
+import { USER_FRIST_NAME } from "../../constants/key";
 
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";
@@ -56,7 +56,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             onNavigate("/admin-home");
           }}
         >
-          TIKA Management - {localStorage.getItem(USER_NAME)}
+          TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
         </h2>
       </Header>
       <Layout>
