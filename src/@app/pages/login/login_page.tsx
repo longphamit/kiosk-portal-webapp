@@ -102,7 +102,7 @@ const LoginPage: React.FC = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, type: "string", min: 7 }]}
+              rules={[{ required: true, type: "string", min: LENGTH_PASSWORD_REQUIRED }]}
               style={{ marginBottom: 0 }}
             >
               <Input.Password />

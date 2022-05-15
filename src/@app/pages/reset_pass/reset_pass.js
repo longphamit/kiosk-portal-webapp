@@ -2,7 +2,6 @@ import { Button, Col, Form, Input, Row } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PRIMARY_COLOR } from "../../constants/colors";
-import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 import { forgotPasswordService } from "../../services/auth_service";
 import { resetPasswordService } from "../../services/user_service";
 
@@ -35,7 +34,7 @@ const ResetPassPage = () => {
               label="Password"
               name="password"
               hasFeedback
-              rules={[{ required: true, type: "string", min: LENGTH_PASSWORD_REQUIRED }]}
+              rules={[{ required: true, type: "string", min: 8 }]}
             >
               <Input.Password />
             </Form.Item>
