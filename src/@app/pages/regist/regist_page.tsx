@@ -19,6 +19,7 @@ const validateMessages: ValidateMessages = {
 };
 const RegistPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const form = Form.useForm();
   let navigate = useNavigate();
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const RegistPage: React.FC = () => {
       .catch((error: any) => {
         console.log(error.response);
         toast(error.response.data.message);
-      }).finally(()=>{
+      }).finally(() => {
         setIsLoading(false)
       });
   };
@@ -62,12 +63,12 @@ const RegistPage: React.FC = () => {
       <Row
         justify="center"
         align="middle"
-        style={{ minHeight: "100vh",padding:40, backgroundColor: "#93dbbd" }}
+        style={{ minHeight: "100vh", padding: 40, backgroundColor: "#93dbbd" }}
       >
         <Col span={4} />
         <Col span={16} className="login-form">
           <h2 style={{ textAlign: "center", fontWeight: "bold" }}>Sign up</h2>
-          
+
           <Form
             className="admin-login-form"
             name="basic"
@@ -207,7 +208,7 @@ const RegistPage: React.FC = () => {
           </Form>
           {isLoading ? (
             <Row justify="center" align="middle">
-              <Spin style={{marginBottom:20}} />
+              <Spin style={{ marginBottom: 20 }} />
             </Row>
           ) : null}
         </Col>

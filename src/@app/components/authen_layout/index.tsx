@@ -23,6 +23,7 @@ import { ROLE_ADMIN } from "../../constants/role";
 import { localStorageClearService } from "../../services/localstorage_service";
 
 import routes from "../../routers/routes";
+import { t } from "i18next";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -42,16 +43,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const roles: string[] | null = useSelector(
     (state: AppState) => state.auth.roles
   );
- 
+
   useEffect(() => {
     setInterval(() => setTime(new Date().toLocaleString()), 1000);
   });
   return (
+
     <Layout>
       <Header className="header">
         <div className="logo" />
         <h2
-          style={{ fontWeight: "bold",color:"#fff" }}
+          style={{ fontWeight: "bold", color: "#fff" }}
           onClick={() => {
             onNavigate("/admin-home");
           }}
@@ -70,7 +72,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
           >
             <Menu.Item disabled>
               <div
-                style={{ marginTop: 20, marginBottom: 20, color: "#3753ad",fontSize:12 }}
+                style={{ marginTop: 20, marginBottom: 20, color: "#3753ad", fontSize: 12 }}
               >
                 <ClockCircleOutlined style={{ marginRight: 10 }} />
                 {time}
@@ -96,16 +98,16 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 onNavigate("/admin-home");
               }}
             >
-              Home
+              {t('home')}
             </Menu.Item>
             <Menu.Item
               icon={<FundOutlined />}
               key="2"
               onClick={() => {
-                onNavigate("/admin-category-room");
+                onNavigate("/accountmanager");
               }}
             >
-              Room Category
+              {t('accountmanager')}
             </Menu.Item>
             <Menu.Item
               icon={<BlockOutlined />}

@@ -1,1 +1,1 @@
-export const HOST:string="http://localhost:8090/api"
+export const HOST: string = "http://tikap.cf:10051/api"

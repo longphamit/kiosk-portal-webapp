@@ -3,8 +3,8 @@ import { HOST } from "../constants/host";
 import request from "../utils/http_client";
 
 
-export const getAllUserService=async()=>{
-    const response=await request.get(`${HOST}/user`);
+export const getAllUserService = async () => {
+    const response = await request.get(`${HOST}/user`);
     return response.data;
 };
 export const getAllUserToAddGroupService = async (groupId: string) => {
@@ -15,27 +15,41 @@ export const getUserInfoService = async () => {
     const response = await request.get(`${HOST}/user/info`);
     return response.data;
 };
-export const updateUserInfoService = async (userId:string,userInfo:any) => {
-    const response = await request.patch(`${HOST}/user/${userId}`,userInfo);
+export const updateUserInfoService = async (userId: string, userInfo: any) => {
+    const response = await request.patch(`${HOST}/user/${userId}`, userInfo);
     return response.data;
 };
-export const getUserInfoByUserIdService = async (userId:string) => {
+export const getUserInfoByUserIdService = async (userId: string) => {
     const response = await request.get(`${HOST}/user/info/${userId}`);
     return response.data;
 };
-export const searchUserToAddGroupService = async (userName:string,groupId:string) => {
+export const searchUserToAddGroupService = async (userName: string, groupId: string) => {
     const response = await request.get(`${HOST}/user/search/${groupId}?s=${userName}`);
     return response.data;
 };
-export const changePasswordService = async (data:any) => {
-    const response = await request.patch(`${HOST}/user/change-password`,data);
+export const changePasswordService = async (data: any) => {
+    const response = await request.patch(`${HOST}/user/change-password`, data);
     return response.data;
 }
-export const resetPasswordService = async (email:string,uuid:string,password:any) => {
-    const response = await request.patch(`${HOST}/user/reset-password?email=${email}&uuid=${uuid}`,password);
+export const resetPasswordService = async (email: string, uuid: string, password: any) => {
+    const response = await request.patch(`${HOST}/user/reset-password?email=${email}&uuid=${uuid}`, password);
     return response.data;
 }
-export const activeAccountService = async (userId:string,uuid:string,password:any) => {
+export const activeAccountService = async (userId: string, uuid: string, password: any) => {
     const response = await request.get(`${HOST}/user/active?id=${userId}&uuid=${uuid}`);
+    return response.data;
+}
+export const getListAccountService = async () => {
+    const response = await request.get(`${HOST}/v1/parties`);
+    return response.data;
+}
+
+export const getListRoleService = async () => {
+    const response = await request.get(`${HOST}/v1/roles`);
+    return response.data;
+}
+
+export const createAccountService = async (data: any) => {
+    const response = await request.post(`${HOST}/v1/parties`, data);
     return response.data;
 }

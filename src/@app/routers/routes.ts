@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import AccountManager from "../../kiosk_portal/pages/account/account_manager";
 import HomePage from "../../kiosk_portal/pages/home";
 
 import AuthenLayout from "../components/authen_layout";
@@ -18,7 +19,7 @@ interface Route {
   path: string;
   isLayout: boolean;
   authen: boolean;
-  breadcrumb:string;
+  breadcrumb: string;
 }
 const routes: Route[] = [
   {
@@ -26,50 +27,58 @@ const routes: Route[] = [
     path: "/signin",
     isLayout: false,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: RegistPage,
     path: "/signup",
     isLayout: false,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: ConfirmAccountPage,
     path: "/confirm-account",
     isLayout: false,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: ResetPassPage,
     path: "/reset-pass",
     isLayout: false,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: UnAuthPage,
     path: "/unauth",
     isLayout: false,
     authen: true,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: ForgotPassPage,
     path: "/forgot-pass",
     isLayout: false,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
   },
   {
     component: HomePage,
     path: "/admin-home",
     isLayout: true,
-    layout:AuthenLayout,
+    layout: AuthenLayout,
     authen: false,
-    breadcrumb:""
+    breadcrumb: ""
+  },
+  {
+    component: AccountManager,
+    path: "/accountmanager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: false,
+    breadcrumb: ""
   },
 ];
 

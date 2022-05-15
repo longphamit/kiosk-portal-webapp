@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { HOST } from "../constants/host";
 const controller = new AbortController();
-let cancelAxios=axios.CancelToken.source()
+let cancelAxios = axios.CancelToken.source()
 axios.defaults.baseURL = HOST;
-axios.defaults.responseType= "json"
+axios.defaults.responseType = "json"
 axios.interceptors.response.use(
   (res) => {
     return res;
@@ -14,13 +14,13 @@ axios.interceptors.response.use(
     const originalConfig = err.config;
     if (originalConfig.url !== "/signin" && err.response) {
       // Access Token was expired
-      if ((err.response.status === 401 ||err.response.status === 403 )&& !originalConfig._retry) {
+      if ((err.response.status === 401 || err.response.status === 403) && !originalConfig._retry) {
         originalConfig._retry = true;
         localStorage.removeItem("ACCESS_TOKEN")
         cancelAxios.cancel("----stop all request---")
         toast.error("Your session is expired! Please login again")
         setTimeout(() => {
-          window.location.href="/signin"
+          window.location.href = "/signin"
         }, 3000);
         controller.abort()
         // try {
@@ -38,28 +38,28 @@ axios.interceptors.response.use(
     return Promise.reject(err);
   }
 );
-const getAccessToken=()=>{
-  let accessToken= localStorage.getItem("ACCESS_TOKEN")
-  if(accessToken==null){
+const getAccessToken = () => {
+  let accessToken = localStorage.getItem("ACCESS_TOKEN")
+  if (accessToken == null) {
     return ""
   }
   return accessToken
 }
-const createConfig=()=>{
+const createConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "Application/json",
-      "Authorization": "Bearer "+getAccessToken(),
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MjYyOTIxNX0.7eXwWOb6Sh0YygRANuJeotklkjiq22dpcIX5BylFyl0",
     },
-    cancelToken:cancelAxios.token
+    cancelToken: cancelAxios.token
   }
   return getConfig;
 }
-const multipartConfig=()=>{
+const multipartConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "multipart/form-data",
-      "Authorization": "Bearer "+getAccessToken(),
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MjYyOTIxNX0.7eXwWOb6Sh0YygRANuJeotklkjiq22dpcIX5BylFyl0",
     },
   }
   return getConfig;
@@ -68,10 +68,10 @@ const request = {
   get: (url: string) => axios.get(url, createConfig()),
   post: (url: string, data: any) => axios.post(url, data, createConfig()),
   put: (url: string, data: any) => axios.put(url, data, createConfig()),
-  patch: (url: string,data:any) => axios.patch(url,data, createConfig()),
+  patch: (url: string, data: any) => axios.patch(url, data, createConfig()),
   delete: (url: string) => axios.delete(url, createConfig()),
-  post_multipart:(url: string, data: any) => axios.post(url, data, multipartConfig()),
-  patch_multipart:(url: string, data: any) => axios.patch(url, data, multipartConfig()),
+  post_multipart: (url: string, data: any) => axios.post(url, data, multipartConfig()),
+  patch_multipart: (url: string, data: any) => axios.patch(url, data, multipartConfig()),
 };
 
 export default request;
