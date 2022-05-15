@@ -2,7 +2,7 @@ import { HOST } from "../constants/host";
 import request from "../utils/http_client";
 
 export const signInService=async(email:string,password:string)=>{
-   const response= await request.post(`${HOST}/auth`,{
+   const response= await request.post(`${HOST}/v1/auth`,{
         email,
         password
     })
