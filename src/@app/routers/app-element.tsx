@@ -18,7 +18,7 @@ const AppElement: React.FC<Props> = (props) => {
   if(!access_token&&authen){
     return <UnAuthPage/>
   }
-  if(access_token&&!authen){
+  if(access_token&&authen){
     return <Navigate to="/admin-home"/>
   }
   return isLayout && Layout ? (

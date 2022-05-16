@@ -40,9 +40,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
     navigate(url);
   };
 
-  const roles: string[] | null = useSelector(
-    (state: AppState) => state.auth.role
-  );
+
 
   useEffect(() => {
     setInterval(() => setTime(new Date().toLocaleString()), 1000);
@@ -65,9 +63,6 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
         <Sider width={200} className="site-layout-background">
           <Menu
             mode="inline"
-            defaultSelectedKeys={
-              roles ? (roles.includes(ROLE_ADMIN) ? ["9999"] : ["0"]) : ["0"]
-            }
             style={{ height: "100%", borderRight: 0 }}
           >
             <Menu.Item disabled>
@@ -78,19 +73,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 {time}
               </div>
             </Menu.Item>
-            {roles ? (
-              roles.includes(ROLE_ADMIN) ? (
-                <Menu.Item
-                  icon={<KeyOutlined />}
-                  key="0"
-                  onClick={() => {
-                    onNavigate("/admin-dashboard");
-                  }}
-                >
-                  Admin Dashboard
-                </Menu.Item>
-              ) : null
-            ) : null}
+            
             <Menu.Item
               icon={<HomeFilled />}
               key="1"

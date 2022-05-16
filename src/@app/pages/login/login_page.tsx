@@ -19,11 +19,12 @@ import {
   ROLE_LOCATION_OWNER,
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
+import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
     len: "${label} must be have length with exact ${len}",
-    min: "${label} must be at least ${min} characters {signin}",
+    min: "${label} must be at least ${min} characters",
   },
   number: {
     range: "${label} must be between ${min} and ${max}",
@@ -40,6 +41,7 @@ const LoginPage: React.FC = () => {
         if (response.error) {
           toast.error("Wrong Username or password");
         } else {
+          navigate("/admin-home")
           toast.success("Sign in successfull");
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
