@@ -47,7 +47,7 @@ const routes: Route[] = [
     component: ResetPassPage,
     path: "/reset-pass",
     isLayout: false,
-    authen: false,
+    authen: true,
     breadcrumb: ""
   },
   {
