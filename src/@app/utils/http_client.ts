@@ -50,7 +50,7 @@ const createConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "Application/json",
-      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzAzNjk4OH0.UQP71P3d--EoYCU65HJ8J1Sh6-hZaNL5BzVQKCSzNnw",
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzA3MDE5Mn0.akaqjOZTEztRFJlv4HcZN7Gt_W3gsS4PS9FGvvfjbH4",
     },
     cancelToken: cancelAxios.token
   }
@@ -60,7 +60,7 @@ const multipartConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "multipart/form-data",
-      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzAzNjk4OH0.UQP71P3d--EoYCU65HJ8J1Sh6-hZaNL5BzVQKCSzNnw",
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzA3MDE5Mn0.akaqjOZTEztRFJlv4HcZN7Gt_W3gsS4PS9FGvvfjbH4",
     },
   }
   return getConfig;

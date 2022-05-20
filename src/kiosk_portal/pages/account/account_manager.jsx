@@ -20,12 +20,6 @@ const AccountManager = () => {
         try {
             await getListAccountService(currentPageToGetList, numInPage)
                 .then(res => {
-                    // const newArray = res.map((a) =>
-                    //     console.log("a: " + a)
-
-                    // )
-                    // console.log("new Array: " + newArray);
-
                     setTotalAccount(res.data.metadata.total);
                     setListAccount(res.data.data);
                 })
@@ -137,7 +131,6 @@ const AccountManager = () => {
         return moment(new Date(stringToConvert)).format('DD/MM/YYYY');
     }
        
-
     const columns = [
         {
             title: t('firstname'),
@@ -182,11 +175,9 @@ const AccountManager = () => {
             render: text => 
                 <a>
                     {
-                         converDate(text)
+                        converDate(text)
                     }
                 </a>
-            
-           
         },
         {
             title: t('role'),
@@ -198,7 +189,13 @@ const AccountManager = () => {
             title: t('status'),
             dataIndex: 'status',
             key: 'status',
-            render: text => <a>{text}</a>,
+            render: (text, record,dataIndex) => (
+                record.status==="active"
+                ?
+                <a style={{color:"green"}}>{t('active')}</a>
+                :
+                <a style={{color:"red"}}>{t('deactivate')}</a>
+            )
         },
 
         {
@@ -209,12 +206,23 @@ const AccountManager = () => {
                     <Button type="primary" shape="default" size={"large"} onClick={{}}>
                         {t('edit')}
                     </Button>
-                    <Button type="primary" shape="default" size={"large"} name={record}
-                        onClick={() => {
-                            handleChangeStatusAccount(record)
-                        }}>
-                        {t('change-status')}
-                    </Button>
+                    {
+                        record.roleName==="Admin"
+                            ?
+                            <Button type="primary" shape="default" size={"large"} name={record} disabled="false"
+                                onClick={() => {
+                                    handleChangeStatusAccount(record)
+                                }}>
+                                {t('change-status')}
+                            </Button>
+                            :
+                            <Button type="primary" shape="default" size={"large"} name={record} 
+                                onClick={() => {
+                                    handleChangeStatusAccount(record)
+                                }}>
+                                {t('change-status')}
+                            </Button>
+                    }
                 </Space>
             ),
         },
