@@ -55,5 +55,7 @@
     "yes":"Có",
     "no":"Không",
     "toastSuccessChangeStatus":"Đổi trạng thái thành công",
-    "toastSuccessCreateAccount":"Tạo tài khoản thành công"
+    "toastSuccessCreateAccount":"Tạo tài khoản thành công",
+    "active":"Đang hoạt động",
+    "deactivate":"Không hoạt động"
 }
