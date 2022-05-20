@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { HOST } from "../constants/host";
+import { ACCESS_TOKEN } from "../constants/key";
 const controller = new AbortController();
 let cancelAxios = axios.CancelToken.source()
 axios.defaults.baseURL = HOST;
@@ -49,7 +50,7 @@ const createConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "Application/json",
-      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MjYyOTIxNX0.7eXwWOb6Sh0YygRANuJeotklkjiq22dpcIX5BylFyl0",
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzAzNjk4OH0.UQP71P3d--EoYCU65HJ8J1Sh6-hZaNL5BzVQKCSzNnw",
     },
     cancelToken: cancelAxios.token
   }
@@ -59,7 +60,7 @@ const multipartConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "multipart/form-data",
-      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MjYyOTIxNX0.7eXwWOb6Sh0YygRANuJeotklkjiq22dpcIX5BylFyl0",
+      "Authorization": "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzk3NjkxLWFjZTAtNDUxMS05MTZhLWRiMDcxYzFiM2JiZCIsInJvbGUiOiJBZG1pbiIsIm1haWwiOiJ0ZXN0QGdtYWlsLmNvbSIsInBob25lTnVtYmVyIjoiMDkxMjM0NTY3OCIsImV4cCI6MTY1MzAzNjk4OH0.UQP71P3d--EoYCU65HJ8J1Sh6-hZaNL5BzVQKCSzNnw",
     },
   }
   return getConfig;

@@ -24,6 +24,7 @@
     "getcaptcha": "Get Captcha",
     "selectgender": "Select your gender",
     "selectrole": "Select your role",
+    "selectdob": "Select your birthday",
     "hintcaptcha": "We must make sure that your are a human.",
     "checkboxcreateaccount": "I have read the ",
     "checkboxcreateaccount2": "agreement",
@@ -48,5 +49,11 @@
     "home": "Home",
     "back": "Back",
     "formatphonenumber": "Please input phone number with right format in this field",
-    "forgot-password":"Forgot password?"
+    "forgot-password": "Forgot password?",
+    "change-status": "Change Status",
+    "confirmChangeStatusAccount" : "Are you sure, you want to change status this account?",
+    "yes":"Yes",
+    "no":"No",
+    "toastSuccessChangeStatus":"Change Status Successful",
+    "toastSuccessCreateAccount":"Create Account Successful"
 }
