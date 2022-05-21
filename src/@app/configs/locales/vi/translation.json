@@ -24,6 +24,7 @@
     "getcaptcha": "Nhận Captcha",
     "selectgender": "Vui lòng chọn giới tính",
     "selectrole": "Vui lòng chọn vai trò",
+    "selectdob": "Vui lòng chọn sinh nhật",
     "hintcaptcha": "Chúng tôi phải chắc chắn bạn là con người.",
     "checkboxcreateaccount": "Tôi đã đọc ",
     "checkboxcreateaccount2": "điều khoản",
@@ -48,5 +49,13 @@
     "home": "Trang chủ",
     "back": "Trở về",
     "formatphonenumber": "Vui lòng nhập vào số điện thoại với đúng định dạng vào ô này",
-    "forgot-password":"Quên mật khẩu?"
+    "forgot-password": "Quên mật khẩu?",
+    "change-status": "Đổi trạng thái",
+    "confirmChangeStatusAccount" : "Bạn có chắc là muốn đổi trạng thái tài khoản không?",
+    "yes":"Có",
+    "no":"Không",
+    "toastSuccessChangeStatus":"Đổi trạng thái thành công",
+    "toastSuccessCreateAccount":"Tạo tài khoản thành công",
+    "active":"Đang hoạt động",
+    "deactivate":"Không hoạt động"
 }

@@ -1,20 +1,27 @@
-import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Row, Select, Space, Table } from "antd";
+import { Button, Checkbox, Col, DatePicker, Form, Input, Modal, Pagination, Popconfirm, Row, Select, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createAccountService, getListAccountService, getListRoleService } from "../../../@app/services/user_service";
+import { toast } from "react-toastify";
+import { changeStatusAccountService, createAccountService, getListAccountService, getListRoleService } from "../../../@app/services/user_service";
+import moment from 'moment';
 
 const AccountManager = () => {
-
     const { Option } = Select;
     const { t } = useTranslation();
     const [listAccount, setListAccount] = useState([]);
+    const [totalAccount, setTotalAccount] = useState(0);
+    const [numAccountInPage, setNumAccountInPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
     const [listRole, setListRole] = useState([]);
     const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] = useState(false);
-    const getListAccountFunction = async () => {
+    const [form] = Form.useForm();
+
+    const getListAccountFunction = async (currentPageToGetList, numInPage) => {
         try {
-            await getListAccountService()
+            await getListAccountService(currentPageToGetList, numInPage)
                 .then(res => {
-                    setListAccount(res.data);
+                    setTotalAccount(res.data.metadata.total);
+                    setListAccount(res.data.data);
                 })
         } catch (error) {
             console.log(error);
@@ -30,8 +37,9 @@ const AccountManager = () => {
             console.log(error);
         }
     }
+
     useEffect(() => {
-        getListAccountFunction();
+        getListAccountFunction(currentPage, numAccountInPage);
         listRoleFunction();
     }, []);
 
@@ -46,6 +54,7 @@ const AccountManager = () => {
             sm: { span: 16 },
         },
     };
+
     const tailFormItemLayout = {
         wrapperCol: {
             xs: {
@@ -58,7 +67,7 @@ const AccountManager = () => {
             },
         },
     };
-    const [form] = Form.useForm();
+
     const onFinishCreateAccount = async (values) => {
         const newAccount = {
             "firstName": values.firstName,
@@ -70,9 +79,13 @@ const AccountManager = () => {
             "roleId": values.roleId
         }
         try {
-            createAccountService(newAccount);
-            getListAccountFunction();
-            setIsCreateAccountModalVisible(false);
+            await createAccountService(newAccount).then(() => {
+                getListAccountFunction(currentPage, numAccountInPage);
+                setIsCreateAccountModalVisible(false);
+                toast.success(t('toastSuccessCreateAccount'));
+            });
+
+
         } catch (error) {
             console.log(error);
         }
@@ -84,11 +97,40 @@ const AccountManager = () => {
         form.resetFields();
     };
 
-
-
     const handleCancelCreateAccount = () => {
         setIsCreateAccountModalVisible(false);
     };
+
+    const handleChangeStatusAccount =async (record) =>{
+        Modal.confirm({
+            title:t('confirmChangeStatusAccount'), 
+            okText:t('yes'),
+            cancelText:t('no'),
+            onOk:async () =>{{
+                    try {
+                        await changeStatusAccountService(record.id,null).then(()=>{
+                            getListAccountFunction(currentPage, numAccountInPage);
+                            toast.success(t('toastSuccessChangeStatus'));
+                            } 
+                        )
+                    } catch (error) {
+                        console.log(error);
+                    }
+                    
+                }
+            }
+        })
+    }
+
+    const handleChangeNumberOfPaging = async (page, pageSize) => {
+        setCurrentPage(page);
+        await getListAccountFunction(page, numAccountInPage);
+    }
+
+    const converDate = (stringToConvert) => {
+        return moment(new Date(stringToConvert)).format('DD/MM/YYYY');
+    }
+       
     const columns = [
         {
             title: t('firstname'),
@@ -130,7 +172,12 @@ const AccountManager = () => {
             title: t('dob'),
             dataIndex: 'dateOfBirth',
             key: 'dob',
-            render: text => <a>{text}</a>,
+            render: text => 
+                <a>
+                    {
+                        converDate(text)
+                    }
+                </a>
         },
         {
             title: t('role'),
@@ -142,17 +189,40 @@ const AccountManager = () => {
             title: t('status'),
             dataIndex: 'status',
             key: 'status',
-            render: text => <a>{text}</a>,
+            render: (text, record,dataIndex) => (
+                record.status==="active"
+                ?
+                <a style={{color:"green"}}>{t('active')}</a>
+                :
+                <a style={{color:"red"}}>{t('deactivate')}</a>
+            )
         },
 
         {
             title: t('action'),
             key: 'action',
-            render: (text, record) => (
+            render: (text, record,dataIndex) => (
                 <Space size="middle">
                     <Button type="primary" shape="default" size={"large"} onClick={{}}>
                         {t('edit')}
                     </Button>
+                    {
+                        record.roleName==="Admin"
+                            ?
+                            <Button type="primary" shape="default" size={"large"} name={record} disabled="false"
+                                onClick={() => {
+                                    handleChangeStatusAccount(record)
+                                }}>
+                                {t('change-status')}
+                            </Button>
+                            :
+                            <Button type="primary" shape="default" size={"large"} name={record} 
+                                onClick={() => {
+                                    handleChangeStatusAccount(record)
+                                }}>
+                                {t('change-status')}
+                            </Button>
+                    }
                 </Space>
             ),
         },
@@ -167,6 +237,7 @@ const AccountManager = () => {
             },
         ],
     };
+
     return (<>
 
         <Row style={{ padding: 10 }}>
@@ -177,7 +248,8 @@ const AccountManager = () => {
                 </Button>
             </Col>
         </Row>
-        <Table columns={columns} dataSource={listAccount} />;
+        <Table columns={columns} dataSource={listAccount} pagination={false} />;
+        <Pagination defaultCurrent={1} total={totalAccount} pageSize={5} onChange={handleChangeNumberOfPaging} />;
         <Modal title={t('createaccount')} visible={isCreateAccountModalVisible} onCancel={handleCancelCreateAccount}
             footer={null}
         >
@@ -186,10 +258,6 @@ const AccountManager = () => {
                 form={form}
                 name="register"
                 onFinish={onFinishCreateAccount}
-                initialValues={{
-                    residence: ['zhejiang', 'hangzhou', 'xihu'],
-                    prefix: '86',
-                }}
                 scrollToFirstError
             >
                 <Form.Item
@@ -221,7 +289,7 @@ const AccountManager = () => {
                     label={t('phonenumber')}
                     rules={[
                         {
-                            pattern: new RegExp("^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"),
+                            pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
                             message: t('formatphonenumber')
                         },
                         {
@@ -245,7 +313,15 @@ const AccountManager = () => {
                     <Input />
                 </Form.Item>
                 <Form.Item name="dateOfBirth" label={t('dob')} {...config} >
-                    <DatePicker />
+                    <DatePicker
+                        placeholder={t('selectdob')}
+                        format="DD/MM/YYYY"
+                        allowClear={false}
+                        style={{
+                            height: "auto",
+                            width: "auto",
+                        }}
+                    />
                 </Form.Item>
                 <Form.Item
                     name="email"

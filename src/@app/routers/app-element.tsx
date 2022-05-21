@@ -30,17 +30,8 @@ const AppElement: React.FC<Props> = (props) => {
   if (!access_token && authen) {
     return <UnAuthPage />;
   }
-  if (access_token && !authen) {
-    const role = localStorageGetReduxState().auth.role;
-    switch (role) {
-      case ROLE_ADMIN:
-        return <Navigate to="/admin-home" />;
-      case ROLE_LOCATION_OWNER:
-        break;
-      case ROLE_SERVICE_PROVIDER:
-        break;
-    }
-    return <UnAuthPage />;
+  if(access_token&&authen){
+    return <Navigate to="/admin-home"/>
   }
   return isLayout && Layout ? (
     <Layout>
