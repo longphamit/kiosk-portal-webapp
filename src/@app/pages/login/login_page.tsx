@@ -45,8 +45,6 @@ const LoginPage: React.FC = () => {
         if (response.error) {
           toast.error("Wrong Username or password");
         } else {
-          navigate("/admin-home")
-          toast.success("Sign in successfull");
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
           localStorage.setItem(
@@ -56,6 +54,14 @@ const LoginPage: React.FC = () => {
           if(!response.payload.data.passwordIsChanged){
             navigate("/reset-pass");
           }else{
+            switch (response.payload.data.roleName) {
+              case ROLE_ADMIN:
+                return navigate("/admin-home");
+              case ROLE_LOCATION_OWNER:
+                break;
+              case ROLE_SERVICE_PROVIDER:
+                break;
+            }
             toast.success("Sign in successfull");
           }
         }
