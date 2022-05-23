@@ -233,7 +233,28 @@ const AccountManager = () => {
   const converDate = (stringToConvert) => {
     return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
   };
-
+  const types = [
+    {
+      name: "FirstName",
+      label: "First Name",
+    },
+    {
+      name: "LastName",
+      label: "Last Name",
+    },
+    {
+      name: "PhoneNumber",
+      label: "Phone Number",
+    },
+    {
+      name: "Email",
+      label: "Email",
+    },
+    {
+      name: "Address",
+      label: "Address",
+    },
+  ];
   const columns = [
     {
       title: t("firstname"),
@@ -346,11 +367,9 @@ const AccountManager = () => {
   const prefixSearch = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="FirstName">
-        <Option value="FirstName">First Name</Option>
-        <Option value="LastName">Last Name</Option>
-        <Option value="PhoneNumber">Phone Number</Option>
-        <Option value="Email">Email</Option>
-        <Option value="Address">Address</Option>
+        {types.map((item) => {
+          return <Option value={item.name}>{item.label}</Option>;
+        })}
       </Select>
     </Form.Item>
   );
