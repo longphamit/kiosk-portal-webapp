@@ -6,7 +6,11 @@ import { toast } from "react-toastify";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 import { PRIMARY_COLOR } from "../../constants/colors";
 
-import { ACCESS_TOKEN, USER_FRIST_NAME, USER_ID } from "../../constants/key";
+import {
+  ACCESS_TOKEN,
+  USER_FRIST_NAME,
+  USER_ID,
+} from "../../constants/key";
 import useDispatch from "../../hooks/use_dispatch";
 import { loginAction } from "../../redux/actions/login_action";
 
@@ -41,24 +45,24 @@ const LoginPage: React.FC = () => {
         if (response.error) {
           toast.error("Wrong Username or password");
         } else {
-          navigate("/admin-home")
-          toast.success("Sign in successfull");
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
           localStorage.setItem(
             USER_FRIST_NAME,
             response.payload.data.firstName
           );
-          const role = localStorageGetReduxState().auth.role;
-          switch (role) {
-            case ROLE_ADMIN:
-              break;
-            case ROLE_LOCATION_OWNER:
-              break;
-            case ROLE_SERVICE_PROVIDER:
-              break;
-            default:
-              return;
+          if(!response.payload.data.passwordIsChanged){
+            navigate("/reset-pass");
+          }else{
+            switch (response.payload.data.roleName) {
+              case ROLE_ADMIN:
+                return navigate("/admin-home");
+              case ROLE_LOCATION_OWNER:
+                break;
+              case ROLE_SERVICE_PROVIDER:
+                break;
+            }
+            toast.success("Sign in successfull");
           }
         }
       })

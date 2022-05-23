@@ -27,7 +27,6 @@ const authSlice = createSlice({
       return {
         ...state,
         isLoading: false,
-      //  role: payload.data.roleName,
       };
     });
   },
