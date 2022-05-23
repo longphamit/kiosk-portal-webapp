@@ -32,8 +32,8 @@ const AccountManager = () => {
   const [listAccount, setListAccount] = useState([]);
   const [totalAccount, setTotalAccount] = useState(0);
   const [numAccountInPage, setNumAccountInPage] = useState(5);
-  const [isSearch,setIsSearch] = useState(false);
-  const [querySearch, setQuerySearch] = useState(null)
+  const [isSearch, setIsSearch] = useState(false);
+  const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [listRole, setListRole] = useState([]);
   const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] =
@@ -43,14 +43,12 @@ const AccountManager = () => {
   const [form] = Form.useForm();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
     try {
-      if(isSearch){
+      if (isSearch) {
         querySearch.page = currentPageToGetList;
-        await searchAccountService(querySearch).then(
-          (res) => {
-            setTotalAccount(res.data.metadata.total);
-            setListAccount(res.data.data);
-          }
-        );
+        await searchAccountService(querySearch).then((res) => {
+          setTotalAccount(res.data.metadata.total);
+          setListAccount(res.data.data);
+        });
         return;
       }
       await getListAccountService(currentPageToGetList, numInPage).then(
@@ -419,14 +417,14 @@ const AccountManager = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listAccount} pagination={false} />;
+      <Table columns={columns} dataSource={listAccount} pagination={false} />
       <Pagination
         defaultCurrent={1}
         total={totalAccount}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
-      ;
+
       <Modal
         title={t("createaccount")}
         visible={isCreateAccountModalVisible}
