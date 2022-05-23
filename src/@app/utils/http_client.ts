@@ -4,9 +4,9 @@ import { toast } from "react-toastify";
 import { HOST } from "../constants/host";
 import { ACCESS_TOKEN } from "../constants/key";
 const controller = new AbortController();
-let cancelAxios = axios.CancelToken.source()
+let cancelAxios = axios.CancelToken.source();
 axios.defaults.baseURL = HOST;
-axios.defaults.responseType = "json"
+axios.defaults.responseType = "json";
 axios.interceptors.response.use(
   (res) => {
     return res;
@@ -15,15 +15,18 @@ axios.interceptors.response.use(
     const originalConfig = err.config;
     if (originalConfig.url !== "/signin" && err.response) {
       // Access Token was expired
-      if ((err.response.status === 401 || err.response.status === 403) && !originalConfig._retry) {
+      if (
+        (err.response.status === 401 || err.response.status === 403) &&
+        !originalConfig._retry
+      ) {
         originalConfig._retry = true;
-        localStorage.removeItem("ACCESS_TOKEN")
-        cancelAxios.cancel("----stop all request---")
-        toast.error("Your session is expired! Please login again")
+        localStorage.removeItem("ACCESS_TOKEN");
+        cancelAxios.cancel("----stop all request---");
+        toast.error("Your session is expired! Please login again");
         setTimeout(() => {
-          window.location.href = "/signin"
+          window.location.href = "/signin";
         }, 3000);
-        controller.abort()
+        controller.abort();
         // try {
         //   const rs = await axios.post("/auth/refreshtoken", {
         //     refreshToken: localStorage.getItem("REFRESH_TOKEN"),
@@ -40,39 +43,41 @@ axios.interceptors.response.use(
   }
 );
 const getAccessToken = () => {
-  let accessToken = localStorage.getItem("ACCESS_TOKEN")
+  let accessToken = localStorage.getItem("ACCESS_TOKEN");
   if (accessToken == null) {
-    return ""
+    return "";
   }
-  return accessToken
-}
+  return accessToken;
+};
 const createConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "Application/json",
-      "Authorization": "Bearer " + getAccessToken(),
+      Authorization: "Bearer " + getAccessToken(),
     },
-    cancelToken: cancelAxios.token
-  }
+    cancelToken: cancelAxios.token,
+  };
   return getConfig;
-}
+};
 const multipartConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
       "Content-type": "multipart/form-data",
-      "Authorization": "Bearer " + getAccessToken(),
+      Authorization: "Bearer " + getAccessToken(),
     },
-  }
+  };
   return getConfig;
-}
+};
 const request = {
   get: (url: string) => axios.get(url, createConfig()),
   post: (url: string, data: any) => axios.post(url, data, createConfig()),
   put: (url: string, data: any) => axios.put(url, data, createConfig()),
   patch: (url: string, data: any) => axios.patch(url, data, createConfig()),
   delete: (url: string) => axios.delete(url, createConfig()),
-  post_multipart: (url: string, data: any) => axios.post(url, data, multipartConfig()),
-  patch_multipart: (url: string, data: any) => axios.patch(url, data, multipartConfig()),
+  post_multipart: (url: string, data: any) =>
+    axios.post(url, data, multipartConfig()),
+  patch_multipart: (url: string, data: any) =>
+    axios.patch(url, data, multipartConfig()),
 };
 
 export default request;
