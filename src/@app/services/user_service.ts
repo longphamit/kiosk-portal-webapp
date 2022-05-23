@@ -31,8 +31,8 @@ export const changePasswordService = async (data: any) => {
     const response = await request.patch(`${HOST}/user/change-password`, data);
     return response.data;
 }
-export const resetPasswordService = async (email: string, uuid: string, password: any) => {
-    const response = await request.patch(`${HOST}/user/reset-password?email=${email}&uuid=${uuid}`, password);
+export const resetPasswordService = async (data: any) => {
+    const response = await request.patch(`${HOST}/v1/parties/password`, data);
     return response.data;
 }
 export const activeAccountService = async (userId: string, uuid: string, password: any) => {
