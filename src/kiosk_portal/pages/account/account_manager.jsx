@@ -22,6 +22,7 @@ import {
   getListAccountService,
   getListRoleService,
   searchAccountService,
+  updateAccountService,
 } from "../../../@app/services/user_service";
 import moment from "moment";
 import Search from "antd/lib/transfer/search";
@@ -36,7 +37,10 @@ const AccountManager = () => {
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [listRole, setListRole] = useState([]);
+  const [currentItem, setCurrentItem] = useState(null);
   const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] =
+    useState(false);
+  const [isEditAccountModalVisible, setIsEditAccountModalVisible] =
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
@@ -98,6 +102,27 @@ const AccountManager = () => {
         offset: 8,
       },
     },
+  };
+  const onFinishEditAccount = async (values) => {
+    console.log(values);
+    const updateAccount = {
+      id: values.id,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phoneNumber: values.phoneNumber,
+      address: values.address,
+      dateOfBirth: values.dateOfBirth,
+    };
+    try {
+      await updateAccountService(updateAccount).then(() => {
+        getListAccountFunction(currentPage, numAccountInPage);
+        setIsCreateAccountModalVisible(false);
+        toast.success(t("toastSuccessCreateAccount"));
+        handleCancelEditAccount();
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const onFinishAdvancedSearch = async (values) => {
     const search = {
@@ -168,7 +193,14 @@ const AccountManager = () => {
       setListAccount([]);
     }
   };
+  const showModalEditAccount = () => {
+    setIsEditAccountModalVisible(true);
+    form.resetFields();
+  };
 
+  const handleCancelEditAccount = () => {
+    setIsEditAccountModalVisible(false);
+  };
   const onFinishCreateAccount = async (values) => {
     const newAccount = {
       firstName: values.firstName,
@@ -232,6 +264,9 @@ const AccountManager = () => {
 
   const converDate = (stringToConvert) => {
     return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
+  };
+  const getDate = (dateOfBirth) => {
+    return moment(dateOfBirth);
   };
   const types = [
     {
@@ -321,7 +356,15 @@ const AccountManager = () => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button type="primary" shape="default" size={"large"} onClick={{}}>
+          <Button
+            type="primary"
+            shape="default"
+            size={"large"}
+            onClick={() => {
+              setCurrentItem(record);
+              showModalEditAccount();
+            }}
+          >
             {t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
@@ -668,6 +711,104 @@ const AccountManager = () => {
           </Form.Item>
         </Form>
       </Modal>
+      {currentItem ? (
+        <Modal
+          key={currentItem.id}
+          title={t("edit")}
+          visible={isEditAccountModalVisible}
+          onCancel={handleCancelEditAccount}
+          footer={null}
+        >
+          <Form
+            key={currentItem.id}
+            {...formItemLayout}
+            form={form}
+            name="edit"
+            onFinish={onFinishEditAccount}
+            scrollToFirstError
+            initialValues={{
+              firstName: currentItem.firstName,
+              lastName: currentItem.lastName,
+              phoneNumber: currentItem.phoneNumber,
+              address: currentItem.address,
+              dateOfBirth: getDate(currentItem.dateOfBirth),
+              id: currentItem.id,
+            }}
+          >
+            <Form.Item name="id" hidden={true}>
+              <Input type="hidden" />
+            </Form.Item>
+            <Form.Item
+              name="firstName"
+              label={t("firstname")}
+              rules={[
+                {
+                  required: true,
+                  message: t("reqfirstname"),
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="lastName"
+              label={t("lastname")}
+              rules={[
+                {
+                  required: true,
+                  message: t("reqlastname"),
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="phoneNumber"
+              label={t("phonenumber")}
+              rules={[
+                {
+                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
+                  message: t("formatphonenumber"),
+                },
+                {
+                  required: true,
+                  message: t("reqphonenumber"),
+                },
+              ]}
+            >
+              <Input style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item
+              name="address"
+              label={t("address")}
+              rules={[
+                {
+                  required: true,
+                  message: t("reqaddress"),
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item name="dateOfBirth" label={t("dob")} {...config}>
+              <DatePicker
+                placeholder={t("selectdob")}
+                format="DD/MM/YYYY"
+                allowClear={false}
+                style={{
+                  height: "auto",
+                  width: "auto",
+                }}
+              />
+            </Form.Item>
+            <Form.Item {...tailFormItemLayout}>
+              <Button type="primary" htmlType="submit">
+                Save
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      ) : null}
     </>
   );
 };
