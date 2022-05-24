@@ -195,7 +195,6 @@ const AccountManager = () => {
   };
   const showModalEditAccount = () => {
     setIsEditAccountModalVisible(true);
-    form.resetFields();
   };
 
   const handleCancelEditAccount = () => {
