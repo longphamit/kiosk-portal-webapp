@@ -21,9 +21,10 @@ import {
   createAccountService,
   getListAccountService,
   getListRoleService,
-  updateAccountService,
+  searchAccountService,
 } from "../../../@app/services/user_service";
 import moment from "moment";
+import Search from "antd/lib/transfer/search";
 
 const AccountManager = () => {
   const { Option } = Select;
@@ -31,16 +32,25 @@ const AccountManager = () => {
   const [listAccount, setListAccount] = useState([]);
   const [totalAccount, setTotalAccount] = useState(0);
   const [numAccountInPage, setNumAccountInPage] = useState(5);
+  const [isSearch, setIsSearch] = useState(false);
+  const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [listRole, setListRole] = useState([]);
   const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] =
     useState(false);
-  const [isEditAccountModalVisible, setIsEditAccountModalVisible] =
+  const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
   const [form] = Form.useForm();
-  const [currentItem, setCurrentItem] = useState(null);
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
     try {
+      if (isSearch) {
+        querySearch.page = currentPageToGetList;
+        await searchAccountService(querySearch).then((res) => {
+          setTotalAccount(res.data.metadata.total);
+          setListAccount(res.data.data);
+        });
+        return;
+      }
       await getListAccountService(currentPageToGetList, numInPage).then(
         (res) => {
           setTotalAccount(res.data.metadata.total);
@@ -89,27 +99,76 @@ const AccountManager = () => {
       },
     },
   };
-  const onFinishEditAccount = async (values) => {
-    console.log(values);
-    const updateAccount = {
-      id: values.id,
+  const onFinishAdvancedSearch = async (values) => {
+    const search = {
       firstName: values.firstName,
       lastName: values.lastName,
       phoneNumber: values.phoneNumber,
+      email: values.email,
       address: values.address,
-      dateOfBirth: values.dateOfBirth,
+      size: numAccountInPage,
+      page: 1,
     };
     try {
-      await updateAccountService(updateAccount).then(() => {
-        getListAccountFunction(currentPage, numAccountInPage);
-        setIsCreateAccountModalVisible(false);
-        toast.success(t("toastSuccessCreateAccount"));
-        handleCancelEditAccount();
+      await searchAccountService(search).then((res) => {
+        setTotalAccount(res.data.metadata.total);
+        setListAccount(res.data.data);
+        setIsSearch(true);
+        setQuerySearch(search);
       });
     } catch (error) {
       console.log(error);
+      setTotalAccount(0);
+      setListAccount([]);
     }
   };
+  const onFinishSearch = async (values) => {
+    console.log(values);
+    let firstName = "";
+    let lastName = "";
+    let phoneNumber = "";
+    let email = "";
+    let address = "";
+    switch (values.type) {
+      case "FirstName":
+        firstName = values.searchString;
+        break;
+      case "LastName":
+        lastName = values.searchString;
+        break;
+      case "PhoneNumber":
+        phoneNumber = values.searchString;
+        break;
+      case "Email":
+        email = values.searchString;
+        break;
+      case "Address":
+        address = values.searchString;
+        break;
+    }
+    const search = {
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      email: email,
+      address: address,
+      size: numAccountInPage,
+      page: 1,
+    };
+    try {
+      await searchAccountService(search).then((res) => {
+        setTotalAccount(res.data.metadata.total);
+        setListAccount(res.data.data);
+        setIsSearch(true);
+        setQuerySearch(search);
+      });
+    } catch (error) {
+      console.log(error);
+      setTotalAccount(0);
+      setListAccount([]);
+    }
+  };
+
   const onFinishCreateAccount = async (values) => {
     const newAccount = {
       firstName: values.firstName,
@@ -139,15 +198,13 @@ const AccountManager = () => {
   const handleCancelCreateAccount = () => {
     setIsCreateAccountModalVisible(false);
   };
-  const showModalEditAccount = () => {
-    setIsEditAccountModalVisible(true);
+  const showModalAdvancedSearch = () => {
+    setIsAdvancedSearchModalVisible(true);
     form.resetFields();
   };
-
-  const handleCancelEditAccount = () => {
-    setIsEditAccountModalVisible(false);
+  const handleCloseModalAdvancedSearch = () => {
+    setIsAdvancedSearchModalVisible(false);
   };
-
   const handleChangeStatusAccount = async (record) => {
     Modal.confirm({
       title: t("confirmChangeStatusAccount"),
@@ -176,9 +233,28 @@ const AccountManager = () => {
   const converDate = (stringToConvert) => {
     return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
   };
-  const getDate = (dateOfBirth) => {
-    return moment(dateOfBirth);
-  };
+  const types = [
+    {
+      name: "FirstName",
+      label: "First Name",
+    },
+    {
+      name: "LastName",
+      label: "Last Name",
+    },
+    {
+      name: "PhoneNumber",
+      label: "Phone Number",
+    },
+    {
+      name: "Email",
+      label: "Email",
+    },
+    {
+      name: "Address",
+      label: "Address",
+    },
+  ];
   const columns = [
     {
       title: t("firstname"),
@@ -245,16 +321,7 @@ const AccountManager = () => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button
-            key={record.id}
-            type="primary"
-            shape="default"
-            size={"large"}
-            onClick={() => {
-              setCurrentItem(record);
-              showModalEditAccount();
-            }}
-          >
+          <Button type="primary" shape="default" size={"large"} onClick={{}}>
             {t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
@@ -297,10 +364,67 @@ const AccountManager = () => {
       },
     ],
   };
+  const prefixSearch = (
+    <Form.Item name="type" noStyle>
+      <Select defaultValue="FirstName">
+        {types.map((item) => {
+          return <Option value={item.name}>{item.label}</Option>;
+        })}
+      </Select>
+    </Form.Item>
+  );
   return (
     <>
       <Row style={{ padding: 10 }}>
-        <Col span={20}></Col>
+        <Col span={13}>
+          <Form
+            form={form}
+            name="search"
+            onFinish={onFinishSearch}
+            initialValues={{
+              type: "FirstName",
+              searchString: "",
+            }}
+          >
+            <Row>
+              <Col span={16}>
+                <Form.Item name="searchString" style={{ marginTop: 5 }}>
+                  <Input
+                    addonBefore={prefixSearch}
+                    style={{ width: "100%" }}
+                    placeholder="Search..."
+                    value=""
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={3}>
+                <Form.Item>
+                  <Button
+                    htmlType="submit"
+                    style={{ marginLeft: 10, borderRadius: 5 }}
+                    type="primary"
+                    size={"large"}
+                  >
+                    Search
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+
+        <Col span={3}>
+          <Button
+            style={{ marginLeft: 10 }}
+            type="danger"
+            shape="round"
+            size={"large"}
+            onClick={showModalAdvancedSearch}
+          >
+            Advanced Search
+          </Button>
+        </Col>
+        <Col span={3}></Col>
         <Col span={4}>
           <Button
             type="primary"
@@ -312,14 +436,14 @@ const AccountManager = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listAccount} pagination={false} />;
+      <Table columns={columns} dataSource={listAccount} pagination={false} />
       <Pagination
         defaultCurrent={1}
         total={totalAccount}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
-      ;
+
       <Modal
         title={t("createaccount")}
         visible={isCreateAccountModalVisible}
@@ -498,104 +622,52 @@ const AccountManager = () => {
           </Form.Item>
         </Form>
       </Modal>
-      {currentItem ? (
-        <Modal
-          key={currentItem.id}
-          title={t("edit")}
-          visible={isEditAccountModalVisible}
-          onCancel={handleCancelEditAccount}
-          footer={null}
+      <Modal
+        title="Advanced Search"
+        visible={isAdvancedSearchModalVisible}
+        onCancel={handleCloseModalAdvancedSearch}
+        footer={null}
+      >
+        <Form
+          {...formItemLayout}
+          form={form}
+          name="advancedSearch"
+          onFinish={onFinishAdvancedSearch}
+          scrollToFirstError
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 14 }}
+          initialValues={{
+            address: "",
+            email: "",
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+          }}
         >
-          <Form
-            key={currentItem.id}
-            {...formItemLayout}
-            form={form}
-            name="edit"
-            onFinish={onFinishEditAccount}
-            scrollToFirstError
-            initialValues={{
-              firstName: currentItem.firstName,
-              lastName: currentItem.lastName,
-              phoneNumber: currentItem.phoneNumber,
-              address: currentItem.address,
-              dateOfBirth: getDate(currentItem.dateOfBirth),
-              id: currentItem.id,
-            }}
-          >
-            <Form.Item name="id" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
-            <Form.Item
-              name="firstName"
-              label={t("firstname")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqfirstname"),
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="lastName"
-              label={t("lastname")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqlastname"),
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="phoneNumber"
-              label={t("phonenumber")}
-              rules={[
-                {
-                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                  message: t("formatphonenumber"),
-                },
-                {
-                  required: true,
-                  message: t("reqphonenumber"),
-                },
-              ]}
-            >
-              <Input style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              name="address"
-              label={t("address")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqaddress"),
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item name="dateOfBirth" label={t("dob")} {...config}>
-              <DatePicker
-                placeholder={t("selectdob")}
-                format="DD/MM/YYYY"
-                allowClear={false}
-                style={{
-                  height: "auto",
-                  width: "auto",
-                }}
-              />
-            </Form.Item>
-            <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Save
+          <Form.Item name="firstName" label={t("firstname")}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="lastName" label={t("lastname")}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phoneNumber" label={t("phonenumber")}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label={t("email")}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="address" label={t("address")}>
+            <Input />
+          </Form.Item>
+          <Form.Item {...tailFormItemLayout}>
+            <Space align="center">
+              <Button align="center" type="primary" htmlType="submit">
+                Search
               </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      ) : null}
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };
