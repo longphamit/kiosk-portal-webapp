@@ -79,3 +79,8 @@ export const searchAccountService = async (data: any) => {
   );
   return response.data;
 };
+
+export const updateAccountService = async (data: any) => {
+  const response = await request.put(`${HOST}/v1/parties`, data);
+  return response.data;
+};
