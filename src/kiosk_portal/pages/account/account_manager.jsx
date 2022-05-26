@@ -125,8 +125,8 @@ const AccountManager = () => {
       console.log(error);
     }
   };
-  function checkUndefine(value){
-    if(value===undefined){
+  function checkUndefine(value) {
+    if (value === undefined) {
       return "";
     }
     return value;
@@ -141,7 +141,7 @@ const AccountManager = () => {
       address: checkUndefine(values.address),
       status: checkUndefine(values.status),
       roleName: checkUndefine(values.roleName),
-      size: numAccountInPage, 
+      size: numAccountInPage,
       page: 1,
     };
     try {
@@ -721,7 +721,7 @@ const AccountManager = () => {
             <Input />
           </Form.Item>
           <Form.Item name="lastName" label={t("lastname")}>
-            <Input/>
+            <Input />
           </Form.Item>
           <Form.Item name="phoneNumber" label={t("phonenumber")}>
             <Input />
