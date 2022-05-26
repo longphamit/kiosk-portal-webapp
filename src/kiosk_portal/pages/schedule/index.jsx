@@ -1,5 +1,4 @@
 import {
-  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -13,6 +12,7 @@ import {
   Space,
   Table,
   Tag,
+  TimePicker,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,66 +20,59 @@ import { toast } from "react-toastify";
 import {
   changeStatusAccountService,
   createAccountService,
+  createScheduleService,
   getListAccountService,
-  getListRoleService,
+  getListScheduleService,
   searchAccountService,
   updateAccountService,
 } from "../../../@app/services/user_service";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
-const AccountManager = () => {
+import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
+
+const ScheduleManagerPage = () => {
+  const { RangePicker } = DatePicker;
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listAccount, setListAccount] = useState([]);
-  const [totalAccount, setTotalAccount] = useState(0);
-  const [numAccountInPage, setNumAccountInPage] = useState(5);
+  const [listSchedule, setListSchedule] = useState([]);
+  const [totalSchedule, setTotalSchedule] = useState(0);
+  const [numScheduleInPage, setNumScheduleInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [listRole, setListRole] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
-  const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] =
+  const [dateStartaa, setDateStartaa] = useState(null);
+  const [isCreateScheduleModalVisible, setIsCreateScheduleModalVisible] =
     useState(false);
-  const [isEditAccountModalVisible, setIsEditAccountModalVisible] =
+  const [isEditScheduleModalVisible, setIsEditScheduleModalVisible] =
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
   const [form] = Form.useForm();
-  let navigate = useNavigate();
-  const getListAccountFunction = async (currentPageToGetList, numInPage) => {
+  const getListScheduleFunction = async (currentPageToGetList, numInPage) => {
     try {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
         await searchAccountService(querySearch).then((res) => {
-          setTotalAccount(res.data.metadata.total);
-          setListAccount(res.data.data);
+          // setTotalSchedule(res.data.metadata.total);
+          // setListSchedule(res.data.data);
         });
-        return;
+      } else {
+        await getListScheduleService(currentPageToGetList, numInPage).then(
+          (res) => {
+
+            //   setTotalSchedule(res.data.metadata.total);
+            setListSchedule(res.data);
+          }
+        );
       }
-      await getListAccountService(currentPageToGetList, numInPage).then(
-        (res) => {
-          setTotalAccount(res.data.metadata.total);
-          setListAccount(res.data.data);
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const listRoleFunction = async () => {
-    try {
-      await getListRoleService().then((res) => {
-        setListRole(res.data);
-      });
+      return;
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getListAccountFunction(currentPage, numAccountInPage);
-    listRoleFunction();
+    getListScheduleFunction(currentPage, numScheduleInPage);
   }, []);
 
   const formItemLayout = {
@@ -116,57 +109,44 @@ const AccountManager = () => {
     };
     try {
       await updateAccountService(updateAccount).then(() => {
-        getListAccountFunction(currentPage, numAccountInPage);
-        setIsCreateAccountModalVisible(false);
-        toast.success(t("toastsuccesseditaccount"));
-        handleCancelEditAccount();
+        getListScheduleFunction(currentPage, numScheduleInPage);
+        setIsCreateScheduleModalVisible(false);
+        toast.success(t("toastsuccesscreateschedule"));
+        setIsEditScheduleModalVisible(false);
       });
     } catch (error) {
       console.log(error);
     }
   };
-  function checkUndefine(value) {
-    if (value === undefined) {
-      return "";
-    }
-    return value;
-  }
   const onFinishAdvancedSearch = async (values) => {
-    console.log(values);
     const search = {
-      firstName: checkUndefine(values.firstName),
-      lastName: checkUndefine(values.lastName),
-      phoneNumber: checkUndefine(values.phoneNumber),
-      email: checkUndefine(values.email),
-      address: checkUndefine(values.address),
-      status: checkUndefine(values.status),
-      roleName: checkUndefine(values.roleName),
-      size: numAccountInPage,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      phoneNumber: values.phoneNumber,
+      email: values.email,
+      address: values.address,
+      size: numScheduleInPage,
       page: 1,
     };
     try {
       await searchAccountService(search).then((res) => {
-        setTotalAccount(res.data.metadata.total);
-        setListAccount(res.data.data);
+        setTotalSchedule(res.data.metadata.total);
+        setListSchedule(res.data.data);
         setIsSearch(true);
         setQuerySearch(search);
-        handleCloseModalAdvancedSearch();
       });
     } catch (error) {
       console.log(error);
-      setTotalAccount(0);
-      setListAccount([]);
+      setTotalSchedule(0);
+      setListSchedule([]);
     }
   };
   const onFinishSearch = async (values) => {
-    console.log(values);
     let firstName = "";
     let lastName = "";
     let phoneNumber = "";
     let email = "";
     let address = "";
-    let status = "";
-    let roleName = "";
     switch (values.type) {
       case "FirstName":
         firstName = values.searchString;
@@ -183,12 +163,6 @@ const AccountManager = () => {
       case "Address":
         address = values.searchString;
         break;
-      case "Status":
-        status = values.searchString;
-        break;
-      case "RoleName":
-        roleName = values.searchString;
-        break;
     }
     const search = {
       firstName: firstName,
@@ -196,68 +170,101 @@ const AccountManager = () => {
       phoneNumber: phoneNumber,
       email: email,
       address: address,
-      status: status,
-      roleName: roleName,
-      size: numAccountInPage,
+      size: numScheduleInPage,
       page: 1,
     };
     try {
       await searchAccountService(search).then((res) => {
-        setTotalAccount(res.data.metadata.total);
-        setListAccount(res.data.data);
+        setTotalSchedule(res.data.metadata.total);
+        setListSchedule(res.data.data);
         setIsSearch(true);
         setQuerySearch(search);
       });
     } catch (error) {
       console.log(error);
-      setTotalAccount(0);
-      setListAccount([]);
+      setTotalSchedule(0);
+      setListSchedule([]);
     }
   };
-  const showModalEditAccount = () => {
-    setIsEditAccountModalVisible(true);
+  const showModalEditSchedule = () => {
+    setIsEditScheduleModalVisible(true);
   };
 
-  const handleCancelEditAccount = () => {
-    setIsEditAccountModalVisible(false);
+  const formatDatePicker = (str) => {
+    var date = new Date(str),
+      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+      day = ("0" + date.getDate()).slice(-2);
+    return [date.getFullYear(), mnth, day].join("-");
+  }
+
+  const formatTimePicker = (str) => {
+    var date = new Date(str);
+    var hours = ("0" + date.getHours()).slice(-2);
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var second = ("0" + date.getSeconds()).slice(-2);
+    return [hours, minutes, second].join(":");
+  }
+
+  const handleCancelEditSchedule = () => {
+    setIsEditScheduleModalVisible(false);
   };
-  const onFinishCreateAccount = async (values) => {
-    const newAccount = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      address: values.address,
-      dateOfBirth: values.dateOfBirth,
-      roleId: values.roleId,
-    };
+  const onFinishCreateSchedule = async (values) => {
+    var today = new Date();
+    const invalidMsg = [];
+    var check = true;
     try {
-      await createAccountService(newAccount).then(() => {
-        getListAccountFunction(currentPage, numAccountInPage);
-        setIsCreateAccountModalVisible(false);
-        toast.success(t("toastsuccesscreateaccount"));
-      });
+      if (today - values.timeStart > 0 || today - values.timeEnd > 0) {
+        invalidMsg.push("Time start and time end need to after today \n");
+        check = false;
+      }
+      if (values.dateStart - values.dateEnd > 0) {
+        invalidMsg.push("Date start need to before or match with date end\n");
+        check = false;
+      }
+      if (values.timeStart - values.timeEnd > 0) {
+        invalidMsg.push("Time start need to before or match with time end\n");
+        check = false;
+      }
+      if (check) {
+        const newSchedule = {
+          name: values.name,
+          dateStart: formatDatePicker(values.dateStart),
+          dateEnd: formatDatePicker(values.dateEnd),
+          partyId: localStorageGetUserIdService(),
+          timeStart: formatTimePicker(values.timeStart),
+          timeEnd: formatTimePicker(values.timeEnd),
+          dayOfWeek: values.dayOfWeek.join('-'),
+        };
+        await createScheduleService(newSchedule).then(() => {
+          getListScheduleFunction(currentPage, numScheduleInPage);
+          setIsCreateScheduleModalVisible(false);
+          toast.success(t("toastsuccesscreateschedule"));
+        });
+      } else {
+        var errormsg = invalidMsg.join("-");
+        toast.error(errormsg)
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const showModalCreateAccount = () => {
-    setIsCreateAccountModalVisible(true);
+  const showModalCreateSchedule = () => {
+    setIsCreateScheduleModalVisible(true);
     form.resetFields();
   };
 
-  const handleCancelCreateAccount = () => {
-    setIsCreateAccountModalVisible(false);
+  const handleCancelCreateSchedule = () => {
+    setIsCreateScheduleModalVisible(false);
   };
-  const showModalAdvancedSearch = () => {
+  const showModalAdvancedSearchSchedule = () => {
     setIsAdvancedSearchModalVisible(true);
     form.resetFields();
   };
-  const handleCloseModalAdvancedSearch = () => {
+  const handleCloseModalAdvancedSearchSchedule = () => {
     setIsAdvancedSearchModalVisible(false);
   };
-  const handleChangeStatusAccount = async (record) => {
+  const handleChangeStatusSchedule = async (record) => {
     Modal.confirm({
       title: t("confirmChangeStatusAccount"),
       okText: t("yes"),
@@ -266,7 +273,7 @@ const AccountManager = () => {
         {
           try {
             await changeStatusAccountService(record.id, null).then(() => {
-              getListAccountFunction(currentPage, numAccountInPage);
+              getListScheduleFunction(currentPage, numScheduleInPage);
               toast.success(t("toastsuccesschangestatus"));
             });
           } catch (error) {
@@ -279,12 +286,13 @@ const AccountManager = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListAccountFunction(page, numAccountInPage);
+    await getListScheduleFunction(page, numScheduleInPage);
   };
 
-  const converDate = (stringToConvert) => {
+  const convertDate = (stringToConvert) => {
     return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
   };
+
   const getDate = (dateOfBirth) => {
     return moment(dateOfBirth);
   };
@@ -309,56 +317,42 @@ const AccountManager = () => {
       name: "Address",
       label: "Address",
     },
-    {
-      name: "Status",
-      label: "Status",
-    },
-    {
-      name: "RoleName",
-      label: "Role Name",
-    }
   ];
   const columns = [
     {
-      title: t("firstname"),
-      dataIndex: "firstName",
-      key: "firstname",
+      title: t('name'),
+      dataIndex: "name",
+      key: "name",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("lastname"),
-      dataIndex: "lastName",
-      key: "lastname",
+      title: t('dayofweek'),
+      dataIndex: "dayOfWeek",
+      key: "dayOfWeek",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("phonenumber"),
-      dataIndex: "phoneNumber",
-      key: "phonenumber",
+      title: t('datestart'),
+      dataIndex: "dateStart",
+      key: "dateStart",
+      render: (text) => <a>{convertDate(text)}</a>,
+    },
+    {
+      title: t('dateend'),
+      dataIndex: "dateEnd",
+      key: "dateEnd",
+      render: (text) => <a>{convertDate(text)}</a>,
+    },
+    {
+      title: t('timestart'),
+      dataIndex: "stringTimeStart",
+      key: "stringTimeStart",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("email"),
-      dataIndex: "email",
-      key: "email",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: t("address"),
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: t("dob"),
-      dataIndex: "dateOfBirth",
-      key: "dob",
-      render: (text) => <a>{converDate(text)}</a>,
-    },
-    {
-      title: t("role"),
-      dataIndex: "roleName",
-      key: "role",
+      title: t('timeend'),
+      dataIndex: "stringTimeEnd",
+      key: "stringTimeEnd",
       render: (text) => <a>{text}</a>,
     },
     {
@@ -366,10 +360,10 @@ const AccountManager = () => {
       dataIndex: "status",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
-          <Tag color="green">{t("activate")}</Tag>
+        record.status === "on" ? (
+          <Tag color={"green"}>{t("active")}</Tag>
         ) : (
-          <a style={{ color: "red" }}>{t("deactive")}</a>
+          <Tag color={"red"}>{t("deactivate")}</Tag>
         ),
     },
 
@@ -378,29 +372,23 @@ const AccountManager = () => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="infor-button" onClick={() => {
-            navigate("/account-detail/"+record.id)
-            }}>
-          {t("detail")}
-          </Button>
           <Button
             className="warn-button"
             shape="default"
             onClick={() => {
               setCurrentItem(record);
-              showModalEditAccount();
+              showModalEditSchedule();
             }}
           >
             {t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
             <Button
-              type="primary"
               shape="default"
               name={record}
               disabled="false"
               onClick={() => {
-                handleChangeStatusAccount(record);
+                handleChangeStatusSchedule(record);
               }}
             >
               {t("change-status")}
@@ -411,7 +399,7 @@ const AccountManager = () => {
               shape="default"
               name={record}
               onClick={() => {
-                handleChangeStatusAccount(record);
+                handleChangeStatusSchedule(record);
               }}
             >
               {t("change-status")}
@@ -422,21 +410,15 @@ const AccountManager = () => {
     },
   ];
 
-  const options = [
-    { value: 'Burns Bay Road' },
-    { value: 'Downing Street' },
-    { value: 'Wall Street' },
-  ];
-
-  const config = {
-    rules: [
-      {
-        type: "object",
-        required: true,
-        message: t("reqdob"),
-      },
-    ],
-  };
+  const prefixSearch = (
+    <Form.Item name="type" noStyle>
+      <Select defaultValue="FirstName">
+        {types.map((item) => {
+          return <Option value={item.name}>{item.label}</Option>;
+        })}
+      </Select>
+    </Form.Item>
+  );
   return (
     <>
       <Row style={{ padding: 10 }}>
@@ -453,14 +435,12 @@ const AccountManager = () => {
             <Row>
               <Col span={14}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                    <AutoComplete
-                      style={{ width: "100%" }}
-                      options={options}
-                      placeholder="Search..."
-                      filterOption={(inputValue, option) =>
-                        option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                      }
-                    />
+                  <Input
+                    addonBefore={prefixSearch}
+                    style={{ width: "100%" }}
+                    placeholder="Search..."
+                    value=""
+                  />
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -475,107 +455,94 @@ const AccountManager = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col span={3}>
-                <Button
+              <Col>
+                <Button span={3}
+                  style={{ marginLeft: 10 }}
                   type="danger"
                   size={"large"}
-                  onClick={showModalAdvancedSearch}
-                  
+                  onClick={showModalAdvancedSearchSchedule}
                 >
                   Advanced Search
-                </Button>
-              </Col>
-
+                </Button></Col>
             </Row>
           </Form>
+
         </Col>
-        <Col span={5}/>
+        <Col span={5} />
         <Col span={4}>
           <Button
-            className="success-button"
+            type="primary"
+            shape="round"
             size={"large"}
-            onClick={showModalCreateAccount}
+            onClick={showModalCreateSchedule}
           >
-            {t("createaccount")}
+            {t("createschedule")}
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listAccount} pagination={false} />
+      <Table columns={columns} dataSource={listSchedule} pagination={false} />
       <Pagination
         defaultCurrent={1}
-        total={totalAccount}
+        total={totalSchedule}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
 
       <Modal
-        title={t("createaccount")}
-        visible={isCreateAccountModalVisible}
-        onCancel={handleCancelCreateAccount}
+        title={t("createschedule")}
+        visible={isCreateScheduleModalVisible}
+        onCancel={handleCancelCreateSchedule}
         footer={null}
       >
         <Form
           {...formItemLayout}
           form={form}
           name="register"
-          onFinish={onFinishCreateAccount}
+          onFinish={onFinishCreateSchedule}
           scrollToFirstError
         >
           <Form.Item
-            name="firstName"
-            label={t("firstname")}
+            name="name"
+            label={t("name")}
             rules={[
               {
                 required: true,
-                message: t("reqfirstname"),
+                message: t("reqnameschedule"),
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="lastName"
-            label={t("lastname")}
+          <Form.Item name="dateStart" label={t("datestart")}
             rules={[
               {
                 required: true,
-                message: t("reqlastname"),
+                message: t("reqdatestartschedule"),
               },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="phoneNumber"
-            label={t("phonenumber")}
-            rules={[
-              {
-                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                message: t("formatphonenumber"),
-              },
-              {
-                required: true,
-                message: t("reqphonenumber"),
-              },
-            ]}
-          >
-            <Input style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="address"
-            label={t("address")}
-            rules={[
-              {
-                required: true,
-                message: t("reqaddress"),
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="dateOfBirth" label={t("dob")} {...config}>
+            ]}>
+
+
             <DatePicker
-              placeholder={t("selectdob")}
+              placeholder={t("selecttime")}
+              format="DD/MM/YYYY"
+              allowClear={false}
+              style={{
+                height: "auto",
+                width: "auto",
+              }}
+
+              onChange={(newDate) => setDateStartaa(moment(newDate).format("yyyy-MM-dd"))}
+            />
+          </Form.Item>
+          <Form.Item name="dateEnd" label={t("dateend")}
+            rules={[
+              {
+                required: true,
+                message: t("reqdateendschedule"),
+              },
+            ]}>
+            <DatePicker
+              placeholder={t("selecttime")}
               format="DD/MM/YYYY"
               allowClear={false}
               style={{
@@ -584,100 +551,54 @@ const AccountManager = () => {
               }}
             />
           </Form.Item>
-          <Form.Item
-            name="email"
-            label={t("email")}
-            rules={[
-              {
-                type: "email",
-                message: "The input is not valid E-mail!",
-              },
-              {
-                required: true,
-                message: t("reqemail"),
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            label={t("password")}
+          <Form.Item name="timeStart" label={t('timestart')}
             rules={[
               {
                 required: true,
-                message: t("reqpassword"),
+                message: t("reqtimestartschedule"),
               },
-            ]}
-            hasFeedback
-          >
-            <Input.Password />
+            ]}>
+            <TimePicker allowClear={false} />
           </Form.Item>
-
-          <Form.Item
-            name="confirm"
-            label={t("confirmpassword")}
-            dependencies={["password"]}
-            hasFeedback
+          <Form.Item name="timeEnd" label={t('timeend')}
             rules={[
               {
                 required: true,
-                message: t("reqconfpassword"),
+                message: t("reqtimeendschedule"),
               },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error(t("reqsamepassword")));
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
+            ]}>
+            <TimePicker allowClear={false} />
           </Form.Item>
-
-          <Form.Item
-            name="gender"
-            label={t("gender")}
-            rules={[{ required: true, message: t("reqgender") }]}
-          >
-            <Select placeholder={t("selectgender")}>
-              <Option value="male">{t("male")}</Option>
-              <Option value="female">{t("female")}</Option>
-              <Option value="other">{t("other")}</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="roleId"
-            label={t("role")}
-            rules={[{ required: true, message: t("reqrole") }]}
-          >
-            <Select placeholder={t("selectrole")}>
-              {listRole.map((item) => {
-                return <Option value={item.id}>{item.name}</Option>;
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(new Error(t("reqcheckbox"))),
-              },
-            ]}
-            {...tailFormItemLayout}
-          >
+          <Form.Item name="dayOfWeek" label={t('dayofweek')}>
+            <Checkbox.Group style={{ width: '100%' }} onChange={{}}>
+              <Row>
+                <Col span={8}>
+                  <Checkbox value="Monday">{t('monday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Tuesday">{t('tuesday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Wednesday">{t('wednesday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Thursday">{t('thursday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Friday">{t('friday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Saturday">{t('saturday')}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Sunday">{t('sunday')}</Checkbox>
+                </Col>
+              </Row>
+            </Checkbox.Group>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              {t("register")}
+              {t("btncreateschedule")}
             </Button>
           </Form.Item>
         </Form>
@@ -685,7 +606,7 @@ const AccountManager = () => {
       <Modal
         title="Advanced Search"
         visible={isAdvancedSearchModalVisible}
-        onCancel={handleCloseModalAdvancedSearch}
+        onCancel={handleCloseModalAdvancedSearchSchedule}
         footer={null}
       >
         <Form
@@ -702,8 +623,6 @@ const AccountManager = () => {
             firstName: "",
             lastName: "",
             phoneNumber: "",
-            roleName: "",
-            status: ""
           }}
         >
           <Form.Item name="firstName" label={t("firstname")}>
@@ -721,27 +640,6 @@ const AccountManager = () => {
           <Form.Item name="address" label={t("address")}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="roleName"
-            label={t("role")}
-          >
-            <Select >
-              <Option value="">All</Option>
-              <Option value={ROLE_SERVICE_PROVIDER}>{ROLE_SERVICE_PROVIDER}</Option>
-              <Option value={ROLE_LOCATION_OWNER}>{ROLE_SERVICE_PROVIDER}</Option>
-              <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="status"
-            label={t("status")}
-          >
-            <Select initialValues="">
-              <Option value="">All</Option>
-              <Option value="active">{t("active")}</Option>
-              <Option value="deactive">{t("deactive")}</Option>
-            </Select>
-          </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Space align="center">
               <Button align="center" type="primary" htmlType="submit">
@@ -755,8 +653,8 @@ const AccountManager = () => {
         <Modal
           key={currentItem.id}
           title={t("edit")}
-          visible={isEditAccountModalVisible}
-          onCancel={handleCancelEditAccount}
+          visible={isEditScheduleModalVisible}
+          onCancel={handleCancelEditSchedule}
           footer={null}
         >
           <Form
@@ -830,7 +728,12 @@ const AccountManager = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="dateOfBirth" label={t("dob")} {...config}>
+            <Form.Item name="dateOfBirth" label={t("dob")} rules={[
+              {
+                required: true,
+                message: t("reqname"),
+              },
+            ]}>
               <DatePicker
                 placeholder={t("selectdob")}
                 format="DD/MM/YYYY"
@@ -852,4 +755,4 @@ const AccountManager = () => {
     </>
   );
 };
-export default AccountManager;
+export default ScheduleManagerPage;

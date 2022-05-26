@@ -22,6 +22,7 @@ const AppRouter: React.FC = () => {
                 layout={r.layout}
                 authen={r.authen}
                 path={r.path}
+                roles={r.roles}
               />
             }
           />

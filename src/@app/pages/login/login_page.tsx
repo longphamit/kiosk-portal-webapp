@@ -56,9 +56,9 @@ const LoginPage: React.FC = () => {
           }else{
             switch (response.payload.data.roleName) {
               case ROLE_ADMIN:
-                return navigate("/admin-home");
+                return navigate("/homepage");
               case ROLE_LOCATION_OWNER:
-                break;
+                return navigate("/homepage");
               case ROLE_SERVICE_PROVIDER:
                 break;
             }
