@@ -89,14 +89,14 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               role==="Admin"
               ?
               <Menu.Item
-                icon={<FundOutlined />}
-                key="2"
-                onClick={() => {
-                  onNavigate("/accountmanager");
-                }}
-              >
-                {t('accountmanager')}
-              </Menu.Item>
+              icon={<FundOutlined />}
+              key="2"
+              onClick={() => {
+                onNavigate("/account-manager");
+              }}
+            >
+              {t('accountmanager')}
+            </Menu.Item>
               :
               <Menu.Item
                 icon={<BlockOutlined />}
@@ -108,6 +108,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 {t('schedulemanager')}
               </Menu.Item>
             }
+            <Menu.Item
+              icon={<BlockOutlined />}
+              key="3"
+              onClick={() => {
+                onNavigate("/kiosk");
+              }}
+            >
+              Kiosk
+            </Menu.Item>
             <Menu.Item
               key="4"
               icon={<AuditOutlined />}

@@ -12,6 +12,7 @@ import {
   Select,
   Space,
   Table,
+  Tag,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,8 +26,7 @@ import {
   updateAccountService,
 } from "../../../@app/services/user_service";
 import moment from "moment";
-import Search from "antd/lib/transfer/search";
-
+import { useNavigate } from "react-router-dom";
 const AccountManager = () => {
   const { Option } = Select;
   const { t } = useTranslation();
@@ -45,6 +45,7 @@ const AccountManager = () => {
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
   const [form] = Form.useForm();
+  let navigate = useNavigate();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
     try {
       if (isSearch) {
@@ -308,12 +309,6 @@ const AccountManager = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("gender"),
-      dataIndex: "gender",
-      key: "gender",
-      render: (text) => <a>{text}</a>,
-    },
-    {
       title: t("email"),
       dataIndex: "email",
       key: "email",
@@ -343,9 +338,9 @@ const AccountManager = () => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "active" ? (
-          <a style={{ color: "green" }}>{t("active")}</a>
+          <Tag color="green">{t("activate")}</Tag>
         ) : (
-          <a style={{ color: "red" }}>{t("deactivate")}</a>
+          <Tag color="red">{t("deactivate")}</Tag>
         ),
     },
 
@@ -354,10 +349,14 @@ const AccountManager = () => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
+          <Button className="infor-button" onClick={() => {
+            navigate("/account-detail/"+record.id)
+            }}>
+          {t("detail")}
+          </Button>
           <Button
-            type="primary"
+            className="warn-button"
             shape="default"
-            size={"large"}
             onClick={() => {
               setCurrentItem(record);
               showModalEditAccount();
@@ -369,7 +368,6 @@ const AccountManager = () => {
             <Button
               type="primary"
               shape="default"
-              size={"large"}
               name={record}
               disabled="false"
               onClick={() => {
@@ -382,7 +380,6 @@ const AccountManager = () => {
             <Button
               type="primary"
               shape="default"
-              size={"large"}
               name={record}
               onClick={() => {
                 handleChangeStatusAccount(record);
@@ -414,7 +411,7 @@ const AccountManager = () => {
   return (
     <>
       <Row style={{ padding: 10 }}>
-        <Col span={13}>
+        <Col span={15}>
           <Form
             form={form}
             name="search"
@@ -425,16 +422,7 @@ const AccountManager = () => {
             }}
           >
             <Row>
-              <Col span={4}>
-                <Form.Item name="type" style={{ marginTop: 5 }} >
-                    <Select defaultValue="FirstName" >
-                      {types.map((item) => {
-                        return <Option value={item.name}>{item.label}</Option>;
-                      })}
-                    </Select>
-                </Form.Item>
-              </Col>
-              <Col span={10}>
+              <Col span={14}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
                     <AutoComplete
                       style={{ width: "100%" }}
@@ -458,26 +446,24 @@ const AccountManager = () => {
                   </Button>
                 </Form.Item>
               </Col>
+              <Col span={3}>
+                <Button
+                  type="danger"
+                  size={"large"}
+                  onClick={showModalAdvancedSearch}
+                  
+                >
+                  Advanced Search
+                </Button>
+              </Col>
+
             </Row>
           </Form>
         </Col>
-
-        <Col span={3}>
-          <Button
-            style={{ marginLeft: 10 }}
-            type="danger"
-            shape="round"
-            size={"large"}
-            onClick={showModalAdvancedSearch}
-          >
-            Advanced Search
-          </Button>
-        </Col>
-        <Col span={3}></Col>
+        <Col span={5}/>
         <Col span={4}>
           <Button
-            type="primary"
-            shape="round"
+            className="success-button"
             size={"large"}
             onClick={showModalCreateAccount}
           >

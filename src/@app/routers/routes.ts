@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import AccountManager from "../../kiosk_portal/pages/account/account_manager";
+import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import HomePage from "../../kiosk_portal/pages/home";
 import ScheduleManager from "../../kiosk_portal/pages/schedule/schedule_manager";
-
+import KioskPage from "../../kiosk_portal/pages/kiosk";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
@@ -75,7 +76,23 @@ const routes: Route[] = [
   },
   {
     component: AccountManager,
-    path: "/accountmanager",
+    path: "/account-manager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: false,
+    breadcrumb: ""
+  },
+  {
+    component: KioskPage,
+    path: "/kiosk",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: false,
+    breadcrumb: ""
+  },
+  {
+    component: AccountDetailPage,
+    path: "/account-detail/:partyId",
     isLayout: true,
     layout: AuthenLayout,
     authen: false,
