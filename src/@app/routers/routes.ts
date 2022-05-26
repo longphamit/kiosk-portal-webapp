@@ -5,6 +5,7 @@ import HomePage from "../../kiosk_portal/pages/home";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
 
 
@@ -22,6 +23,7 @@ interface Route {
   isLayout: boolean;
   authen: boolean;
   breadcrumb: string;
+  roles:[string];
 }
 const routes: Route[] = [
   {
@@ -29,42 +31,48 @@ const routes: Route[] = [
     path: "/signin",
     isLayout: false,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: RegistPage,
     path: "/signup",
     isLayout: false,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: ConfirmAccountPage,
     path: "/confirm-account",
     isLayout: false,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: ResetPassPage,
     path: "/reset-pass",
     isLayout: false,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: UnAuthPage,
     path: "/unauth",
     isLayout: false,
     authen: true,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: ForgotPassPage,
     path: "/forgot-pass",
     isLayout: false,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: HomePage,
@@ -72,31 +80,35 @@ const routes: Route[] = [
     isLayout: true,
     layout: AuthenLayout,
     authen: false,
-    breadcrumb: ""
+    breadcrumb: "",
+    roles:[""]
   },
   {
     component: AccountManager,
     path: "/account-manager",
     isLayout: true,
     layout: AuthenLayout,
-    authen: false,
-    breadcrumb: ""
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_ADMIN]
   },
   {
     component: AccountDetailPage,
     path: "/account-detail/:partyId",
     isLayout: true,
     layout: AuthenLayout,
-    authen: false,
-    breadcrumb: ""
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_ADMIN]
   },
   {
     component: ScheduleManagerPage,
     path: "/schedule-manager",
     isLayout: true,
     layout: AuthenLayout,
-    authen: false,
-    breadcrumb: ""
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_LOCATION_OWNER]
   },
 ];
 
