@@ -20,7 +20,7 @@ import { USER_FRIST_NAME } from "../../constants/key";
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";
 import { ROLE_ADMIN } from "../../constants/role";
-import { localStorageClearService } from "../../services/localstorage_service";
+import { localStorageClearService, localStorageGetReduxState, localStorageGetUserIdService } from "../../services/localstorage_service";
 
 import routes from "../../routers/routes";
 import { t } from "i18next";
@@ -28,6 +28,7 @@ const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
+  const role = localStorageGetReduxState().auth.role;
   const { children } = props;
   const [time, setTime] = useState(new Date().toLocaleString());
   let navigate = useNavigate();
@@ -53,7 +54,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
         <h2
           style={{ fontWeight: "bold", color: "#fff" }}
           onClick={() => {
-            onNavigate("/admin-home");
+            onNavigate("/homepage");
           }}
         >
           TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
@@ -73,34 +74,40 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 {time}
               </div>
             </Menu.Item>
-            
+
             <Menu.Item
               icon={<HomeFilled />}
               key="1"
               onClick={() => {
-                onNavigate("/admin-home");
+                onNavigate("/homepage");
               }}
             >
               {t('home')}
-            </Menu.Item>
-            <Menu.Item
-              icon={<FundOutlined />}
-              key="2"
-              onClick={() => {
-                onNavigate("/accountmanager");
-              }}
-            >
-              {t('accountmanager')}
-            </Menu.Item>
-            <Menu.Item
-              icon={<BlockOutlined />}
-              key="3"
-              onClick={() => {
-                onNavigate("/admin-room");
-              }}
-            >
-              Room
-            </Menu.Item>
+
+            </Menu.Item>  
+            {
+              role==="Admin"
+              ?
+              <Menu.Item
+                icon={<FundOutlined />}
+                key="2"
+                onClick={() => {
+                  onNavigate("/accountmanager");
+                }}
+              >
+                {t('accountmanager')}
+              </Menu.Item>
+              :
+              <Menu.Item
+                icon={<BlockOutlined />}
+                key="3"
+                onClick={() => {
+                  onNavigate("/schedulemanager");
+                }}
+              >
+                {t('schedulemanager')}
+              </Menu.Item>
+            }
             <Menu.Item
               key="4"
               icon={<AuditOutlined />}

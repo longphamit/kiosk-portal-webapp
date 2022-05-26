@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import AccountManager from "../../kiosk_portal/pages/account/account_manager";
 import HomePage from "../../kiosk_portal/pages/home";
+import ScheduleManager from "../../kiosk_portal/pages/schedule/schedule_manager";
 
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
@@ -66,7 +67,7 @@ const routes: Route[] = [
   },
   {
     component: HomePage,
-    path: "/admin-home",
+    path: "/homepage",
     isLayout: true,
     layout: AuthenLayout,
     authen: false,
@@ -75,6 +76,14 @@ const routes: Route[] = [
   {
     component: AccountManager,
     path: "/accountmanager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: false,
+    breadcrumb: ""
+  },
+  {
+    component: ScheduleManager,
+    path: "/schedulemanager",
     isLayout: true,
     layout: AuthenLayout,
     authen: false,
