@@ -28,7 +28,7 @@ import {
   import moment from "moment";
 import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
   
-  const ScheduleManager = () => {
+  const ScheduleManagerPage = () => {
     const { RangePicker } = DatePicker;
     const { Option } = Select;
     const { t } = useTranslation();
@@ -760,5 +760,5 @@ import { localStorageGetUserIdService } from "../../../@app/services/localstorag
       </>
     );
   };
-  export default ScheduleManager;
+  export default ScheduleManagerPage;
   

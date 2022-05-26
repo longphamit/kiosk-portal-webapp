@@ -2,8 +2,6 @@ import { ReactNode } from "react";
 import AccountManager from "../../kiosk_portal/pages/account/account_manager";
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import HomePage from "../../kiosk_portal/pages/home";
-import ScheduleManager from "../../kiosk_portal/pages/schedule/schedule_manager";
-import KioskPage from "../../kiosk_portal/pages/kiosk";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
@@ -14,6 +12,7 @@ import LoginPage from "../pages/login/login_page";
 import RegistPage from "../pages/regist/regist_page";
 import ResetPassPage from "../pages/reset_pass/reset_pass";
 import UnAuthPage from "../pages/un_auth";
+import ScheduleManagerPage from "../../kiosk_portal/pages/schedule/schedule_manager";
 
 interface Route {
   component: React.FC;
@@ -83,14 +82,6 @@ const routes: Route[] = [
     breadcrumb: ""
   },
   {
-    component: KioskPage,
-    path: "/kiosk",
-    isLayout: true,
-    layout: AuthenLayout,
-    authen: false,
-    breadcrumb: ""
-  },
-  {
     component: AccountDetailPage,
     path: "/account-detail/:partyId",
     isLayout: true,
@@ -99,8 +90,8 @@ const routes: Route[] = [
     breadcrumb: ""
   },
   {
-    component: ScheduleManager,
-    path: "/schedulemanager",
+    component: ScheduleManagerPage,
+    path: "/schedule-manager",
     isLayout: true,
     layout: AuthenLayout,
     authen: false,

@@ -9,7 +9,7 @@ import {
   BlockOutlined,
   AuditOutlined,
   ClockCircleOutlined,
-  ToolOutlined
+  ToolOutlined,
 } from "@ant-design/icons";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import "./styles.css";
@@ -19,8 +19,12 @@ import { USER_FRIST_NAME } from "../../constants/key";
 
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";
-import { ROLE_ADMIN } from "../../constants/role";
-import { localStorageClearService, localStorageGetReduxState, localStorageGetUserIdService } from "../../services/localstorage_service";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../constants/role";
+import {
+  localStorageClearService,
+  localStorageGetReduxState,
+  localStorageGetUserIdService,
+} from "../../services/localstorage_service";
 
 import routes from "../../routers/routes";
 import { t } from "i18next";
@@ -41,13 +45,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
     navigate(url);
   };
 
-
-
   useEffect(() => {
     setInterval(() => setTime(new Date().toLocaleString()), 1000);
   });
   return (
-
     <Layout>
       <Header className="header">
         <div className="logo" />
@@ -62,13 +63,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
-          <Menu
-            mode="inline"
-            style={{ height: "100%", borderRight: 0 }}
-          >
+          <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
             <Menu.Item disabled>
               <div
-                style={{ marginTop: 20, marginBottom: 20, color: "#3753ad", fontSize: 12 }}
+                style={{
+                  marginTop: 20,
+                  marginBottom: 20,
+                  color: "#3753ad",
+                  fontSize: 12,
+                }}
               >
                 <ClockCircleOutlined style={{ marginRight: 10 }} />
                 {time}
@@ -82,50 +85,35 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 onNavigate("/homepage");
               }}
             >
-              {t('home')}
+              {t("home")}
+            </Menu.Item>
+            {role === ROLE_ADMIN ? (
+              <>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="2"
+                  onClick={() => {
+                    onNavigate("/account-manager");
+                  }}
+                >
+                  {t("accountmanager")}
+                </Menu.Item>
+              </>
+            ) : null}
+            {role === ROLE_LOCATION_OWNER ? (
+              <>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="4"
+                  onClick={() => {
+                    onNavigate("/schedulemanager");
+                  }}
+                >
+                  {t("schedulemanager")}
+                </Menu.Item>
+              </>
+            ) : null}
 
-            </Menu.Item>  
-            {
-              role==="Admin"
-              ?
-              <Menu.Item
-              icon={<FundOutlined />}
-              key="2"
-              onClick={() => {
-                onNavigate("/account-manager");
-              }}
-            >
-              {t('accountmanager')}
-            </Menu.Item>
-              :
-              <Menu.Item
-                icon={<BlockOutlined />}
-                key="3"
-                onClick={() => {
-                  onNavigate("/schedulemanager");
-                }}
-              >
-                {t('schedulemanager')}
-              </Menu.Item>
-            }
-            <Menu.Item
-              icon={<BlockOutlined />}
-              key="3"
-              onClick={() => {
-                onNavigate("/kiosk");
-              }}
-            >
-              Kiosk
-            </Menu.Item>
-            <Menu.Item
-              key="4"
-              icon={<AuditOutlined />}
-              onClick={() => {
-                onNavigate("/admin-ticket");
-              }}
-            >
-              Ticket
-            </Menu.Item>
             <Menu.Item
               key="5"
               icon={<ToolOutlined />}
