@@ -26,6 +26,7 @@ import {
 } from "../../../@app/services/user_service";
 import moment from "moment";
 import Search from "antd/lib/transfer/search";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 
 const AccountManager = () => {
   const { Option } = Select;
@@ -124,14 +125,23 @@ const AccountManager = () => {
       console.log(error);
     }
   };
+  function checkUndefine(value){
+    if(value===undefined){
+      return "";
+    }
+    return value;
+  }
   const onFinishAdvancedSearch = async (values) => {
+    console.log(values);
     const search = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      address: values.address,
-      size: numAccountInPage,
+      firstName: checkUndefine(values.firstName),
+      lastName: checkUndefine(values.lastName),
+      phoneNumber: checkUndefine(values.phoneNumber),
+      email: checkUndefine(values.email),
+      address: checkUndefine(values.address),
+      status: checkUndefine(values.status),
+      roleName: checkUndefine(values.roleName),
+      size: numAccountInPage, 
       page: 1,
     };
     try {
@@ -140,6 +150,7 @@ const AccountManager = () => {
         setListAccount(res.data.data);
         setIsSearch(true);
         setQuerySearch(search);
+        handleCloseModalAdvancedSearch();
       });
     } catch (error) {
       console.log(error);
@@ -154,6 +165,8 @@ const AccountManager = () => {
     let phoneNumber = "";
     let email = "";
     let address = "";
+    let status = "";
+    let roleName = "";
     switch (values.type) {
       case "FirstName":
         firstName = values.searchString;
@@ -170,6 +183,12 @@ const AccountManager = () => {
       case "Address":
         address = values.searchString;
         break;
+      case "Status":
+        status = values.searchString;
+        break;
+      case "RoleName":
+        roleName = values.searchString;
+        break;
     }
     const search = {
       firstName: firstName,
@@ -177,6 +196,8 @@ const AccountManager = () => {
       phoneNumber: phoneNumber,
       email: email,
       address: address,
+      status: status,
+      roleName: roleName,
       size: numAccountInPage,
       page: 1,
     };
@@ -288,6 +309,14 @@ const AccountManager = () => {
       name: "Address",
       label: "Address",
     },
+    {
+      name: "Status",
+      label: "Status",
+    },
+    {
+      name: "RoleName",
+      label: "Role Name",
+    }
   ];
   const columns = [
     {
@@ -684,13 +713,15 @@ const AccountManager = () => {
             firstName: "",
             lastName: "",
             phoneNumber: "",
+            roleName: "",
+            status: ""
           }}
         >
           <Form.Item name="firstName" label={t("firstname")}>
             <Input />
           </Form.Item>
           <Form.Item name="lastName" label={t("lastname")}>
-            <Input />
+            <Input/>
           </Form.Item>
           <Form.Item name="phoneNumber" label={t("phonenumber")}>
             <Input />
@@ -700,6 +731,27 @@ const AccountManager = () => {
           </Form.Item>
           <Form.Item name="address" label={t("address")}>
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="roleName"
+            label={t("role")}
+          >
+            <Select >
+              <Option value="">All</Option>
+              <Option value={ROLE_SERVICE_PROVIDER}>{ROLE_SERVICE_PROVIDER}</Option>
+              <Option value={ROLE_LOCATION_OWNER}>{ROLE_SERVICE_PROVIDER}</Option>
+              <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="status"
+            label={t("status")}
+          >
+            <Select initialValues="">
+              <Option value="">All</Option>
+              <Option value="active">{t("active")}</Option>
+              <Option value="deactive">{t("deactive")}</Option>
+            </Select>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Space align="center">
