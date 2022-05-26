@@ -106,7 +106,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   icon={<BlockOutlined />}
                   key="4"
                   onClick={() => {
-                    onNavigate("/schedulemanager");
+                    onNavigate("/schedule-manager");
                   }}
                 >
                   {t("schedulemanager")}
