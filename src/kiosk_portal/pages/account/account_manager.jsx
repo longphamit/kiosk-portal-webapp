@@ -375,7 +375,7 @@ const AccountManager = () => {
         record.status === "active" ? (
           <a style={{ color: "green" }}>{t("active")}</a>
         ) : (
-          <a style={{ color: "red" }}>{t("deactivate")}</a>
+          <a style={{ color: "red" }}>{t("deactive")}</a>
         ),
     },
 

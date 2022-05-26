@@ -57,6 +57,6 @@
     "toastSuccessChangeStatus":"Change Status Successful",
     "toastSuccessCreateAccount":"Create Account Successful",
     "active":"Active",
-    "deactivate":"Deactivate"
+    "deactive":"Deactive"
 
 }
