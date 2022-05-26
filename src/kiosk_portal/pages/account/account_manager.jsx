@@ -299,7 +299,7 @@ const AccountManager = () => {
     },
     {
       name: "PhoneNumber",
-      label: "Phone Number",
+      label: "Phone",
     },
     {
       name: "Email",
@@ -379,9 +379,9 @@ const AccountManager = () => {
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button className="infor-button" onClick={() => {
-            navigate("/account-detail/"+record.id)
-            }}>
-          {t("detail")}
+            navigate("/account-detail/" + record.id)
+          }}>
+            {t("detail")}
           </Button>
           <Button
             className="warn-button"
@@ -451,16 +451,25 @@ const AccountManager = () => {
             }}
           >
             <Row>
-              <Col span={14}>
+              <Col span={4}>
+                <Form.Item name="type" style={{ marginTop: 5 }} >
+                  <Select defaultValue="FirstName" >
+                    {types.map((item) => {
+                      return <Option value={item.name}>{item.label}</Option>;
+                    })}
+                  </Select>
+                </Form.Item></Col>
+              <Col span={10}>
+
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                    <AutoComplete
-                      style={{ width: "100%" }}
-                      options={options}
-                      placeholder="Search..."
-                      filterOption={(inputValue, option) =>
-                        option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                      }
-                    />
+                  <AutoComplete
+                    style={{ width: "100%" }}
+                    options={options}
+                    placeholder="Search..."
+                    filterOption={(inputValue, option) =>
+                      option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                    }
+                  />
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -480,7 +489,7 @@ const AccountManager = () => {
                   type="danger"
                   size={"large"}
                   onClick={showModalAdvancedSearch}
-                  
+
                 >
                   Advanced Search
                 </Button>
@@ -489,7 +498,7 @@ const AccountManager = () => {
             </Row>
           </Form>
         </Col>
-        <Col span={5}/>
+        <Col span={5} />
         <Col span={4}>
           <Button
             className="success-button"
