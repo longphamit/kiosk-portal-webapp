@@ -33,6 +33,7 @@ const AppElement: React.FC<Props> = (props) => {
   if(access_token&&authen){
     // return <Navigate to="/admin-home"/>
     const role = localStorageGetReduxState().auth.role;
+    console.log("role app-element: "+role);
     switch (role) {
       case ROLE_ADMIN:
         return <Navigate to="/admin-home" />;

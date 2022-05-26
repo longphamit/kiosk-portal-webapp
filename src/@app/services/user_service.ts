@@ -30,6 +30,8 @@ export const searchUserToAddGroupService = async (
   );
   return response.data;
 };
+
+//Account
 export const changePasswordService = async (data: any) => {
   const response = await request.patch(`${HOST}/user/change-password`, data);
   return response.data;
@@ -48,15 +50,11 @@ export const activeAccountService = async (
   );
   return response.data;
 };
+
 export const getListAccountService = async (page: any, size: any) => {
   const response = await request.get(
     `${HOST}/v1/parties?page=${page}&size=${size}`
   );
-  return response.data;
-};
-
-export const getListRoleService = async () => {
-  const response = await request.get(`${HOST}/v1/roles`);
   return response.data;
 };
 
@@ -82,5 +80,28 @@ export const searchAccountService = async (data: any) => {
 
 export const updateAccountService = async (data: any) => {
   const response = await request.put(`${HOST}/v1/parties`, data);
+  return response.data;
+};
+
+//Role
+export const getListRoleService = async () => {
+  const response = await request.get(`${HOST}/v1/roles`);
+  return response.data;
+};
+
+
+//Schedule
+
+// export const getListAccountService = async (page: any, size: any) => {
+export const getListScheduleService = async (page: any, size: any) => {
+  const response = await request.get(
+    // `${HOST}/v1/parties?page=${page}&size=${size}`
+    `${HOST}/v1/schedules`
+  );
+  return response.data;
+};
+
+export const createScheduleService = async (data: any) => {
+  const response = await request.post(`${HOST}/v1/schedules`, data);
   return response.data;
 };

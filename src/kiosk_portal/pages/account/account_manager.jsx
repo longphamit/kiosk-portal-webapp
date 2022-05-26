@@ -1,4 +1,5 @@
 import {
+  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -7,7 +8,6 @@ import {
   Input,
   Modal,
   Pagination,
-  Popconfirm,
   Row,
   Select,
   Space,
@@ -104,7 +104,6 @@ const AccountManager = () => {
     },
   };
   const onFinishEditAccount = async (values) => {
-    console.log(values);
     const updateAccount = {
       id: values.id,
       firstName: values.firstName,
@@ -117,7 +116,7 @@ const AccountManager = () => {
       await updateAccountService(updateAccount).then(() => {
         getListAccountFunction(currentPage, numAccountInPage);
         setIsCreateAccountModalVisible(false);
-        toast.success(t("toastSuccessCreateAccount"));
+        toast.success(t("toastsuccesseditaccount"));
         handleCancelEditAccount();
       });
     } catch (error) {
@@ -214,7 +213,7 @@ const AccountManager = () => {
       await createAccountService(newAccount).then(() => {
         getListAccountFunction(currentPage, numAccountInPage);
         setIsCreateAccountModalVisible(false);
-        toast.success(t("toastSuccessCreateAccount"));
+        toast.success(t("toastsuccesscreateaccount"));
       });
     } catch (error) {
       console.log(error);
@@ -246,7 +245,7 @@ const AccountManager = () => {
           try {
             await changeStatusAccountService(record.id, null).then(() => {
               getListAccountFunction(currentPage, numAccountInPage);
-              toast.success(t("toastSuccessChangeStatus"));
+              toast.success(t("toastsuccesschangestatus"));
             });
           } catch (error) {
             console.log(error);
@@ -397,6 +396,12 @@ const AccountManager = () => {
     },
   ];
 
+  const options = [
+    { value: 'Burns Bay Road' },
+    { value: 'Downing Street' },
+    { value: 'Wall Street' },
+  ];
+
   const config = {
     rules: [
       {
@@ -406,15 +411,6 @@ const AccountManager = () => {
       },
     ],
   };
-  const prefixSearch = (
-    <Form.Item name="type" noStyle>
-      <Select defaultValue="FirstName">
-        {types.map((item) => {
-          return <Option value={item.name}>{item.label}</Option>;
-        })}
-      </Select>
-    </Form.Item>
-  );
   return (
     <>
       <Row style={{ padding: 10 }}>
@@ -429,14 +425,25 @@ const AccountManager = () => {
             }}
           >
             <Row>
-              <Col span={16}>
+              <Col span={4}>
+                <Form.Item name="type" style={{ marginTop: 5 }} >
+                    <Select defaultValue="FirstName" >
+                      {types.map((item) => {
+                        return <Option value={item.name}>{item.label}</Option>;
+                      })}
+                    </Select>
+                </Form.Item>
+              </Col>
+              <Col span={10}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                  <Input
-                    addonBefore={prefixSearch}
-                    style={{ width: "100%" }}
-                    placeholder="Search..."
-                    value=""
-                  />
+                    <AutoComplete
+                      style={{ width: "100%" }}
+                      options={options}
+                      placeholder="Search..."
+                      filterOption={(inputValue, option) =>
+                        option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                      }
+                    />
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -652,10 +659,6 @@ const AccountManager = () => {
             ]}
             {...tailFormItemLayout}
           >
-            <Checkbox>
-              {t("checkboxcreateaccount")}
-              <a href="">{t("checkboxcreateaccount2")}</a>
-            </Checkbox>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
