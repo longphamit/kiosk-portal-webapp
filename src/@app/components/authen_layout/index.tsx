@@ -87,7 +87,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<FundOutlined />}
               key="2"
               onClick={() => {
-                onNavigate("/accountmanager");
+                onNavigate("/account-manager");
               }}
             >
               {t('accountmanager')}
@@ -96,10 +96,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<BlockOutlined />}
               key="3"
               onClick={() => {
-                onNavigate("/admin-room");
+                onNavigate("/kiosk");
               }}
             >
-              Room
+              Kiosk
             </Menu.Item>
             <Menu.Item
               key="4"

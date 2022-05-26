@@ -45,7 +45,7 @@
     "male": "Male",
     "female": "Female",
     "other": "Other",
-    "accountmanager": "Account Manager",
+    "accountmanager": "Account",
     "home": "Home",
     "back": "Back",
     "formatphonenumber": "Please input phone number with right format in this field",
@@ -57,6 +57,13 @@
     "toastSuccessChangeStatus":"Change Status Successful",
     "toastSuccessCreateAccount":"Create Account Successful",
     "active":"Active",
-    "deactivate":"Deactivate"
+    "deactivate":"Deactivate",
+    "detail": "Detail",
 
+    "createkiosk":"Create Kiosk",
+    "name":"Name",
+    "location":"Location",
+    "id":"ID"
+    
+    
 }

@@ -45,7 +45,7 @@
     "male": "Nam",
     "female": "Nữ",
     "other": "Khác",
-    "accountmanager": "Quản lý tài khoản",
+    "accountmanager": "Tài khoản",
     "home": "Trang chủ",
     "back": "Trở về",
     "formatphonenumber": "Vui lòng nhập vào số điện thoại với đúng định dạng vào ô này",
@@ -57,5 +57,11 @@
     "toastSuccessChangeStatus":"Đổi trạng thái thành công",
     "toastSuccessCreateAccount":"Tạo tài khoản thành công",
     "active":"Đang hoạt động",
-    "deactivate":"Không hoạt động"
+    "deactivate":"Không hoạt động",
+    "detail": "Chi tiết",
+
+    "createkiosk":"Tạo Kiosk",
+    "name":"Tên",
+    "location":"Địa điểm",
+    "id":"Mã"
 }
