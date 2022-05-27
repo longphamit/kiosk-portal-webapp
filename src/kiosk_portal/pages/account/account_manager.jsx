@@ -670,20 +670,7 @@ const AccountManager = () => {
               })}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(new Error(t("reqcheckbox"))),
-              },
-            ]}
-            {...tailFormItemLayout}
-          >
-          </Form.Item>
+          
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
               {t("register")}
