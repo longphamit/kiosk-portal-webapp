@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
-import AccountManager from "../../kiosk_portal/pages/account/account_manager";
+import AccountManagerPage from "../../kiosk_portal/pages/account";
+
+
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import HomePage from "../../kiosk_portal/pages/home";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
@@ -84,7 +86,7 @@ const routes: Route[] = [
     roles:[""]
   },
   {
-    component: AccountManager,
+    component: AccountManagerPage,
     path: "/account-manager",
     isLayout: true,
     layout: AuthenLayout,

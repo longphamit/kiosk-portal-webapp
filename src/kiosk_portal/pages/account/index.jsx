@@ -28,7 +28,7 @@ import {
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
-const AccountManager = () => {
+const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
   const [listAccount, setListAccount] = useState([]);
@@ -848,4 +848,4 @@ const AccountManager = () => {
     </>
   );
 };
-export default AccountManager;
+export default AccountManagerPage;
