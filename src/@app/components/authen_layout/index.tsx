@@ -63,7 +63,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
-          <Menu mode="inline" style={{ height: "100%", borderRight: 0 }}>
+          <Menu defaultSelectedKeys={['1']} mode="inline" style={{ height: "100%", borderRight: 0 }}>
             <Menu.Item disabled>
               <div
                 style={{

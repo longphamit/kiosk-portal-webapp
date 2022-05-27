@@ -14,19 +14,13 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 
-import { getListKioskService } from "../../services/kiosk_service";
+import {
+  createKioskService,
+  getListKioskService,
+} from "../../services/kiosk_service";
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
 const searchTypeKiosk = [
   {
     name: "Name",
@@ -104,6 +98,14 @@ const KioskTable = ({ partyId }) => {
       setKioskPageSize(data.metadata.size);
     });
   };
+  const onCreateKiosk = async (values) => {
+    try {
+      const res = await createKioskService({ name: values.name });
+      console.log(res)
+    } catch (e) {
+      console.log(e.response.data.errors);
+    }
+  };
   const onFinishSearchKiosk = () => {};
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
@@ -114,6 +116,7 @@ const KioskTable = ({ partyId }) => {
       </Select>
     </Form.Item>
   );
+
   useEffect(() => {
     getListKiosk(partyId, kioskPage, kioskPageSize);
   }, []);
@@ -204,18 +207,17 @@ const KioskTable = ({ partyId }) => {
           {...formItemLayout}
           form={createKioskForm}
           name="CreateKiosk"
-          onFinish={() => {}}
+          onFinish={onCreateKiosk}
           initialValues={{ name: "kiosk" + "-" + (kioskTotal + 1) }}
           scrollToFirstError
         >
           <Form.Item name="name" label={t("name")}>
             <Input disabled />
           </Form.Item>
-          <Form.Item name={t("location")} label={t("location")}>
-            <Select placeholder="Select province">
-              <Option value="Zhejiang">Zhejiang</Option>
-              <Option value="Jiangsu">Jiangsu</Option>
-            </Select>
+          <Form.Item {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit">
+              Save
+            </Button>
           </Form.Item>
         </Form>
       </Modal>
