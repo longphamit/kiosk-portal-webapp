@@ -4,6 +4,7 @@ import AccountManagerPage from "../../kiosk_portal/pages/account";
 
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import HomePage from "../../kiosk_portal/pages/home";
+import KioskPage from "../../kiosk_portal/pages/kiosk";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
@@ -106,6 +107,15 @@ const routes: Route[] = [
   {
     component: ScheduleManagerPage,
     path: "/schedule-manager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_LOCATION_OWNER]
+  },
+  {
+    component: KioskPage,
+    path: "/kiosk",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,

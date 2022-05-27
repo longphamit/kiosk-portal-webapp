@@ -63,7 +63,11 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
-          <Menu defaultSelectedKeys={['1']} mode="inline" style={{ height: "100%", borderRight: 0 }}>
+          <Menu
+            defaultSelectedKeys={["1"]}
+            mode="inline"
+            style={{ height: "100%", borderRight: 0 }}
+          >
             <Menu.Item disabled>
               <div
                 style={{
@@ -104,6 +108,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               <>
                 <Menu.Item
                   icon={<BlockOutlined />}
+                  key="5"
+                  onClick={() => {
+                    onNavigate("/kiosk");
+                  }}
+                >
+                  Kiosk
+                </Menu.Item>
+                <Menu.Item
+                  icon={<BlockOutlined />}
                   key="4"
                   onClick={() => {
                     onNavigate("/schedule-manager");
@@ -115,7 +128,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             ) : null}
 
             <Menu.Item
-              key="5"
+              key="6"
               icon={<ToolOutlined />}
               onClick={() => {
                 onNavigate("/admin-tool");
@@ -125,7 +138,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             </Menu.Item>
             <SubMenu key="sub2" icon={<LaptopOutlined />} title="Me">
               <Menu.Item
-                key="6"
+                key="7"
                 onClick={() => {
                   onNavigate("/admin-profile");
                 }}
@@ -145,7 +158,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             </SubMenu> */}
             <Menu.Item
               icon={<LogoutOutlined />}
-              key="7"
+              key="8"
               onClick={() => {
                 logout();
               }}

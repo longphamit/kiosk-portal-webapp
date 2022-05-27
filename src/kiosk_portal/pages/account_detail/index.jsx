@@ -1,11 +1,13 @@
-import { Col, Row, Tag } from "antd";
+import { Col, Collapse, Row, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
 import KioskTable from "../../components/tables/kiosk_table";
+
 import { getAccountByIdService } from "../../services/account_service";
 import "./styles.css"
+const { Panel } = Collapse;
 const AccountDetailPage = () => {
   const { partyId } = useParams()
   const { t } = useTranslation();
@@ -80,7 +82,18 @@ const AccountDetailPage = () => {
           </> : null
       }
       {
-        accountDetail ? accountDetail.roleName === ROLE_LOCATION_OWNER ? <KioskTable partyId={partyId} /> : null : null
+        accountDetail ? accountDetail.roleName === ROLE_LOCATION_OWNER ?
+          <Collapse defaultActiveKey={["1"]}>
+            <Panel
+              header="Kiosks"
+              key="1"
+              style={{ color: "#ffff" }}
+            >
+              <KioskTable partyId={partyId} />
+            </Panel>
+          </Collapse>
+
+          : null : null
       }
     </>)
 }

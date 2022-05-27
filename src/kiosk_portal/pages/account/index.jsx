@@ -724,7 +724,7 @@ const AccountManagerPage = () => {
             <Select >
               <Option value="">All</Option>
               <Option value={ROLE_SERVICE_PROVIDER}>{ROLE_SERVICE_PROVIDER}</Option>
-              <Option value={ROLE_LOCATION_OWNER}>{ROLE_SERVICE_PROVIDER}</Option>
+              <Option value={ROLE_LOCATION_OWNER}>{ROLE_LOCATION_OWNER}</Option>
               <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
             </Select>
           </Form.Item>

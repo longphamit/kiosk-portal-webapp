@@ -17,7 +17,6 @@ axios.interceptors.response.use(
       // Access Token was expired
       if (err.response.status === 403) {
         toast.error("You are not allow!");
-        cancelAxios.cancel("----stop all request---");
       }
       if (err.response.status === 401 && !originalConfig._retry) {
         originalConfig._retry = true;
