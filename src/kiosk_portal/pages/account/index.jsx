@@ -344,12 +344,6 @@ const AccountManagerPage = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("address"),
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <a>{text}</a>,
-    },
-    {
       title: t("dob"),
       dataIndex: "dateOfBirth",
       key: "dob",
