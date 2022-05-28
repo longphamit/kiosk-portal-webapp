@@ -27,13 +27,14 @@ import {
 } from "../../services/localstorage_service";
 
 import routes from "../../routers/routes";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const role = localStorageGetReduxState().auth.role;
   const { children } = props;
+  const { t } = useTranslation();
   const [time, setTime] = useState(new Date().toLocaleString());
   let navigate = useNavigate();
   const logout = () => {
