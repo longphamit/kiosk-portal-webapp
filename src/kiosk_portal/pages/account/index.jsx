@@ -599,55 +599,6 @@ const AccountManagerPage = () => {
           </Form.Item>
 
           <Form.Item
-            name="password"
-            label={t("password")}
-            rules={[
-              {
-                required: true,
-                message: t("reqpassword"),
-              },
-            ]}
-            hasFeedback
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            name="confirm"
-            label={t("confirmpassword")}
-            dependencies={["password"]}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: t("reqconfpassword"),
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error(t("reqsamepassword")));
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            name="gender"
-            label={t("gender")}
-            rules={[{ required: true, message: t("reqgender") }]}
-          >
-            <Select placeholder={t("selectgender")}>
-              <Option value="male">{t("male")}</Option>
-              <Option value="female">{t("female")}</Option>
-              <Option value="other">{t("other")}</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
             name="roleId"
             label={t("role")}
             rules={[{ required: true, message: t("reqrole") }]}
