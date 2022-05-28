@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { activeAccountService } from "../../services/user_service";
+import { activeAccountService } from "../../../kiosk_portal/services/account_service";
 
 const ConfirmAccountPage=()=>{
     const [searchParams, setSearchParams] = useSearchParams();

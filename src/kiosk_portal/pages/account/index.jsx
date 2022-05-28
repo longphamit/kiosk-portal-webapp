@@ -17,17 +17,11 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import {
-  changeStatusAccountService,
-  createAccountService,
-  getListAccountService,
-  getListRoleService,
-  searchAccountService,
-  updateAccountService,
-} from "../../../@app/services/user_service";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import { getListRoleService } from "../../services/role_service";
+import { changeStatusAccountService, createAccountService, getListAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
 const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();

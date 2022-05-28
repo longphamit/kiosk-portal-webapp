@@ -17,20 +17,12 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import {
-  changeStatusAccountService,
-  createAccountService,
-  createScheduleService,
-  getListAccountService,
-  getListScheduleService,
-  searchAccountService,
-  updateAccountService,
-} from "../../../@app/services/user_service";
 import moment from "moment";
 import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
+import { changeStatusAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
+import { createScheduleService, getListScheduleService } from "../../services/schedule_service";
 
 const ScheduleManagerPage = () => {
-  const { RangePicker } = DatePicker;
   const { Option } = Select;
   const { t } = useTranslation();
   const [listSchedule, setListSchedule] = useState([]);
@@ -40,7 +32,6 @@ const ScheduleManagerPage = () => {
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
-  const [dateStartaa, setDateStartaa] = useState(null);
   const [isCreateScheduleModalVisible, setIsCreateScheduleModalVisible] =
     useState(false);
   const [isEditScheduleModalVisible, setIsEditScheduleModalVisible] =
@@ -213,10 +204,10 @@ const ScheduleManagerPage = () => {
     const invalidMsg = [];
     var check = true;
     try {
-      if (today - values.timeStart > 0 || today - values.timeEnd > 0) {
-        invalidMsg.push("Time start and time end need to after today \n");
-        check = false;
-      }
+      // if (today - values.timeStart > 0 || today - values.timeEnd > 0) {
+      //   invalidMsg.push("Time start and time end need to after today \n");
+      //   check = false;
+      // }
       if (values.dateStart - values.dateEnd > 0) {
         invalidMsg.push("Date start need to before or match with date end\n");
         check = false;
@@ -530,8 +521,6 @@ const ScheduleManagerPage = () => {
                 height: "auto",
                 width: "auto",
               }}
-
-              onChange={(newDate) => setDateStartaa(moment(newDate).format("yyyy-MM-dd"))}
             />
           </Form.Item>
           <Form.Item name="dateEnd" label={t("dateend")}

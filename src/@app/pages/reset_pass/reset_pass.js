@@ -1,13 +1,11 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { resetPasswordService } from "../../../kiosk_portal/services/account_service";
 import { PRIMARY_COLOR } from "../../constants/colors";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
-import { forgotPasswordService } from "../../services/auth_service";
-import { resetPasswordService } from "../../services/user_service";
 
 const ResetPassPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
   const onResetPassword = async (values) => {
     resetPasswordService({ newPassword: values.password, oldPassword: 'abc@123' }).then((response) => {

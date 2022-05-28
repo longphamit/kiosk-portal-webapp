@@ -15,8 +15,6 @@ import useDispatch from "../../hooks/use_dispatch";
 import { loginAction } from "../../redux/actions/login_action";
 
 import "../../constants/role";
-import { localStorageGetReduxState } from "../../services/localstorage_service";
-import { getUserInfoService } from "../../services/user_service";
 import { useTranslation } from "react-i18next";
 import {
   ROLE_ADMIN,
