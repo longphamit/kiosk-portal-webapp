@@ -55,8 +55,6 @@
     "toastsuccesscreateaccount":"Tạo tài khoản thành công",
     "yes":"Có",
     "no":"Không",
-    "active":"Đang hoạt động",
-    "deactivate":"Không hoạt động",
     "schedulemanager":"Lập lịch",
     "name":"Tên",
     "dayofweek":"Ngày trong tuần",
@@ -82,9 +80,11 @@
     "toastsuccesseditaccount":"Chỉnh sửa tài khoản thành công",
     "btncreateschedule":"Tạo lịch trình",
     "detail": "Chi tiết",
-
     "createkiosk":"Tạo Kiosk",
     "location":"Địa điểm",
-    "id":"Mã"
-    
+    "id":"Mã",
+    "deactivate":"Không hoạt động",
+    "activate":"Đang hoạt động",
+    "toastSuccessCreateAccount":"Tạo tài khoản thành công",
+    "toastSuccessChangeStatus":"Đổi trạng thái thành công"
 }

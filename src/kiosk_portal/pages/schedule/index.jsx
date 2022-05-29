@@ -352,7 +352,7 @@ const ScheduleManagerPage = () => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "on" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+          <Tag color={"green"}>{t("activate")}</Tag>
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
         ),

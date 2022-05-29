@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import { use } from "i18next";
 import { getListRoleService } from "../../services/role_service";
 import { changeStatusAccountService, createAccountService, getListAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
 const AccountManagerPage = () => {
@@ -29,10 +30,14 @@ const AccountManagerPage = () => {
   const [totalAccount, setTotalAccount] = useState(0);
   const [numAccountInPage, setNumAccountInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
+  const [value, setValue] = useState('');
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [listRole, setListRole] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [searchType, setSearchType] = useState('FirstName');
+
   const [isCreateAccountModalVisible, setIsCreateAccountModalVisible] =
     useState(false);
   const [isEditAccountModalVisible, setIsEditAccountModalVisible] =
@@ -357,7 +362,7 @@ const AccountManagerPage = () => {
         record.status === "active" ? (
           <Tag color="green">{t("activate")}</Tag>
         ) : (
-          <a style={{ color: "red" }}>{t("deactive")}</a>
+          <a style={{ color: "red" }}>{t("deactivate")}</a>
         ),
     },
 
@@ -410,12 +415,6 @@ const AccountManagerPage = () => {
     },
   ];
 
-  const options = [
-    { value: 'Burns Bay Road' },
-    { value: 'Downing Street' },
-    { value: 'Wall Street' },
-  ];
-
   const config = {
     rules: [
       {
@@ -424,6 +423,79 @@ const AccountManagerPage = () => {
         message: t("reqdob"),
       },
     ],
+  };
+  const createObjectToSearch = (searchText, searchType, size, page) => {
+    let firstName = "";
+    let lastName = "";
+    let phoneNumber = "";
+    let email = "";
+    let address = "";
+    let status = "";
+    let roleName = "";
+    switch (searchType) {
+      case "FirstName":
+        firstName = searchText;
+        break;
+      case "LastName":
+        lastName = searchText;
+        break;
+      case "PhoneNumber":
+        phoneNumber = searchText;
+        break;
+      case "Email":
+        email = searchText;
+        break;
+      case "Address":
+        address = searchText;
+        break;
+      case "Status":
+        status = searchText;
+        break;
+      case "RoleName":
+        roleName = searchText;
+        break;
+    }
+    return {
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: phoneNumber,
+      email: email,
+      address: address,
+      status: status,
+      roleName: roleName,
+      size: size,
+      page: page,
+    };
+  }
+  async function getSearchOption(searchObj)  {
+    try {
+      await searchAccountService(searchObj).then((res) => {
+        let data = res.data.data;
+        console.log(data.map(obj => obj.firstName));
+        return data.map(obj => obj.firstName);    
+      });
+    } catch (error) {
+      return [];
+    }
+   
+  }
+  const onSearch = async (searchText) => {
+    let search = createObjectToSearch(searchText, searchType, 10, 1);
+    let x = await getSearchOption(search);
+    console.log(x);
+     setOptions(
+          !searchText ? [] : x,
+        );
+  };
+
+  const handleChangeSearchType = (value) => {
+    console.log(`selected ${value}`);
+    setSearchType(value);
+
+  };
+
+  const onChange = (data) => {
+    setValue(data);
   };
   return (
     <>
@@ -441,7 +513,7 @@ const AccountManagerPage = () => {
             <Row>
               <Col span={4}>
                 <Form.Item name="type" style={{ marginTop: 5 }} >
-                  <Select defaultValue="FirstName" >
+                  <Select defaultValue="FirstName" onChange={handleChangeSearchType}>
                     {types.map((item) => {
                       return <Option value={item.name}>{item.label}</Option>;
                     })}
@@ -451,8 +523,11 @@ const AccountManagerPage = () => {
 
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
                   <AutoComplete
+                    id="search"
                     style={{ width: "100%" }}
                     options={options}
+                    onSearch={onSearch}
+                    onChange={onChange}
                     placeholder="Search..."
                     filterOption={(inputValue, option) =>
                       option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
@@ -609,7 +684,7 @@ const AccountManagerPage = () => {
               })}
             </Select>
           </Form.Item>
-          
+
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
               {t("register")}
@@ -673,8 +748,8 @@ const AccountManagerPage = () => {
           >
             <Select initialValues="">
               <Option value="">All</Option>
-              <Option value="active">{t("active")}</Option>
-              <Option value="deactive">{t("deactive")}</Option>
+              <Option value="active">{t("activate")}</Option>
+              <Option value="deactive">{t("deactivate")}</Option>
             </Select>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
