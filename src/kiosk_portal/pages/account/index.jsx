@@ -17,18 +17,12 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import {
-  changeStatusAccountService,
-  createAccountService,
-  getListAccountService,
-  getListRoleService,
-  searchAccountService,
-  updateAccountService,
-} from "../../../@app/services/user_service";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
-const AccountManager = () => {
+import { getListRoleService } from "../../services/role_service";
+import { changeStatusAccountService, createAccountService, getListAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
+const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
   const [listAccount, setListAccount] = useState([]);
@@ -344,12 +338,6 @@ const AccountManager = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("address"),
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <a>{text}</a>,
-    },
-    {
       title: t("dob"),
       dataIndex: "dateOfBirth",
       key: "dob",
@@ -611,55 +599,6 @@ const AccountManager = () => {
           </Form.Item>
 
           <Form.Item
-            name="password"
-            label={t("password")}
-            rules={[
-              {
-                required: true,
-                message: t("reqpassword"),
-              },
-            ]}
-            hasFeedback
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            name="confirm"
-            label={t("confirmpassword")}
-            dependencies={["password"]}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: t("reqconfpassword"),
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error(t("reqsamepassword")));
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item
-            name="gender"
-            label={t("gender")}
-            rules={[{ required: true, message: t("reqgender") }]}
-          >
-            <Select placeholder={t("selectgender")}>
-              <Option value="male">{t("male")}</Option>
-              <Option value="female">{t("female")}</Option>
-              <Option value="other">{t("other")}</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
             name="roleId"
             label={t("role")}
             rules={[{ required: true, message: t("reqrole") }]}
@@ -670,20 +609,7 @@ const AccountManager = () => {
               })}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-            rules={[
-              {
-                validator: (_, value) =>
-                  value
-                    ? Promise.resolve()
-                    : Promise.reject(new Error(t("reqcheckbox"))),
-              },
-            ]}
-            {...tailFormItemLayout}
-          >
-          </Form.Item>
+          
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
               {t("register")}
@@ -737,7 +663,7 @@ const AccountManager = () => {
             <Select >
               <Option value="">All</Option>
               <Option value={ROLE_SERVICE_PROVIDER}>{ROLE_SERVICE_PROVIDER}</Option>
-              <Option value={ROLE_LOCATION_OWNER}>{ROLE_SERVICE_PROVIDER}</Option>
+              <Option value={ROLE_LOCATION_OWNER}>{ROLE_LOCATION_OWNER}</Option>
               <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
             </Select>
           </Form.Item>
@@ -861,4 +787,4 @@ const AccountManager = () => {
     </>
   );
 };
-export default AccountManager;
+export default AccountManagerPage;
