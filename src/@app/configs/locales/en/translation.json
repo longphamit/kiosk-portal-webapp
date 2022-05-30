@@ -83,8 +83,14 @@
     "toastsuccesseditaccount":"Edit Account Successful",
     "btncreateschedule":"Create Schedule",
     "detail": "Detail",
-
     "createkiosk":"Create Kiosk",
     "location":"Location",
-    "id":"ID"
+    "id":"ID",
+    "template":"Template",
+    "description":"Description",
+    "createdate":"Create Date",
+    "delete":"Delete",
+    "confirmDeleteTemplate":"Are you sure, you want to delete this template?",
+    "createtemplate":"Create Template",
+    "reqnametemplate":"Please input template name"
 }

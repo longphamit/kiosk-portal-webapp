@@ -125,6 +125,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   {t("schedulemanager")}
                 </Menu.Item>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="3"
+                  onClick={() => {
+                    onNavigate("/template-manager");
+                  }}
+                >
+                  {t("template")}
+                </Menu.Item>
               </>
             ) : null}
 
