@@ -6,6 +6,7 @@ import {
   Input,
   Modal,
   Pagination,
+  Popconfirm,
   Row,
   Select,
   Space,
@@ -20,6 +21,7 @@ import { downloadTxtFile } from "../../../../@app/utils/file_util";
 import {
   createKioskService,
   getListKioskService,
+  changeStatusKioskService
 } from "../../../services/kiosk_service";
 import {
   formItemLayout,
@@ -50,7 +52,17 @@ const KioskTable = ({ partyId }) => {
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
   const role = localStorageGetReduxState().auth.role;
-  const kioskColumn = [
+  const onConfirmChangeStatus=async(kioskId)=>{
+    try{
+      await changeStatusKioskService(kioskId)
+      await getListKiosk(partyId, kioskPage, kioskPageSize);
+      toast.success("Change status kiosk success")
+    }catch(e){
+      console.log(e)
+    }
+    
+  }
+  const kioskColumnAdmin = [
     {
       title: "No",
       key: "index",
@@ -72,6 +84,7 @@ const KioskTable = ({ partyId }) => {
     {
       title: t("status"),
       dataIndex: "status",
+      align: 'center',
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "active" ? (
@@ -83,19 +96,70 @@ const KioskTable = ({ partyId }) => {
     {
       title: t("action"),
       key: "action",
+      align: 'center',
+      render: (text, record, dataIndex) => (
+        <Space size="middle">
+          <Button
+            className="success-button"
+            onClick={() => {
+              downloadTxtFile(partyId + "-" + record.name, record.id);
+            }}
+          >
+            <ArrowDownOutlined /> Key
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+  const kioskColumnLocationOwner = [
+    {
+      title: "No",
+      key: "index",
+      render: (text, record, index) => <>{index + 1}</>,
+    },
+    {
+      title: t("name"),
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <a>{text}</a>,
+    },
+
+    {
+      title: t("status"),
+      dataIndex: "status",
+      align: 'center',
+      key: "status",
+      render: (text, record, dataIndex) =>
+        record.status === "active" ? (
+          <Tag color={"green"}>{t("active")}</Tag>
+        ) : (
+          <Tag color={"red"}>{t("deactivate")}</Tag>
+        ),
+    },
+    {
+      title: t("action"),
+      align: 'center',
+      key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button className="warn-button" shape="default" onClick={() => {}}>
             {t("edit")}
           </Button>
-          <Button
-            type="primary"
-            shape="default"
-            name={record}
-            onClick={() => {}}
+          <Popconfirm
+            title="Are you sure, you want to change status this kiosk?"
+            onConfirm={()=>onConfirmChangeStatus(record.id)}
+            onVisibleChange={() => console.log("visible change")}
           >
-            {t("change-status")}
-          </Button>
+            <Button
+              type="primary"
+              shape="default"
+              name={record}
+              onClick={() => {}}
+            >
+              {t("change-status")}
+            </Button>
+          </Popconfirm>
+
           <Button
             className="success-button"
             onClick={() => {
@@ -154,7 +218,7 @@ const KioskTable = ({ partyId }) => {
       <div>
         <Row style={{ padding: 10 }}>
           <Col span={15}>
-            <Form
+            {/* <Form
               form={searchKioskForm}
               name="search"
               onFinish={onFinishSearchKiosk}
@@ -187,7 +251,7 @@ const KioskTable = ({ partyId }) => {
                   </Form.Item>
                 </Col>
               </Row>
-            </Form>
+            </Form> */}
           </Col>
           <Col span={5} />
           {role ? (
@@ -207,11 +271,21 @@ const KioskTable = ({ partyId }) => {
           ) : null}
         </Row>
         <Col span={24}>
-          <Table
-            columns={kioskColumn}
-            dataSource={listKiosk}
-            pagination={false}
-          />
+          {role ? (
+            role === ROLE_ADMIN ? (
+              <Table
+                columns={kioskColumnAdmin}
+                dataSource={listKiosk}
+                pagination={false}
+              />
+            ) : (
+              <Table
+                columns={kioskColumnLocationOwner}
+                dataSource={listKiosk}
+                pagination={false}
+              />
+            )
+          ) : null}
         </Col>
         <Pagination
           defaultCurrent={kioskPage}
