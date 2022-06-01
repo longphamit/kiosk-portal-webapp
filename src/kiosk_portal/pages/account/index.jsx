@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import { getListRoleService } from "../../services/role_service";
 import { changeStatusAccountService, createAccountService, getListAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
+import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
@@ -39,24 +40,21 @@ const AccountManagerPage = () => {
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
+  const [accountSearchType, setAccountSearchType] = useState("FirstName")
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
     try {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
-        await searchAccountService(querySearch).then((res) => {
-          setTotalAccount(res.data.metadata.total);
-          setListAccount(res.data.data);
-        });
+        const res = await searchAccountService(querySearch)
+        setTotalAccount(res.data.metadata.total);
+        setListAccount(res.data.data);
         return;
       }
-      await getListAccountService(currentPageToGetList, numInPage).then(
-        (res) => {
-          setTotalAccount(res.data.metadata.total);
-          setListAccount(res.data.data);
-        }
-      );
+      const res = await getListAccountService(currentPageToGetList, numInPage)
+      setTotalAccount(res.data.metadata.total);
+      setListAccount(res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -76,29 +74,7 @@ const AccountManagerPage = () => {
     listRoleFunction();
   }, []);
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-  };
 
-  const tailFormItemLayout = {
-    wrapperCol: {
-      xs: {
-        span: 24,
-        offset: 0,
-      },
-      sm: {
-        span: 16,
-        offset: 8,
-      },
-    },
-  };
   const onFinishEditAccount = async (values) => {
     const updateAccount = {
       id: values.id,
@@ -109,12 +85,11 @@ const AccountManagerPage = () => {
       dateOfBirth: values.dateOfBirth,
     };
     try {
-      await updateAccountService(updateAccount).then(() => {
-        getListAccountFunction(currentPage, numAccountInPage);
-        setIsCreateAccountModalVisible(false);
-        toast.success(t("toastsuccesseditaccount"));
-        handleCancelEditAccount();
-      });
+      await updateAccountService(updateAccount)
+      getListAccountFunction(currentPage, numAccountInPage);
+      setIsCreateAccountModalVisible(false);
+      toast.success(t("toastsuccesseditaccount"));
+      handleCancelEditAccount();
     } catch (error) {
       console.log(error);
     }
@@ -139,21 +114,19 @@ const AccountManagerPage = () => {
       page: 1,
     };
     try {
-      await searchAccountService(search).then((res) => {
-        setTotalAccount(res.data.metadata.total);
-        setListAccount(res.data.data);
-        setIsSearch(true);
-        setQuerySearch(search);
-        handleCloseModalAdvancedSearch();
-      });
+      const res = await searchAccountService(search)
+      setTotalAccount(res.data.metadata.total);
+      setListAccount(res.data.data);
+      setIsSearch(true);
+      setQuerySearch(search);
+      handleCloseModalAdvancedSearch();
     } catch (error) {
       console.log(error);
       setTotalAccount(0);
       setListAccount([]);
     }
   };
-  const onFinishSearch = async (values) => {
-    console.log(values);
+  const buildPartyParamSearch = (value) => {
     let firstName = "";
     let lastName = "";
     let phoneNumber = "";
@@ -161,30 +134,30 @@ const AccountManagerPage = () => {
     let address = "";
     let status = "";
     let roleName = "";
-    switch (values.type) {
+    switch (accountSearchType) {
       case "FirstName":
-        firstName = values.searchString;
+        firstName = value
         break;
       case "LastName":
-        lastName = values.searchString;
+        lastName = value
         break;
       case "PhoneNumber":
-        phoneNumber = values.searchString;
+        phoneNumber = value
         break;
       case "Email":
-        email = values.searchString;
+        email = value
         break;
       case "Address":
-        address = values.searchString;
+        address = value
         break;
       case "Status":
-        status = values.searchString;
+        status = value
         break;
       case "RoleName":
-        roleName = values.searchString;
+        roleName = value
         break;
     }
-    const search = {
+    return {
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,
@@ -192,16 +165,18 @@ const AccountManagerPage = () => {
       address: address,
       status: status,
       roleName: roleName,
-      size: numAccountInPage,
-      page: 1,
     };
+  }
+  const onFinishSearch = async (values) => {
+    const search = buildPartyParamSearch(values.searchString);
+    search["size"] = numAccountInPage;
+    search["page"] = 1
     try {
-      await searchAccountService(search).then((res) => {
-        setTotalAccount(res.data.metadata.total);
-        setListAccount(res.data.data);
-        setIsSearch(true);
-        setQuerySearch(search);
-      });
+      const res = await searchAccountService(search)
+      setTotalAccount(res.data.metadata.total);
+      setListAccount(res.data.data);
+      setIsSearch(true);
+      setQuerySearch(search);
     } catch (error) {
       console.log(error);
       setTotalAccount(0);
@@ -226,11 +201,10 @@ const AccountManagerPage = () => {
       roleId: values.roleId,
     };
     try {
-      await createAccountService(newAccount).then(() => {
-        getListAccountFunction(currentPage, numAccountInPage);
-        setIsCreateAccountModalVisible(false);
-        toast.success(t("toastsuccesscreateaccount"));
-      });
+      await createAccountService(newAccount)
+      getListAccountFunction(currentPage, numAccountInPage);
+      setIsCreateAccountModalVisible(false);
+      toast.success(t("toastsuccesscreateaccount"));
     } catch (error) {
       console.log(error);
     }
@@ -410,11 +384,6 @@ const AccountManagerPage = () => {
     },
   ];
 
-  const options = [
-    { value: 'Burns Bay Road' },
-    { value: 'Downing Street' },
-    { value: 'Wall Street' },
-  ];
 
   const config = {
     rules: [
@@ -440,8 +409,8 @@ const AccountManagerPage = () => {
           >
             <Row>
               <Col span={4}>
-                <Form.Item name="type" style={{ marginTop: 5 }} >
-                  <Select defaultValue="FirstName" >
+                <Form.Item name="type" style={{ marginTop: 5 }}>
+                  <Select defaultValue="FirstName" onChange={(e) => { setAccountSearchType(e) }}>
                     {types.map((item) => {
                       return <Option value={item.name}>{item.label}</Option>;
                     })}
@@ -449,10 +418,10 @@ const AccountManagerPage = () => {
                 </Form.Item></Col>
               <Col span={10}>
 
-                <Form.Item name="searchString" style={{ marginTop: 5 }}>
+                <Form.Item name="searchString" style={{ marginTop: 5 }} >
                   <AutoComplete
                     style={{ width: "100%" }}
-                    options={options}
+                    options={[]}
                     placeholder="Search..."
                     filterOption={(inputValue, option) =>
                       option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
@@ -609,7 +578,7 @@ const AccountManagerPage = () => {
               })}
             </Select>
           </Form.Item>
-          
+
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
               {t("register")}

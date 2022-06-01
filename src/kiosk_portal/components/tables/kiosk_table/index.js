@@ -21,7 +21,7 @@ import { downloadTxtFile } from "../../../../@app/utils/file_util";
 import {
   createKioskService,
   getListKioskService,
-  changeStatusKioskService
+  changeStatusKioskService,
 } from "../../../services/kiosk_service";
 import {
   formItemLayout,
@@ -52,16 +52,15 @@ const KioskTable = ({ partyId }) => {
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
   const role = localStorageGetReduxState().auth.role;
-  const onConfirmChangeStatus=async(kioskId)=>{
-    try{
-      await changeStatusKioskService(kioskId)
+  const onConfirmChangeStatus = async (kioskId) => {
+    try {
+      await changeStatusKioskService(kioskId);
       await getListKiosk(partyId, kioskPage, kioskPageSize);
-      toast.success("Change status kiosk success")
-    }catch(e){
-      console.log(e)
+      toast.success("Change status kiosk success");
+    } catch (e) {
+      console.log(e);
     }
-    
-  }
+  };
   const kioskColumnAdmin = [
     {
       title: "No",
@@ -84,7 +83,7 @@ const KioskTable = ({ partyId }) => {
     {
       title: t("status"),
       dataIndex: "status",
-      align: 'center',
+      align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "active" ? (
@@ -96,7 +95,7 @@ const KioskTable = ({ partyId }) => {
     {
       title: t("action"),
       key: "action",
-      align: 'center',
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -127,7 +126,7 @@ const KioskTable = ({ partyId }) => {
     {
       title: t("status"),
       dataIndex: "status",
-      align: 'center',
+      align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "active" ? (
@@ -138,7 +137,7 @@ const KioskTable = ({ partyId }) => {
     },
     {
       title: t("action"),
-      align: 'center',
+      align: "center",
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
@@ -147,7 +146,7 @@ const KioskTable = ({ partyId }) => {
           </Button>
           <Popconfirm
             title="Are you sure, you want to change status this kiosk?"
-            onConfirm={()=>onConfirmChangeStatus(record.id)}
+            onConfirm={() => onConfirmChangeStatus(record.id)}
             onVisibleChange={() => console.log("visible change")}
           >
             <Button
@@ -178,12 +177,15 @@ const KioskTable = ({ partyId }) => {
     await getListKiosk(partyId, page, kioskPageSize);
   };
   const getListKiosk = async (partyId, kioskPage, kioskPageSize) => {
-    getListKioskService(partyId, kioskPage, kioskPageSize).then(({ data }) => {
-      setListKiosk(data.data);
-      setKioskPage(data.metadata.page);
-      setKioskTotal(data.metadata.total);
-      setKioskPageSize(data.metadata.size);
-    });
+    const { data } = await getListKioskService(
+      partyId,
+      kioskPage,
+      kioskPageSize
+    );
+    setListKiosk(data.data);
+    setKioskPage(data.metadata.page);
+    setKioskTotal(data.metadata.total);
+    setKioskPageSize(data.metadata.size);
   };
   const onCreateKiosk = async (values) => {
     try {
