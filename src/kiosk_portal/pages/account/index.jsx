@@ -94,22 +94,17 @@ const AccountManagerPage = () => {
       console.log(error);
     }
   };
-  function checkUndefine(value) {
-    if (value === undefined) {
-      return "";
-    }
-    return value;
-  }
+  
   const onFinishAdvancedSearch = async (values) => {
     console.log(values);
     const search = {
-      firstName: checkUndefine(values.firstName),
-      lastName: checkUndefine(values.lastName),
-      phoneNumber: checkUndefine(values.phoneNumber),
-      email: checkUndefine(values.email),
-      address: checkUndefine(values.address),
-      status: checkUndefine(values.status),
-      roleName: checkUndefine(values.roleName),
+      firstName: values.firstName??"",
+      lastName: values.lastName??"",
+      phoneNumber: values.phoneNumber??"",
+      email: values.email??"",
+      address: values.address??"",
+      status: values.status??"",
+      roleName: values.roleName??"",
       size: numAccountInPage,
       page: 1,
     };
