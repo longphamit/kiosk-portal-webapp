@@ -220,7 +220,7 @@ const KioskTable = ({ partyId }) => {
       <div>
         <Row style={{ padding: 10 }}>
           <Col span={15}>
-            {/* <Form
+            <Form
               form={searchKioskForm}
               name="search"
               onFinish={onFinishSearchKiosk}
@@ -253,7 +253,7 @@ const KioskTable = ({ partyId }) => {
                   </Form.Item>
                 </Col>
               </Row>
-            </Form> */}
+            </Form>
           </Col>
           <Col span={5} />
           {role ? (
