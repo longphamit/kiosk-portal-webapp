@@ -1,8 +1,6 @@
 import {
     Button,
-    Checkbox,
     Col,
-    DatePicker,
     Form,
     Input,
     Modal,
@@ -11,11 +9,8 @@ import {
     Select,
     Space,
     Table,
-    Tag,
-    TimePicker,
 } from "antd";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { createTemplateService, deleteTemplateService, getListTemplateService, updateTemplateService } from "../../services/template_service";
@@ -312,7 +307,7 @@ const TemplateManagerPage = () => {
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
-                            Edit Template
+                            Create Template
                         </Button>
                     </Form.Item>
                 </Form>

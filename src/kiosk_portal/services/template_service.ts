@@ -3,7 +3,7 @@ import request from "../../@app/utils/http_client";
 
 export const getListTemplateService = async (page: any, size: any, name: any) => {
     const response = await request.get(
-        `${HOST}/v1/templates?Name=${name}&Status=Incomplete&size=${size}&page=${page}`
+        `${HOST}/v1/templates?Name=${name}&&size=${size}&page=${page}`
     );
     return response.data;
 };
