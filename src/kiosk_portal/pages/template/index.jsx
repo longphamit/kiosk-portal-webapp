@@ -171,7 +171,7 @@ const TemplateManagerPage = () => {
             title: 'Status',
             dataIndex: "status",
             key: "status",
-            render: (text) =>text===STATUS_INCOMPLETE?(<Tag color={"red"}>Incomplete</Tag>) :(<Tag color={"blue"}>Complete</Tag>),
+            render: (text) => text === STATUS_INCOMPLETE ? (<Tag color={"red"}>Incomplete</Tag>) : (<Tag color={"blue"}>Complete</Tag>),
         },
         {
             title: 'Action',
