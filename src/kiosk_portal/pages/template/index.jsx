@@ -18,17 +18,15 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
-import { getListTemplateService } from "../../services/template_service";
+import { createTemplateService, deleteTemplateService, getListTemplateService, updateTemplateService } from "../../services/template_service";
 
 const TemplateManagerPage = () => {
     const { Option } = Select;
     const { t } = useTranslation();
-    const [listTemplate, setlistTemplate] = useState([]);
+    const [listTemplate, setListTemplate] = useState([]);
     const [totalTemplate, setTotalTemplate] = useState(0);
-    const [numTemplatePage, setnumTemplatePage] = useState(5);
-    const [isSearch, setIsSearch] = useState(false);
-    const [querySearch, setQuerySearch] = useState(null);
+    const [numTemplateInPage, setNumTemplateInPage] = useState(10);
+    const [querySearch, setQuerySearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [currentItem, setCurrentItem] = useState(null);
     const [isCreateTemplateModalVisible, setIsCreateTemplateModalVisible] =
@@ -38,17 +36,10 @@ const TemplateManagerPage = () => {
     const [form] = Form.useForm();
     const getListTemplateFunction = async (currentPageToGetList, numInPage) => {
         try {
-            if (isSearch) {
-                querySearch.page = currentPageToGetList;
-                //Get list search
-            } else {
-                await getListTemplateService(currentPageToGetList, numInPage).then(
-                    (res) => {
-                        setTotalTemplate(res.data.metadata.total);
-                        setlistTemplate(res.data);
-                    }
-                );
-            }
+            let name = querySearch !== '' ? querySearch : '';
+            const res = await getListTemplateService(currentPageToGetList, numInPage, name);
+            setTotalTemplate(res.data.metadata.total);
+            setListTemplate(res.data.data);
             return;
         } catch (error) {
             console.log(error);
@@ -56,7 +47,7 @@ const TemplateManagerPage = () => {
     };
 
     useEffect(() => {
-        getListTemplateFunction(currentPage, numTemplatePage);
+        getListTemplateFunction(currentPage, numTemplateInPage);
     }, []);
 
     const formItemLayout = {
@@ -83,17 +74,50 @@ const TemplateManagerPage = () => {
         },
     };
     const onFinishEditTemplate = async (values) => {
-
+        let data = {
+            id: values.id,
+            name: values.Name ?? "",
+            description: values.description ?? ""
+        }
+        try {
+            const res = await updateTemplateService(data);
+            handleCancelEditTemplate();
+            toast("Update successful");
+            getListTemplateFunction(currentPage, numTemplateInPage)
+        } catch (e) {
+            toast("Update failed");
+        }
     };
     const onFinishSearch = async (values) => {
+        try {
+            const res = await getListTemplateService(1, numTemplateInPage, values.searchString);
+            setCurrentPage(1);
+            setTotalTemplate(res.data.metadata.total);
+            setListTemplate(res.data.data);
+        } catch (e) {
+            toast("Cannot found!")
+        }
+
     };
     const showModalEditTemplate = () => {
         setIsEditTemplateModalVisible(true);
     };
-    const handleCancelEditSchedule = () => {
+    const handleCancelEditTemplate = () => {
         setIsEditTemplateModalVisible(false);
     };
     const onFinishCreateTemplate = async (values) => {
+        let data = {
+            name: values.Name ?? "",
+            description: values.description ?? ""
+        }
+        try {
+            await createTemplateService(data);
+            handleCancelCreateTemplate();
+            toast("Create successful");
+            getListTemplateFunction(currentPage, numTemplateInPage);
+        } catch (e) {
+            toast("Create failed");
+        }
     };
 
     const showModalCreateTemplate = () => {
@@ -105,12 +129,20 @@ const TemplateManagerPage = () => {
         setIsCreateTemplateModalVisible(false);
     };
     const handleDeleteTemplate = async (record) => {
+        console.log(record);
         Modal.confirm({
             title: t("confirmDeleteTemplate"),
             okText: t("yes"),
             cancelText: t("no"),
             onOk: async () => {
                 {
+                    try {
+                        await deleteTemplateService(record.id);
+                        getListTemplateFunction(currentPage, numTemplateInPage);
+                        toast("Delete successful");
+                    } catch (e) {
+                        toast("Delete failed");
+                    }
                 }
             },
         });
@@ -118,7 +150,7 @@ const TemplateManagerPage = () => {
 
     const handleChangeNumberOfPaging = async (page, pageSize) => {
         setCurrentPage(page);
-        await getListTemplateFunction(page, numTemplatePage);
+        await getListTemplateFunction(page, numTemplateInPage);
     };
 
     const convertDate = (stringToConvert) => {
@@ -142,12 +174,6 @@ const TemplateManagerPage = () => {
             dataIndex: "description",
             key: "description",
             render: (text) => <a>{text}</a>,
-        },
-        {
-            title: t('createdate'),
-            dataIndex: "createdate",
-            key: "createdate",
-            render: (text) => <a>{convertDate(text)}</a>,
         },
         {
             title: t("action"),
@@ -246,7 +272,7 @@ const TemplateManagerPage = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table columns={columns} dataSource={sample} pagination={false} />
+            <Table columns={columns} dataSource={listTemplate} pagination={false} />
             <Pagination
                 defaultCurrent={1}
                 total={totalTemplate}
@@ -287,7 +313,7 @@ const TemplateManagerPage = () => {
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
-                            {t("btncreateschedule")}
+                            Edit Template
                         </Button>
                     </Form.Item>
                 </Form>
@@ -297,7 +323,7 @@ const TemplateManagerPage = () => {
                     key={currentItem.id}
                     title={t("edit")}
                     visible={isEditTemplateModalVisible}
-                    onCancel={handleCancelEditSchedule}
+                    onCancel={handleCancelEditTemplate}
                     footer={null}
                 >
                     <Form
@@ -307,7 +333,11 @@ const TemplateManagerPage = () => {
                         name="edit"
                         onFinish={onFinishEditTemplate}
                         scrollToFirstError
-                        initialValues={{}}
+                        initialValues={{
+                            id: currentItem.id,
+                            Name: currentItem.name,
+                            description: currentItem.description
+                        }}
                     >
                         <Form.Item name="id" hidden={true}>
                             <Input type="hidden" />
