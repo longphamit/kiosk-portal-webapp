@@ -3,6 +3,7 @@ import AccountManagerPage from "../../kiosk_portal/pages/account";
 
 
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
+import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
@@ -122,6 +123,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles:[ROLE_LOCATION_OWNER]
+  },
+  {
+    component: ServiceApplicationPublishRequestPage,
+    path: "/application-publish-request",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_ADMIN]
   },
   {
     component: TemplateManagerPage,

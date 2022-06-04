@@ -13,10 +13,9 @@ const AccountDetailPage = () => {
   const { t } = useTranslation();
   const [accountDetail, setAccountDetail] = useState()
   const getAccountDetailById = async () => {
-    getAccountByIdService(partyId).then((res) => {
-      setAccountDetail(res.data)
-      console.log(res.data)
-    })
+    const res = await getAccountByIdService(partyId)
+    setAccountDetail(res.data)
+    console.log(res.data)
   }
   useEffect(() => {
     getAccountDetailById()

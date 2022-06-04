@@ -141,10 +141,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               key="6"
               icon={<ToolOutlined />}
               onClick={() => {
-                onNavigate("/admin-tool");
+                onNavigate("/application-publish-request");
               }}
             >
-              Tool
+              App Publish Request
             </Menu.Item>
             <SubMenu key="sub2" icon={<LaptopOutlined />} title="Me">
               <Menu.Item
