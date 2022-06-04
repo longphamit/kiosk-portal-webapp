@@ -7,6 +7,7 @@ import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_p
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
+import TemplateManagerPage from "../../kiosk_portal/pages/template";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../constants/role";
@@ -131,6 +132,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles:[ROLE_ADMIN]
+  },
+  {
+    component: TemplateManagerPage,
+    path: "/template-manager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_LOCATION_OWNER]
   },
 ];
 
