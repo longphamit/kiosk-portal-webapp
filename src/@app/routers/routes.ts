@@ -3,13 +3,14 @@ import AccountManagerPage from "../../kiosk_portal/pages/account";
 
 
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
+import ApplicationPage from "../../kiosk_portal/pages/application";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import AuthenLayout from "../components/authen_layout";
 import ClientLayout from "../components/client_layout";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
 
 
@@ -131,6 +132,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles:[ROLE_ADMIN]
+  },
+  {
+    component: ApplicationPage,
+    path: "/application-page",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_SERVICE_PROVIDER]
   },
 ];
 

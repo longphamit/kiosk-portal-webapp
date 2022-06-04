@@ -19,7 +19,7 @@ import { USER_FRIST_NAME } from "../../constants/key";
 
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../constants/role";
 import {
   localStorageClearService,
   localStorageGetReduxState,
@@ -124,6 +124,19 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   }}
                 >
                   {t("schedulemanager")}
+                </Menu.Item>
+              </>
+            ) : null}
+            {role === ROLE_SERVICE_PROVIDER ? (
+              <>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="4"
+                  onClick={() => {
+                    onNavigate("/application-page");
+                  }}
+                >
+                  Application
                 </Menu.Item>
               </>
             ) : null}

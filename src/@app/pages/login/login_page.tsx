@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
               case ROLE_LOCATION_OWNER:
                 return navigate("/homepage");
               case ROLE_SERVICE_PROVIDER:
-                break;
+                return navigate("/homepage");
             }
             toast.success("Sign in successfull");
           }
