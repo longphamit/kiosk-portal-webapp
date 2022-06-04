@@ -82,14 +82,9 @@
     "toastsuccesseditaccount":"Chỉnh sửa tài khoản thành công",
     "btncreateschedule":"Tạo lịch trình",
     "detail": "Chi tiết",
+
     "createkiosk":"Tạo Kiosk",
     "location":"Địa điểm",
-    "id":"Mã",
-    "template":"Bản mẫu",
-    "description":"Mô tả",
-    "createdate":"Ngày tạo",
-    "delete":"Xóa",
-    "confirmDeleteTemplate":"Bạn có chắc muốn xóa bản mẫu này không?",
-    "createtemplate":"Tạo biểu mẫu",
-    "reqnametemplate":"Xin hãy nhập tên của biểu mẫu"
+    "id":"Mã"
+    
 }

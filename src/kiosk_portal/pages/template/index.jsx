@@ -22,7 +22,6 @@ import { createTemplateService, deleteTemplateService, getListTemplateService, u
 
 const TemplateManagerPage = () => {
     const { Option } = Select;
-    const { t } = useTranslation();
     const [listTemplate, setListTemplate] = useState([]);
     const [totalTemplate, setTotalTemplate] = useState(0);
     const [numTemplateInPage, setNumTemplateInPage] = useState(10);
@@ -131,9 +130,9 @@ const TemplateManagerPage = () => {
     const handleDeleteTemplate = async (record) => {
         console.log(record);
         Modal.confirm({
-            title: t("confirmDeleteTemplate"),
-            okText: t("yes"),
-            cancelText: t("no"),
+            title: 'Confirm delete the template',
+            okText: "Yes",
+            cancelText: 'No',
             onOk: async () => {
                 {
                     try {
@@ -164,19 +163,19 @@ const TemplateManagerPage = () => {
     ];
     const columns = [
         {
-            title: t('name'),
+            title: 'Name',
             dataIndex: "name",
             key: "name",
             render: (text) => <a>{text}</a>,
         },
         {
-            title: t('description'),
+            title: 'Description',
             dataIndex: "description",
             key: "description",
             render: (text) => <a>{text}</a>,
         },
         {
-            title: t("action"),
+            title: 'Action',
             key: "action",
             render: (text, record, dataIndex) => (
                 <Space size="middle">
@@ -188,7 +187,7 @@ const TemplateManagerPage = () => {
                             showModalEditTemplate();
                         }}
                     >
-                        {t("edit")}
+                        Edit
                     </Button>
 
                     <Button
@@ -199,7 +198,7 @@ const TemplateManagerPage = () => {
                             handleDeleteTemplate(record);
                         }}
                     >
-                        {t("delete")}
+                        Delete
                     </Button>
 
                 </Space>
@@ -268,7 +267,7 @@ const TemplateManagerPage = () => {
                         size={"large"}
                         onClick={showModalCreateTemplate}
                     >
-                        {t("createtemplate")}
+                        Create template
                     </Button>
                 </Col>
             </Row>
@@ -281,7 +280,7 @@ const TemplateManagerPage = () => {
             />
 
             <Modal
-                title={t("createtemplate")}
+                title='Create template'
                 visible={isCreateTemplateModalVisible}
                 onCancel={handleCancelCreateTemplate}
                 footer={null}
@@ -295,11 +294,11 @@ const TemplateManagerPage = () => {
                 >
                     <Form.Item
                         name="Name"
-                        label={t("name")}
+                        label='Name'
                         rules={[
                             {
                                 required: true,
-                                message: t("reqname"),
+                                message: 'Please input name',
                             },
                         ]}
                     >
@@ -307,7 +306,7 @@ const TemplateManagerPage = () => {
                     </Form.Item>
                     <Form.Item
                         name="description"
-                        label={t("description")}
+                        label='Description'
                     >
                         <Input />
                     </Form.Item>
@@ -321,7 +320,7 @@ const TemplateManagerPage = () => {
             {currentItem ? (
                 <Modal
                     key={currentItem.id}
-                    title={t("edit")}
+                    title="Edit"
                     visible={isEditTemplateModalVisible}
                     onCancel={handleCancelEditTemplate}
                     footer={null}
@@ -344,11 +343,11 @@ const TemplateManagerPage = () => {
                         </Form.Item>
                         <Form.Item
                             name="Name"
-                            label={t("name")}
+                            label='Name'
                             rules={[
                                 {
                                     required: true,
-                                    message: t("reqname"),
+                                    message: 'Please input name',
                                 },
                             ]}
                         >
@@ -356,7 +355,7 @@ const TemplateManagerPage = () => {
                         </Form.Item>
                         <Form.Item
                             name="description"
-                            label={t("description")}
+                            label='Description'
                         >
                             <Input />
                         </Form.Item>
