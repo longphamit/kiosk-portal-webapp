@@ -9,11 +9,12 @@ import {
     Select,
     Space,
     Table,
+    Tag,
 } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import moment from "moment";
 import { createTemplateService, deleteTemplateService, getListTemplateService, updateTemplateService } from "../../services/template_service";
+import { STATUS_INCOMPLETE } from "../../constants/template_constants";
 
 const TemplateManagerPage = () => {
     const { Option } = Select;
@@ -34,6 +35,7 @@ const TemplateManagerPage = () => {
             const res = await getListTemplateService(currentPageToGetList, numInPage, name);
             setTotalTemplate(res.data.metadata.total);
             setListTemplate(res.data.data);
+            console.log(res)
             return;
         } catch (error) {
             console.log(error);
@@ -146,10 +148,6 @@ const TemplateManagerPage = () => {
         setCurrentPage(page);
         await getListTemplateFunction(page, numTemplateInPage);
     };
-
-    const convertDate = (stringToConvert) => {
-        return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
-    };
     const types = [
         {
             name: "Name",
@@ -168,6 +166,12 @@ const TemplateManagerPage = () => {
             dataIndex: "description",
             key: "description",
             render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Status',
+            dataIndex: "status",
+            key: "status",
+            render: (text) =>text===STATUS_INCOMPLETE?(<Tag color={"red"}>Incomplete</Tag>) :(<Tag color={"blue"}>Complete</Tag>),
         },
         {
             title: 'Action',

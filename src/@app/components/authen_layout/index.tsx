@@ -132,7 +132,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                     onNavigate("/template-manager");
                   }}
                 >
-                  {t("template")}
+                  Template
                 </Menu.Item>
               </>
             ) : null}
