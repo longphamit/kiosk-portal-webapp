@@ -2,7 +2,8 @@ import { Col, Collapse, Row, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
+import { ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import ApplicationTable from "../../components/tables/app_table";
 import KioskTable from "../../components/tables/kiosk_table";
 
 import { getAccountByIdService } from "../../services/account_service";
@@ -82,7 +83,7 @@ const AccountDetailPage = () => {
       }
       {
         accountDetail ? accountDetail.roleName === ROLE_LOCATION_OWNER ?
-          <Collapse defaultActiveKey={["1"]}>
+          (<><Collapse defaultActiveKey={["1"]}>
             <Panel
               header="Kiosks"
               key="1"
@@ -90,9 +91,19 @@ const AccountDetailPage = () => {
             >
               <KioskTable partyId={partyId} />
             </Panel>
-          </Collapse>
+          </Collapse></>)
 
-          : null : null
+          : accountDetail.roleName === ROLE_SERVICE_PROVIDER?
+          (<><Collapse defaultActiveKey={["1"]}>
+            <Panel
+              header="Applications"
+              key="1"
+              style={{ color: "#ffff" }}
+            >
+              <ApplicationTable partyId={partyId} />
+            </Panel>
+          </Collapse></>)
+          : null:null
       }
     </>)
 }
