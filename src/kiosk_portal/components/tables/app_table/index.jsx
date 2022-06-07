@@ -31,9 +31,10 @@ import {
   createApplicationService,
   getListApplicationService,
   sendReqPublishApplicationService,
-  updateLogoServiceApplicationService,
+  updateApplicationService,
 } from "../../../services/application_service";
 import { getListCategoriesFunction } from "../../../../@app/utils/list_select_util";
+import { getDate } from "../../../../@app/utils/date_util";
 
 const ApplicationTable = () => {
   const { Option } = Select;
@@ -52,14 +53,9 @@ const ApplicationTable = () => {
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
-  const [IsUpdateLogoApplicationVisible, setIsUpdateLogoApplicationVisible] =
-    useState(false);
   const [applicationSearchType, setApplicationSearchType] =
     useState("FirstName");
   const [form] = Form.useForm();
-  const [imageBase64, setImageBase64] = useState(null);
-  const [chooseImg, setChooseImg] = useState([]);
-  const [formatImg, setFormatImg] = useState(false);
   const getListApplicationFunction = async (
     currentPageToGetList,
     numInPage
@@ -88,25 +84,42 @@ const ApplicationTable = () => {
     setListCategories(await getListCategoriesFunction("", 100, 1));
   }, []);
 
-  // const onFinishEditApplication = async (values) => {
-  //   const updateApplication = {
-  //     id: values.id,
-  //     firstName: values.firstName,
-  //     lastName: values.lastName,
-  //     phoneNumber: values.phoneNumber,
-  //     address: values.address,
-  //     dateOfBirth: values.dateOfBirth,
-  //   };
-  //   try {
-  //     await updateAccountService(updateApplication)
-  //     getListApplicationFunction(currentPage, numApplicationInPage);
-  //     setIsCreateapplicationModalVisible(false);
-  //     toast.success("Update Application Success");
-  //     handleCancelEditApplication();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const onFinishUpdateApplication = async (values) => {
+    let updateApplication = [];
+    if (typeof values.logo === "object") {
+      let formatResult = [];
+      const result = await getBase64(values.logo.file.originFileObj);
+      formatResult = result.split(",");
+      updateApplication = {
+        id: values.id,
+        name: values.name,
+        description: values.description,
+        logo: formatResult[1],
+        link: values.link,
+        partyId: values.partyId,
+        appCategoryId: values.appCategoryId,
+      };
+    } else {
+      updateApplication = {
+        id: values.id,
+        name: values.name,
+        description: values.description,
+        logo: values.logo,
+        link: values.link,
+        partyId: values.partyId,
+        appCategoryId: values.appCategoryId,
+      };
+    }
+    try {
+      await updateApplicationService(updateApplication);
+      getListApplicationFunction(currentPage, numApplicationInPage);
+      setIsCreateapplicationModalVisible(false);
+      toast.success("Update Application Success");
+      handleCancelEditApplication();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // const onFinishAdvancedSearch = async (values) => {
   //   console.log(values);
@@ -189,36 +202,21 @@ const ApplicationTable = () => {
     setIsEditApplicationModalVisible(true);
   };
 
-  const showModalUpdateLogoApplication = () => {
-    setIsUpdateLogoApplicationVisible(true);
-  };
-
   const handleCancelEditApplication = () => {
     setIsEditApplicationModalVisible(false);
   };
 
-  const handleCancelUpdateLogoApplication = () => {
-    setIsUpdateLogoApplicationVisible(false);
-  };
-
   const beforeUpload = (file) => {
-    setFormatImg(true);
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
       toast.error("You can only upload JPG/PNG file!");
-      setFormatImg(false);
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       toast.error("Image must smaller than 2MB!");
-      setFormatImg(false);
     }
 
     return isJpgOrPng && isLt2M;
-  };
-
-  const changeImg = (file) => {
-    setChooseImg(file);
   };
 
   const onFinishCreateApplication = async (values) => {
@@ -233,15 +231,15 @@ const ApplicationTable = () => {
       appCategoryId: values.appCategoryId,
     };
     console.log(newApplication);
-    // try {
-    //   await createApplicationService(newApplication);
-    //   getListApplicationFunction(currentPage, numApplicationInPage);
-    //   setIsCreateapplicationModalVisible(false);
-    //   toast.success("Create Application Success");
-    //   form.resetFields();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await createApplicationService(newApplication);
+      getListApplicationFunction(currentPage, numApplicationInPage);
+      setIsCreateapplicationModalVisible(false);
+      toast.success("Create Application Success");
+      form.resetFields();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const showModalCreateApplication = () => {
@@ -288,12 +286,6 @@ const ApplicationTable = () => {
     await getListApplicationFunction(page, numApplicationInPage);
   };
 
-  const converDate = (stringToConvert) => {
-    return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
-  };
-  const getDate = (dateOfBirth) => {
-    return moment(dateOfBirth);
-  };
   const types = [
     {
       name: "FirstName",
@@ -374,30 +366,6 @@ const ApplicationTable = () => {
           >
             Update application
           </Button>
-          {record.status === "incomplete" ? (
-            <Button
-              className="warn-button"
-              shape="default"
-              onClick={() => {
-                setCurrentItem(record);
-                showModalUpdateLogoApplication();
-              }}
-            >
-              Add Logo
-            </Button>
-          ) : (
-            <Button
-              className="warn-button"
-              shape="default"
-              disabled
-              onClick={() => {
-                setCurrentItem(record);
-                showModalUpdateLogoApplication();
-              }}
-            >
-              Add Logo
-            </Button>
-          )}
           {record.status === "unavailable" ? (
             <Button
               type="primary"
@@ -589,9 +557,8 @@ const ApplicationTable = () => {
               action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
               listType="picture"
               maxCount={1}
-              accept=".png"
+              accept=".png,.jpeg"
               beforeUpload={beforeUpload}
-              onChange={changeImg}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
@@ -688,86 +655,108 @@ const ApplicationTable = () => {
             {...formItemLayout}
             form={form}
             name="edit"
-            //   onFinish={onFinishEditApplication}
+            onFinish={onFinishUpdateApplication}
             scrollToFirstError
             initialValues={{
-              firstName: currentItem.firstName,
-              lastName: currentItem.lastName,
-              phoneNumber: currentItem.phoneNumber,
-              address: currentItem.address,
-              dateOfBirth: getDate(currentItem.dateOfBirth),
               id: currentItem.id,
+              name: currentItem.name,
+              description: currentItem.description,
+              logo: currentItem.logo,
+              link: currentItem.link,
+              partyId: localStorageGetUserIdService(),
+              appCategoryId: currentItem.appCategoryId,
             }}
           >
             <Form.Item name="id" hidden={true}>
               <Input type="hidden" />
             </Form.Item>
+            <Form.Item name="partyId" hidden={true}>
+              <Input type="hidden" />
+            </Form.Item>
             <Form.Item
-              name="firstName"
-              label={t("firstname")}
+              name="name"
+              label="Name"
               rules={[
                 {
                   required: true,
-                  message: t("reqfirstname"),
+                  message: "Please input application name!",
                 },
               ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              name="lastName"
-              label={t("lastname")}
+              name="description"
+              label="Description"
               rules={[
                 {
                   required: true,
-                  message: t("reqlastname"),
+                  message: "Please input application description!",
                 },
               ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              name="phoneNumber"
-              label={t("phonenumber")}
-              rules={[
-                {
-                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                  message: t("formatphonenumber"),
-                },
-                {
-                  required: true,
-                  message: t("reqphonenumber"),
-                },
-              ]}
-            >
-              <Input style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              name="address"
-              label={t("address")}
+              name="link"
+              label="Link"
               rules={[
                 {
                   required: true,
-                  message: t("reqaddress"),
+                  message: "Please input application link!",
                 },
               ]}
             >
               <Input />
             </Form.Item>
-            <Form.Item name="dateOfBirth" label={t("dob")} {...config}>
-              <DatePicker
-                placeholder={t("selectdob")}
-                format="DD/MM/YYYY"
-                allowClear={false}
-                style={{
-                  height: "auto",
-                  width: "auto",
-                }}
-              />
+            <Form.Item
+              name="logo"
+              label="Logo"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose application logo!",
+                },
+              ]}
+            >
+              <Upload
+                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                listType="picture"
+                maxCount={1}
+                accept=".png"
+                beforeUpload={beforeUpload}
+                defaultFileList={[
+                  {
+                    uid: "abc",
+                    name: "image.png",
+                    status: "done",
+                    url: currentItem.logo,
+                  },
+                ]}
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
             </Form.Item>
+            <Form.Item
+              name="appCategoryId"
+              label="Category"
+              rules={[
+                {
+                  required: true,
+                  message: "Please choose application category!",
+                },
+              ]}
+            >
+              <Select placeholder="Select your categories">
+                {listCategories.map((item) => {
+                  return <Option value={item.id}>{item.name}</Option>;
+                })}
+              </Select>
+            </Form.Item>
+
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Save
+                Update Application
               </Button>
             </Form.Item>
           </Form>
