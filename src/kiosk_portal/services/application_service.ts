@@ -19,3 +19,8 @@ export const sendReqPublishApplicationService = async (data: any) => {
   const response = await request.post(`${HOST}/v1/publishRequests`, data);
   return response.data;
 };
+
+export const updateApplicationService = async (data:any) =>{
+  const response = await request.put(`${HOST}/v1/serviceApplications`, data);
+  return response.data;
+}
