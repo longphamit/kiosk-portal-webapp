@@ -19,10 +19,21 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import {
+  ROLE_ADMIN,
+  ROLE_LOCATION_OWNER,
+  ROLE_SERVICE_PROVIDER,
+} from "../../../@app/constants/role";
 import { getListRoleService } from "../../services/role_service";
-import { changeStatusAccountService, createAccountService, getListAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
+import {
+  changeStatusAccountService,
+  createAccountService,
+  getListAccountService,
+  searchAccountService,
+  updateAccountService,
+} from "../../services/account_service";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
+import { getListRoleFunction } from "../../../@app/utils/list_select_util";
 const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
@@ -40,40 +51,30 @@ const AccountManagerPage = () => {
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
-  const [accountSearchType, setAccountSearchType] = useState("FirstName")
+  const [accountSearchType, setAccountSearchType] = useState("FirstName");
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
     try {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
-        const res = await searchAccountService(querySearch)
+        const res = await searchAccountService(querySearch);
         setTotalAccount(res.data.metadata.total);
         setListAccount(res.data.data);
         return;
       }
-      const res = await getListAccountService(currentPageToGetList, numInPage)
+      const res = await getListAccountService(currentPageToGetList, numInPage);
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
-  const listRoleFunction = async () => {
-    try {
-      await getListRoleService().then((res) => {
-        setListRole(res.data);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  useEffect(() => {
+  useEffect(async () => {
     getListAccountFunction(currentPage, numAccountInPage);
-    listRoleFunction();
+    setListRole(await getListRoleFunction());
   }, []);
-
 
   const onFinishEditAccount = async (values) => {
     const updateAccount = {
@@ -85,7 +86,7 @@ const AccountManagerPage = () => {
       dateOfBirth: values.dateOfBirth,
     };
     try {
-      await updateAccountService(updateAccount)
+      await updateAccountService(updateAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
       toast.success(t("toastsuccesseditaccount"));
@@ -94,22 +95,22 @@ const AccountManagerPage = () => {
       console.log(error);
     }
   };
-  
+
   const onFinishAdvancedSearch = async (values) => {
     console.log(values);
     const search = {
-      firstName: values.firstName??"",
-      lastName: values.lastName??"",
-      phoneNumber: values.phoneNumber??"",
-      email: values.email??"",
-      address: values.address??"",
-      status: values.status??"",
-      roleName: values.roleName??"",
+      firstName: values.firstName ?? "",
+      lastName: values.lastName ?? "",
+      phoneNumber: values.phoneNumber ?? "",
+      email: values.email ?? "",
+      address: values.address ?? "",
+      status: values.status ?? "",
+      roleName: values.roleName ?? "",
       size: numAccountInPage,
       page: 1,
     };
     try {
-      const res = await searchAccountService(search)
+      const res = await searchAccountService(search);
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
       setIsSearch(true);
@@ -131,25 +132,25 @@ const AccountManagerPage = () => {
     let roleName = "";
     switch (accountSearchType) {
       case "FirstName":
-        firstName = value
+        firstName = value;
         break;
       case "LastName":
-        lastName = value
+        lastName = value;
         break;
       case "PhoneNumber":
-        phoneNumber = value
+        phoneNumber = value;
         break;
       case "Email":
-        email = value
+        email = value;
         break;
       case "Address":
-        address = value
+        address = value;
         break;
       case "Status":
-        status = value
+        status = value;
         break;
       case "RoleName":
-        roleName = value
+        roleName = value;
         break;
     }
     return {
@@ -161,13 +162,13 @@ const AccountManagerPage = () => {
       status: status,
       roleName: roleName,
     };
-  }
+  };
   const onFinishSearch = async (values) => {
     const search = buildPartyParamSearch(values.searchString);
     search["size"] = numAccountInPage;
-    search["page"] = 1
+    search["page"] = 1;
     try {
-      const res = await searchAccountService(search)
+      const res = await searchAccountService(search);
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
       setIsSearch(true);
@@ -196,7 +197,7 @@ const AccountManagerPage = () => {
       roleId: values.roleId,
     };
     try {
-      await createAccountService(newAccount)
+      await createAccountService(newAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
       toast.success(t("toastsuccesscreateaccount"));
@@ -279,7 +280,7 @@ const AccountManagerPage = () => {
     {
       name: "RoleName",
       label: "Role Name",
-    }
+    },
   ];
   const columns = [
     {
@@ -335,9 +336,12 @@ const AccountManagerPage = () => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="infor-button" onClick={() => {
-            navigate("/account-detail/" + record.id)
-          }}>
+          <Button
+            className="infor-button"
+            onClick={() => {
+              navigate("/account-detail/" + record.id);
+            }}
+          >
             {t("detail")}
           </Button>
           <Button
@@ -379,7 +383,6 @@ const AccountManagerPage = () => {
     },
   ];
 
-
   const config = {
     rules: [
       {
@@ -405,21 +408,28 @@ const AccountManagerPage = () => {
             <Row>
               <Col span={4}>
                 <Form.Item name="type" style={{ marginTop: 5 }}>
-                  <Select defaultValue="FirstName" onChange={(e) => { setAccountSearchType(e) }}>
+                  <Select
+                    defaultValue="FirstName"
+                    onChange={(e) => {
+                      setAccountSearchType(e);
+                    }}
+                  >
                     {types.map((item) => {
                       return <Option value={item.name}>{item.label}</Option>;
                     })}
                   </Select>
-                </Form.Item></Col>
+                </Form.Item>
+              </Col>
               <Col span={10}>
-
-                <Form.Item name="searchString" style={{ marginTop: 5 }} >
+                <Form.Item name="searchString" style={{ marginTop: 5 }}>
                   <AutoComplete
                     style={{ width: "100%" }}
                     options={[]}
                     placeholder="Search..."
                     filterOption={(inputValue, option) =>
-                      option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                      option.value
+                        .toUpperCase()
+                        .indexOf(inputValue.toUpperCase()) !== -1
                     }
                   />
                 </Form.Item>
@@ -441,12 +451,10 @@ const AccountManagerPage = () => {
                   type="danger"
                   size={"large"}
                   onClick={showModalAdvancedSearch}
-
                 >
                   Advanced Search
                 </Button>
               </Col>
-
             </Row>
           </Form>
         </Col>
@@ -602,7 +610,7 @@ const AccountManagerPage = () => {
             lastName: "",
             phoneNumber: "",
             roleName: "",
-            status: ""
+            status: "",
           }}
         >
           <Form.Item name="firstName" label={t("firstname")}>
@@ -620,21 +628,17 @@ const AccountManagerPage = () => {
           <Form.Item name="address" label={t("address")}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="roleName"
-            label={t("role")}
-          >
-            <Select >
+          <Form.Item name="roleName" label={t("role")}>
+            <Select>
               <Option value="">All</Option>
-              <Option value={ROLE_SERVICE_PROVIDER}>{ROLE_SERVICE_PROVIDER}</Option>
+              <Option value={ROLE_SERVICE_PROVIDER}>
+                {ROLE_SERVICE_PROVIDER}
+              </Option>
               <Option value={ROLE_LOCATION_OWNER}>{ROLE_LOCATION_OWNER}</Option>
               <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="status"
-            label={t("status")}
-          >
+          <Form.Item name="status" label={t("status")}>
             <Select initialValues="">
               <Option value="">All</Option>
               <Option value="active">{t("active")}</Option>
