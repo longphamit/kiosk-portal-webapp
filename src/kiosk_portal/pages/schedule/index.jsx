@@ -19,8 +19,20 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
-import { changeStatusAccountService, searchAccountService, updateAccountService } from "../../services/account_service";
-import { createScheduleService, getListScheduleService } from "../../services/schedule_service";
+import {
+  changeStatusAccountService,
+  searchAccountService,
+  updateAccountService,
+} from "../../services/account_service";
+import {
+  createScheduleService,
+  getListScheduleService,
+} from "../../services/schedule_service";
+import {
+  convertDate,
+  getDate,
+  splitTimeString,
+} from "../../../@app/utils/date_util";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
@@ -44,15 +56,14 @@ const ScheduleManagerPage = () => {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
         await searchAccountService(querySearch).then((res) => {
-          // setTotalSchedule(res.data.metadata.total);
-          // setListSchedule(res.data.data);
+          setTotalSchedule(res.data.metadata.total);
+          setListSchedule(res.data.data);
         });
       } else {
         await getListScheduleService(currentPageToGetList, numInPage).then(
           (res) => {
-
-            //   setTotalSchedule(res.data.metadata.total);
-            setListSchedule(res.data);
+            setTotalSchedule(res.data.metadata.total);
+            setListSchedule(res.data.data);
           }
         );
       }
@@ -186,7 +197,7 @@ const ScheduleManagerPage = () => {
       mnth = ("0" + (date.getMonth() + 1)).slice(-2),
       day = ("0" + date.getDate()).slice(-2);
     return [date.getFullYear(), mnth, day].join("-");
-  }
+  };
 
   const formatTimePicker = (str) => {
     var date = new Date(str);
@@ -194,7 +205,7 @@ const ScheduleManagerPage = () => {
     var minutes = ("0" + date.getMinutes()).slice(-2);
     var second = ("0" + date.getSeconds()).slice(-2);
     return [hours, minutes, second].join(":");
-  }
+  };
 
   const handleCancelEditSchedule = () => {
     setIsEditScheduleModalVisible(false);
@@ -221,11 +232,11 @@ const ScheduleManagerPage = () => {
           name: values.name,
           dateStart: formatDatePicker(values.dateStart),
           dateEnd: formatDatePicker(values.dateEnd),
-          partyId: localStorageGetUserIdService(),
-          timeStart: formatTimePicker(values.timeStart),
-          timeEnd: formatTimePicker(values.timeEnd),
-          dayOfWeek: values.dayOfWeek.join('-'),
+          stringTimeStart: formatTimePicker(values.timeStart),
+          stringTimeEnd: formatTimePicker(values.timeEnd),
+          dayOfWeek: values.dayOfWeek.join("-"),
         };
+        console.log(newSchedule);
         await createScheduleService(newSchedule).then(() => {
           getListScheduleFunction(currentPage, numScheduleInPage);
           setIsCreateScheduleModalVisible(false);
@@ -233,7 +244,7 @@ const ScheduleManagerPage = () => {
         });
       } else {
         var errormsg = invalidMsg.join("-");
-        toast.error(errormsg)
+        toast.error(errormsg);
       }
     } catch (error) {
       console.log(error);
@@ -280,13 +291,6 @@ const ScheduleManagerPage = () => {
     await getListScheduleFunction(page, numScheduleInPage);
   };
 
-  const convertDate = (stringToConvert) => {
-    return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
-  };
-
-  const getDate = (dateOfBirth) => {
-    return moment(dateOfBirth);
-  };
   const types = [
     {
       name: "FirstName",
@@ -311,40 +315,40 @@ const ScheduleManagerPage = () => {
   ];
   const columns = [
     {
-      title: t('name'),
+      title: t("name"),
       dataIndex: "name",
       key: "name",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t('dayofweek'),
+      title: t("dayofweek"),
       dataIndex: "dayOfWeek",
       key: "dayOfWeek",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t('datestart'),
+      title: t("datestart"),
       dataIndex: "dateStart",
       key: "dateStart",
       render: (text) => <a>{convertDate(text)}</a>,
     },
     {
-      title: t('dateend'),
+      title: t("dateend"),
       dataIndex: "dateEnd",
       key: "dateEnd",
       render: (text) => <a>{convertDate(text)}</a>,
     },
     {
-      title: t('timestart'),
-      dataIndex: "stringTimeStart",
-      key: "stringTimeStart",
-      render: (text) => <a>{text}</a>,
+      title: t("timestart"),
+      dataIndex: "timeStart",
+      key: "timeStart",
+      render: (text) => <a>{splitTimeString(text)}</a>,
     },
     {
-      title: t('timeend'),
-      dataIndex: "stringTimeEnd",
-      key: "stringTimeEnd",
-      render: (text) => <a>{text}</a>,
+      title: t("timeend"),
+      dataIndex: "timeEnd",
+      key: "timeEnd",
+      render: (text) => <a>{splitTimeString(text)}</a>,
     },
     {
       title: t("status"),
@@ -447,17 +451,18 @@ const ScheduleManagerPage = () => {
                 </Form.Item>
               </Col>
               <Col>
-                <Button span={3}
+                <Button
+                  span={3}
                   style={{ marginLeft: 10 }}
                   type="danger"
                   size={"large"}
                   onClick={showModalAdvancedSearchSchedule}
                 >
                   Advanced Search
-                </Button></Col>
+                </Button>
+              </Col>
             </Row>
           </Form>
-
         </Col>
         <Col span={5} />
         <Col span={4}>
@@ -504,15 +509,16 @@ const ScheduleManagerPage = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="dateStart" label={t("datestart")}
+          <Form.Item
+            name="dateStart"
+            label={t("datestart")}
             rules={[
               {
                 required: true,
                 message: t("reqdatestartschedule"),
               },
-            ]}>
-
-
+            ]}
+          >
             <DatePicker
               placeholder={t("selecttime")}
               format="DD/MM/YYYY"
@@ -523,13 +529,16 @@ const ScheduleManagerPage = () => {
               }}
             />
           </Form.Item>
-          <Form.Item name="dateEnd" label={t("dateend")}
+          <Form.Item
+            name="dateEnd"
+            label={t("dateend")}
             rules={[
               {
                 required: true,
                 message: t("reqdateendschedule"),
               },
-            ]}>
+            ]}
+          >
             <DatePicker
               placeholder={t("selecttime")}
               format="DD/MM/YYYY"
@@ -540,47 +549,53 @@ const ScheduleManagerPage = () => {
               }}
             />
           </Form.Item>
-          <Form.Item name="timeStart" label={t('timestart')}
+          <Form.Item
+            name="timeStart"
+            label={t("timestart")}
             rules={[
               {
                 required: true,
                 message: t("reqtimestartschedule"),
               },
-            ]}>
+            ]}
+          >
             <TimePicker allowClear={false} />
           </Form.Item>
-          <Form.Item name="timeEnd" label={t('timeend')}
+          <Form.Item
+            name="timeEnd"
+            label={t("timeend")}
             rules={[
               {
                 required: true,
                 message: t("reqtimeendschedule"),
               },
-            ]}>
+            ]}
+          >
             <TimePicker allowClear={false} />
           </Form.Item>
-          <Form.Item name="dayOfWeek" label={t('dayofweek')}>
-            <Checkbox.Group style={{ width: '100%' }} onChange={{}}>
+          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+            <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
               <Row>
                 <Col span={8}>
-                  <Checkbox value="Monday">{t('monday')}</Checkbox>
+                  <Checkbox value="Monday">{t("monday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Tuesday">{t('tuesday')}</Checkbox>
+                  <Checkbox value="Tuesday">{t("tuesday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Wednesday">{t('wednesday')}</Checkbox>
+                  <Checkbox value="Wednesday">{t("wednesday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Thursday">{t('thursday')}</Checkbox>
+                  <Checkbox value="Thursday">{t("thursday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Friday">{t('friday')}</Checkbox>
+                  <Checkbox value="Friday">{t("friday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Saturday">{t('saturday')}</Checkbox>
+                  <Checkbox value="Saturday">{t("saturday")}</Checkbox>
                 </Col>
                 <Col span={8}>
-                  <Checkbox value="Sunday">{t('sunday')}</Checkbox>
+                  <Checkbox value="Sunday">{t("sunday")}</Checkbox>
                 </Col>
               </Row>
             </Checkbox.Group>
@@ -717,12 +732,16 @@ const ScheduleManagerPage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="dateOfBirth" label={t("dob")} rules={[
-              {
-                required: true,
-                message: t("reqname"),
-              },
-            ]}>
+            <Form.Item
+              name="dateOfBirth"
+              label={t("dob")}
+              rules={[
+                {
+                  required: true,
+                  message: t("reqname"),
+                },
+              ]}
+            >
               <DatePicker
                 placeholder={t("selectdob")}
                 format="DD/MM/YYYY"
