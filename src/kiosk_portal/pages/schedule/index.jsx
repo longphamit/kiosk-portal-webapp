@@ -30,6 +30,8 @@ import {
 } from "../../services/schedule_service";
 import {
   convertDate,
+  formatDatePicker,
+  formatTimePicker,
   getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
@@ -190,21 +192,6 @@ const ScheduleManagerPage = () => {
   };
   const showModalEditSchedule = () => {
     setIsEditScheduleModalVisible(true);
-  };
-
-  const formatDatePicker = (str) => {
-    var date = new Date(str),
-      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-      day = ("0" + date.getDate()).slice(-2);
-    return [date.getFullYear(), mnth, day].join("-");
-  };
-
-  const formatTimePicker = (str) => {
-    var date = new Date(str);
-    var hours = ("0" + date.getHours()).slice(-2);
-    var minutes = ("0" + date.getMinutes()).slice(-2);
-    var second = ("0" + date.getSeconds()).slice(-2);
-    return [hours, minutes, second].join(":");
   };
 
   const handleCancelEditSchedule = () => {

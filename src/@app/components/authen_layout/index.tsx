@@ -159,6 +159,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             >
               App Publish Request
             </Menu.Item>
+            <Menu.Item
+              key="7"
+              icon={<ToolOutlined />}
+              onClick={() => {
+                onNavigate("/poi-page");
+              }}
+            >
+              POI
+            </Menu.Item>
             <SubMenu key="sub2" icon={<LaptopOutlined />} title="Me">
               <Menu.Item
                 key="7"
