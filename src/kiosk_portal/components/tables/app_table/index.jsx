@@ -33,8 +33,7 @@ import {
   sendReqPublishApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
-import { getListCategoriesFunction } from "../../../../@app/utils/list_select_util";
-import { getDate } from "../../../../@app/utils/date_util";
+import { getListCategoriesService } from "../../../services/categories_service";
 
 const ApplicationTable = () => {
   const { Option } = Select;
@@ -81,7 +80,8 @@ const ApplicationTable = () => {
 
   useEffect(async () => {
     getListApplicationFunction(currentPage, numApplicationInPage);
-    setListCategories(await getListCategoriesFunction("", 100, 1));
+    const res = await getListCategoriesService("", 100, 1);
+    setListCategories(res.data);
   }, []);
 
   const onFinishUpdateApplication = async (values) => {
@@ -748,9 +748,11 @@ const ApplicationTable = () => {
               ]}
             >
               <Select placeholder="Select your categories">
-                {listCategories.map((item) => {
-                  return <Option value={item.id}>{item.name}</Option>;
-                })}
+                {listCategories
+                  ? listCategories.map((item) => {
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
+                  : null}
               </Select>
             </Form.Item>
 

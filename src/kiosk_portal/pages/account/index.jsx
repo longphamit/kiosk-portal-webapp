@@ -33,7 +33,6 @@ import {
   updateAccountService,
 } from "../../services/account_service";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import { getListRoleFunction } from "../../../@app/utils/list_select_util";
 const AccountManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
@@ -73,7 +72,8 @@ const AccountManagerPage = () => {
 
   useEffect(async () => {
     getListAccountFunction(currentPage, numAccountInPage);
-    setListRole(await getListRoleFunction());
+    const res = await getListRoleService();
+    setListRole(res.data);
   }, []);
 
   const onFinishEditAccount = async (values) => {
@@ -576,9 +576,11 @@ const AccountManagerPage = () => {
             rules={[{ required: true, message: t("reqrole") }]}
           >
             <Select placeholder={t("selectrole")}>
-              {listRole.map((item) => {
-                return <Option value={item.id}>{item.name}</Option>;
-              })}
+              {listRole
+                ? listRole.map((item) => {
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
+                : null}
             </Select>
           </Form.Item>
 
