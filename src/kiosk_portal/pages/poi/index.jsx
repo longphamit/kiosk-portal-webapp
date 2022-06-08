@@ -13,6 +13,7 @@ import {
   Space,
   Table,
   Tag,
+  TimePicker,
   Upload,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -21,44 +22,46 @@ import { toast } from "react-toastify";
 import moment from "moment";
 
 import { UploadOutlined } from "@ant-design/icons";
-import { getBase64 } from "../../../../@app/utils/file_util";
-import { localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
+import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
+import { getBase64 } from "../../../@app/utils/file_util";
+import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
 import {
-  formItemLayout,
-  tailFormItemLayout,
-} from "../../../layouts/form_layout";
+  createPoiService,
+  getListPoiService,
+} from "../../services/poi_service";
 import {
-  createApplicationService,
-  getListApplicationService,
-  sendReqPublishApplicationService,
-  updateApplicationService,
-} from "../../../services/application_service";
-import { getListCategoriesService } from "../../../services/categories_service";
+  formatDatePicker,
+  formatTimePicker,
+} from "../../../@app/utils/date_util";
+import {
+  getListDistrictService,
+  getListProvinceService,
+  getListWardService,
+} from "../../services/map_service";
 
-const ApplicationTable = () => {
+const PoiPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listApplication, setListApplication] = useState([]);
-  const [totalApplication, setTotalApplication] = useState(0);
-  const [numApplicationInPage, setNumApplicationInPage] = useState(5);
+  const [listPoi, setListPoi] = useState([]);
+  const [totalPoi, setTotalPoi] = useState(0);
+  const [numPoiInPage, setNumPoiInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
   const [listCategories, setListCategories] = useState([]);
-  const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
-    useState(false);
-  const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
-    useState(false);
+  const [isCreatePoiModalVisible, setIsCreatePoiModalVisible] = useState(false);
+  const [isEditPoiModalVisible, setIsEditPoiModalVisible] = useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
-  const [applicationSearchType, setApplicationSearchType] =
-    useState("FirstName");
+  const [poiSearchType, setPoiSearchType] = useState("FirstName");
+
+  const [listProvinces, setListProvinces] = useState([]);
+  const [listDistricts, setListDistricts] = useState([]);
+  const [listWards, setListWards] = useState([]);
+
   const [form] = Form.useForm();
-  const getListApplicationFunction = async (
-    currentPageToGetList,
-    numInPage
-  ) => {
+  const getListPoiFunction = async (currentPageToGetList, numInPage) => {
     try {
       // if (isSearch) {
       //   querySearch.page = currentPageToGetList;
@@ -67,30 +70,37 @@ const ApplicationTable = () => {
       //   setListApplication(res.data.data);
       //   return;
       // }
-      const res = await getListApplicationService(
-        currentPageToGetList,
-        numInPage
+      const res = await getListPoiService(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        numInPage,
+        currentPageToGetList
       );
-      setTotalApplication(res.data.metadata.total);
-      setListApplication(res.data.data);
+      setTotalPoi(res.data.metadata.total);
+      setListPoi(res.data.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(async () => {
-    getListApplicationFunction(currentPage, numApplicationInPage);
-    const res = await getListCategoriesService("", 100, 1);
-    setListCategories(res.data);
+    getListPoiFunction(currentPage, numPoiInPage);
+    const resProvinces = await getListProvinceService();
+    setListProvinces(resProvinces.data);
   }, []);
 
-  const onFinishUpdateApplication = async (values) => {
-    let updateApplication = [];
+  const onFinishUpdatePoi = async (values) => {
+    let updatePoi = [];
     if (typeof values.logo === "object") {
       let formatResult = [];
       const result = await getBase64(values.logo.file.originFileObj);
       formatResult = result.split(",");
-      updateApplication = {
+      updatePoi = {
         id: values.id,
         name: values.name,
         description: values.description,
@@ -100,7 +110,7 @@ const ApplicationTable = () => {
         appCategoryId: values.appCategoryId,
       };
     } else {
-      updateApplication = {
+      updatePoi = {
         id: values.id,
         name: values.name,
         description: values.description,
@@ -110,15 +120,52 @@ const ApplicationTable = () => {
         appCategoryId: values.appCategoryId,
       };
     }
-    try {
-      await updateApplicationService(updateApplication);
-      getListApplicationFunction(currentPage, numApplicationInPage);
-      setIsCreateApplicationModalVisible(false);
-      toast.success("Update Application Success");
-      handleCancelEditApplication();
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   await updateApplicationService(updatePoi);
+    //   getListPoiFunction(currentPage, numPoiInPage);
+    //   setIsCreatePoiModalVisible(false);
+    //   toast.success("Update Poi Success");
+    //   handleCancelEditPoi();
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  const handleProvinceChange = async (value) => {
+    const resDistrict = await getListDistrictService(value);
+    setListDistricts(resDistrict.data);
+    const resWard = await getListWardService(resDistrict.data[0].code);
+    setListWards(resWard.data);
+    form.setFieldsValue({
+      district: {
+        value: resDistrict.data[0].name,
+      },
+      selectDistricts: {
+        key: resDistrict.data[0].code,
+        value: resDistrict.data[0].code,
+      },
+      ward: {
+        value: resWard.data[0].name,
+      },
+      selectWards: {
+        key: resWard.data[0].code,
+        value: resWard.data[0].code,
+      },
+    });
+  };
+
+  const handleDistrictChange = async (value) => {
+    const resWard = await getListWardService(value);
+    setListWards(resWard.data);
+    form.setFieldsValue({
+      ward: {
+        value: resWard.data[0].name,
+      },
+      selectWards: {
+        key: resWard.data[0].code,
+        value: resWard.data[0].code,
+      },
+    });
   };
 
   // const onFinishAdvancedSearch = async (values) => {
@@ -153,7 +200,7 @@ const ApplicationTable = () => {
     let email = "";
     let address = "";
     let status = "";
-    switch (applicationSearchType) {
+    switch (poiSearchType) {
       case "FirstName":
         firstName = value;
         break;
@@ -198,12 +245,12 @@ const ApplicationTable = () => {
   //     setListApplication([]);
   //   }
   // };
-  const showModalEditApplication = () => {
-    setIsEditApplicationModalVisible(true);
+  const showModalEditPoi = () => {
+    setIsEditPoiModalVisible(true);
   };
 
-  const handleCancelEditApplication = () => {
-    setIsEditApplicationModalVisible(false);
+  const handleCancelEditPoi = () => {
+    setIsEditPoiModalVisible(false);
   };
 
   const beforeUpload = (file) => {
@@ -219,36 +266,69 @@ const ApplicationTable = () => {
     return isJpgOrPng && isLt2M;
   };
 
-  const onFinishCreateApplication = async (values) => {
-    let formatResult = [];
-    const result = await getBase64(values.logo.file.originFileObj);
-    formatResult = result.split(",");
-    const newApplication = {
-      name: values.name,
-      description: values.description,
-      link: values.link,
-      logo: formatResult[1],
-      appCategoryId: values.appCategoryId,
-    };
-    console.log(newApplication);
+  const onFinishCreatePoi = async (values) => {
+    const invalidMsg = [];
+    var check = true;
     try {
-      await createApplicationService(newApplication);
-      getListApplicationFunction(currentPage, numApplicationInPage);
-      setIsCreateApplicationModalVisible(false);
-      toast.success("Create Application Success");
-      form.resetFields();
+      if (values.stringOpenTime - values.stringCloseTime > 0) {
+        invalidMsg.push("Time start need to before or match with time end\n");
+        check = false;
+      }
+      if (check) {
+        let objCity = listProvinces.find(
+          (element) => element.code === values.city
+        );
+        let objDistrict = listDistricts.find(
+          (element) => element.code === values.district
+        );
+        let objWard = listWards.find((element) => element.code === values.ward);
+
+        if (typeof objDistrict === "undefined") {
+          objDistrict = values.district.value;
+        } else {
+          objDistrict = objDistrict.name;
+        }
+        if (typeof objWard === "undefined") {
+          objWard = values.ward.value;
+        } else {
+          objWard = objWard.name;
+        }
+
+        const newPoi = {
+          name: values.name,
+          description: values.description,
+          stringOpenTime: formatTimePicker(values.stringOpenTime),
+          stringCloseTime: formatTimePicker(values.stringCloseTime),
+          dayOfWeek: values.dayOfWeek.join("-"),
+          ward: objWard,
+          district: objDistrict,
+          city: objCity.name,
+          address: values.address,
+          poicategoryId: values.poicategoryId,
+        };
+        await createPoiService(newPoi).then(() => {
+          getListPoiFunction(currentPage, numPoiInPage);
+          setIsCreatePoiModalVisible(false);
+          toast.success("Create Poi Success");
+        });
+      } else {
+        var errormsg = invalidMsg.join("-");
+        toast.error(errormsg);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const showModalCreateApplication = () => {
-    setIsCreateApplicationModalVisible(true);
+  const showModalCreatePoi = () => {
+    setIsCreatePoiModalVisible(true);
     form.resetFields();
   };
 
-  const handleCancelCreateApplication = () => {
-    setIsCreateApplicationModalVisible(false);
+  const handleCancelCreatePoi = () => {
+    setIsCreatePoiModalVisible(false);
+    setListDistricts(null);
+    setListWards(null);
   };
   const showModalAdvancedSearch = () => {
     setIsAdvancedSearchModalVisible(true);
@@ -257,25 +337,25 @@ const ApplicationTable = () => {
   const handleCloseModalAdvancedSearch = () => {
     setIsAdvancedSearchModalVisible(false);
   };
-  const handleChangeStatusApplication = async (record) => {
+  const handleChangeStatusPoi = async (record) => {
     Modal.confirm({
-      title: "Are you sure to send request change status this application",
+      title: "Are you sure to send request change status this poi",
       okText: t("yes"),
       cancelText: t("no"),
       onOk: async () => {
         {
-          try {
-            const newReq = {
-              creatorId: localStorageGetUserIdService(),
-              serviceApplicationId: record.id,
-            };
-            await sendReqPublishApplicationService(newReq).then(() => {
-              getListApplicationFunction(currentPage, numApplicationInPage);
-              toast.success("Send req success");
-            });
-          } catch (error) {
-            console.log(error);
-          }
+          //   try {
+          //     const newReq = {
+          //       //   creatorId: localStorageGetUserIdService(),
+          //       //   serviceApplicationId: record.id,
+          //     };
+          //     await sendReqPublishApplicationService(newReq).then(() => {
+          //       getListPoiFunction(currentPage, numPoiInPage);
+          //       toast.success("Send req success");
+          //     });
+          //   } catch (error) {
+          //     console.log(error);
+          //   }
         }
       },
     });
@@ -283,7 +363,7 @@ const ApplicationTable = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListApplicationFunction(page, numApplicationInPage);
+    await getListPoiFunction(page, numPoiInPage);
   };
 
   const types = [
@@ -320,27 +400,21 @@ const ApplicationTable = () => {
       render: (text) => <a>{text}</a>,
     },
     {
+      title: "Open Day",
+      dataIndex: "dayOfWeek",
+      key: "dayOfWeek",
+      render: (text) => <a>{text}</a>,
+    },
+    {
       title: "Description",
       dataIndex: "description",
       key: "description",
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Link",
-      dataIndex: "link",
-      key: "link",
-      render: (text) => <a href={text}>{text}</a>,
-    },
-    {
-      title: "Logo",
-      dataIndex: "logo",
-      key: "logo",
-      render: (text) => <img style={{ height: 80, weight: 80 }} src={text} />,
-    },
-    {
-      title: "Category",
-      dataIndex: "appCategoryName",
-      key: "appCategoryName",
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
       render: (text) => <a>{text}</a>,
     },
 
@@ -361,10 +435,10 @@ const ApplicationTable = () => {
             shape="default"
             onClick={() => {
               setCurrentItem(record);
-              showModalEditApplication();
+              showModalEditPoi();
             }}
           >
-            Update application
+            Update poi
           </Button>
           {record.status === "unavailable" ? (
             <Button
@@ -372,7 +446,7 @@ const ApplicationTable = () => {
               shape="default"
               name={record}
               onClick={() => {
-                handleChangeStatusApplication(record);
+                handleChangeStatusPoi(record);
               }}
             >
               Publish App
@@ -384,7 +458,7 @@ const ApplicationTable = () => {
               disabled="false"
               name={record}
               onClick={() => {
-                handleChangeStatusApplication(record);
+                handleChangeStatusPoi(record);
               }}
             >
               Publish App
@@ -394,16 +468,6 @@ const ApplicationTable = () => {
       ),
     },
   ];
-
-  const config = {
-    rules: [
-      {
-        type: "object",
-        required: true,
-        message: t("reqdob"),
-      },
-    ],
-  };
 
   return (
     <>
@@ -424,7 +488,7 @@ const ApplicationTable = () => {
                   <Select
                     defaultValue="FirstName"
                     onChange={(e) => {
-                      setApplicationSearchType(e);
+                      setPoiSearchType(e);
                     }}
                   >
                     {types.map((item) => {
@@ -476,44 +540,40 @@ const ApplicationTable = () => {
           <Button
             className="success-button"
             size={"large"}
-            onClick={showModalCreateApplication}
+            onClick={showModalCreatePoi}
           >
-            Create application
+            Create poi
           </Button>
         </Col>
       </Row>
-      <Table
-        columns={columns}
-        dataSource={listApplication}
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={listPoi} pagination={false} />
       <Pagination
         defaultCurrent={1}
-        total={totalApplication}
+        total={totalPoi}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
 
       <Modal
-        title="Create Application"
-        visible={isCreateApplicationModalVisible}
-        onCancel={handleCancelCreateApplication}
+        title="Create Poi"
+        visible={isCreatePoiModalVisible}
+        onCancel={handleCancelCreatePoi}
         footer={null}
       >
         <Form
           {...formItemLayout}
           form={form}
-          name="register"
-          onFinish={onFinishCreateApplication}
+          name="registerPoi"
+          onFinish={onFinishCreatePoi}
           scrollToFirstError
         >
           <Form.Item
             name="name"
-            label="Name"
+            label={t("name")}
             rules={[
               {
                 required: true,
-                message: "Please input application name!",
+                message: t("reqnameschedule"),
               },
             ]}
           >
@@ -525,64 +585,166 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: "Please input application description!",
+                message: "Please input your description!",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="link"
-            label="Link"
+            name="stringOpenTime"
+            label={t("timestart")}
             rules={[
               {
                 required: true,
-                message: "Please input application link!",
+                message: t("reqtimestartschedule"),
+              },
+            ]}
+          >
+            <TimePicker allowClear={false} />
+          </Form.Item>
+          <Form.Item
+            name="stringCloseTime"
+            label={t("timeend")}
+            rules={[
+              {
+                required: true,
+                message: t("reqtimeendschedule"),
+              },
+            ]}
+          >
+            <TimePicker allowClear={false} />
+          </Form.Item>
+          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+            <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
+              <Row>
+                <Col span={8}>
+                  <Checkbox value="Monday">{t("monday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Tuesday">{t("tuesday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Wednesday">{t("wednesday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Thursday">{t("thursday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Friday">{t("friday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Saturday">{t("saturday")}</Checkbox>
+                </Col>
+                <Col span={8}>
+                  <Checkbox value="Sunday">{t("sunday")}</Checkbox>
+                </Col>
+              </Row>
+            </Checkbox.Group>
+          </Form.Item>
+          <Form.Item
+            name="address"
+            label="Address"
+            rules={[
+              {
+                required: true,
+                message: "Please input your address!",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="logo"
-            label="Logo"
+            name="city"
+            label="City"
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: "Please choose your city!",
               },
             ]}
           >
-            <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture"
-              maxCount={1}
-              accept=".png,.jpeg"
-              beforeUpload={beforeUpload}
+            <Select
+              name="selectProvince"
+              onChange={handleProvinceChange}
+              //   defaultValue={listProvinces[0]}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
+              {listProvinces
+                ? listProvinces.map((item) => (
+                    <Option key={item.code} value={item.code}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
           </Form.Item>
           <Form.Item
-            name="appCategoryId"
+            name="district"
+            label="District"
+            rules={[
+              {
+                required: true,
+                message: "Please choose your district!",
+              },
+            ]}
+          >
+            <Select
+              name="selectDistricts"
+              onChange={handleDistrictChange}
+              //   defaultValue={listDistricts[0]}
+            >
+              {listDistricts
+                ? listDistricts.map((item) => (
+                    <Option key={item.code} value={item.code}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="ward"
+            label="Ward"
+            rules={[
+              {
+                required: true,
+                message: "Please choose your ward!",
+              },
+            ]}
+          >
+            <Select
+              name="selectWards"
+              // defaultValue={listWards[0]}
+            >
+              {listWards
+                ? listWards.map((item) => (
+                    <Option key={item.code} value={item.code}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="poicategoryId"
             label="Category"
             rules={[
               {
                 required: true,
-                message: "Please choose application category!",
+                message: "Please choose your category!",
               },
             ]}
           >
-            <Select placeholder="Select your categories">
-              {listCategories.map((item) => {
-                return <Option value={item.id}>{item.name}</Option>;
-              })}
+            <Select defaultValue={{}}>
+              {/* {provinceData.map((province) => (
+                <Option key={province}>{province}</Option>
+              ))} */}
+              <Option value="c5ad724c-0513-4f9e-8239-50b2a70793a0">Test</Option>
             </Select>
           </Form.Item>
-
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Create Application
+              Create Poi
             </Button>
           </Form.Item>
         </Form>
@@ -646,8 +808,8 @@ const ApplicationTable = () => {
         <Modal
           key={currentItem.id}
           title={t("edit")}
-          visible={isEditApplicationModalVisible}
-          onCancel={handleCancelEditApplication}
+          visible={isEditPoiModalVisible}
+          onCancel={handleCancelEditPoi}
           footer={null}
         >
           <Form
@@ -655,7 +817,7 @@ const ApplicationTable = () => {
             {...formItemLayout}
             form={form}
             name="edit"
-            onFinish={onFinishUpdateApplication}
+            onFinish={onFinishUpdatePoi}
             scrollToFirstError
             initialValues={{
               id: currentItem.id,
@@ -679,7 +841,7 @@ const ApplicationTable = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input application name!",
+                  message: "Please input poi name!",
                 },
               ]}
             >
@@ -691,7 +853,7 @@ const ApplicationTable = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input application description!",
+                  message: "Please input poi description!",
                 },
               ]}
             >
@@ -703,7 +865,7 @@ const ApplicationTable = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input application link!",
+                  message: "Please input poi link!",
                 },
               ]}
             >
@@ -715,7 +877,7 @@ const ApplicationTable = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please choose application logo!",
+                  message: "Please choose poi logo!",
                 },
               ]}
             >
@@ -743,7 +905,7 @@ const ApplicationTable = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please choose application category!",
+                  message: "Please choose poi category!",
                 },
               ]}
             >
@@ -758,7 +920,7 @@ const ApplicationTable = () => {
 
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Update Application
+                Update Poi
               </Button>
             </Form.Item>
           </Form>
@@ -767,4 +929,4 @@ const ApplicationTable = () => {
     </>
   );
 };
-export default ApplicationTable;
+export default PoiPage;
