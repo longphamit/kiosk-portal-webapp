@@ -15,7 +15,7 @@ interface Props {
   isLayout: boolean;
   authen: boolean;
   path: string;
-  roles:[string]
+  roles:string[]
 }
 const AppElement: React.FC<Props> = (props) => {
   const {

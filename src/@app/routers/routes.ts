@@ -30,7 +30,7 @@ interface Route {
   isLayout: boolean;
   authen: boolean;
   breadcrumb: string;
-  roles:[string];
+  roles: string[];
 }
 const routes: Route[] = [
   {
