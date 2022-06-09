@@ -7,9 +7,10 @@ import {
   KeyOutlined,
   FundOutlined,
   BlockOutlined,
-  AuditOutlined,
+  ArrowUpOutlined,
   ClockCircleOutlined,
   ToolOutlined,
+  MenuOutlined
 } from "@ant-design/icons";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import "./styles.css";
@@ -19,7 +20,11 @@ import { USER_FRIST_NAME } from "../../constants/key";
 
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../constants/role";
+import {
+  ROLE_ADMIN,
+  ROLE_LOCATION_OWNER,
+  ROLE_SERVICE_PROVIDER,
+} from "../../constants/role";
 import {
   localStorageClearService,
   localStorageGetReduxState,
@@ -103,6 +108,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   {t("accountmanager")}
                 </Menu.Item>
+                <Menu.Item
+                  icon={<MenuOutlined />}
+                  key="98"
+                  onClick={() => {
+                    onNavigate("/app-category");
+                  }}
+                >
+                  App Category
+                </Menu.Item>
               </>
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
@@ -152,12 +166,12 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
 
             <Menu.Item
               key="6"
-              icon={<ToolOutlined />}
+              icon={<ArrowUpOutlined />}
               onClick={() => {
                 onNavigate("/application-publish-request");
               }}
             >
-              App Publish Request
+              App Publish
             </Menu.Item>
             <Menu.Item
               key="7"
