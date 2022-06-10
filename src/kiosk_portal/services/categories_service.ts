@@ -5,3 +5,8 @@ export const getListCategoriesService = async (Name:any,size:any,page:any) => {
     const response = await request.get(`${HOST}/v1/categories?Name=${Name}&size=${size}&page=${page}`);
     return response.data.data;
 };
+
+export const createCategoriesService = async (data: any) => {
+    const response = await request.post(`${HOST}/v1/categories`, data);
+    return response.data;
+  };
