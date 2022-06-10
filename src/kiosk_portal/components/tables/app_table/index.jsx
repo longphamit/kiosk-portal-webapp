@@ -35,9 +35,11 @@ import {
 } from "../../../services/application_service";
 import { getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
+import FormDetailApplication from "../../../pages/application/modalDetailApplication";
 
 const ApplicationTable = () => {
   const { Option } = Select;
+  const { TextArea } = Input;
   const { t } = useTranslation();
   const [listApplication, setListApplication] = useState([]);
   const [totalApplication, setTotalApplication] = useState(0);
@@ -50,6 +52,8 @@ const ApplicationTable = () => {
   const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
     useState(false);
   const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
+    useState(false);
+  const [isDetailApplicationModalVisible, setIsDetailApplicationModalVisible] =
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
@@ -74,6 +78,7 @@ const ApplicationTable = () => {
       );
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
+      console.log(res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -199,6 +204,15 @@ const ApplicationTable = () => {
   //     setListApplication([]);
   //   }
   // };
+
+  const showModalDetailApplication = () => {
+    setIsDetailApplicationModalVisible(true);
+  };
+
+  const handleCancelShowDetailApplication = () => {
+    setIsDetailApplicationModalVisible(false);
+  };
+
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
   };
@@ -302,6 +316,12 @@ const ApplicationTable = () => {
   ];
   const columns = [
     {
+      title: "Logo",
+      dataIndex: "logo",
+      key: "logo",
+      render: (text) => <img style={{ height: 80, weight: 80 }} src={text} />,
+    },
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
@@ -319,12 +339,7 @@ const ApplicationTable = () => {
       key: "link",
       render: (text) => <a href={text}>{text}</a>,
     },
-    {
-      title: "Logo",
-      dataIndex: "logo",
-      key: "logo",
-      render: (text) => <img style={{ height: 80, weight: 80 }} src={text} />,
-    },
+
     {
       title: "Category",
       dataIndex: "appCategoryName",
@@ -346,6 +361,16 @@ const ApplicationTable = () => {
         <Space size="middle">
           <Button
             className="infor-button"
+            shape="default"
+            onClick={() => {
+              setCurrentItem(record);
+              showModalDetailApplication();
+            }}
+          >
+            Detail Application
+          </Button>
+          <Button
+            className="warn-button"
             shape="default"
             onClick={() => {
               setCurrentItem(record);
@@ -483,6 +508,15 @@ const ApplicationTable = () => {
       />
 
       <Modal
+        title="Detail Application"
+        visible={isDetailApplicationModalVisible}
+        onCancel={handleCancelShowDetailApplication}
+        footer={null}
+      >
+        <FormDetailApplication itemcurrent={currentItem} />
+      </Modal>
+
+      <Modal
         title="Create Application"
         visible={isCreateApplicationModalVisible}
         onCancel={handleCancelCreateApplication}
@@ -517,7 +551,7 @@ const ApplicationTable = () => {
               },
             ]}
           >
-            <Input />
+            <TextArea />
           </Form.Item>
           <Form.Item
             name="link"
