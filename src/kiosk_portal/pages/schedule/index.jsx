@@ -35,6 +35,8 @@ import {
   getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
+import FormAddTemplate from "./modalAddTemplate";
+import { getListTemplateService } from "../../services/template_service";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
@@ -46,13 +48,30 @@ const ScheduleManagerPage = () => {
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
+  const [listTemplate, setListTemplate] = useState([]);
   const [isCreateScheduleModalVisible, setIsCreateScheduleModalVisible] =
     useState(false);
   const [isEditScheduleModalVisible, setIsEditScheduleModalVisible] =
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
+
+  const [isAddTemplateModalVisible, setIsAddTemplateModalVisible] =
+    useState(false);
   const [form] = Form.useForm();
+
+  const getListTemplateFunction = async () => {
+    try {
+      let name = querySearch !== "" ? querySearch : "";
+      const res = await getListTemplateService(1, 100000000, "");
+      setListTemplate(res.data.data);
+      console.log(res.data.data);
+      console.log(listTemplate);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getListScheduleFunction = async (currentPageToGetList, numInPage) => {
     try {
       if (isSearch) {
@@ -77,6 +96,8 @@ const ScheduleManagerPage = () => {
 
   useEffect(() => {
     getListScheduleFunction(currentPage, numScheduleInPage);
+    getListTemplateFunction();
+    console.log(listTemplate);
   }, []);
 
   const formItemLayout = {
@@ -192,6 +213,18 @@ const ScheduleManagerPage = () => {
   };
   const showModalEditSchedule = () => {
     setIsEditScheduleModalVisible(true);
+  };
+
+  const handleShowModalAddTemplate = () => {
+    setIsAddTemplateModalVisible(true);
+  };
+  const handleCancelModalAddTemplate = () => {
+    setIsAddTemplateModalVisible(false);
+  };
+
+  const onFinishModalAddTemplate = async (childdata) => {
+    setIsAddTemplateModalVisible(childdata);
+    await getListScheduleFunction(currentPage, numScheduleInPage);
   };
 
   const handleCancelEditSchedule = () => {
@@ -364,6 +397,16 @@ const ScheduleManagerPage = () => {
           >
             {t("edit")}
           </Button>
+          <Button
+            className="warn-button"
+            shape="default"
+            onClick={() => {
+              setCurrentItem(record);
+              handleShowModalAddTemplate();
+            }}
+          >
+            Add Template
+          </Button>
           {record.roleName === "Admin" ? (
             <Button
               shape="default"
@@ -470,6 +513,19 @@ const ScheduleManagerPage = () => {
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
+
+      <Modal
+        title="Add Template"
+        visible={isAddTemplateModalVisible}
+        onCancel={handleCancelModalAddTemplate}
+        footer={null}
+      >
+        <FormAddTemplate
+          modalToIndex={onFinishModalAddTemplate}
+          indexToModal={currentItem}
+          listTemplate={listTemplate}
+        />
+      </Modal>
 
       <Modal
         title={t("createschedule")}
