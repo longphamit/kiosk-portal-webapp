@@ -5,7 +5,6 @@ import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 import { createCategoriesService } from "../../services/categories_service";
 import { toast } from "react-toastify";
-import { useState } from "react";
 
 const FormCreateCategory = ({ visible }) => {
   const [form] = Form.useForm();
@@ -17,7 +16,6 @@ const FormCreateCategory = ({ visible }) => {
       name: values.name,
       logo: formatResult[1],
     };
-    console.log(newCategories);
     try {
       await createCategoriesService(newCategories);
       toast.success("Create Category Success");
