@@ -6,29 +6,35 @@ import { getListAppCategoryService } from "../../services/app_category_service";
 
 const AppCategoryPage = () => {
     const [appCategoryList, setAppCategoryList] = useState([])
-    const [appCategoryPage,setAppCategoryPage]=useState(1)
-    const [appCategoryPageSize,setAppCategoryPageSize]=useState(5)
-    const [appCategoryPageTotal,setAppCategoryPageTotal]=useState(0)
+    const [appCategoryPage, setAppCategoryPage] = useState(1)
+    const [appCategoryPageSize, setAppCategoryPageSize] = useState(5)
+    const [appCategoryPageTotal, setAppCategoryPageTotal] = useState(0)
     const { t } = useTranslation()
     const { form } = Form.useForm()
     const columns = [
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-            render: (text) => <a>{text}</a>,
-        },
-
         {
             title: "Logo",
             dataIndex: "logo",
             key: "logo",
             render: (text) => <img style={{ height: 80, weight: 80 }} src={text} />,
         },
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            render: (text) => <a>{text}</a>,
+        }
     ];
-    const getAppCategoryList = async () => {
-        getListAppCategoryService();
+    const getAppCategoryList = async (page,size) => {
+        const res = await getListAppCategoryService(page, size);
+        setAppCategoryList(res.data.data)
     }
+
+    const handleChangeNumberOfPaging = async (page, pageSize) => {
+        setAppCategoryPage(page);
+        await getAppCategoryList(page, appCategoryPageSize);
+      };
+
     useEffect(async () => {
         getAppCategoryList(appCategoryPage,appCategoryPageSize);
     }, []);
@@ -95,9 +101,9 @@ const AppCategoryPage = () => {
             />
             <Pagination
                 defaultCurrent={1}
-                total={0}
-                pageSize={5}
-                onChange={() => { }}
+                total={appCategoryPageTotal}
+                pageSize={appCategoryPageSize}
+                onChange={handleChangeNumberOfPaging}
             />
         </>
 
