@@ -22,7 +22,7 @@ import moment from "moment";
 
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../../../@app/utils/file_util";
-import { localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
+import { localStorageGetReduxState, localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
 import {
   formItemLayout,
   tailFormItemLayout,
@@ -36,11 +36,15 @@ import {
 import { getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import FormDetailApplication from "../../../pages/application/modalDetailApplication";
+import { useNavigate } from "react-router-dom";
+import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 
 const ApplicationTable = () => {
+  const navigator = useNavigate()
   const { Option } = Select;
   const { TextArea } = Input;
   const { t } = useTranslation();
+  const role = localStorageGetReduxState().auth.role;
   const [listApplication, setListApplication] = useState([]);
   const [totalApplication, setTotalApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
@@ -328,12 +332,6 @@ const ApplicationTable = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      render: (text) => <a>{text}</a>,
-    },
-    {
       title: "Link",
       dataIndex: "link",
       key: "link",
@@ -363,46 +361,49 @@ const ApplicationTable = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              setCurrentItem(record);
-              showModalDetailApplication();
+              navigator(`/app-detail/${record.id}`)
             }}
           >
-            Detail Application
+            Detail
           </Button>
-          <Button
-            className="warn-button"
-            shape="default"
-            onClick={() => {
-              setCurrentItem(record);
-              showModalEditApplication();
-            }}
-          >
-            Update application
-          </Button>
-          {record.status === "unavailable" ? (
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleChangeStatusApplication(record);
-              }}
-            >
-              Publish App
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              shape="default"
-              disabled="false"
-              name={record}
-              onClick={() => {
-                handleChangeStatusApplication(record);
-              }}
-            >
-              Publish App
-            </Button>
-          )}
+          {
+            role ? role === ROLE_SERVICE_PROVIDER ? <>
+              <Button
+                className="warn-button"
+                shape="default"
+                onClick={() => {
+                  setCurrentItem(record);
+                  showModalEditApplication();
+                }}
+              >
+                Update
+              </Button>
+              {record.status === "unavailable" ? (
+                <Button
+                  type="primary"
+                  shape="default"
+                  name={record}
+                  onClick={() => {
+                    handleChangeStatusApplication(record);
+                  }}
+                >
+                  Publish
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  shape="default"
+                  disabled="false"
+                  name={record}
+                  onClick={() => {
+                    handleChangeStatusApplication(record);
+                  }}
+                >
+                  Publish
+                </Button>
+              )}
+            </> : null : null
+          }
         </Space>
       ),
     },
@@ -772,8 +773,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                   : null}
               </Select>
             </Form.Item>

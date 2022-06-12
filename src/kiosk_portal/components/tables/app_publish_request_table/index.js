@@ -40,6 +40,7 @@ import {
   PUBLISH_DENIED,
   PUBLISH_IN_PROGRESS,
 } from "../../../constants/app_publish_request_status_constant";
+import { useNavigate } from "react-router-dom";
 
 const searchTypeKiosk = [
   {
@@ -57,6 +58,7 @@ const AppPublishRequestTable = ({ partyId }) => {
   const [listAppPublishRequest, setListListAppPublishRequest] = useState([]);
   const [appPublishRequestSearchType, setAppPublishRequestSearchType] =
     useState("CreatorEmail");
+    const navigator=useNavigate()
   const AdminApplicationPublishRequestColumn = [
     {
       title: "No",
@@ -72,6 +74,12 @@ const AppPublishRequestTable = ({ partyId }) => {
     {
       title: "App Name",
       dataIndex: "serviceApplicationName",
+      key: "id",
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Handler",
+      dataIndex: "handlerName",
       key: "id",
       render: (text) => <a>{text}</a>,
     },
@@ -98,10 +106,11 @@ const AppPublishRequestTable = ({ partyId }) => {
       align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="infor-button">Detail</Button>
+          <Button className="infor-button" onClick={()=>{navigator(`/app-detail/${record.serviceApplicationId}`)}}>App</Button>
         </Space>
       ),
     },
+    
   ];
   const searchTypeAppPublishRequest = [
     {

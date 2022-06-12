@@ -1,4 +1,4 @@
-import { Col, Collapse, Row, Tag } from "antd";
+import { Col, Collapse, Descriptions, Row, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -28,56 +28,23 @@ const AccountDetailPage = () => {
           <>
             <div id="account-info-panel">
               <Col span={24}>
-                <Row className="info-row">
-                  <Col span={2} className="info-title">
-                    Name:
-                  </Col>
-                  <Col span={6}>
-                    {accountDetail.lastName + " " + accountDetail.firstName}
-                  </Col>
-                  <Col span={2} className="info-title">
-                    Email:
-                  </Col>
-                  <Col span={6}>
-                    {accountDetail.email}
-                  </Col>
-                  <Col span={2} className="info-title">
-                    Phone:
-                  </Col>
-                  <Col span={6}>
-                    {accountDetail.phoneNumber}
-                  </Col>
-                </Row>
-
-                <Row className="info-row">
-                  <Col span={2} className="info-title">
-                    Role:
-                  </Col>
-                  <Col span={6}>
-                    {accountDetail.roleName}
-                  </Col>
-                  <Col span={2} className="info-title">
-                    Created By:
-                  </Col>
-                  <Col span={6}>
+                <Descriptions title="Account Info">
+                  <Descriptions.Item label="Name" labelStyle={{fontWeight:"bold"}}>{accountDetail.lastName + " " + accountDetail.firstName}</Descriptions.Item>
+                  <Descriptions.Item label="Email" labelStyle={{fontWeight:"bold"}}>{accountDetail.email}</Descriptions.Item>
+                  <Descriptions.Item label="Phone" labelStyle={{fontWeight:"bold"}}>{accountDetail.phoneNumber}</Descriptions.Item>
+                  <Descriptions.Item label="Role" labelStyle={{fontWeight:"bold"}}>{accountDetail.roleName}</Descriptions.Item>
+                  <Descriptions.Item label="Created By" labelStyle={{fontWeight:"bold"}}>
                     {accountDetail.creatorMail}
-                  </Col>
-                  <Col span={2} className="info-title">
-                    Status:
-                  </Col>
-                  <Col span={6}>
-                    {
-                      accountDetail.status === "active" ? (
-                        <Tag color="green">{t("activate")}</Tag>
-                      ) : (
-                        <Tag color="red">{t("deactivate")}</Tag>
-                      )
-                    }
-                  </Col>
-                </Row>
-
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Status" labelStyle={{fontWeight:"bold"}}>{
+                    accountDetail.status === "active" ? (
+                      <Tag color="green">{t("activate")}</Tag>
+                    ) : (
+                      <Tag color="red">{t("deactivate")}</Tag>
+                    )
+                  }</Descriptions.Item>
+                </Descriptions>
               </Col>
-
             </div>
           </> : null
       }
@@ -93,17 +60,17 @@ const AccountDetailPage = () => {
             </Panel>
           </Collapse></>)
 
-          : accountDetail.roleName === ROLE_SERVICE_PROVIDER?
-          (<><Collapse defaultActiveKey={["1"]}>
-            <Panel
-              header="Applications"
-              key="1"
-              style={{ color: "#ffff" }}
-            >
-              <ApplicationTable partyId={partyId} />
-            </Panel>
-          </Collapse></>)
-          : null:null
+          : accountDetail.roleName === ROLE_SERVICE_PROVIDER ?
+            (<><Collapse defaultActiveKey={["1"]}>
+              <Panel
+                header="Applications"
+                key="1"
+                style={{ color: "#ffff" }}
+              >
+                <ApplicationTable partyId={partyId} />
+              </Panel>
+            </Collapse></>)
+            : null : null
       }
     </>)
 }

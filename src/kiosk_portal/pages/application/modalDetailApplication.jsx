@@ -12,7 +12,7 @@ const FormDetailApplication = (itemcurrent) => {
           form={form}
           name="register"
           scrollToFirstError
-          onFinish={test}
+          onFinish={()=>{}}
           // initialValues={{
           //   appCategoryName: itemcurrent.itemcurrent.appCategoryName,
           //   description: itemcurrent.itemcurrent.description,

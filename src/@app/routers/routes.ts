@@ -4,6 +4,7 @@ import AccountManagerPage from "../../kiosk_portal/pages/account";
 
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import ApplicationPage from "../../kiosk_portal/pages/application";
+import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import HomePage from "../../kiosk_portal/pages/home";
@@ -134,7 +135,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN]
+    roles:[ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
   },
   {
     component: ApplicationPage,
@@ -171,6 +172,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles:[ROLE_ADMIN]
+  },
+  {
+    component: ApplicationDetailPage,
+    path: "/app-detail/:appId",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
   },
 ];
 
