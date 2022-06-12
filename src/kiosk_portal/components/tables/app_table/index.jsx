@@ -277,7 +277,7 @@ const ApplicationTable = () => {
             };
             await sendReqPublishApplicationService(newReq).then(() => {
               getListApplicationFunction(currentPage, numApplicationInPage);
-              toast.success("Send req success");
+              toast.success("Send request publish success");
             });
           } catch (error) {
             console.log(error);

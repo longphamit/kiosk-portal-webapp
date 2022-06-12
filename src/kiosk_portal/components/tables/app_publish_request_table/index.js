@@ -219,7 +219,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={4}>
+                <Col span={6}>
                   <Form.Item
                     initialValue=""
                     name="status"
