@@ -21,3 +21,26 @@ page=${page}
 &Status=${data.status}`);
   return response.data;
 };
+export const getInprogressAppPublishRequestByAppIdService = async (
+  appId: string
+) => {
+  const response = await request.get(
+    `${HOST}/v1/publishRequests/inprogress/appId/${appId}`
+  );
+  return response.data;
+};
+export const approveAppPublishRequestService = async (requestId: string) => {
+  const response = await request.put(`${HOST}/v1/publishRequests`, {
+    id: requestId,
+    status: "approved",
+  });
+  return response.data;
+};
+export const denyAppPublishRequestService = async (requestId: string,comment:string) => {
+  const response = await request.put(`${HOST}/v1/publishRequests`, {
+    id: requestId,
+    status: "denied",
+    handlerComment:comment
+  });
+  return response.data;
+};
