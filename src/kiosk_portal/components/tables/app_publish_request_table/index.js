@@ -58,7 +58,7 @@ const AppPublishRequestTable = ({ partyId }) => {
   const [listAppPublishRequest, setListListAppPublishRequest] = useState([]);
   const [appPublishRequestSearchType, setAppPublishRequestSearchType] =
     useState("CreatorEmail");
-    const navigator=useNavigate()
+  const navigator = useNavigate();
   const AdminApplicationPublishRequestColumn = [
     {
       title: "No",
@@ -106,11 +106,26 @@ const AppPublishRequestTable = ({ partyId }) => {
       align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="infor-button" onClick={()=>{navigator(`/app-detail/${record.serviceApplicationId}`)}}>App</Button>
+          <Button
+            className="infor-button"
+            onClick={() => {
+              navigator(`/app-detail/${record.serviceApplicationId}`);
+            }}
+          >
+            App
+          </Button>
+          <Button
+              disabled={record.status===PUBLISH_DENIED?false:true}
+              className="infor-button"
+              onClick={() => {
+                
+              }}
+            >
+              Detail
+            </Button>
         </Space>
       ),
     },
-    
   ];
   const searchTypeAppPublishRequest = [
     {
