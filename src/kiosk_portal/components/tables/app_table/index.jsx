@@ -18,8 +18,6 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import moment from "moment";
-
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../../../@app/utils/file_util";
 import { localStorageGetReduxState, localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
@@ -35,7 +33,6 @@ import {
 } from "../../../services/application_service";
 import { getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
-import FormDetailApplication from "../../../pages/application/modalDetailApplication";
 import { useNavigate } from "react-router-dom";
 import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 
@@ -56,8 +53,6 @@ const ApplicationTable = () => {
   const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
     useState(false);
   const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
-    useState(false);
-  const [isDetailApplicationModalVisible, setIsDetailApplicationModalVisible] =
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
@@ -209,13 +204,7 @@ const ApplicationTable = () => {
   //   }
   // };
 
-  const showModalDetailApplication = () => {
-    setIsDetailApplicationModalVisible(true);
-  };
 
-  const handleCancelShowDetailApplication = () => {
-    setIsDetailApplicationModalVisible(false);
-  };
 
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
@@ -507,16 +496,6 @@ const ApplicationTable = () => {
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
-
-      <Modal
-        title="Detail Application"
-        visible={isDetailApplicationModalVisible}
-        onCancel={handleCancelShowDetailApplication}
-        footer={null}
-      >
-        <FormDetailApplication itemcurrent={currentItem} />
-      </Modal>
-
       <Modal
         title="Create Application"
         visible={isCreateApplicationModalVisible}

@@ -2,6 +2,7 @@ import {
   Button,
   Col,
   Collapse,
+  Descriptions,
   Form,
   Input,
   Modal,
@@ -56,8 +57,13 @@ const AppPublishRequestTable = ({ partyId }) => {
   const [appPublishRequestTotal, setAppPublishRequestTotal] = useState(0);
   const [appPublishRequestPageSize, setAppPublishRequestPageSize] = useState(5);
   const [listAppPublishRequest, setListListAppPublishRequest] = useState([]);
+  const [appPublishRequestSelected, setAppPublishRequestSelected] = useState();
   const [appPublishRequestSearchType, setAppPublishRequestSearchType] =
     useState("CreatorEmail");
+  const [
+    isPublishRequestDetailModalVisible,
+    setPublishRequestDetailModalVisible,
+  ] = useState();
   const navigator = useNavigate();
   const AdminApplicationPublishRequestColumn = [
     {
@@ -103,7 +109,7 @@ const AppPublishRequestTable = ({ partyId }) => {
     {
       title: t("action"),
       key: "action",
-      align: "center",
+      
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -114,15 +120,19 @@ const AppPublishRequestTable = ({ partyId }) => {
           >
             App
           </Button>
-          <Button
-              disabled={record.status===PUBLISH_DENIED?false:true}
+          {record.status === PUBLISH_DENIED ? (
+            <Button
               className="infor-button"
               onClick={() => {
-                
+                setAppPublishRequestSelected(record);
+                setPublishRequestDetailModalVisible(true);
               }}
             >
-              Detail
+              View Response
             </Button>
+          ) : (
+            <></>
+          )}
         </Space>
       ),
     },
@@ -265,6 +275,31 @@ const AppPublishRequestTable = ({ partyId }) => {
           onChange={handlePaginationAppPublishRequest}
         />
       </div>
+      {appPublishRequestSelected ? (
+        <Modal
+          key={appPublishRequestSelected.id}
+          visible={isPublishRequestDetailModalVisible}
+          title="Result"
+          onCancel={() => {
+            setPublishRequestDetailModalVisible(false);
+          }}
+          footer={[]}
+        >
+          <div style={{ width: "100%" }}>
+            <Descriptions column={2}>
+              <Descriptions.Item label="Email">
+                {appPublishRequestSelected.handlerEmail}
+              </Descriptions.Item>
+              <Descriptions.Item label="Name">
+                {appPublishRequestSelected.handlerName}
+              </Descriptions.Item>
+              <Descriptions.Item label="Response">
+                {appPublishRequestSelected.handlerComment}
+              </Descriptions.Item>
+            </Descriptions>
+          </div>
+        </Modal>
+      ) : null}
     </>
   );
 };
