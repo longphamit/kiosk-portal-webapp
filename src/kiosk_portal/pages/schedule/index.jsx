@@ -497,8 +497,7 @@ const ScheduleManagerPage = () => {
         <Col span={5} />
         <Col span={4}>
           <Button
-            type="primary"
-            shape="round"
+            className="success-button"
             size={"large"}
             onClick={showModalCreateSchedule}
           >
