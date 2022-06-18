@@ -35,7 +35,7 @@ import {
   getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
-import FormAddTemplate from "./modalAddTemplate";
+import FormAddTemplate from "./formAddTemplate";
 import { getListTemplateService } from "../../services/template_service";
 
 const ScheduleManagerPage = () => {
