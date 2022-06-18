@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListAppCategoryService } from "../../services/app_category_service";
-import FormCreateCategory from "./modalCreate";
+import FormCreateCategory from "./formCreate";
 
 const AppCategoryPage = () => {
   const [appCategoryList, setAppCategoryList] = useState([]);

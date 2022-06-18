@@ -30,14 +30,12 @@ import {
   getListPoiService,
 } from "../../services/poi_service";
 import {
-  formatDatePicker,
-  formatTimePicker,
-} from "../../../@app/utils/date_util";
-import {
   getListDistrictService,
   getListProvinceService,
   getListWardService,
 } from "../../services/map_service";
+import ModalCreatePoi from "./modalCreatePoi";
+import { getListCategoriesService } from "../../services/categories_service";
 
 const PoiPage = () => {
   const { Option } = Select;
@@ -57,8 +55,6 @@ const PoiPage = () => {
   const [poiSearchType, setPoiSearchType] = useState("FirstName");
 
   const [listProvinces, setListProvinces] = useState([]);
-  const [listDistricts, setListDistricts] = useState([]);
-  const [listWards, setListWards] = useState([]);
 
   const [form] = Form.useForm();
   const getListPoiFunction = async (currentPageToGetList, numInPage) => {
@@ -92,6 +88,8 @@ const PoiPage = () => {
     getListPoiFunction(currentPage, numPoiInPage);
     const resProvinces = await getListProvinceService();
     setListProvinces(resProvinces.data);
+    const resCategories = await getListCategoriesService("", 10000, 1);
+    setListCategories(resCategories.data);
   }, []);
 
   const onFinishUpdatePoi = async (values) => {
@@ -131,41 +129,13 @@ const PoiPage = () => {
     // }
   };
 
-  const handleProvinceChange = async (value) => {
-    const resDistrict = await getListDistrictService(value);
-    setListDistricts(resDistrict.data);
-    const resWard = await getListWardService(resDistrict.data[0].code);
-    setListWards(resWard.data);
-    form.setFieldsValue({
-      district: {
-        value: resDistrict.data[0].name,
-      },
-      selectDistricts: {
-        key: resDistrict.data[0].code,
-        value: resDistrict.data[0].code,
-      },
-      ward: {
-        value: resWard.data[0].name,
-      },
-      selectWards: {
-        key: resWard.data[0].code,
-        value: resWard.data[0].code,
-      },
-    });
+  const onFinishModalCreatePoi = async (childdata) => {
+    setIsCreatePoiModalVisible(childdata);
+    await getListPoiFunction(currentPage, numPoiInPage);
   };
 
-  const handleDistrictChange = async (value) => {
-    const resWard = await getListWardService(value);
-    setListWards(resWard.data);
-    form.setFieldsValue({
-      ward: {
-        value: resWard.data[0].name,
-      },
-      selectWards: {
-        key: resWard.data[0].code,
-        value: resWard.data[0].code,
-      },
-    });
+  const handleCancelCreatePoi = (childdata) => {
+    setIsCreatePoiModalVisible(childdata);
   };
 
   // const onFinishAdvancedSearch = async (values) => {
@@ -266,70 +236,11 @@ const PoiPage = () => {
     return isJpgOrPng && isLt2M;
   };
 
-  const onFinishCreatePoi = async (values) => {
-    const invalidMsg = [];
-    var check = true;
-    try {
-      if (values.stringOpenTime - values.stringCloseTime > 0) {
-        invalidMsg.push("Time start need to before or match with time end\n");
-        check = false;
-      }
-      if (check) {
-        let objCity = listProvinces.find(
-          (element) => element.code === values.city
-        );
-        let objDistrict = listDistricts.find(
-          (element) => element.code === values.district
-        );
-        let objWard = listWards.find((element) => element.code === values.ward);
-
-        if (typeof objDistrict === "undefined") {
-          objDistrict = values.district.value;
-        } else {
-          objDistrict = objDistrict.name;
-        }
-        if (typeof objWard === "undefined") {
-          objWard = values.ward.value;
-        } else {
-          objWard = objWard.name;
-        }
-
-        const newPoi = {
-          name: values.name,
-          description: values.description,
-          stringOpenTime: formatTimePicker(values.stringOpenTime),
-          stringCloseTime: formatTimePicker(values.stringCloseTime),
-          dayOfWeek: values.dayOfWeek.join("-"),
-          ward: objWard,
-          district: objDistrict,
-          city: objCity.name,
-          address: values.address,
-          poicategoryId: values.poicategoryId,
-        };
-        await createPoiService(newPoi).then(() => {
-          getListPoiFunction(currentPage, numPoiInPage);
-          setIsCreatePoiModalVisible(false);
-          toast.success("Create Poi Success");
-        });
-      } else {
-        var errormsg = invalidMsg.join("-");
-        toast.error(errormsg);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const showModalCreatePoi = () => {
+  const showModalCreatePoi = async () => {
     setIsCreatePoiModalVisible(true);
     form.resetFields();
   };
 
-  const handleCancelCreatePoi = () => {
-    setIsCreatePoiModalVisible(false);
-    setListDistricts(null);
-    setListWards(null);
-  };
   const showModalAdvancedSearch = () => {
     setIsAdvancedSearchModalVisible(true);
     form.resetFields();
@@ -554,201 +465,13 @@ const PoiPage = () => {
         onChange={handleChangeNumberOfPaging}
       />
 
-      <Modal
-        title="Create Poi"
-        visible={isCreatePoiModalVisible}
-        onCancel={handleCancelCreatePoi}
-        footer={null}
-      >
-        <Form
-          {...formItemLayout}
-          form={form}
-          name="registerPoi"
-          onFinish={onFinishCreatePoi}
-          scrollToFirstError
-        >
-          <Form.Item
-            name="name"
-            label={t("name")}
-            rules={[
-              {
-                required: true,
-                message: t("reqnameschedule"),
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                message: "Please input your description!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="stringOpenTime"
-            label={t("timestart")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimestartschedule"),
-              },
-            ]}
-          >
-            <TimePicker allowClear={false} />
-          </Form.Item>
-          <Form.Item
-            name="stringCloseTime"
-            label={t("timeend")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimeendschedule"),
-              },
-            ]}
-          >
-            <TimePicker allowClear={false} />
-          </Form.Item>
-          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
-            <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
-              <Row>
-                <Col span={8}>
-                  <Checkbox value="Monday">{t("monday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Tuesday">{t("tuesday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Wednesday">{t("wednesday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Thursday">{t("thursday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Friday">{t("friday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Saturday">{t("saturday")}</Checkbox>
-                </Col>
-                <Col span={8}>
-                  <Checkbox value="Sunday">{t("sunday")}</Checkbox>
-                </Col>
-              </Row>
-            </Checkbox.Group>
-          </Form.Item>
-          <Form.Item
-            name="address"
-            label="Address"
-            rules={[
-              {
-                required: true,
-                message: "Please input your address!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="city"
-            label="City"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your city!",
-              },
-            ]}
-          >
-            <Select
-              name="selectProvince"
-              onChange={handleProvinceChange}
-              //   defaultValue={listProvinces[0]}
-            >
-              {listProvinces
-                ? listProvinces.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="district"
-            label="District"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your district!",
-              },
-            ]}
-          >
-            <Select
-              name="selectDistricts"
-              onChange={handleDistrictChange}
-              //   defaultValue={listDistricts[0]}
-            >
-              {listDistricts
-                ? listDistricts.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="ward"
-            label="Ward"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your ward!",
-              },
-            ]}
-          >
-            <Select
-              name="selectWards"
-              // defaultValue={listWards[0]}
-            >
-              {listWards
-                ? listWards.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="poicategoryId"
-            label="Category"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your category!",
-              },
-            ]}
-          >
-            <Select defaultValue={{}}>
-              {/* {provinceData.map((province) => (
-                <Option key={province}>{province}</Option>
-              ))} */}
-              <Option value="c5ad724c-0513-4f9e-8239-50b2a70793a0">Test</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Create Poi
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      <ModalCreatePoi
+        modalToIndex={onFinishModalCreatePoi}
+        listProvinces={listProvinces}
+        isCreatePoiModalVisible={isCreatePoiModalVisible}
+        handleCancelCreatePoi={handleCancelCreatePoi}
+        listCategories={listCategories}
+      />
 
       <Modal
         title="Advanced Search"
