@@ -7,6 +7,7 @@ import ApplicationPage from "../../kiosk_portal/pages/application";
 import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
+import EventManagerPage from "../../kiosk_portal/pages/event";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import PoiPage from "../../kiosk_portal/pages/poi";
@@ -41,7 +42,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: RegistPage,
@@ -49,7 +50,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: ConfirmAccountPage,
@@ -57,7 +58,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: ResetPassPage,
@@ -65,7 +66,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: UnAuthPage,
@@ -73,7 +74,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: true,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: ForgotPassPage,
@@ -81,7 +82,7 @@ const routes: Route[] = [
     isLayout: false,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: HomePage,
@@ -90,7 +91,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: false,
     breadcrumb: "",
-    roles:[""]
+    roles: [""]
   },
   {
     component: AccountManagerPage,
@@ -99,7 +100,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN]
+    roles: [ROLE_ADMIN]
   },
   {
     component: AccountDetailPage,
@@ -108,7 +109,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN]
+    roles: [ROLE_ADMIN]
   },
   {
     component: ScheduleManagerPage,
@@ -117,7 +118,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   },
   {
     component: KioskPage,
@@ -126,7 +127,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   },
   {
     component: ServiceApplicationPublishRequestPage,
@@ -135,7 +136,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_ADMIN, ROLE_SERVICE_PROVIDER]
   },
   {
     component: ApplicationPage,
@@ -144,7 +145,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_SERVICE_PROVIDER]
   },
   {
     component: TemplateManagerPage,
@@ -153,7 +154,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   },
   {
     component: PoiPage,
@@ -162,7 +163,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN,ROLE_LOCATION_OWNER]
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
   },
   {
     component: AppCategoryPage,
@@ -171,7 +172,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN]
+    roles: [ROLE_ADMIN]
   },
   {
     component: ApplicationDetailPage,
@@ -180,8 +181,17 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_ADMIN, ROLE_SERVICE_PROVIDER]
   },
+  {
+    component: EventManagerPage,
+    path: "/event-manager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  }
 ];
 
 export default routes;

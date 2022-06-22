@@ -126,7 +126,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   POI
                 </Menu.Item>
+                 <Menu.Item
+                  icon={<FundOutlined />}
+                  key="event"
+                  onClick={() => {
+                    onNavigate("/event-manager");
+                  }}
+                >
+                  Event
+                  </Menu.Item>
               </>
+
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
@@ -166,6 +176,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   POI
                 </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="event"
+                  onClick={() => {
+                    onNavigate("/event-manager");
+                  }}
+                >
+                  Event
+                  </Menu.Item>
               </>
             ) : null}
             {role === ROLE_SERVICE_PROVIDER ? (
