@@ -35,7 +35,7 @@ import {
   getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
-import FormAddTemplate from "./modalAddTemplate";
+import FormAddTemplate from "./formAddTemplate";
 import { getListTemplateService } from "../../services/template_service";
 
 const ScheduleManagerPage = () => {
@@ -497,8 +497,7 @@ const ScheduleManagerPage = () => {
         <Col span={5} />
         <Col span={4}>
           <Button
-            type="primary"
-            shape="round"
+            className="success-button"
             size={"large"}
             onClick={showModalCreateSchedule}
           >

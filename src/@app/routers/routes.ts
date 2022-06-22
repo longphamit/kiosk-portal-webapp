@@ -163,7 +163,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles:[ROLE_ADMIN]
+    roles:[ROLE_ADMIN,ROLE_LOCATION_OWNER]
   },
   {
     component: AppCategoryPage,

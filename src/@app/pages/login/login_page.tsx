@@ -1,16 +1,12 @@
 import { Col, Row } from "antd";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { toast } from "react-toastify";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 import { PRIMARY_COLOR } from "../../constants/colors";
 
-import {
-  ACCESS_TOKEN,
-  USER_FRIST_NAME,
-  USER_ID,
-} from "../../constants/key";
+import { ACCESS_TOKEN, USER_FRIST_NAME, USER_ID } from "../../constants/key";
 import useDispatch from "../../hooks/use_dispatch";
 import { loginAction } from "../../redux/actions/login_action";
 
@@ -22,6 +18,7 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
+import { useState } from "react";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
@@ -33,12 +30,15 @@ const validateMessages: ValidateMessages = {
   },
 };
 const LoginPage: React.FC = () => {
+  const [isLoading, setLoading] = useState(false);
   const { t } = useTranslation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
+    setLoading(true);
     dispatch(loginAction({ email: values.email, password: values.password }))
       .then(async (response: any) => {
+        setLoading(false);
         console.log(response);
         if (response.error) {
           toast.error("Wrong Username or password");
@@ -49,9 +49,9 @@ const LoginPage: React.FC = () => {
             USER_FRIST_NAME,
             response.payload.data.firstName
           );
-          if(!response.payload.data.passwordIsChanged){
+          if (!response.payload.data.passwordIsChanged) {
             navigate("/reset-pass");
-          }else{
+          } else {
             switch (response.payload.data.roleName) {
               case ROLE_ADMIN:
                 return navigate("/homepage");
@@ -66,6 +66,9 @@ const LoginPage: React.FC = () => {
       })
       .catch((error: any) => {
         console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -106,7 +109,13 @@ const LoginPage: React.FC = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[{ required: true, type: "string", min: LENGTH_PASSWORD_REQUIRED }]}
+              rules={[
+                {
+                  required: true,
+                  type: "string",
+                  min: LENGTH_PASSWORD_REQUIRED,
+                },
+              ]}
               style={{ marginBottom: 0 }}
             >
               <Input.Password />
@@ -123,9 +132,13 @@ const LoginPage: React.FC = () => {
             </Row>
             <Row justify="center" align="middle">
               <Form.Item style={{ marginTop: 10 }}>
-                <Button type="primary" htmlType="submit">
-                  {t("signin")}
-                </Button>
+                {isLoading ? (
+                  <Spin />
+                ) : (
+                  <Button type="primary" htmlType="submit">
+                    {t("signin")}
+                  </Button>
+                )}
               </Form.Item>
             </Row>
           </Form>

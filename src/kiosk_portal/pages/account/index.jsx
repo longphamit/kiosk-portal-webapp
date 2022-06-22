@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
 } from "antd";
@@ -34,6 +35,9 @@ import {
 } from "../../services/account_service";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 const AccountManagerPage = () => {
+  const [isListAccountLoading, setListAccountLoading] = useState()
+  const [isCreateAccountLoading, setCreateAccountLoading] = useState()
+  const [isUpdateAccountLoading, setUpdateAccountLoading] = useState()
   const { Option } = Select;
   const { t } = useTranslation();
   const [listAccount, setListAccount] = useState([]);
@@ -54,6 +58,7 @@ const AccountManagerPage = () => {
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
+    setListAccountLoading(true)
     try {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
@@ -67,6 +72,8 @@ const AccountManagerPage = () => {
       setListAccount(res.data.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setListAccountLoading(false)
     }
   };
 
@@ -77,6 +84,7 @@ const AccountManagerPage = () => {
   }, []);
 
   const onFinishEditAccount = async (values) => {
+    setUpdateAccountLoading(true)
     const updateAccount = {
       id: values.id,
       firstName: values.firstName,
@@ -93,6 +101,8 @@ const AccountManagerPage = () => {
       handleCancelEditAccount();
     } catch (error) {
       console.log(error);
+    } finally {
+      setUpdateAccountLoading(false)
     }
   };
 
@@ -187,6 +197,7 @@ const AccountManagerPage = () => {
     setIsEditAccountModalVisible(false);
   };
   const onFinishCreateAccount = async (values) => {
+    setCreateAccountLoading(true)
     const newAccount = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -203,6 +214,8 @@ const AccountManagerPage = () => {
       toast.success(t("toastsuccesscreateaccount"));
     } catch (error) {
       console.log(error);
+    } finally {
+      setCreateAccountLoading(false)
     }
   };
 
@@ -469,7 +482,10 @@ const AccountManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listAccount} pagination={false} />
+      {
+        isListAccountLoading ? <Spin /> : <Table columns={columns} dataSource={listAccount} pagination={false} />
+      }
+
       <Pagination
         defaultCurrent={1}
         total={totalAccount}
@@ -578,16 +594,20 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                  return <Option value={item.id}>{item.name}</Option>;
+                })
                 : null}
             </Select>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              {t("register")}
-            </Button>
+            {
+              isCreateAccountLoading ?
+                <Spin />
+                : <Button type="primary" htmlType="submit">
+                  {t("register")}
+                </Button>
+            }
           </Form.Item>
         </Form>
       </Modal>
@@ -747,9 +767,13 @@ const AccountManagerPage = () => {
               />
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
+              {
+                isUpdateAccountLoading ?
+                  <Spin />
+                  : <Button type="primary" htmlType="submit">
+                    Save
+                  </Button>
+              }
             </Form.Item>
           </Form>
         </Modal>

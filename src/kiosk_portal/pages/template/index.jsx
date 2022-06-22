@@ -226,13 +226,6 @@ const TemplateManagerPage = () => {
       ),
     },
   ];
-  const sample = [
-    {
-      name: "a",
-      description: "aa",
-      createdate: "20222/05/22",
-    },
-  ];
   const prefixSearch = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
@@ -284,9 +277,7 @@ const TemplateManagerPage = () => {
         <Col span={5} />
         <Col span={4}>
           <Button
-            type="primary"
-            shape="round"
-            size={"large"}
+            className="success-button"
             onClick={showModalCreateTemplate}
           >
             Create template
