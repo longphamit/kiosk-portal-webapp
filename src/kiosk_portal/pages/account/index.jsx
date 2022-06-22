@@ -15,6 +15,10 @@ import {
   Table,
   Tag,
 } from "antd";
+import {
+  PlusOutlined,
+  SearchOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -175,6 +179,7 @@ const AccountManagerPage = () => {
   };
   const onFinishSearch = async (values) => {
     const search = buildPartyParamSearch(values.searchString);
+    search["status"]=values.status
     search["size"] = numAccountInPage;
     search["page"] = 1;
     try {
@@ -285,14 +290,6 @@ const AccountManagerPage = () => {
     {
       name: "Address",
       label: "Address",
-    },
-    {
-      name: "Status",
-      label: "Status",
-    },
-    {
-      name: "RoleName",
-      label: "Role Name",
     },
   ];
   const columns = [
@@ -433,7 +430,7 @@ const AccountManagerPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={10}>
+              <Col span={6}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
                   <AutoComplete
                     style={{ width: "100%" }}
@@ -447,6 +444,15 @@ const AccountManagerPage = () => {
                   />
                 </Form.Item>
               </Col>
+              <Col  span={6}>
+                <Form.Item initialValue="" name="status" label={t("status")} style={{ margin:5 }}>
+                  <Select >
+                    <Option value="">All</Option>
+                    <Option value="active">Active</Option>
+                    <Option value="deactivate">Deactive</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col span={3}>
                 <Form.Item>
                   <Button
@@ -455,7 +461,7 @@ const AccountManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                   <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -478,7 +484,7 @@ const AccountManagerPage = () => {
             size={"large"}
             onClick={showModalCreateAccount}
           >
-            {t("createaccount")}
+            <PlusOutlined/> Account
           </Button>
         </Col>
       </Row>
