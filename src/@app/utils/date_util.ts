@@ -4,6 +4,9 @@ export const convertDate = (stringToConvert:any) => {
     return moment(new Date(stringToConvert)).format("DD/MM/YYYY");
 };
 
+export const convertTime =(hour:any,minute:any,second:any) => {
+  return moment(hour+":" +minute+":" +second,"HH:mm:ss")
+};
   
 
 export  const getDate = (dateOfBirth: any) => {

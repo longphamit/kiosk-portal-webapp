@@ -1,9 +1,7 @@
 import {
   AutoComplete,
   Button,
-  Checkbox,
   Col,
-  DatePicker,
   Form,
   Input,
   Modal,
@@ -12,30 +10,15 @@ import {
   Select,
   Space,
   Table,
-  Tag,
-  TimePicker,
-  Upload,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
-import moment from "moment";
-
-import { UploadOutlined } from "@ant-design/icons";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import { getBase64 } from "../../../@app/utils/file_util";
-import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
-import {
-  createPoiService,
-  getListPoiService,
-} from "../../services/poi_service";
-import {
-  getListDistrictService,
-  getListProvinceService,
-  getListWardService,
-} from "../../services/map_service";
+import { getListPoiService } from "../../services/poi_service";
+import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
-import { getListCategoriesService } from "../../services/categories_service";
+import { getListPoiCategoriesService } from "../../services/poi_category_service";
+import ModalUpdatePoi from "./modalUpdatePoi";
 
 const PoiPage = () => {
   const { Option } = Select;
@@ -47,9 +30,9 @@ const PoiPage = () => {
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
-  const [listCategories, setListCategories] = useState([]);
+  const [listPoiCategories, setListPoiCategories] = useState([]);
   const [isCreatePoiModalVisible, setIsCreatePoiModalVisible] = useState(false);
-  const [isEditPoiModalVisible, setIsEditPoiModalVisible] = useState(false);
+  const [isUpdatePoiModalVisible, setIsUpdatePoiModalVisible] = useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
   const [poiSearchType, setPoiSearchType] = useState("FirstName");
@@ -88,55 +71,9 @@ const PoiPage = () => {
     getListPoiFunction(currentPage, numPoiInPage);
     const resProvinces = await getListProvinceService();
     setListProvinces(resProvinces.data);
-    const resCategories = await getListCategoriesService("", 10000, 1);
-    setListCategories(resCategories.data);
+    const resPoiCategories = await getListPoiCategoriesService("", 10000, 1);
+    setListPoiCategories(resPoiCategories.data.data);
   }, []);
-
-  const onFinishUpdatePoi = async (values) => {
-    let updatePoi = [];
-    if (typeof values.logo === "object") {
-      let formatResult = [];
-      const result = await getBase64(values.logo.file.originFileObj);
-      formatResult = result.split(",");
-      updatePoi = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: formatResult[1],
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    } else {
-      updatePoi = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: values.logo,
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    }
-    // try {
-    //   await updateApplicationService(updatePoi);
-    //   getListPoiFunction(currentPage, numPoiInPage);
-    //   setIsCreatePoiModalVisible(false);
-    //   toast.success("Update Poi Success");
-    //   handleCancelEditPoi();
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
-
-  const onFinishModalCreatePoi = async (childdata) => {
-    setIsCreatePoiModalVisible(childdata);
-    await getListPoiFunction(currentPage, numPoiInPage);
-  };
-
-  const handleCancelCreatePoi = (childdata) => {
-    setIsCreatePoiModalVisible(childdata);
-  };
 
   // const onFinishAdvancedSearch = async (values) => {
   //   console.log(values);
@@ -215,30 +152,27 @@ const PoiPage = () => {
   //     setListApplication([]);
   //   }
   // };
-  const showModalEditPoi = () => {
-    setIsEditPoiModalVisible(true);
-  };
 
-  const handleCancelEditPoi = () => {
-    setIsEditPoiModalVisible(false);
-  };
-
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-    if (!isJpgOrPng) {
-      toast.error("You can only upload JPG/PNG file!");
+  const showModalPoi = (type) => {
+    if (type === "create") {
+      setIsCreatePoiModalVisible(true);
+    } else if (type === "update") {
+      setIsUpdatePoiModalVisible(true);
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      toast.error("Image must smaller than 2MB!");
-    }
-
-    return isJpgOrPng && isLt2M;
   };
 
-  const showModalCreatePoi = async () => {
-    setIsCreatePoiModalVisible(true);
-    form.resetFields();
+  const onFinishModalPoi = async () => {
+    setIsCreatePoiModalVisible(false);
+    await getListPoiFunction(currentPage, numPoiInPage);
+  };
+
+  const handleCancelModalPoi = (type) => {
+    if (type === "create") {
+      setIsCreatePoiModalVisible(false);
+    }
+    if (type === "update") {
+      setIsUpdatePoiModalVisible(false);
+    }
   };
 
   const showModalAdvancedSearch = () => {
@@ -247,29 +181,6 @@ const PoiPage = () => {
   };
   const handleCloseModalAdvancedSearch = () => {
     setIsAdvancedSearchModalVisible(false);
-  };
-  const handleChangeStatusPoi = async (record) => {
-    Modal.confirm({
-      title: "Are you sure to send request change status this poi",
-      okText: t("yes"),
-      cancelText: t("no"),
-      onOk: async () => {
-        {
-          //   try {
-          //     const newReq = {
-          //       //   creatorId: localStorageGetUserIdService(),
-          //       //   serviceApplicationId: record.id,
-          //     };
-          //     await sendReqPublishApplicationService(newReq).then(() => {
-          //       getListPoiFunction(currentPage, numPoiInPage);
-          //       toast.success("Send req success");
-          //     });
-          //   } catch (error) {
-          //     console.log(error);
-          //   }
-        }
-      },
-    });
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -346,35 +257,11 @@ const PoiPage = () => {
             shape="default"
             onClick={() => {
               setCurrentItem(record);
-              showModalEditPoi();
+              showModalPoi("update");
             }}
           >
             Update poi
           </Button>
-          {record.status === "unavailable" ? (
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleChangeStatusPoi(record);
-              }}
-            >
-              Publish App
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              shape="default"
-              disabled="false"
-              name={record}
-              onClick={() => {
-                handleChangeStatusPoi(record);
-              }}
-            >
-              Publish App
-            </Button>
-          )}
         </Space>
       ),
     },
@@ -451,7 +338,7 @@ const PoiPage = () => {
           <Button
             className="success-button"
             size={"large"}
-            onClick={showModalCreatePoi}
+            onClick={() => showModalPoi("create")}
           >
             Create poi
           </Button>
@@ -466,12 +353,24 @@ const PoiPage = () => {
       />
 
       <ModalCreatePoi
-        modalToIndex={onFinishModalCreatePoi}
+        modalToIndex={onFinishModalPoi}
         listProvinces={listProvinces}
         isCreatePoiModalVisible={isCreatePoiModalVisible}
-        handleCancelCreatePoi={handleCancelCreatePoi}
-        listCategories={listCategories}
+        handleCancelPoiModal={handleCancelModalPoi}
+        listPoiCategories={listPoiCategories}
       />
+
+      {currentItem ? (
+        <ModalUpdatePoi
+          key={currentItem.id}
+          modalToIndex={onFinishModalPoi}
+          listProvinces={listProvinces}
+          isUpdatePoiModalVisible={isUpdatePoiModalVisible}
+          handleCancelPoiModal={handleCancelModalPoi}
+          listPoiCategories={listPoiCategories}
+          currentItem={currentItem}
+        />
+      ) : null}
 
       <Modal
         title="Advanced Search"
@@ -527,128 +426,6 @@ const PoiPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-      {currentItem ? (
-        <Modal
-          key={currentItem.id}
-          title={t("edit")}
-          visible={isEditPoiModalVisible}
-          onCancel={handleCancelEditPoi}
-          footer={null}
-        >
-          <Form
-            key={currentItem.id}
-            {...formItemLayout}
-            form={form}
-            name="edit"
-            onFinish={onFinishUpdatePoi}
-            scrollToFirstError
-            initialValues={{
-              id: currentItem.id,
-              name: currentItem.name,
-              description: currentItem.description,
-              logo: currentItem.logo,
-              link: currentItem.link,
-              partyId: localStorageGetUserIdService(),
-              appCategoryId: currentItem.appCategoryId,
-            }}
-          >
-            <Form.Item name="id" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
-            <Form.Item name="partyId" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input poi name!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input poi description!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="link"
-              label="Link"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input poi link!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="logo"
-              label="Logo"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose poi logo!",
-                },
-              ]}
-            >
-              <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                listType="picture"
-                maxCount={1}
-                accept=".png"
-                beforeUpload={beforeUpload}
-                defaultFileList={[
-                  {
-                    uid: "abc",
-                    name: "image.png",
-                    status: "done",
-                    url: currentItem.logo,
-                  },
-                ]}
-              >
-                <Button icon={<UploadOutlined />}>Upload</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              name="appCategoryId"
-              label="Category"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose poi category!",
-                },
-              ]}
-            >
-              <Select placeholder="Select your categories">
-                {listCategories
-                  ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
-                  : null}
-              </Select>
-            </Form.Item>
-
-            <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Update Poi
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      ) : null}
     </>
   );
 };
