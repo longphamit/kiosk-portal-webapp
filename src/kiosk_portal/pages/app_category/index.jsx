@@ -78,7 +78,7 @@ const AppCategoryPage = () => {
 
       <Row style={{ padding: 10 }}>
         <Col span={15}>
-          <Form
+          {/* <Form
             form={form}
             name="search"
             //   onFinish={onFinishSearch}
@@ -115,7 +115,7 @@ const AppCategoryPage = () => {
                 </Form.Item>
               </Col>
             </Row>
-          </Form>
+          </Form> */}
         </Col>
         <Col span={5} />
         <Col span={4}>
