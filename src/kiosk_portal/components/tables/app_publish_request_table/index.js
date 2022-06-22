@@ -13,7 +13,8 @@ import {
   Tag,
 } from "antd";
 import {
-  SearchOutlined
+  SearchOutlined,
+  EyeFilled
 } from "@ant-design/icons";
 
 import { useEffect, useState } from "react";
@@ -104,7 +105,7 @@ const AppPublishRequestTable = ({ partyId }) => {
               navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
-            App
+            <EyeFilled/> Detail
           </Button>
           {record.status === PUBLISH_DENIED ? (
             <Button

@@ -5,6 +5,10 @@ export const getListCategoriesService = async (Name:any,size:any,page:any) => {
     const response = await request.get(`${HOST}/v1/categories?Name=${Name}&size=${size}&page=${page}`);
     return response.data.data;
 };
+export const getAllCategoriesService = async () => {
+    const response = await request.get(`${HOST}/v1/categories?size=-1&page=1`);
+    return response.data.data;
+};
 export const getListAvailableCategoriesService = async () => {
     const response = await request.get(`${HOST}/v1/categories?page=1`);
     return response.data.data;

@@ -15,6 +15,13 @@ import {
   Tag,
   Upload,
 } from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -34,7 +41,7 @@ import {
   sendReqPublishApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
-import { getListCategoriesService } from "../../../services/categories_service";
+import { getAllCategoriesService, getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
 import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
@@ -88,7 +95,7 @@ const ApplicationTable = () => {
 
   useEffect(async () => {
     getListApplicationFunction(currentPage, numApplicationInPage);
-    const res = await getListCategoriesService("", 100, 1);
+    const res = await getAllCategoriesService();
     setListCategories(res.data);
   }, []);
 
@@ -351,51 +358,49 @@ const ApplicationTable = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.id}`);
+              navigator(`/app-detail/${record.id}`)
             }}
           >
-            Detail
+           <EyeFilled/> Detail
           </Button>
-          {role ? (
-            role === ROLE_SERVICE_PROVIDER ? (
-              <>
+          {
+            role ? role === ROLE_SERVICE_PROVIDER ? <>
+              <Button
+                className="warn-button"
+                shape="default"
+                onClick={() => {
+                  setCurrentItem(record);
+                  showModalEditApplication();
+                }}
+              >
+                <EditFilled/>Update
+              </Button>
+              {record.status === "unavailable" ? (
                 <Button
-                  className="warn-button"
+                  type="primary"
                   shape="default"
+                  name={record}
                   onClick={() => {
-                    setCurrentItem(record);
-                    showModalEditApplication();
+                    handleChangeStatusApplication(record);
                   }}
                 >
-                  Update
+                  <ArrowUpOutlined/> Publish
                 </Button>
-                {record.status === "unavailable" ? (
-                  <Button
-                    type="primary"
-                    shape="default"
-                    name={record}
-                    onClick={() => {
-                      handleChangeStatusApplication(record);
-                    }}
-                  >
-                    Publish
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    shape="default"
-                    disabled="false"
-                    name={record}
-                    onClick={() => {
-                      handleChangeStatusApplication(record);
-                    }}
-                  >
-                    Publish
-                  </Button>
-                )}
-              </>
-            ) : null
-          ) : null}
+              ) : (
+                <Button
+                  type="primary"
+                  shape="default"
+                  disabled="false"
+                  name={record}
+                  onClick={() => {
+                    handleChangeStatusApplication(record);
+                  }}
+                >
+                 <ArrowUpOutlined/> Publish
+                </Button>
+              )}
+            </> : null : null
+          }
         </Space>
       ),
     },
@@ -453,7 +458,7 @@ const ApplicationTable = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -461,7 +466,7 @@ const ApplicationTable = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -471,7 +476,7 @@ const ApplicationTable = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  Advanced Search
+                  <SearchOutlined/>Advanced
                 </Button>
               </Col>
             </Row>
@@ -484,7 +489,7 @@ const ApplicationTable = () => {
             size={"large"}
             onClick={showModalCreateApplication}
           >
-            Create application
+            <PlusOutlined/> Application
           </Button>
         </Col>
       </Row>
@@ -755,8 +760,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                   : null}
               </Select>
             </Form.Item>

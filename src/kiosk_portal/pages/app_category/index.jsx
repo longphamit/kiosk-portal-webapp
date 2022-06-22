@@ -10,6 +10,9 @@ import {
   Space,
   Table,
 } from "antd";
+import {
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListAppCategoryService } from "../../services/app_category_service";
@@ -124,7 +127,7 @@ const AppCategoryPage = () => {
             size={"large"}
             onClick={handleShowModalCreateCategory}
           >
-            Create app category
+            <PlusOutlined/> App category
           </Button>
         </Col>
       </Row>

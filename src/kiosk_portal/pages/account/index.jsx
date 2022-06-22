@@ -16,8 +16,12 @@ import {
   Tag,
 } from "antd";
 import {
+  SearchOutlined,
   PlusOutlined,
-  SearchOutlined
+  EyeFilled,
+  EditFilled,
+  PoweroffOutlined,
+  ArrowUpOutlined
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -352,7 +356,7 @@ const AccountManagerPage = () => {
               navigate("/account-detail/" + record.id);
             }}
           >
-            {t("detail")}
+            <EyeFilled/>{t("detail")}
           </Button>
           <Button
             className="warn-button"
@@ -362,7 +366,7 @@ const AccountManagerPage = () => {
               showModalEditAccount();
             }}
           >
-            {t("edit")}
+            <EditFilled/>{t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
             <Button
@@ -374,7 +378,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              {t("change-status")}
+              <PoweroffOutlined/> {t("change-status")}
             </Button>
           ) : (
             <Button
@@ -385,7 +389,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              {t("change-status")}
+              <PoweroffOutlined/> {t("change-status")}
             </Button>
           )}
         </Space>
@@ -453,7 +457,7 @@ const AccountManagerPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -471,7 +475,7 @@ const AccountManagerPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  Advanced Search
+                  <SearchOutlined/> Advance
                 </Button>
               </Col>
             </Row>
