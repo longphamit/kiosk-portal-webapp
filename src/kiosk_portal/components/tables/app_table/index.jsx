@@ -20,7 +20,10 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../../../@app/utils/file_util";
-import { localStorageGetReduxState, localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
+import {
+  localStorageGetReduxState,
+  localStorageGetUserIdService,
+} from "../../../../@app/services/localstorage_service";
 import {
   formItemLayout,
   tailFormItemLayout,
@@ -37,7 +40,7 @@ import { useNavigate } from "react-router-dom";
 import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 
 const ApplicationTable = () => {
-  const navigator = useNavigate()
+  const navigator = useNavigate();
   const { Option } = Select;
   const { TextArea } = Input;
   const { t } = useTranslation();
@@ -204,8 +207,6 @@ const ApplicationTable = () => {
   //   }
   // };
 
-
-
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
   };
@@ -350,49 +351,51 @@ const ApplicationTable = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.id}`)
+              navigator(`/app-detail/${record.id}`);
             }}
           >
             Detail
           </Button>
-          {
-            role ? role === ROLE_SERVICE_PROVIDER ? <>
-              <Button
-                className="warn-button"
-                shape="default"
-                onClick={() => {
-                  setCurrentItem(record);
-                  showModalEditApplication();
-                }}
-              >
-                Update
-              </Button>
-              {record.status === "unavailable" ? (
+          {role ? (
+            role === ROLE_SERVICE_PROVIDER ? (
+              <>
                 <Button
-                  type="primary"
+                  className="warn-button"
                   shape="default"
-                  name={record}
                   onClick={() => {
-                    handleChangeStatusApplication(record);
+                    setCurrentItem(record);
+                    showModalEditApplication();
                   }}
                 >
-                  Publish
+                  Update
                 </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  shape="default"
-                  disabled="false"
-                  name={record}
-                  onClick={() => {
-                    handleChangeStatusApplication(record);
-                  }}
-                >
-                  Publish
-                </Button>
-              )}
-            </> : null : null
-          }
+                {record.status === "unavailable" ? (
+                  <Button
+                    type="primary"
+                    shape="default"
+                    name={record}
+                    onClick={() => {
+                      handleChangeStatusApplication(record);
+                    }}
+                  >
+                    Publish
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    shape="default"
+                    disabled="false"
+                    name={record}
+                    onClick={() => {
+                      handleChangeStatusApplication(record);
+                    }}
+                  >
+                    Publish
+                  </Button>
+                )}
+              </>
+            ) : null
+          ) : null}
         </Space>
       ),
     },
@@ -752,8 +755,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                   : null}
               </Select>
             </Form.Item>
