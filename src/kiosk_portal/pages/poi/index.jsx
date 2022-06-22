@@ -19,7 +19,13 @@ import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
 import ModalUpdatePoi from "./modalUpdatePoi";
-
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined
+} from "@ant-design/icons";
 const PoiPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
@@ -216,6 +222,10 @@ const PoiPage = () => {
   ];
   const columns = [
     {
+      title: "Image",
+      render: (text, record, dataIndex) => <img src={record.thumbnail.link} width={100} height={100}/>
+    },
+    {
       title: "Name",
       dataIndex: "name",
       key: "name",
@@ -260,7 +270,7 @@ const PoiPage = () => {
               showModalPoi("update");
             }}
           >
-            Update poi
+            <EditFilled/> POI
           </Button>
         </Space>
       ),
@@ -309,7 +319,7 @@ const PoiPage = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -317,7 +327,7 @@ const PoiPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -327,7 +337,8 @@ const PoiPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  Advanced Search
+                    
+                    <SearchOutlined/>  Advanced 
                 </Button>
               </Col>
             </Row>
@@ -340,7 +351,7 @@ const PoiPage = () => {
             size={"large"}
             onClick={() => showModalPoi("create")}
           >
-            Create poi
+            <PlusOutlined/> POI
           </Button>
         </Col>
       </Row>
