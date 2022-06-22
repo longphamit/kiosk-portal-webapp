@@ -20,7 +20,8 @@ import {
   PlusOutlined,
   EyeFilled,
   EditFilled,
-  ArrowUpOutlined
+  ArrowUpOutlined,
+  DownloadOutlined
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,7 +45,7 @@ import {
 import { getAllCategoriesService, getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
-import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -361,7 +362,7 @@ const ApplicationTable = () => {
               navigator(`/app-detail/${record.id}`)
             }}
           >
-           <EyeFilled/> Detail
+            <EyeFilled /> Detail
           </Button>
           {
             role ? role === ROLE_SERVICE_PROVIDER ? <>
@@ -373,7 +374,7 @@ const ApplicationTable = () => {
                   showModalEditApplication();
                 }}
               >
-                <EditFilled/>Update
+                <EditFilled />Update
               </Button>
               {record.status === "unavailable" ? (
                 <Button
@@ -384,7 +385,7 @@ const ApplicationTable = () => {
                     handleChangeStatusApplication(record);
                   }}
                 >
-                  <ArrowUpOutlined/> Publish
+                  <ArrowUpOutlined /> Publish
                 </Button>
               ) : (
                 <Button
@@ -396,10 +397,16 @@ const ApplicationTable = () => {
                     handleChangeStatusApplication(record);
                   }}
                 >
-                 <ArrowUpOutlined/> Publish
+                  <ArrowUpOutlined /> Publish
                 </Button>
               )}
             </> : null : null
+          }
+          {
+            role ? role == ROLE_LOCATION_OWNER ?
+              <Button className="success-button">
+                <DownloadOutlined /> Install
+              </Button> : null : null
           }
         </Space>
       ),
@@ -466,7 +473,7 @@ const ApplicationTable = () => {
                     type="primary"
                     size={"large"}
                   >
-                    <SearchOutlined/>
+                    <SearchOutlined />
                   </Button>
                 </Form.Item>
               </Col>
@@ -476,22 +483,24 @@ const ApplicationTable = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  <SearchOutlined/>Advanced
+                  <SearchOutlined />Advanced
                 </Button>
               </Col>
             </Row>
           </Form>
         </Col>
         <Col span={5} />
-        <Col span={4}>
-          <Button
-            className="success-button"
-            size={"large"}
-            onClick={showModalCreateApplication}
-          >
-            <PlusOutlined/> Application
-          </Button>
-        </Col>
+        {
+          role ? (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) ? <Col span={4}>
+            <Button
+              className="success-button"
+              size={"large"}
+              onClick={showModalCreateApplication}
+            >
+              <PlusOutlined /> Application
+            </Button>
+          </Col> : null : null
+        }
       </Row>
       <Table
         columns={columns}

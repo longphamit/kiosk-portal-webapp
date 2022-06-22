@@ -168,29 +168,29 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
               </>
             ) : null}
-            {role === ROLE_SERVICE_PROVIDER ? (
-              <>
-                <Menu.Item
-                  icon={<BlockOutlined />}
-                  key="4"
-                  onClick={() => {
-                    onNavigate("/application-page");
-                  }}
-                >
-                  Application
-                </Menu.Item>
-              </>
-            ) : null}
+            <>
+              <Menu.Item
+                icon={<BlockOutlined />}
+                key="98"
+                onClick={() => {
+                  onNavigate("/application-page");
+                }}
+              >
+                Application
+              </Menu.Item>
+            </>
 
-            <Menu.Item
-              key="6"
-              icon={<ArrowUpOutlined />}
-              onClick={() => {
-                onNavigate("/application-publish-request");
-              }}
-            >
-              App Publish
-            </Menu.Item>
+            {role === ROLE_ADMIN || role === ROLE_SERVICE_PROVIDER ? (
+              <Menu.Item
+                key="6"
+                icon={<ArrowUpOutlined />}
+                onClick={() => {
+                  onNavigate("/application-publish-request");
+                }}
+              >
+                App Publish
+              </Menu.Item>
+            ) : null}
 
             <SubMenu key="sub2" icon={<LaptopOutlined />} title="Me">
               <Menu.Item

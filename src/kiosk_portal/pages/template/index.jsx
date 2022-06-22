@@ -21,7 +21,15 @@ import {
 } from "../../services/template_service";
 import { STATUS_INCOMPLETE } from "../../constants/template_constants";
 import { useNavigate } from "react-router-dom";
-
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined,
+  DeleteFilled
+  
+} from "@ant-design/icons";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [listTemplate, setListTemplate] = useState([]);
@@ -209,7 +217,7 @@ const TemplateManagerPage = () => {
               showModalEditTemplate();
             }}
           >
-            Edit
+            <EditFilled/> Edit
           </Button>
 
           <Button
@@ -220,7 +228,7 @@ const TemplateManagerPage = () => {
               handleDeleteTemplate(record);
             }}
           >
-            Delete
+           <DeleteFilled/> Delete
           </Button>
         </Space>
       ),
@@ -267,7 +275,7 @@ const TemplateManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -280,7 +288,7 @@ const TemplateManagerPage = () => {
             className="success-button"
             onClick={showModalCreateTemplate}
           >
-            Create template
+            <PlusOutlined/> Template
           </Button>
         </Col>
       </Row>

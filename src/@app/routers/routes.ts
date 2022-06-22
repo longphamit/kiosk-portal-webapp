@@ -143,9 +143,9 @@ const routes: Route[] = [
     path: "/application-page",
     isLayout: true,
     layout: AuthenLayout,
-    authen: true,
+    authen: false,
     breadcrumb: "",
-    roles:[ROLE_SERVICE_PROVIDER]
+    roles:[""]
   },
   {
     component: TemplateManagerPage,
