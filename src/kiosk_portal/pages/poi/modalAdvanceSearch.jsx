@@ -79,71 +79,39 @@ const ModalAdvanceSearch = ({
   };
 
   const onFinishSearchPoi = async (values) => {
-    const invalidMsg = [];
-    var check = true;
     try {
-      if (values.stringOpenTime - values.stringCloseTime > 0) {
-        invalidMsg.push("Time start need to before or match with time end\n");
-        check = false;
-      }
-      if (check) {
-        let objCity = listProvinces.find(
-          (element) => element.code === values.city
-        );
-        let objDistrict = listDistrictsInForm.find(
-          (element) => element.code === values.district
-        );
-        let objWard = listWardsInForm.find(
-          (element) => element.code === values.ward
-        );
+      console.log(values);
+      // if (typeof objDistrict === "undefined") {
+      //   objDistrict = "";
+      // } else {
+      //   objDistrict = objDistrict.name;
+      // }
+      // if (typeof objWard === "undefined") {
+      //   objWard = "";
+      // } else {
+      //   objWard = objWard.name;
+      // }
 
-        if (typeof objDistrict === "undefined") {
-          objDistrict = values.district.value;
-        } else {
-          objDistrict = objDistrict.name;
-        }
-        if (typeof objWard === "undefined") {
-          objWard = values.ward.value;
-        } else {
-          objWard = objWard.name;
-        }
-
-        let thumbnail = [];
-        let result = await getBase64(values.thumbnail.file.originFileObj);
-        thumbnail = result.split(",");
-
-        let listImage = [];
-        let formatImage = [];
-        setInputListImage(values.listImage.fileList);
-        inputListImage.map(async (value) => {
-          result = await getBase64(value.originFileObj);
-          formatImage = result.split(",");
-          listImage.push(formatImage[1]);
-        });
-
-        const newPoi = {
-          name: values.name,
-          description: values.description,
-          stringOpenTime: formatTimePicker(values.stringOpenTime),
-          stringCloseTime: formatTimePicker(values.stringCloseTime),
-          dayOfWeek: values.dayOfWeek.join("-"),
-          ward: objWard,
-          district: objDistrict,
-          city: objCity.name,
-          address: values.address,
-          poicategoryId: values.poicategoryId,
-          thumbnail: thumbnail[1],
-          listImage: listImage,
-        };
-        // await createPoiService(newPoi).then(() => {
-        //   modalToIndex("search");
-        //   toast.success("Search Poi Success");
-        //   form.resetFields();
-        // });
-      } else {
-        var errormsg = invalidMsg.join("-");
-        toast.error(errormsg);
-      }
+      // const searchPoi = {
+      //   name: values.name,
+      //   description: values.description,
+      //   stringOpenTime: formatTimePicker(values.stringOpenTime),
+      //   stringCloseTime: formatTimePicker(values.stringCloseTime),
+      //   dayOfWeek: values.dayOfWeek.join("-"),
+      //   ward: objWard,
+      //   district: objDistrict,
+      //   city: objCity.name,
+      //   address: values.address,
+      //   poicategoryId: values.poicategoryId,
+      //   thumbnail: thumbnail[1],
+      //   listImage: listImage,
+      // };
+      // console.log(searchPoi);
+      // await createPoiService(newPoi).then(() => {
+      //   modalToIndex("search");
+      //   toast.success("Search Poi Success");
+      //   form.resetFields();
+      // });
     } catch (error) {
       console.log(error);
     }

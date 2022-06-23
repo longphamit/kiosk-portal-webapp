@@ -371,7 +371,7 @@ const ModalUpdatePoi = ({
             </Form.Item>
             <Form.Item
               name="thumbnail"
-              label="thumbnail"
+              label="Avatar"
               rules={[
                 {
                   required: true,
@@ -391,7 +391,7 @@ const ModalUpdatePoi = ({
             </Form.Item>
             <Form.Item
               name="listImage"
-              label="listImage"
+              label="List Image"
               rules={[
                 {
                   required: true,

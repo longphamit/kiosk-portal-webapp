@@ -117,11 +117,13 @@ const ModalCreatePoi = ({
         let listImage = [];
         let formatImage = [];
         setInputListImage(values.listImage.fileList);
-        inputListImage.map(async (value) => {
-          result = await getBase64(value.originFileObj);
-          formatImage = result.split(",");
-          listImage.push(formatImage[1]);
-        });
+        await Promise.all(
+          inputListImage.map(async (value) => {
+            result = await getBase64(value.originFileObj);
+            formatImage = result.split(",");
+            listImage.push(formatImage[1]);
+          })
+        );
 
         const newPoi = {
           name: values.name,
@@ -137,6 +139,7 @@ const ModalCreatePoi = ({
           thumbnail: thumbnail[1],
           listImage: listImage,
         };
+        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
           modalToIndex("create");
           toast.success("Create Poi Success");
@@ -343,7 +346,7 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="thumbnail"
-            label="thumbnail"
+            label="Avatar"
             rules={[
               {
                 required: true,
@@ -363,7 +366,7 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="listImage"
-            label="listImage"
+            label="List Image"
             rules={[
               {
                 required: true,
