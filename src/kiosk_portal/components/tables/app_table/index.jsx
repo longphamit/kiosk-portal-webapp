@@ -15,12 +15,23 @@ import {
   Tag,
   Upload,
 } from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined,
+  DownloadOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { UploadOutlined } from "@ant-design/icons";
 import { getBase64 } from "../../../../@app/utils/file_util";
-import { localStorageGetReduxState, localStorageGetUserIdService } from "../../../../@app/services/localstorage_service";
+import {
+  localStorageGetReduxState,
+  localStorageGetUserIdService,
+} from "../../../../@app/services/localstorage_service";
 import {
   formItemLayout,
   tailFormItemLayout,
@@ -31,13 +42,13 @@ import {
   sendReqPublishApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
-import { getListCategoriesService } from "../../../services/categories_service";
+import { getAllCategoriesService, getListCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
-import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 
 const ApplicationTable = () => {
-  const navigator = useNavigate()
+  const navigator = useNavigate();
   const { Option } = Select;
   const { TextArea } = Input;
   const { t } = useTranslation();
@@ -85,7 +96,7 @@ const ApplicationTable = () => {
 
   useEffect(async () => {
     getListApplicationFunction(currentPage, numApplicationInPage);
-    const res = await getListCategoriesService("", 100, 1);
+    const res = await getAllCategoriesService();
     setListCategories(res.data);
   }, []);
 
@@ -203,8 +214,6 @@ const ApplicationTable = () => {
   //     setListApplication([]);
   //   }
   // };
-
-
 
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
@@ -353,7 +362,7 @@ const ApplicationTable = () => {
               navigator(`/app-detail/${record.id}`)
             }}
           >
-            Detail
+            <EyeFilled /> Detail
           </Button>
           {
             role ? role === ROLE_SERVICE_PROVIDER ? <>
@@ -365,7 +374,7 @@ const ApplicationTable = () => {
                   showModalEditApplication();
                 }}
               >
-                Update
+                <EditFilled />Update
               </Button>
               {record.status === "unavailable" ? (
                 <Button
@@ -376,7 +385,7 @@ const ApplicationTable = () => {
                     handleChangeStatusApplication(record);
                   }}
                 >
-                  Publish
+                  <ArrowUpOutlined /> Publish
                 </Button>
               ) : (
                 <Button
@@ -388,10 +397,16 @@ const ApplicationTable = () => {
                     handleChangeStatusApplication(record);
                   }}
                 >
-                  Publish
+                  <ArrowUpOutlined /> Publish
                 </Button>
               )}
             </> : null : null
+          }
+          {
+            role ? role == ROLE_LOCATION_OWNER ?
+              <Button className="success-button">
+                <DownloadOutlined /> Install
+              </Button> : null : null
           }
         </Space>
       ),
@@ -450,7 +465,7 @@ const ApplicationTable = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -458,7 +473,7 @@ const ApplicationTable = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined />
                   </Button>
                 </Form.Item>
               </Col>
@@ -468,22 +483,24 @@ const ApplicationTable = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  Advanced Search
+                  <SearchOutlined />Advanced
                 </Button>
               </Col>
             </Row>
           </Form>
         </Col>
         <Col span={5} />
-        <Col span={4}>
-          <Button
-            className="success-button"
-            size={"large"}
-            onClick={showModalCreateApplication}
-          >
-            Create application
-          </Button>
-        </Col>
+        {
+          role ? (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) ? <Col span={4}>
+            <Button
+              className="success-button"
+              size={"large"}
+              onClick={showModalCreateApplication}
+            >
+              <PlusOutlined /> Application
+            </Button>
+          </Col> : null : null
+        }
       </Row>
       <Table
         columns={columns}

@@ -12,10 +12,11 @@ import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import PoiPage from "../../kiosk_portal/pages/poi";
+import PoiCategory from "../../kiosk_portal/pages/poi_category";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
+import CreateTemplatePage from "../../kiosk_portal/pages/template/create-template";
 import AuthenLayout from "../components/authen_layout";
-import ClientLayout from "../components/client_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
 
@@ -144,9 +145,9 @@ const routes: Route[] = [
     path: "/application-page",
     isLayout: true,
     layout: AuthenLayout,
-    authen: true,
+    authen: false,
     breadcrumb: "",
-    roles: [ROLE_SERVICE_PROVIDER]
+    roles: [""]
   },
   {
     component: TemplateManagerPage,
@@ -183,6 +184,24 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_ADMIN, ROLE_SERVICE_PROVIDER]
+  },
+  {
+    component: CreateTemplatePage,
+    path: "/create-template",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: PoiCategory,
+    path: "/poi-category",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN]
   },
   {
     component: EventManagerPage,

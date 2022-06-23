@@ -1,37 +1,24 @@
 import {
   Button,
   Col,
-  Collapse,
   Descriptions,
   Form,
   Input,
   Modal,
   Pagination,
-  Popconfirm,
   Row,
   Select,
   Space,
   Table,
   Tag,
 } from "antd";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  EyeFilled
+} from "@ant-design/icons";
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
-import { downloadTxtFile } from "../../../../@app/utils/file_util";
-
-import {
-  formItemLayout,
-  tailFormItemLayout,
-} from "../../../layouts/form_layout";
-import {
-  localStorageGetReduxState,
-  localStorageSaveReduxState,
-} from "../../../../@app/services/localstorage_service";
-import {
-  ROLE_ADMIN,
-  ROLE_SERVICE_PROVIDER,
-} from "../../../../@app/constants/role";
 import {
   getListAppPublishRequestSearchService,
   getListAppPublishRequestService,
@@ -118,7 +105,7 @@ const AppPublishRequestTable = ({ partyId }) => {
               navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
-            App
+            <EyeFilled/> Detail
           </Button>
           {record.status === PUBLISH_DENIED ? (
             <Button
@@ -252,7 +239,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                       type="primary"
                       size={"large"}
                     >
-                      Search
+                     <SearchOutlined/>
                     </Button>
                   </Form.Item>
                 </Col>

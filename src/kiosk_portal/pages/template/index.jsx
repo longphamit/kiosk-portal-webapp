@@ -20,7 +20,16 @@ import {
   updateTemplateService,
 } from "../../services/template_service";
 import { STATUS_INCOMPLETE } from "../../constants/template_constants";
-
+import { useNavigate } from "react-router-dom";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined,
+  DeleteFilled
+  
+} from "@ant-design/icons";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [listTemplate, setListTemplate] = useState([]);
@@ -34,6 +43,7 @@ const TemplateManagerPage = () => {
   const [isEditTemplateModalVisible, setIsEditTemplateModalVisible] =
     useState(false);
   const [form] = Form.useForm();
+  let navigate = useNavigate();
   const getListTemplateFunction = async (currentPageToGetList, numInPage) => {
     try {
       let name = querySearch !== "" ? querySearch : "";
@@ -50,7 +60,9 @@ const TemplateManagerPage = () => {
       console.log(error);
     }
   };
-
+  const onNavigate = (url) => {
+    navigate(url);
+  };
   useEffect(() => {
     getListTemplateFunction(currentPage, numTemplateInPage);
   }, []);
@@ -119,10 +131,12 @@ const TemplateManagerPage = () => {
       description: values.description ?? "",
     };
     try {
-      await createTemplateService(data);
+      let res = await createTemplateService(data);
       handleCancelCreateTemplate();
-      toast("Create successful");
-      getListTemplateFunction(currentPage, numTemplateInPage);
+
+      onNavigate({ pathname: '/./create-template', search: '?id=' + res.data.id });
+      // toast("Create successful");
+      // getListTemplateFunction(currentPage, numTemplateInPage);
     } catch (e) {
       toast("Create failed");
     }
@@ -203,7 +217,7 @@ const TemplateManagerPage = () => {
               showModalEditTemplate();
             }}
           >
-            Edit
+            <EditFilled/> Edit
           </Button>
 
           <Button
@@ -214,7 +228,7 @@ const TemplateManagerPage = () => {
               handleDeleteTemplate(record);
             }}
           >
-            Delete
+           <DeleteFilled/> Delete
           </Button>
         </Space>
       ),
@@ -261,7 +275,7 @@ const TemplateManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -274,7 +288,7 @@ const TemplateManagerPage = () => {
             className="success-button"
             onClick={showModalCreateTemplate}
           >
-            Create template
+            <PlusOutlined/> Template
           </Button>
         </Col>
       </Row>
@@ -325,7 +339,7 @@ const TemplateManagerPage = () => {
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Create Template
+              CONTINUE
             </Button>
           </Form.Item>
         </Form>

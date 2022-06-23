@@ -20,7 +20,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 
@@ -28,15 +28,21 @@ const ModalCreatePoi = ({
   modalToIndex,
   listProvinces,
   isCreatePoiModalVisible,
-  handleCancelCreatePoi,
-  listCategories,
+  handleCancelPoiModal,
+  listPoiCategories,
 }) => {
   const [form] = Form.useForm();
+  const { TextArea } = Input;
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
   const [inputListImage, setInputListImage] = useState([]);
   const { Option } = Select;
+
+  useEffect(async () => {
+    form.resetFields();
+  }, []);
+
   const handleProvinceChange = async (value) => {
     const resDistrict = await getListDistrictService(value);
     setListDistrictsInForm(resDistrict.data);
@@ -111,11 +117,13 @@ const ModalCreatePoi = ({
         let listImage = [];
         let formatImage = [];
         setInputListImage(values.listImage.fileList);
-        inputListImage.map(async (value) => {
-          result = await getBase64(value.originFileObj);
-          formatImage = result.split(",");
-          listImage.push(formatImage[1]);
-        });
+        await Promise.all(
+          inputListImage.map(async (value) => {
+            result = await getBase64(value.originFileObj);
+            formatImage = result.split(",");
+            listImage.push(formatImage[1]);
+          })
+        );
 
         const newPoi = {
           name: values.name,
@@ -133,8 +141,9 @@ const ModalCreatePoi = ({
         };
         console.log(newPoi);
         await createPoiService(newPoi).then(() => {
-          modalToIndex(false);
+          modalToIndex("create");
           toast.success("Create Poi Success");
+          form.resetFields();
         });
       } else {
         var errormsg = invalidMsg.join("-");
@@ -144,16 +153,16 @@ const ModalCreatePoi = ({
       console.log(error);
     }
   };
-  const handleCancelCreatePoiInModal = () => {
+  const handleCancelPoiInModal = () => {
     form.resetFields();
-    handleCancelCreatePoi(false);
+    handleCancelPoiModal("create");
   };
   return (
     <>
       <Modal
         title="Create Poi"
         visible={isCreatePoiModalVisible}
-        onCancel={handleCancelCreatePoiInModal}
+        onCancel={handleCancelPoiInModal}
         footer={null}
       >
         <Form
@@ -185,7 +194,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <Input />
+            <TextArea rows={4} />
           </Form.Item>
           <Form.Item
             name="stringOpenTime"
@@ -211,7 +220,16 @@ const ModalCreatePoi = ({
           >
             <TimePicker allowClear={false} />
           </Form.Item>
-          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+          <Form.Item
+            name="dayOfWeek"
+            label={t("dayofweek")}
+            rules={[
+              {
+                required: true,
+                message: t("reqtimestartschedule"),
+              },
+            ]}
+          >
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
               <Row>
                 <Col span={8}>
@@ -260,11 +278,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <Select
-              name="selectProvince"
-              onChange={handleProvinceChange}
-              //   defaultValue={listProvinces[0]}
-            >
+            <Select name="selectProvince" onChange={handleProvinceChange}>
               {listProvinces
                 ? listProvinces.map((item) => (
                     <Option key={item.code} value={item.code}>
@@ -284,11 +298,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <Select
-              name="selectDistricts"
-              onChange={handleDistrictChange}
-              //   defaultValue={listDistricts[0]}
-            >
+            <Select name="selectDistricts" onChange={handleDistrictChange}>
               {listDistrictsInForm
                 ? listDistrictsInForm.map((item) => (
                     <Option key={item.code} value={item.code}>
@@ -308,10 +318,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <Select
-              name="selectWards"
-              // defaultValue={listWards[0]}
-            >
+            <Select name="selectWards">
               {listWardsInForm
                 ? listWardsInForm.map((item) => (
                     <Option key={item.code} value={item.code}>
@@ -331,16 +338,15 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <Select defaultValue={{}}>
-              {/* {listCategories.map((categories) => (
+            <Select>
+              {listPoiCategories.map((categories) => (
                 <Option value={categories.id}>{categories.name}</Option>
-              ))} */}
-              <Option value="c83fd442-79e0-4ead-b8df-fcb46b90dba4">Test</Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item
             name="thumbnail"
-            label="thumbnail"
+            label="Avatar"
             rules={[
               {
                 required: true,
@@ -360,7 +366,7 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="listImage"
-            label="listImage"
+            label="List Image"
             rules={[
               {
                 required: true,

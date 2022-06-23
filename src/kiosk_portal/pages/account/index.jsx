@@ -15,6 +15,14 @@ import {
   Table,
   Tag,
 } from "antd";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  PoweroffOutlined,
+  ArrowUpOutlined
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -175,6 +183,7 @@ const AccountManagerPage = () => {
   };
   const onFinishSearch = async (values) => {
     const search = buildPartyParamSearch(values.searchString);
+    search["status"]=values.status
     search["size"] = numAccountInPage;
     search["page"] = 1;
     try {
@@ -286,14 +295,6 @@ const AccountManagerPage = () => {
       name: "Address",
       label: "Address",
     },
-    {
-      name: "Status",
-      label: "Status",
-    },
-    {
-      name: "RoleName",
-      label: "Role Name",
-    },
   ];
   const columns = [
     {
@@ -355,7 +356,7 @@ const AccountManagerPage = () => {
               navigate("/account-detail/" + record.id);
             }}
           >
-            {t("detail")}
+            <EyeFilled/>{t("detail")}
           </Button>
           <Button
             className="warn-button"
@@ -365,7 +366,7 @@ const AccountManagerPage = () => {
               showModalEditAccount();
             }}
           >
-            {t("edit")}
+            <EditFilled/>{t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
             <Button
@@ -377,7 +378,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              {t("change-status")}
+              <PoweroffOutlined/> {t("change-status")}
             </Button>
           ) : (
             <Button
@@ -388,7 +389,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              {t("change-status")}
+              <PoweroffOutlined/> {t("change-status")}
             </Button>
           )}
         </Space>
@@ -433,7 +434,7 @@ const AccountManagerPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={10}>
+              <Col span={6}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
                   <AutoComplete
                     style={{ width: "100%" }}
@@ -447,7 +448,16 @@ const AccountManagerPage = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col  span={6}>
+                <Form.Item initialValue="" name="status" label={t("status")} style={{ margin:5 }}>
+                  <Select >
+                    <Option value="">All</Option>
+                    <Option value="active">Active</Option>
+                    <Option value="deactivate">Deactive</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -455,7 +465,7 @@ const AccountManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                   <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -465,7 +475,7 @@ const AccountManagerPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  Advanced Search
+                  <SearchOutlined/> Advance
                 </Button>
               </Col>
             </Row>
@@ -478,7 +488,7 @@ const AccountManagerPage = () => {
             size={"large"}
             onClick={showModalCreateAccount}
           >
-            {t("createaccount")}
+            <PlusOutlined/> Account
           </Button>
         </Col>
       </Row>

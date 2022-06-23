@@ -10,6 +10,9 @@ import {
   Space,
   Table,
 } from "antd";
+import {
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListAppCategoryService } from "../../services/app_category_service";
@@ -78,7 +81,7 @@ const AppCategoryPage = () => {
 
       <Row style={{ padding: 10 }}>
         <Col span={15}>
-          <Form
+          {/* <Form
             form={form}
             name="search"
             //   onFinish={onFinishSearch}
@@ -115,7 +118,7 @@ const AppCategoryPage = () => {
                 </Form.Item>
               </Col>
             </Row>
-          </Form>
+          </Form> */}
         </Col>
         <Col span={5} />
         <Col span={4}>
@@ -124,7 +127,7 @@ const AppCategoryPage = () => {
             size={"large"}
             onClick={handleShowModalCreateCategory}
           >
-            Create app category
+            <PlusOutlined/> App category
           </Button>
         </Col>
       </Row>

@@ -22,3 +22,15 @@ export const deleteTemplateService = async (id: any) => {
     const response = await request.delete(`${HOST}/v1/templates?templateId=${id}`);
     return response.data;
 };
+
+export const createAppCategoryPosition = async (data: any) => {
+    const response = await request.post(`${HOST}/v1/catePositions`, data);
+    return response.data;
+}
+
+export const getTemplateById = async (id: any) => {
+    const response = await request.get(
+        `${HOST}/v1/templates/id?templateId=${id}`
+    );
+    return response.data;
+}

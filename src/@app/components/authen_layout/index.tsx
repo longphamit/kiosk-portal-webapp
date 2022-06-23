@@ -110,31 +110,43 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
                 <Menu.Item
                   icon={<MenuOutlined />}
-                  key="98"
+                  key="3"
                   onClick={() => {
                     onNavigate("/app-category");
                   }}
                 >
                   App Category
                 </Menu.Item>
-                <Menu.Item
-                  key="7"
-                  icon={<ToolOutlined />}
-                  onClick={() => {
-                    onNavigate("/poi-page");
-                  }}
-                >
-                  POI
-                </Menu.Item>
-                 <Menu.Item
-                  icon={<FundOutlined />}
-                  key="event"
-                  onClick={() => {
-                    onNavigate("/event-manager");
-                  }}
-                >
-                  Event
+                <SubMenu key="sub1" icon={<LaptopOutlined />} title="POI">
+                  <Menu.Item
+                    key="4"
+                    icon={<ToolOutlined />}
+                    onClick={() => {
+                      onNavigate("/poi-page");
+                    }}
+                  >
+                    POI
                   </Menu.Item>
+                  <Menu.Item
+                    key="5"
+                    icon={<ToolOutlined />}
+                    onClick={() => {
+                      onNavigate("/poi-category");
+                    }}
+                  >
+                    POI Category
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<FundOutlined />}
+                    key="event"
+                    onClick={() => {
+                      onNavigate("/event-manager");
+                    }}
+                  >
+                    Event
+                  </Menu.Item>
+                </SubMenu>
+
               </>
 
             ) : null}
@@ -142,7 +154,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               <>
                 <Menu.Item
                   icon={<BlockOutlined />}
-                  key="5"
+                  key="6"
                   onClick={() => {
                     onNavigate("/kiosk");
                   }}
@@ -151,7 +163,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
                 <Menu.Item
                   icon={<BlockOutlined />}
-                  key="4"
+                  key="7"
                   onClick={() => {
                     onNavigate("/schedule-manager");
                   }}
@@ -160,7 +172,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
                 <Menu.Item
                   icon={<BlockOutlined />}
-                  key="3"
+                  key="8"
                   onClick={() => {
                     onNavigate("/template-manager");
                   }}
@@ -168,7 +180,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   Template
                 </Menu.Item>
                 <Menu.Item
-                  key="7"
+                  key="9"
                   icon={<ToolOutlined />}
                   onClick={() => {
                     onNavigate("/poi-page");
@@ -184,43 +196,32 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   }}
                 >
                   Event
-                  </Menu.Item>
-              </>
-            ) : null}
-            {role === ROLE_SERVICE_PROVIDER ? (
-              <>
-                <Menu.Item
-                  icon={<BlockOutlined />}
-                  key="4"
-                  onClick={() => {
-                    onNavigate("/application-page");
-                  }}
-                >
-                  Application
                 </Menu.Item>
               </>
             ) : null}
-
-            <Menu.Item
-              key="6"
-              icon={<ArrowUpOutlined />}
-              onClick={() => {
-                onNavigate("/application-publish-request");
-              }}
-            >
-              App Publish
-            </Menu.Item>
-
-            <SubMenu key="sub2" icon={<LaptopOutlined />} title="Me">
+            <>
               <Menu.Item
-                key="7"
+                icon={<BlockOutlined />}
+                key="10"
                 onClick={() => {
-                  onNavigate("/admin-profile");
+                  onNavigate("/application-page");
                 }}
               >
-                Profile
+                Application
               </Menu.Item>
-            </SubMenu>
+            </>
+
+            {role === ROLE_ADMIN || role === ROLE_SERVICE_PROVIDER ? (
+              <Menu.Item
+                key="11"
+                icon={<ArrowUpOutlined />}
+                onClick={() => {
+                  onNavigate("/application-publish-request");
+                }}
+              >
+                App Publish
+              </Menu.Item>
+            ) : null}
             {/* <SubMenu
               key="sub3"
               icon={<NotificationOutlined />}
@@ -233,7 +234,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             </SubMenu> */}
             <Menu.Item
               icon={<LogoutOutlined />}
-              key="8"
+              key="13"
               onClick={() => {
                 logout();
               }}

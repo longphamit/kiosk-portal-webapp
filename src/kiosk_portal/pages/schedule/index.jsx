@@ -29,6 +29,16 @@ import {
   getListScheduleService,
 } from "../../services/schedule_service";
 import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  EditFilled,
+  ArrowUpOutlined,
+  DeleteFilled,
+  PoweroffOutlined
+  
+} from "@ant-design/icons";
+import {
   convertDate,
   formatDatePicker,
   formatTimePicker,
@@ -395,7 +405,7 @@ const ScheduleManagerPage = () => {
               showModalEditSchedule();
             }}
           >
-            {t("edit")}
+           <EditFilled/> {t("edit")}
           </Button>
           <Button
             className="warn-button"
@@ -405,7 +415,7 @@ const ScheduleManagerPage = () => {
               handleShowModalAddTemplate();
             }}
           >
-            Add Template
+            <PlusOutlined/> Template
           </Button>
           {record.roleName === "Admin" ? (
             <Button
@@ -416,7 +426,7 @@ const ScheduleManagerPage = () => {
                 handleChangeStatusSchedule(record);
               }}
             >
-              {t("change-status")}
+            <PoweroffOutlined/>  {t("change-status")}
             </Button>
           ) : (
             <Button
@@ -427,7 +437,7 @@ const ScheduleManagerPage = () => {
                 handleChangeStatusSchedule(record);
               }}
             >
-              {t("change-status")}
+            <PoweroffOutlined/>  {t("change-status")}
             </Button>
           )}
         </Space>
@@ -468,7 +478,7 @@ const ScheduleManagerPage = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              <Col span={2}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -476,7 +486,7 @@ const ScheduleManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    Search
+                    <SearchOutlined/>
                   </Button>
                 </Form.Item>
               </Col>
@@ -488,7 +498,7 @@ const ScheduleManagerPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearchSchedule}
                 >
-                  Advanced Search
+                  <SearchOutlined/> Advance
                 </Button>
               </Col>
             </Row>
@@ -501,7 +511,8 @@ const ScheduleManagerPage = () => {
             size={"large"}
             onClick={showModalCreateSchedule}
           >
-            {t("createschedule")}
+            {/* {t("createschedule")} */}
+            <PlusOutlined/> Schedule
           </Button>
         </Col>
       </Row>
