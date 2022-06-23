@@ -3,7 +3,6 @@ import {
   getListDistrictService,
   getListWardService,
 } from "../../services/map_service";
-import { createPoiService } from "../../services/poi_service";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -24,15 +23,14 @@ import { useEffect, useState } from "react";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 
-const ModalCreatePoi = ({
+const ModalAdvanceSearch = ({
   modalToIndex,
   listProvinces,
-  isCreatePoiModalVisible,
+  isPoiModalVisible,
   handleCancelPoiModal,
   listPoiCategories,
 }) => {
   const [form] = Form.useForm();
-  const { TextArea } = Input;
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
@@ -80,7 +78,7 @@ const ModalCreatePoi = ({
     });
   };
 
-  const onFinishCreatePoi = async (values) => {
+  const onFinishSearchPoi = async (values) => {
     const invalidMsg = [];
     var check = true;
     try {
@@ -137,11 +135,11 @@ const ModalCreatePoi = ({
           thumbnail: thumbnail[1],
           listImage: listImage,
         };
-        await createPoiService(newPoi).then(() => {
-          modalToIndex("create");
-          toast.success("Create Poi Success");
-          form.resetFields();
-        });
+        // await createPoiService(newPoi).then(() => {
+        //   modalToIndex("search");
+        //   toast.success("Search Poi Success");
+        //   form.resetFields();
+        // });
       } else {
         var errormsg = invalidMsg.join("-");
         toast.error(errormsg);
@@ -152,13 +150,13 @@ const ModalCreatePoi = ({
   };
   const handleCancelPoiInModal = () => {
     form.resetFields();
-    handleCancelPoiModal("create");
+    handleCancelPoiModal("search");
   };
   return (
     <>
       <Modal
-        title="Create Poi"
-        visible={isCreatePoiModalVisible}
+        title="Search Poi"
+        visible={isPoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
       >
@@ -166,67 +164,19 @@ const ModalCreatePoi = ({
           {...formItemLayout}
           form={form}
           name="registerPoi"
-          onFinish={onFinishCreatePoi}
+          onFinish={onFinishSearchPoi}
           scrollToFirstError
         >
-          <Form.Item
-            name="name"
-            label={t("name")}
-            rules={[
-              {
-                required: true,
-                message: t("reqnameschedule"),
-              },
-            ]}
-          >
+          <Form.Item name="name" label={t("name")}>
             <Input />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                message: "Please input your description!",
-              },
-            ]}
-          >
-            <TextArea rows={4} />
-          </Form.Item>
-          <Form.Item
-            name="stringOpenTime"
-            label={t("timestart")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimestartschedule"),
-              },
-            ]}
-          >
+          <Form.Item name="stringOpenTime" label={t("timestart")}>
             <TimePicker allowClear={false} />
           </Form.Item>
-          <Form.Item
-            name="stringCloseTime"
-            label={t("timeend")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimeendschedule"),
-              },
-            ]}
-          >
+          <Form.Item name="stringCloseTime" label={t("timeend")}>
             <TimePicker allowClear={false} />
           </Form.Item>
-          <Form.Item
-            name="dayOfWeek"
-            label={t("dayofweek")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimestartschedule"),
-              },
-            ]}
-          >
+          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
               <Row>
                 <Col span={8}>
@@ -253,28 +203,10 @@ const ModalCreatePoi = ({
               </Row>
             </Checkbox.Group>
           </Form.Item>
-          <Form.Item
-            name="address"
-            label="Address"
-            rules={[
-              {
-                required: true,
-                message: "Please input your address!",
-              },
-            ]}
-          >
+          <Form.Item name="address" label="Address">
             <Input />
           </Form.Item>
-          <Form.Item
-            name="city"
-            label="City"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your city!",
-              },
-            ]}
-          >
+          <Form.Item name="city" label="City">
             <Select name="selectProvince" onChange={handleProvinceChange}>
               {listProvinces
                 ? listProvinces.map((item) => (
@@ -285,16 +217,7 @@ const ModalCreatePoi = ({
                 : null}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="district"
-            label="District"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your district!",
-              },
-            ]}
-          >
+          <Form.Item name="district" label="District">
             <Select name="selectDistricts" onChange={handleDistrictChange}>
               {listDistrictsInForm
                 ? listDistrictsInForm.map((item) => (
@@ -305,16 +228,7 @@ const ModalCreatePoi = ({
                 : null}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="ward"
-            label="Ward"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your ward!",
-              },
-            ]}
-          >
+          <Form.Item name="ward" label="Ward">
             <Select name="selectWards">
               {listWardsInForm
                 ? listWardsInForm.map((item) => (
@@ -325,65 +239,16 @@ const ModalCreatePoi = ({
                 : null}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="poicategoryId"
-            label="Category"
-            rules={[
-              {
-                required: true,
-                message: "Please choose your category!",
-              },
-            ]}
-          >
+          <Form.Item name="poicategoryId" label="Category">
             <Select>
               {listPoiCategories.map((categories) => (
                 <Option value={categories.id}>{categories.name}</Option>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="thumbnail"
-            label="thumbnail"
-            rules={[
-              {
-                required: true,
-                message: "Please choose application logo!",
-              },
-            ]}
-          >
-            <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture"
-              maxCount={1}
-              accept=".png,.jpeg"
-              beforeUpload={beforeUpload}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item
-            name="listImage"
-            label="listImage"
-            rules={[
-              {
-                required: true,
-                message: "Please choose application logo!",
-              },
-            ]}
-          >
-            <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture"
-              maxCount={5}
-              accept=".png,.jpeg"
-              beforeUpload={beforeUpload}
-            >
-              <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
-            </Upload>
-          </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Create Poi
+              Search Poi
             </Button>
           </Form.Item>
         </Form>
@@ -391,4 +256,4 @@ const ModalCreatePoi = ({
     </>
   );
 };
-export default ModalCreatePoi;
+export default ModalAdvanceSearch;

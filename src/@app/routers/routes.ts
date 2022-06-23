@@ -10,6 +10,7 @@ import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_p
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import PoiPage from "../../kiosk_portal/pages/poi";
+import PoiCategory from "../../kiosk_portal/pages/poi_category";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
 import CreateTemplatePage from "../../kiosk_portal/pages/template/create-template";
@@ -191,6 +192,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles:[ROLE_LOCATION_OWNER]
+  },
+  {
+    component: PoiCategory,
+    path: "/poi-category",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles:[ROLE_ADMIN]
   }
 ];
 
