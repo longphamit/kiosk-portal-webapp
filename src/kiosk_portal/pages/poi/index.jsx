@@ -116,18 +116,9 @@ const PoiPage = () => {
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
+    console.log(page, pageSize);
     setCurrentPage(page);
-    await getListPoiFunction(
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      currentPage,
-      numUnitInPage
-    );
+    await getListPoiFunction("", "", "", "", "", "", "", page, pageSize);
   };
 
   const columns = [
@@ -181,7 +172,7 @@ const PoiPage = () => {
               showModal("update");
             }}
           >
-            <EditFilled /> UPDATE
+            <EditFilled /> Update
           </Button>
         </Space>
       ),
@@ -211,7 +202,7 @@ const PoiPage = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col span={3} />
+              <Col span={1} />
               <Col span={3}>
                 <Button
                   type="danger"
@@ -231,7 +222,7 @@ const PoiPage = () => {
             size={"large"}
             onClick={() => showModal("create")}
           >
-            <PlusOutlined /> CREATE
+            <PlusOutlined /> Create
           </Button>
         </Col>
       </Row>
