@@ -32,6 +32,7 @@ const ModalUpdatePoi = ({
   currentItem,
 }) => {
   const [form] = Form.useForm();
+  const { TextArea } = Input;
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
@@ -143,7 +144,7 @@ const ModalUpdatePoi = ({
           listImage: listImage,
         };
         // await createPoiService(updatePoi).then(() => {
-        //   modalToIndex();
+        // modalToIndex("update");
         //   toast.success("Update Poi Success");
         // });
       } else {
@@ -218,7 +219,7 @@ const ModalUpdatePoi = ({
                 },
               ]}
             >
-              <Input />
+              <TextArea rows={4} />
             </Form.Item>
             <Form.Item
               name="stringOpenTime"
@@ -244,7 +245,16 @@ const ModalUpdatePoi = ({
             >
               <TimePicker allowClear={false} />
             </Form.Item>
-            <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+            <Form.Item
+              name="dayOfWeek"
+              label={t("dayofweek")}
+              rules={[
+                {
+                  required: true,
+                  message: t("reqtimestartschedule"),
+                },
+              ]}
+            >
               <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
                 <Row>
                   <Col span={8}>
