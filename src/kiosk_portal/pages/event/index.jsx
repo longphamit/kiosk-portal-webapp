@@ -14,29 +14,31 @@ import {
     TimePicker,
     Upload
 } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
-import { createEventService, getListEventService } from "../../services/event_service";
+import { createEventService, deleteEventService, getListEventService } from "../../services/event_service";
 import TextArea from "antd/lib/input/TextArea";
 import { getListDistrictService, getListProviceService, getListWardService } from "../../services/location_services";
 import { getBase64 } from "../../../@app/utils/file_util";
+import { beforeUpload } from "../../../@app/utils/image_util";
+import { useNavigate } from "react-router-dom";
 
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [querySearch, setQuerySearch] = useState('');
     const [numEventInPage, setNumEventInPage] = useState(10);
-    const [currentItem, setCurrentItem] = useState(null);
     const [isCreateEventModalVisible, setIsCreateEventModalVisible] =
         useState(false);
     const [proviceOptions, setProviceOptions] = useState([]);
     const [districtOptions, setDistrictOptions] = useState([]);
     const [wardOptions, setWardOptions] = useState([]);
     const [listEvent, setListEvent] = useState([]);
-    const [isEditEventModalVisible, setIsEditEventModalVisible] =
-        useState(false);
+    useState(false);
     const [form] = Form.useForm();
+    let navigate = useNavigate();
     const getCity = async () => {
         try {
             let res = await getListProviceService();
@@ -45,10 +47,14 @@ const EventManagerPage = () => {
             console.log(e);
         }
     }
+    const onNavigate = (url) => {
+        navigate(url);
+    };
+
     const getListEventFunction = async (currentPageToGetList, numInPage) => {
         try {
             let name = querySearch !== '' ? querySearch : '';
-            const res = await getListEventService(currentPageToGetList, numInPage, name, '', '', '');
+            const res = await getListEventService(currentPageToGetList, numInPage, name, '', '');
             setTotalEvent(res.data.metadata.total);
             setListEvent(res.data.data);
             return;
@@ -108,21 +114,6 @@ const EventManagerPage = () => {
         form.resetFields();
     };
 
-    const onFinishEditEvent = async (values) => {
-        let data = {
-            id: values.id,
-            name: values.Name ?? "",
-            description: values.description ?? ""
-        }
-        try {
-            // const res = await updateTemplateService(data);
-            // handleCancelEditTemplate();
-            // toast("Update successful");
-            // getListTemplateFunction(currentPage, numTemplateInPage)
-        } catch (e) {
-            toast("Update failed");
-        }
-    };
     const formatDatePicker = (str) => {
         var date = new Date(str),
             mnth = ("0" + (date.getMonth() + 1)).slice(-2),
@@ -130,13 +121,6 @@ const EventManagerPage = () => {
         return [date.getFullYear(), mnth, day].join("-");
     }
 
-    const formatTimePicker = (str) => {
-        var date = new Date(str);
-        var hours = ("0" + date.getHours()).slice(-2);
-        var minutes = ("0" + date.getMinutes()).slice(-2);
-        var second = ("0" + date.getSeconds()).slice(-2);
-        return [hours, minutes, second].join(":");
-    }
     const compare2dates = (d1, d2) => {
         return formatDatePicker(d1) === formatDatePicker(d2);
     }
@@ -161,22 +145,28 @@ const EventManagerPage = () => {
                 return;
             }
 
+            let thumbnail = (await getBase64(values.thumbnail.file.originFileObj)).split(",")[1];
+
+            let listImage = [];
+            await Promise.all(values.listImage.fileList.map(async (value) => {
+                let result = (await getBase64(value.originFileObj)).split(",")[1];
+                listImage.push({ image: result });
+            }));
             let data = {
                 "name": values.name,
                 "description": values.description,
-                "image": document.getElementById(values.hiddenField).value,
+                "thumbnail": thumbnail,
                 "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
                 "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
-                "street": "string",
                 "ward": getName(wardOptions, values.ward),
                 "district": getName(districtOptions, values.district),
                 "city": getName(proviceOptions, values.provice),
                 "address": values.address,
-
+                "listImage": listImage
             };
-            // console.log(values);
-            console.log(data);
-            await createEventService(data);
+            console.log(data)
+
+            let res = await createEventService(data);
             getListEventFunction(currentPage, numEventInPage);
             setIsCreateEventModalVisible(false);
             toast.success('Create successful');
@@ -186,12 +176,11 @@ const EventManagerPage = () => {
         }
     };
     const getName = (list, code) => {
-        // console.log(list)
-       for(let obj of list){
-           if(obj.code == code ){
-               return obj.name
-           }
-       }
+        for (let obj of list) {
+            if (obj.code == code) {
+                return obj.name
+            }
+        }
     }
     const onFinishSearch = async (values) => {
         try {
@@ -204,14 +193,8 @@ const EventManagerPage = () => {
         }
 
     };
-    const showModalEditEvent = () => {
-        setIsEditEventModalVisible(true);
-    };
     const handleCancelCreateEvent = () => {
         setIsCreateEventModalVisible(false);
-    };
-    const handleCancelEditEvent = () => {
-        setIsEditEventModalVisible(false);
     };
     const handleDeleteEvent = async (record) => {
         console.log(record);
@@ -221,13 +204,13 @@ const EventManagerPage = () => {
             cancelText: 'No',
             onOk: async () => {
                 {
-                    // try {
-                    //     await deleteTemplateService(record.id);
-                    //     getListTemplateFunction(currentPage, numTemplateInPage);
-                    //     toast("Delete successful");
-                    // } catch (e) {
-                    //     toast("Delete failed");
-                    // }
+                    try {
+                        await deleteEventService(record.id);
+                        getListEventFunction(currentPage, numEventInPage);
+                        toast("Delete successful");
+                    } catch (e) {
+                        toast("Delete failed");
+                    }
                 }
             },
         });
@@ -304,11 +287,10 @@ const EventManagerPage = () => {
                         className="warn-button"
                         shape="default"
                         onClick={() => {
-                            setCurrentItem(record);
-                            showModalEditEvent();
+                            onNavigate({ pathname: '/./event', search: '?id=' + record.id });
                         }}
                     >
-                        Edit
+                        Details
                     </Button>
 
                     <Button
@@ -531,22 +513,44 @@ const EventManagerPage = () => {
                         <TextArea />
                     </Form.Item>
                     <Form.Item
-                        name="image"
-                        label="Image"
+                        name="thumbnail"
+                        label="thumbnail"
                         rules={[
                             {
                                 required: true,
-                                message: 'Please input the district',
+                                message: "Please choose application logo!",
                             },
-                        ]}>
-                        <Input type='file' accept="image/*" onChange={async (event) => {
-                            let img = await getBase64(event.target.files[0]);
-                            document.getElementById('hiddenImg').value = img.replace(/^data:.+;base64,/, '')
-                        }}
-                        />
+                        ]}
+                    >
+                        <Upload
+                            action=""
+                            listType="picture"
+                            maxCount={1}
+                            accept=".png,.jpeg"
+                            beforeUpload={beforeUpload}
+                        >
+                            <Button icon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
                     </Form.Item>
-                    <Form.Item name="hiddenField" hidden={true}>
-                        <Input type='hidden' id="hiddenImg" />
+                    <Form.Item
+                        name="listImage"
+                        label="listImage"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose application logo!",
+                            },
+                        ]}
+                    >
+                        <Upload
+                            action=""
+                            listType="picture"
+                            maxCount={5}
+                            accept=".png,.jpeg"
+                            beforeUpload={beforeUpload}
+                        >
+                            <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+                        </Upload>
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
                         <Button type="primary" htmlType="submit">
@@ -555,57 +559,6 @@ const EventManagerPage = () => {
                     </Form.Item>
                 </Form>
             </Modal>
-            {currentItem ? (
-                <Modal
-                    key={currentItem.id}
-                    title="Edit"
-                    visible={isEditEventModalVisible}
-                    onCancel={handleCancelEditEvent}
-                    footer={null}
-                >
-                    <Form
-                        key={currentItem.id}
-                        {...formItemLayout}
-                        form={form}
-                        name="edit"
-                        onFinish={onFinishEditEvent}
-                        scrollToFirstError
-                        initialValues={{
-                            id: currentItem.id,
-                            Name: currentItem.name,
-                            description: currentItem.description
-                        }}
-                    >
-                        <Form.Item name="id" hidden={true}>
-                            <Input type="hidden" />
-                        </Form.Item>
-                        <Form.Item
-                            name="Name"
-                            label='Name'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input name',
-                                },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="description"
-                            label='Description'
-                        >
-                            <Input />
-                        </Form.Item>
-
-                        <Form.Item {...tailFormItemLayout}>
-                            <Button type="primary" htmlType="submit">
-                                Save
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Modal>
-            ) : null}
         </>
     );
 };

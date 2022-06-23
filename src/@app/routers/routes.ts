@@ -8,6 +8,7 @@ import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import EventManagerPage from "../../kiosk_portal/pages/event";
+import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import PoiPage from "../../kiosk_portal/pages/poi";
@@ -186,6 +187,15 @@ const routes: Route[] = [
   {
     component: EventManagerPage,
     path: "/event-manager",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  },
+  {
+    component: EventDetailsPage,
+    path: "/event",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
