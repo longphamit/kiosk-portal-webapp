@@ -117,28 +117,38 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   App Category
                 </Menu.Item>
-            <SubMenu key="sub1" icon={<LaptopOutlined />} title="POI">
-              <Menu.Item
-                key="4"
-                icon={<ToolOutlined />}
-                onClick={() => {
-                  onNavigate("/poi-page");
-                }}
-              >
-                POI
-              </Menu.Item>
-              <Menu.Item
-                key="5"
-                icon={<ToolOutlined />}
-                onClick={() => {
-                  onNavigate("/poi-category");
-                }}
-              >
-                POI Category
-              </Menu.Item>
-            </SubMenu>
+                <SubMenu key="sub1" icon={<LaptopOutlined />} title="POI">
+                  <Menu.Item
+                    key="4"
+                    icon={<ToolOutlined />}
+                    onClick={() => {
+                      onNavigate("/poi-page");
+                    }}
+                  >
+                    POI
+                  </Menu.Item>
+                  <Menu.Item
+                    key="5"
+                    icon={<ToolOutlined />}
+                    onClick={() => {
+                      onNavigate("/poi-category");
+                    }}
+                  >
+                    POI Category
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<FundOutlined />}
+                    key="event"
+                    onClick={() => {
+                      onNavigate("/event-manager");
+                    }}
+                  >
+                    Event
+                  </Menu.Item>
+                </SubMenu>
 
               </>
+
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
@@ -177,6 +187,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   }}
                 >
                   POI
+                </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="event"
+                  onClick={() => {
+                    onNavigate("/event-manager");
+                  }}
+                >
+                  Event
                 </Menu.Item>
               </>
             ) : null}
