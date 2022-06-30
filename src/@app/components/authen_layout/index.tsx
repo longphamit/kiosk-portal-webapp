@@ -136,17 +136,16 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   >
                     POI Category
                   </Menu.Item>
-                  <Menu.Item
-                    icon={<FundOutlined />}
-                    key="event"
-                    onClick={() => {
-                      onNavigate("/event-manager");
-                    }}
-                  >
-                    Event
-                  </Menu.Item>
                 </SubMenu>
-
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="event"
+                  onClick={() => {
+                    onNavigate("/event-manager");
+                  }}
+                >
+                  Event
+                </Menu.Item>
               </>
 
             ) : null}
