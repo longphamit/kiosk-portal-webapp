@@ -139,9 +139,8 @@ const ModalCreatePoi = ({
           thumbnail: thumbnail[1],
           listImage: listImage,
         };
-        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
-          modalToIndex("create");
+          modalToIndex("create", null);
           toast.success("Create Poi Success");
           form.resetFields();
         });
@@ -206,7 +205,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <TimePicker allowClear={false} />
+            <TimePicker allowClear={false} format="HH:mm" />
           </Form.Item>
           <Form.Item
             name="stringCloseTime"
@@ -218,7 +217,7 @@ const ModalCreatePoi = ({
               },
             ]}
           >
-            <TimePicker allowClear={false} />
+            <TimePicker allowClear={false} format="HH:mm" />
           </Form.Item>
           <Form.Item
             name="dayOfWeek"
