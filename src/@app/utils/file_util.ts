@@ -6,7 +6,7 @@ export const getBase64 = (file: File) => {
     reader.onerror = (error) => reject(error);
   });
 };
-export const downloadTxtFile = (fileName: string,content:string) => {
+export const downloadTxtFile = (fileName: string, content: string) => {
   const element = document.createElement("a");
   const file = new Blob([content], {
     type: "text/plain",

@@ -18,17 +18,22 @@ import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
-import { createEventService, deleteEventService, getListEventService } from "../../services/event_service";
+import { createEventService, deleteEventService, getListEventService, searchEventService } from "../../services/event_service";
 import TextArea from "antd/lib/input/TextArea";
 import { getListDistrictService, getListProviceService, getListWardService } from "../../services/location_services";
 import { getBase64 } from "../../../@app/utils/file_util";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
-
+import "./styles.css"
+import { TYPE_SERVER } from "../../../@app/constants/key";
+import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
+import { ROLE_ADMIN } from "../../../@app/constants/role";
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [querySearch, setQuerySearch] = useState('');
+    const [isSearch, setIsSearch] = useState(false);
+    const [selectedSearchType, setSelectedSearchType] = useState('Name');
     const [numEventInPage, setNumEventInPage] = useState(10);
     const [isCreateEventModalVisible, setIsCreateEventModalVisible] =
         useState(false);
@@ -53,8 +58,14 @@ const EventManagerPage = () => {
 
     const getListEventFunction = async (currentPageToGetList, numInPage) => {
         try {
-            let name = querySearch !== '' ? querySearch : '';
-            const res = await getListEventService(currentPageToGetList, numInPage, name, '', '');
+            if (isSearch) {
+                querySearch.page = currentPageToGetList;
+                let res = searchEventService(querySearch)
+                setTotalEvent(res.data.metadata.total);
+                setListEvent(res.data.data);
+                return;
+            }
+            const res = await getListEventService(currentPageToGetList, numInPage);
             setTotalEvent(res.data.metadata.total);
             setListEvent(res.data.data);
             return;
@@ -89,11 +100,47 @@ const EventManagerPage = () => {
         {
             name: "Name",
             label: "Name",
-        }
+        },
+        {
+            name: "Ward",
+            label: "Ward",
+        },
+        {
+            name: "District",
+            label: "District",
+        },
+        {
+            name: "City",
+            label: "City",
+        },
+        {
+            name: "Status",
+            label: "Status",
+        },
+        {
+            name: "Street",
+            label: "Street",
+        },
+        localStorageGetReduxState().auth.role == ROLE_ADMIN ?
+            ({
+                name: "CreatorName",
+                label: "Creator Name",
+            },
+            {
+                name: "Type",
+                label: "Type",
+            },
+            {
+                name: "CreatorEmail",
+                label: "Creator Email",
+            }) : {}
     ];
     const prefixSearch = (
         <Form.Item name="type" noStyle>
-            <Select defaultValue="Name">
+            <Select
+                onChange={(e) => { e == null ? setSelectedSearchType('Name') : setSelectedSearchType(e) }}
+                defaultValue="Name"
+            >
                 {types.map((item) => {
                     return <Option value={item.name}>{item.label}</Option>;
                 })}
@@ -114,58 +161,59 @@ const EventManagerPage = () => {
         form.resetFields();
     };
 
-    const formatDatePicker = (str) => {
-        var date = new Date(str),
-            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-            day = ("0" + date.getDate()).slice(-2);
-        return [date.getFullYear(), mnth, day].join("-");
-    }
-
-    const compare2dates = (d1, d2) => {
-        return formatDatePicker(d1) === formatDatePicker(d2);
-    }
     const toStringDateTimePicker = (date, time) => {
-        return formatDatePicker(date) + time._d.toISOString().slice(10,);
+        return moment(date).format('YYYY-MM-DD[T]') + moment(time).format('HH:mm:ss.sss[Z]');
     }
+
     const onFinishCreateEvent = async (values) => {
-        var today = new Date();
         try {
+            //Start to check date time of event
+            let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
 
-            if (values.dateStart - today < 0) {
-                toast.error("Date start cannot be today");
+            if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
+                toast.error("Date start is over");
                 return;
             }
 
-            if (values.dateEnd - values.dateStart < 0) {
-                toast.error("Start date must be earlier than end date");
+            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0])) { //Compare on hour
+                toast.error("Time start must be late from now");
+                return;
+            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0])) { // Compare on minute
+
+                if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
+                    toast.error("Time start must be late from now");
+                    return;
+                }
+            }
+
+            let start = toStringDateTimePicker(values.dateStart, values.timeStart);
+            let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
+            if (start > end) { // Check ending time
+                toast.error("Please recheck date and time ending");
                 return;
             }
-            if (compare2dates(values.dateEnd, values.dateStart) && (values.timeEnd - values.timeStart < 0)) {
-                toast.error("Start time must be earlier than end time");
-                return;
-            }
+            //End to check date time of event
 
             let thumbnail = (await getBase64(values.thumbnail.file.originFileObj)).split(",")[1];
 
             let listImage = [];
-            await Promise.all(values.listImage.fileList.map(async (value) => {
-                let result = (await getBase64(value.originFileObj)).split(",")[1];
-                listImage.push({ image: result });
-            }));
+            if (values.listImage !== undefined)
+                await Promise.all(values.listImage.fileList.map(async (value) => {
+                    let result = (await getBase64(value.originFileObj)).split(",")[1];
+                    listImage.push(result);
+                }));
             let data = {
                 "name": values.name,
                 "description": values.description,
                 "thumbnail": thumbnail,
-                "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
-                "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
+                "timeStart": start,
+                "timeEnd": end,
                 "ward": getName(wardOptions, values.ward),
                 "district": getName(districtOptions, values.district),
                 "city": getName(proviceOptions, values.provice),
                 "address": values.address,
                 "listImage": listImage
             };
-            console.log(data)
-
             let res = await createEventService(data);
             getListEventFunction(currentPage, numEventInPage);
             setIsCreateEventModalVisible(false);
@@ -182,14 +230,76 @@ const EventManagerPage = () => {
             }
         }
     }
+    const buildEventParamsSearch = (value) => {
+        let name = '';
+        let ward = '';
+        let district = '';
+        let city = '';
+        let status = '';
+        let street = '';
+        let creatorName = '';
+        let creatorEmail = '';
+        let type = ''
+        console.log(selectedSearchType)
+        switch (selectedSearchType) {
+            case 'Name':
+                name = value;
+                break;
+            case 'Ward':
+                ward = value;
+                break;
+            case 'District':
+                district = value;
+                break;
+            case 'City':
+                city = value;
+                break;
+            case 'Status':
+                status = value;
+                break;
+            case 'Street':
+                street = value;
+                break;
+            case 'CreatorName':
+                creatorName = value;
+                break;
+            case 'Type':
+                type = value;
+                break;
+            case 'CreatorEmail':
+                creatorEmail = value;
+                break;
+        }
+        return {
+            name: name,
+            ward: ward,
+            district: district,
+            city: city,
+            status: status,
+            street: street,
+            creatorName: creatorName,
+            creatorEmail: creatorEmail,
+            type: type
+        }
+    }
     const onFinishSearch = async (values) => {
+        if (values.searchString === '') {
+            setIsSearch(false);
+            getListEventFunction(1, numEventInPage)
+            return;
+        }
+        let searchStr = buildEventParamsSearch(values.searchString);
+        searchStr["size"] = numEventInPage;
+        searchStr["page"] = 1;
         try {
-            // const res = await getListTemplateService(1, numTemplateInPage, values.searchString);
-            // setCurrentPage(1);
-            // setTotalTemplate(res.data.metadata.total);
-            // setListTemplate(res.data.data);
+            const res = await searchEventService(searchStr);
+            setCurrentPage(1);
+            setQuerySearch(searchStr)
+            setTotalEvent(res.data.metadata.total);
+            setListEvent(res.data.data);
         } catch (e) {
             toast("Cannot found!")
+            console.log(e)
         }
 
     };
@@ -220,6 +330,7 @@ const EventManagerPage = () => {
         try {
             let res = await getListDistrictService(selectedOptions);
             setDistrictOptions(res.data);
+
             return;
         } catch (err) {
 
@@ -279,6 +390,12 @@ const EventManagerPage = () => {
             render: (text) => <a>{text}</a>,
         },
         {
+            title: 'Created By',
+            dataIndex: "type",
+            key: "type",
+            render: (text) => text == TYPE_SERVER ? <a>Admin</a> : <a>Location Owner</a>,
+        },
+        {
             title: 'Action',
             key: "action",
             render: (text, record, dataIndex) => (
@@ -310,6 +427,7 @@ const EventManagerPage = () => {
     ];
     return (
         <>
+
             <Row style={{ padding: 10 }}>
                 <Col span={15}>
                     <Form
@@ -534,13 +652,7 @@ const EventManagerPage = () => {
                     </Form.Item>
                     <Form.Item
                         name="listImage"
-                        label="listImage"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please choose application logo!",
-                            },
-                        ]}
+                        label="List Image"
                     >
                         <Upload
                             action=""

@@ -10,20 +10,26 @@ import {
     Col,
     Modal,
 } from 'antd';
+
 import moment from 'moment';
 import { Option } from "antd/lib/mentions";
 import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getEventByIdService, updateEventService } from '../../services/event_service';
+import { getEventByIdService, updateEventService, updateListImage } from '../../services/event_service';
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getListDistrictService, getListWardService } from "../../services/location_services";
 import { getListProvinceService } from '../../services/map_service';
 import { toast } from 'react-toastify';
 import { getBase64 } from '../../../@app/utils/file_util';
 
-const { TextArea } = Input;
 
+import "./styles.css"
+import { TYPE_SERVER } from '../../../@app/constants/key';
+const { TextArea } = Input;
+const CITY_TYPE = "CITY";
+const WARD_TYPE = "WARD";
+const DISTRICT_TYPE = "DISTRICT";
 export const EventDetailsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentEvent, setCurrentEvent] = useState();
@@ -35,24 +41,32 @@ export const EventDetailsPage = () => {
     const [formUploadImages] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const [fileListImage, setFileListImage] = useState([]);
+    const [thumbnail, setThumbnail] = useState('');
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
+        getDistricts(selectedOptions);
+    };
+    const getDistricts = async (selectedCity) => {
         try {
-            let res = await getListDistrictService(selectedOptions);
+            let res = await getListDistrictService(selectedCity);
+            console.log(selectedCity);
             setDistrictOptions(res.data);
             return;
         } catch (err) {
-
+            console.log(err);
         }
-    };
-    const onDistrictChange = async (value) => {
-        form.setFieldsValue({ ward: undefined });
+    }
+    const getWards = async (selectedDistrict) => {
         try {
-            let res = await getListWardService(value);
+            let res = await getListWardService(selectedDistrict);
             setWardOptions(res.data);
         } catch (err) {
-
+            console.log(err);
         }
+    }
+    const onDistrictChange = async (value) => {
+        form.setFieldsValue({ ward: undefined });
+        getWards(value);
     };
     const onNavigate = (url) => {
         navigate(url);
@@ -67,9 +81,36 @@ export const EventDetailsPage = () => {
     }
     let navigate = useNavigate();
     useEffect(async () => {
-        getEventInfo();
         getCity();
+        getEventInfo();
+
     }, []);
+    const getDefaultName = (type) => {
+        switch (type) {
+            case CITY_TYPE:
+                return currentEvent.city;
+            case DISTRICT_TYPE:
+                return currentEvent.district;
+            case WARD_TYPE:
+                return currentEvent.ward;
+        }
+    }
+    const getName = (list, code, type) => {
+        // initial ward and district
+        if (list.length === 0) {
+            return getDefaultName(type);
+        }
+        // initial city value is a name, not a code
+        if (isNaN(parseInt(code))) {
+            return getDefaultName(type);
+        }
+        for (let obj of list) {
+            if (obj.code === code) {
+                return obj.name
+            }
+        }
+
+    }
     const onClickSubmit = async (values) => {
         // Editing
         if (componentDisabled) {
@@ -77,43 +118,74 @@ export const EventDetailsPage = () => {
             return;
         }
         // Update event
-        // Check thumbnail must import 
+        //Start to check date time of event
+        let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
+
+        if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
+            toast.error("Date start is over");
+            return;
+        }
+
+        if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0])) { //Compare on hour
+            toast.error("Time start must be late from now");
+            return;
+        } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0])) { // Compare on minute
+
+            if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
+                toast.error("Time start must be late from now");
+                return;
+            }
+        }
+
+        let start = toStringDateTimePicker(values.dateStart, values.timeStart);
+        let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
+        if (start > end) { // Check ending time
+            toast.error("Please recheck date and time ending");
+            return;
+        }
+        //End to check date time of event
+
         let thumbnail = values.thumbnail;
-        if (!checkThumbnail(thumbnail)) {
+        if (!checkThumbnail(thumbnail)) { // Check thumbnail must import 
             toast.warn('Please add a thumbnail image');
             return;
         }
-        const getName = (list, code) => {
-            for (let obj of list) {
-                if (obj.code == code) {
-                    return obj.name
-                }
+        let base64Thumnail = '';
+        if (thumbnail[0].originFileObj !== undefined) {  // Update thubnail
+            try {
+                base64Thumnail = (await getBase64(thumbnail[0].originFileObj)).split(",")[1]
+            } catch (e) {
+                console.log(e);
+                return;
             }
         }
-        let base64Thumnail = '';
-        if (thumbnail.file === undefined) {
-            //convert base64 from img url
-        } else {
-            base64Thumnail = (await getBase64(thumbnail.file.originFileObj)).split(",")[1];
-        }
         let data = {
-            "id": '',
+            "id": currentEvent.id,
             "name": values.name,
             "description": values.description,
             "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
             "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
-            "ward": getName(wardOptions, values.ward),
-            "district": getName(districtOptions, values.district),
-            "city": getName(proviceOptions, values.provice),
+            "ward": getName(wardOptions, values.ward, WARD_TYPE),
+            "district": getName(districtOptions, values.district, DISTRICT_TYPE),
+            "city": getName(proviceOptions, values.city, CITY_TYPE),
             "address": values.address,
             "image": base64Thumnail,
-            "imageId": currentEvent.thumbnail.id,
+            "imageId": base64Thumnail == '' ? null : currentEvent.thumbnail.id,
         };
-        console.log(data);
         try {
-            updateEventService(data);
-            setComponentDisabled(true);
+            let res = await updateEventService(data);
+            if (res.code == 200) {
+                toast.success('Update Success');
+                getEventInfo();
+                setComponentDisabled(true);
+            } else if (res.code == 400) {
+                toast.success(res.message);
+            }
+
         } catch (e) {
+            if (e.response.code == 400) {
+                toast.error(e.response.data.message + '. Please edit date and time');
+            }
             console.log(e);
         }
     }
@@ -129,7 +201,10 @@ export const EventDetailsPage = () => {
     }
     const checkThumbnail = (thumbnail) => {
         try {
-            if (thumbnail.file.originFileObj == undefined) {
+            if (thumbnail.length == 0) {
+                return false;  // Not have any image
+            }
+            if (thumbnail.file.originFileObj === undefined) {
                 return false;
             }
         } catch (e) {
@@ -165,6 +240,44 @@ export const EventDetailsPage = () => {
         }
         return e && e.fileList;
     };
+    const onFinishUpdateListImage = async (values) => {
+        //Add images
+
+        let existingImage = [];
+        let addFields = [];
+        if (values.listImage === undefined || values.listImage.fileList === undefined) { // not update any image
+            toast.info('Nothing changed to save!')
+            return;
+        } else if (values.listImage !== undefined && values.listImage.fileList !== undefined) {
+            await Promise.all(values.listImage.fileList.map(async (value) => {
+                if (value.uid.includes('rc-upload-')) {
+                    let result = (await getBase64(value.originFileObj)).split(",")[1];
+                    addFields.push(result);
+                } else {
+                    existingImage.push(value.uid);
+                }
+            }));
+        }
+        let removeFields = [];
+        currentEvent.listImage.some((img) => {
+            if (!existingImage.includes(img.id)) {
+                removeFields.push(img.id);
+            }
+        })
+
+        let data = {
+            id: currentEvent.id,
+            removeFields: removeFields,
+            addFields: addFields
+        }
+        try {
+            await updateListImage(data);
+            toast.success("Update success");
+            setVisible(false);
+        } catch (e) {
+            console.log(e)
+        }
+    }
     const loadFileList = () => {
         let list = []
         currentEvent.listImage.map((img, index) => list.push({
@@ -188,13 +301,20 @@ export const EventDetailsPage = () => {
                     city: currentEvent.city,
                     district: currentEvent.district,
                     ward: currentEvent.ward,
-                    status: currentEvent.status,
                     address: currentEvent.address,
                     description: currentEvent.description,
                     dateStart: moment(getDate(currentEvent.timeStart), formatDate),
                     timeStart: moment(getTime(currentEvent.timeStart), formatTime),
                     dateEnd: moment(getDate(currentEvent.timeEnd), formatDate),
                     timeEnd: moment(getTime(currentEvent.timeEnd), formatTime),
+                    thumbnail: [
+                        {
+                            uid: "abc",
+                            name: "thumbnail",
+                            status: "done",
+                            url: currentEvent.thumbnail.link,
+                        },
+                    ]
 
                 }}
             >
@@ -208,7 +328,7 @@ export const EventDetailsPage = () => {
                         },
                     ]}
                 >
-                    <Input disabled={componentDisabled} />
+                    <Input readOnly={componentDisabled} />
                 </Form.Item>
                 <Form.Item label="Time start" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
                     <Form.Item name="dateStart"
@@ -222,11 +342,11 @@ export const EventDetailsPage = () => {
 
 
                         <DatePicker
-
                             disabled={componentDisabled}
                             placeholder="Select date"
                             format="DD/MM/YYYY"
                             allowClear={false}
+                            className='disable-input'
                             style={{
                                 height: "auto",
                                 width: '100%'
@@ -241,8 +361,12 @@ export const EventDetailsPage = () => {
                                 message: 'Please input the event start time'
                             },
                         ]}>
-                        <TimePicker allowClear={false} format='HH:mm' style={{ width: '100%' }}
-                            disabled={componentDisabled} />
+                        <TimePicker
+                            disabled={componentDisabled}
+                            allowClear={false} format='HH:mm'
+                            style={{ width: '100%' }}
+                            className='disable-input'
+                        />
                     </Form.Item>
                 </Form.Item>
                 <Form.Item label="Time end" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
@@ -259,6 +383,7 @@ export const EventDetailsPage = () => {
                             placeholder="Select date"
                             format="DD/MM/YYYY"
                             allowClear={false}
+                            className='disable-input'
                             style={{
                                 height: "auto",
                                 width: '100%'
@@ -273,15 +398,14 @@ export const EventDetailsPage = () => {
                                 message: 'Please input the event end time'
                             },
                         ]}>
-                        <TimePicker allowClear={false} format='HH:mm' style={{ width: '100%' }} disabled={componentDisabled} />
+                        <TimePicker
+                            allowClear={false}
+                            format='HH:mm'
+                            style={{ width: '100%' }}
+                            disabled={componentDisabled}
+                            className='disable-input'
+                        />
                     </Form.Item>
-                </Form.Item>
-                <Form.Item name='status' label="Status">
-                    <Select name='status' style={{ width: '50%' }} disabled={componentDisabled}>
-                        <Option value="coming soon">Coming Soon</Option>
-                        <Option value="on going">On going</Option>
-                        <Option value="end">End</Option>
-                    </Select>
                 </Form.Item>
                 <Form.Item
                     name="city"
@@ -292,7 +416,13 @@ export const EventDetailsPage = () => {
                             message: 'Please input the city',
                         },
                     ]}>
-                    <Select disabled={componentDisabled} defaultValue={proviceOptions[0]} onChange={loadDistrict} allowClear>
+                    <Select
+                        defaultValue={proviceOptions[0]}
+                        onChange={loadDistrict}
+                        allowClear
+                        disabled={componentDisabled}
+                        className='disable-input'
+                    >
                         {proviceOptions.map(province => (
                             <Option key={province.code}>{province.name}</Option>
                         ))}
@@ -306,9 +436,13 @@ export const EventDetailsPage = () => {
                             required: true,
                             message: 'Please input the district',
                         },
-                    ]}>
-                    <Select id="district-select" disabled={componentDisabled}
-                        onChange={onDistrictChange}>
+                    ]}
+                >
+                    <Select
+                        disabled={componentDisabled}
+                        className='disable-input'
+                        onChange={onDistrictChange}
+                    >
                         {districtOptions.map(district => (
                             <Option key={district.code}>{district.name}</Option>
                         ))}
@@ -322,7 +456,8 @@ export const EventDetailsPage = () => {
                             required: true,
                             message: 'Please input the ward',
                         },
-                    ]}>
+                    ]}
+                    className='disable-input'>
                     <Select disabled={componentDisabled}>
                         {wardOptions.map(ward => (
                             <Option key={ward.code}>{ward.name}</Option>
@@ -333,20 +468,21 @@ export const EventDetailsPage = () => {
                     name="address"
                     label='Address'
                 >
-                    <TextArea disabled={componentDisabled} />
+                    <TextArea readOnly={componentDisabled} />
                 </Form.Item>
                 <Form.Item
                     name="description"
                     label='Description'
                 >
-                    <TextArea disabled={componentDisabled} />
+                    <TextArea readOnly={componentDisabled} />
                 </Form.Item>
                 <Form.Item
                     name="thumbnail"
                     label="Thumbnail"
                     getValueFromEvent={normFile}
                 >
-                    <Upload disabled={componentDisabled}
+                    <Upload
+                        disabled={componentDisabled}
                         action=""
                         listType="picture"
                         maxCount={1}
@@ -364,24 +500,24 @@ export const EventDetailsPage = () => {
                         <Button icon={<UploadOutlined />}>Upload</Button>
                     </Upload>
                 </Form.Item>
-                <Row justify="center" align="middle">
-                    <Col>
-                        <Form.Item>
-                            <Button onClick={() => { loadFileList(); setVisible(true); }}>
-                                Update List Image
-                            </Button>
-                        </Form.Item>
-                    </Col>
-                    <Col span={1}>
-                    </Col>
-                    <Col>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" > {componentDisabled ? 'Update Event' : 'Save Event'}</Button>
-                        </Form.Item>
-                    </Col>
-
-                </Row>
-
+                {currentEvent.type == TYPE_SERVER ?
+                    <Row justify="center" align="middle">
+                        <Col>
+                            <Form.Item>
+                                <Button onClick={() => { loadFileList(); setVisible(true); }}>
+                                    Update List Image
+                                </Button>
+                            </Form.Item>
+                        </Col>
+                        <Col span={1}>
+                        </Col>
+                        <Col>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit" > {componentDisabled ? 'Update Event' : 'Save Event'}</Button>
+                            </Form.Item>
+                        </Col>
+                    </Row> : null
+                }
             </Form> : null
         }
         {currentEvent ?
@@ -391,9 +527,15 @@ export const EventDetailsPage = () => {
                 visible={visible}
                 onCancel={() => setVisible(false)}
                 footer={null}
-                width={1000}
+                width={600}
             >
-                <Form form={formUploadImages}>
+                <Form form={formUploadImages}
+                    onFinish={onFinishUpdateListImage}
+                    initialValues={{
+                        listImage: fileListImage
+                    }}
+                >
+
                     <Form.Item
                         name="listImage"
                         label="List Image"
@@ -405,7 +547,7 @@ export const EventDetailsPage = () => {
                                 maxCount={5}
                                 accept=".png,.jpeg"
                                 beforeUpload={beforeUpload}
-                                fileList={fileListImage}
+                                defaultFileList={fileListImage}
                             >
                                 <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
                             </Upload>
@@ -419,6 +561,11 @@ export const EventDetailsPage = () => {
                                 <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
                             </Upload>
                         }
+                    </Form.Item>
+                    <Form.Item>
+                        <Row justify="center" align="middle">
+                            <Button type='primary' htmlType="submit" >Save</Button>
+                        </Row>
                     </Form.Item>
                 </Form>
             </Modal> : null
