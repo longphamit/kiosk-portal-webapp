@@ -24,6 +24,7 @@ import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 
 const ModalAdvanceSearch = ({
+  onSearchModal,
   modalToIndex,
   listProvinces,
   isPoiModalVisible,
@@ -80,38 +81,64 @@ const ModalAdvanceSearch = ({
 
   const onFinishSearchPoi = async (values) => {
     try {
-      console.log(values);
-      // if (typeof objDistrict === "undefined") {
-      //   objDistrict = "";
-      // } else {
-      //   objDistrict = objDistrict.name;
-      // }
-      // if (typeof objWard === "undefined") {
-      //   objWard = "";
-      // } else {
-      //   objWard = objWard.name;
-      // }
+      let name = values.name;
+      if (typeof name === "undefined") {
+        name = "";
+      }
+      let dayOfWeek = values.dayOfWeek;
+      if (typeof dayOfWeek === "undefined") {
+        dayOfWeek = "";
+      } else {
+        dayOfWeek = values.dayOfWeek.join("-");
+      }
+      let address = values.address;
+      if (typeof address === "undefined") {
+        address = "";
+      }
 
-      // const searchPoi = {
-      //   name: values.name,
-      //   description: values.description,
-      //   stringOpenTime: formatTimePicker(values.stringOpenTime),
-      //   stringCloseTime: formatTimePicker(values.stringCloseTime),
-      //   dayOfWeek: values.dayOfWeek.join("-"),
-      //   ward: objWard,
-      //   district: objDistrict,
-      //   city: objCity.name,
-      //   address: values.address,
-      //   poicategoryId: values.poicategoryId,
-      //   thumbnail: thumbnail[1],
-      //   listImage: listImage,
-      // };
-      // console.log(searchPoi);
-      // await createPoiService(newPoi).then(() => {
-      //   modalToIndex("search");
-      //   toast.success("Search Poi Success");
-      //   form.resetFields();
-      // });
+      let city = "";
+      let district = "";
+      let ward = "";
+      if (typeof values.city === "undefined") {
+        city = "";
+      } else {
+        city = listProvinces.find(
+          (element) => element.code === values.city
+        ).name;
+
+        if (typeof values.district.value === "undefined") {
+          district = listDistrictsInForm.find(
+            (element) => element.code === values.district
+          ).name;
+        } else {
+          district = values.district.value;
+        }
+
+        if (typeof values.ward.value === "undefined") {
+          ward = listWardsInForm.find(
+            (element) => element.code === values.ward
+          ).name;
+        } else {
+          ward = values.ward.value;
+        }
+      }
+
+      let poicategoryId = values.poicategoryId;
+      if (typeof poicategoryId === "undefined") {
+        poicategoryId = "";
+      }
+
+      const searchPoi = {
+        Name: name,
+        DayOfWeek: dayOfWeek,
+        ward: ward,
+        district: district,
+        city: city,
+        address: address,
+        poicategoryId: poicategoryId,
+      };
+      modalToIndex("search", searchPoi);
+      form.resetFields();
     } catch (error) {
       console.log(error);
     }
@@ -137,12 +164,6 @@ const ModalAdvanceSearch = ({
         >
           <Form.Item name="name" label={t("name")}>
             <Input />
-          </Form.Item>
-          <Form.Item name="stringOpenTime" label={t("timestart")}>
-            <TimePicker allowClear={false} />
-          </Form.Item>
-          <Form.Item name="stringCloseTime" label={t("timeend")}>
-            <TimePicker allowClear={false} />
           </Form.Item>
           <Form.Item name="dayOfWeek" label={t("dayofweek")}>
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
