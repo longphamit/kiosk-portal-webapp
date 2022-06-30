@@ -84,7 +84,7 @@ const PoiPage = () => {
     }
   };
 
-  const onFinishModal = async (type) => {
+  const onFinishModal = async (type, data) => {
     if (type === "create") {
       setIsCreateModalVisible(false);
     } else if (type === "update") {
@@ -92,18 +92,36 @@ const PoiPage = () => {
     } else if (type === "search") {
       setIsSearchModalVisible(false);
     }
-    await getListPoiFunction(
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      currentPage,
-      numUnitInPage
-    );
+    if (data === null) {
+      setCurrentPage(1);
+      await getListPoiFunction(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        currentPage,
+        numUnitInPage
+      );
+    } else {
+      setCurrentPage(1);
+      await getListPoiFunction(
+        data.Name,
+        data.ward,
+        data.district,
+        data.city,
+        data.address,
+        data.poicategoryId,
+        "",
+        currentPage,
+        numUnitInPage
+      );
+    }
   };
+
+  const onSearchModal = async (data) => {};
 
   const handleCancelModalPoi = (type) => {
     if (type === "create") {
@@ -255,6 +273,7 @@ const PoiPage = () => {
       ) : null}
       {
         <ModalAdvanceSearch
+          onSearchModal={onSearchModal}
           modalToIndex={onFinishModal}
           listProvinces={listProvinces}
           isPoiModalVisible={isSearchModalVisible}
