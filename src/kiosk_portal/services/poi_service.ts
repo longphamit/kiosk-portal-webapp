@@ -7,7 +7,13 @@ export const getListPoiService = async (Name:any,Ward:any,District:any,City:any,
     return response.data;
   };
   
-  export const createPoiService = async (data: any) => {
+export const createPoiService = async (data: any) => {
     const response = await request.post(`${HOST}/v1/pois`, data);
     return response.data;
+};
+
+export const getPoiByIdService = async (id:any) => {
+  const response = await request.get(
+      `${HOST}/v1/pois/${id}`);
+  return response.data;
 };

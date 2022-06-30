@@ -1,20 +1,6 @@
-import {
-  AutoComplete,
-  Button,
-  Col,
-  Form,
-  Modal,
-  Pagination,
-  Row,
-  Select,
-  Space,
-  Table,
-} from "antd";
-import {
-  PlusOutlined,
-} from "@ant-design/icons";
+import { Button, Col, Modal, Pagination, Row, Table } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
 
@@ -23,8 +9,6 @@ const AppCategoryPage = () => {
   const [appCategoryPage, setAppCategoryPage] = useState(1);
   const [appCategoryPageSize, setAppCategoryPageSize] = useState(5);
   const [appCategoryPageTotal, setAppCategoryPageTotal] = useState(0);
-  const { t } = useTranslation();
-  const { form } = Form.useForm();
   const [isCreateCategoryModalVisible, setIsCreateCategoryModalVisible] =
     useState(false);
 
@@ -45,6 +29,7 @@ const AppCategoryPage = () => {
   const getAppCategoryList = async (page, size) => {
     const res = await getListAppCategoryService(page, size);
     setAppCategoryList(res.data.data);
+    setAppCategoryPageTotal(res.data.metadata.total);
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -80,46 +65,7 @@ const AppCategoryPage = () => {
       </Modal>
 
       <Row style={{ padding: 10 }}>
-        <Col span={15}>
-          {/* <Form
-            form={form}
-            name="search"
-            //   onFinish={onFinishSearch}
-            initialValues={{
-              type: "FirstName",
-              searchString: "",
-            }}
-          >
-            <Row>
-              <Col span={10}>
-                <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                  <AutoComplete
-                    style={{ width: "100%" }}
-                    options={[]}
-                    placeholder="Search..."
-                    filterOption={(inputValue, option) =>
-                      option.value
-                        .toUpperCase()
-                        .indexOf(inputValue.toUpperCase()) !== -1
-                    }
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={3}>
-                <Form.Item>
-                  <Button
-                    htmlType="submit"
-                    style={{ marginLeft: 10, borderRadius: 5 }}
-                    type="primary"
-                    size={"large"}
-                  >
-                    Search
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form> */}
-        </Col>
+        <Col span={15}></Col>
         <Col span={5} />
         <Col span={4}>
           <Button
@@ -127,7 +73,7 @@ const AppCategoryPage = () => {
             size={"large"}
             onClick={handleShowModalCreateCategory}
           >
-            <PlusOutlined/> App category
+            <PlusOutlined /> App category
           </Button>
         </Col>
       </Row>
