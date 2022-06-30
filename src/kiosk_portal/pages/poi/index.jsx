@@ -5,9 +5,11 @@ import { getListPoiService } from "../../services/poi_service";
 import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
-import ModalUpdatePoi from "./modalUpdatePoi";
+import DetailPoiPage from "./";
 import { SearchOutlined, PlusOutlined, EditFilled } from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
+import { useNavigate } from "react-router-dom";
+
 const PoiPage = () => {
   const { t } = useTranslation();
   const [listUnit, setListUnit] = useState([]);
@@ -20,6 +22,7 @@ const PoiPage = () => {
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [listProvinces, setListProvinces] = useState([]);
+  let navigate = useNavigate();
 
   const [form] = Form.useForm();
   const getListPoiFunction = async (
@@ -59,6 +62,10 @@ const PoiPage = () => {
     const resPoiCategories = await getListPoiCategoriesService("", 10000, 1);
     setListPoiCategories(resPoiCategories.data.data);
   }, []);
+
+  const onNavigate = (url) => {
+    navigate(url);
+  };
 
   const onFinishSearch = async (values) => {
     getListPoiFunction(
@@ -183,11 +190,19 @@ const PoiPage = () => {
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
+            className="warn-button"
+            shape="default"
+            onClick={() => {
+              onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
+            }}
+          >
+            Details
+          </Button>
+          <Button
             className="infor-button"
             shape="default"
             onClick={() => {
-              setCurrentUnit(record);
-              showModal("update");
+              // onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
             }}
           >
             <EditFilled /> Update
@@ -259,18 +274,6 @@ const PoiPage = () => {
         handleCancelPoiModal={handleCancelModalPoi}
         listPoiCategories={listPoiCategories}
       />
-
-      {currentUnit ? (
-        <ModalUpdatePoi
-          key={currentUnit.id}
-          modalToIndex={onFinishModal}
-          listProvinces={listProvinces}
-          isUpdatePoiModalVisible={isUpdateModalVisible}
-          handleCancelPoiModal={handleCancelModalPoi}
-          listPoiCategories={listPoiCategories}
-          currentItem={currentUnit}
-        />
-      ) : null}
       {
         <ModalAdvanceSearch
           onSearchModal={onSearchModal}

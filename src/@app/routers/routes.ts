@@ -12,6 +12,7 @@ import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import PoiPage from "../../kiosk_portal/pages/poi";
+import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
@@ -215,6 +216,15 @@ const routes: Route[] = [
   {
     component: EventDetailsPage,
     path: "/event",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  },
+  {
+    component: DetailPoiPage ,
+    path: "/poi",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
