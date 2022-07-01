@@ -40,9 +40,11 @@ const LoginPage: React.FC = () => {
       .then(async (response: any) => {
         setLoading(false);
         console.log(response);
-        if (response.error) {
+        if (response.error.message === "Request failed with status code 404") {
           toast.error("Wrong Username or password");
-        } else {
+        } else if(response.error.message === "Request failed with status code 403")
+        {return}
+        else {
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
           localStorage.setItem(USER_EMAIL, response.payload.data.email);
