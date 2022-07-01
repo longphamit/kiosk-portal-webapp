@@ -38,7 +38,7 @@ const DetailPoiPage = () => {
   const [currentItem, setCurrentItem] = useState();
   const [listProvinces, setListProvinces] = useState([]);
   const [listPoiCategories, setListPoiCategories] = useState([]);
-  const [fileListImage, setFileListImage] = useState([]);
+  const [fileListImage, setFileListImage] = useState();
   const { Option } = Select;
 
   let navigate = useNavigate();

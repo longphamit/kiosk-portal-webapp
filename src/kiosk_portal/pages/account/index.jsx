@@ -21,7 +21,7 @@ import {
   EyeFilled,
   EditFilled,
   PoweroffOutlined,
-  ArrowUpOutlined
+  ArrowUpOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,9 +43,9 @@ import {
 } from "../../services/account_service";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 const AccountManagerPage = () => {
-  const [isListAccountLoading, setListAccountLoading] = useState()
-  const [isCreateAccountLoading, setCreateAccountLoading] = useState()
-  const [isUpdateAccountLoading, setUpdateAccountLoading] = useState()
+  const [isListAccountLoading, setListAccountLoading] = useState();
+  const [isCreateAccountLoading, setCreateAccountLoading] = useState();
+  const [isUpdateAccountLoading, setUpdateAccountLoading] = useState();
   const { Option } = Select;
   const { t } = useTranslation();
   const [listAccount, setListAccount] = useState([]);
@@ -66,7 +66,7 @@ const AccountManagerPage = () => {
   const [form] = Form.useForm();
   let navigate = useNavigate();
   const getListAccountFunction = async (currentPageToGetList, numInPage) => {
-    setListAccountLoading(true)
+    setListAccountLoading(true);
     try {
       if (isSearch) {
         querySearch.page = currentPageToGetList;
@@ -81,7 +81,7 @@ const AccountManagerPage = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setListAccountLoading(false)
+      setListAccountLoading(false);
     }
   };
 
@@ -92,7 +92,7 @@ const AccountManagerPage = () => {
   }, []);
 
   const onFinishEditAccount = async (values) => {
-    setUpdateAccountLoading(true)
+    setUpdateAccountLoading(true);
     const updateAccount = {
       id: values.id,
       firstName: values.firstName,
@@ -110,7 +110,7 @@ const AccountManagerPage = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setUpdateAccountLoading(false)
+      setUpdateAccountLoading(false);
     }
   };
 
@@ -183,7 +183,7 @@ const AccountManagerPage = () => {
   };
   const onFinishSearch = async (values) => {
     const search = buildPartyParamSearch(values.searchString);
-    search["status"]=values.status
+    search["status"] = values.status;
     search["size"] = numAccountInPage;
     search["page"] = 1;
     try {
@@ -206,7 +206,7 @@ const AccountManagerPage = () => {
     setIsEditAccountModalVisible(false);
   };
   const onFinishCreateAccount = async (values) => {
-    setCreateAccountLoading(true)
+    setCreateAccountLoading(true);
     const newAccount = {
       firstName: values.firstName,
       lastName: values.lastName,
@@ -224,7 +224,7 @@ const AccountManagerPage = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setCreateAccountLoading(false)
+      setCreateAccountLoading(false);
     }
   };
 
@@ -338,10 +338,10 @@ const AccountManagerPage = () => {
       dataIndex: "status",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
+        record.status === "activate" ? (
           <Tag color="green">{t("activate")}</Tag>
         ) : (
-          <a style={{ color: "red" }}>{t("deactive")}</a>
+          <Tag color="red">{t("deactive")}</Tag>
         ),
     },
 
@@ -356,7 +356,8 @@ const AccountManagerPage = () => {
               navigate("/account-detail/" + record.id);
             }}
           >
-            <EyeFilled/>{t("detail")}
+            <EyeFilled />
+            {t("detail")}
           </Button>
           <Button
             className="warn-button"
@@ -366,7 +367,8 @@ const AccountManagerPage = () => {
               showModalEditAccount();
             }}
           >
-            <EditFilled/>{t("edit")}
+            <EditFilled />
+            {t("edit")}
           </Button>
           {record.roleName === "Admin" ? (
             <Button
@@ -378,7 +380,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              <PoweroffOutlined/> {t("change-status")}
+              <PoweroffOutlined /> {t("change-status")}
             </Button>
           ) : (
             <Button
@@ -389,7 +391,7 @@ const AccountManagerPage = () => {
                 handleChangeStatusAccount(record);
               }}
             >
-              <PoweroffOutlined/> {t("change-status")}
+              <PoweroffOutlined /> {t("change-status")}
             </Button>
           )}
         </Space>
@@ -448,9 +450,14 @@ const AccountManagerPage = () => {
                   />
                 </Form.Item>
               </Col>
-              <Col  span={6}>
-                <Form.Item initialValue="" name="status" label={t("status")} style={{ margin:5 }}>
-                  <Select >
+              <Col span={6}>
+                <Form.Item
+                  initialValue=""
+                  name="status"
+                  label={t("status")}
+                  style={{ margin: 5 }}
+                >
+                  <Select>
                     <Option value="">All</Option>
                     <Option value="active">Active</Option>
                     <Option value="deactivate">Deactive</Option>
@@ -465,7 +472,7 @@ const AccountManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                   <SearchOutlined/>
+                    <SearchOutlined />
                   </Button>
                 </Form.Item>
               </Col>
@@ -475,7 +482,7 @@ const AccountManagerPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  <SearchOutlined/> Advance
+                  <SearchOutlined /> Advance
                 </Button>
               </Col>
             </Row>
@@ -488,13 +495,15 @@ const AccountManagerPage = () => {
             size={"large"}
             onClick={showModalCreateAccount}
           >
-            <PlusOutlined/> Account
+            <PlusOutlined /> Account
           </Button>
         </Col>
       </Row>
-      {
-        isListAccountLoading ? <Spin /> : <Table columns={columns} dataSource={listAccount} pagination={false} />
-      }
+      {isListAccountLoading ? (
+        <Spin />
+      ) : (
+        <Table columns={columns} dataSource={listAccount} pagination={false} />
+      )}
 
       <Pagination
         defaultCurrent={1}
@@ -604,20 +613,20 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                  return <Option value={item.id}>{item.name}</Option>;
-                })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                 : null}
             </Select>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            {
-              isCreateAccountLoading ?
-                <Spin />
-                : <Button type="primary" htmlType="submit">
-                  {t("register")}
-                </Button>
-            }
+            {isCreateAccountLoading ? (
+              <Spin />
+            ) : (
+              <Button type="primary" htmlType="submit">
+                {t("register")}
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Modal>
@@ -777,13 +786,13 @@ const AccountManagerPage = () => {
               />
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
-              {
-                isUpdateAccountLoading ?
-                  <Spin />
-                  : <Button type="primary" htmlType="submit">
-                    Save
-                  </Button>
-              }
+              {isUpdateAccountLoading ? (
+                <Spin />
+              ) : (
+                <Button type="primary" htmlType="submit">
+                  Save
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </Modal>
