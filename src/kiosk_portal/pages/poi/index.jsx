@@ -68,7 +68,8 @@ const PoiPage = () => {
   };
 
   const onFinishSearch = async (values) => {
-    getListPoiFunction(
+    setCurrentPage(1);
+    const res = await getListPoiFunction(
       values.name,
       "",
       "",
@@ -76,9 +77,10 @@ const PoiPage = () => {
       "",
       "",
       "",
-      currentPage,
+      1,
       numUnitInPage
     );
+    setTotalUnit(res.data.metadata.total);
   };
 
   const showModal = (type) => {
@@ -101,7 +103,7 @@ const PoiPage = () => {
     }
     if (data === null) {
       setCurrentPage(1);
-      await getListPoiFunction(
+      const res = await getListPoiFunction(
         "",
         "",
         "",
@@ -109,9 +111,10 @@ const PoiPage = () => {
         "",
         "",
         "",
-        currentPage,
+        1,
         numUnitInPage
       );
+      setTotalUnit(res.data.metadata.total);
     } else {
       setCurrentPage(1);
       await getListPoiFunction(
@@ -141,7 +144,6 @@ const PoiPage = () => {
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
-    console.log(page, pageSize);
     setCurrentPage(page);
     await getListPoiFunction("", "", "", "", "", "", "", page, pageSize);
   };
@@ -265,6 +267,7 @@ const PoiPage = () => {
         total={totalUnit}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
+        current={currentPage}
       />
 
       <ModalCreatePoi
