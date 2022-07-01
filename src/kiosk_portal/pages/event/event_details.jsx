@@ -26,6 +26,7 @@ import { getBase64 } from '../../../@app/utils/file_util';
 
 import "./styles.css"
 import { TYPE_SERVER } from '../../../@app/constants/key';
+import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -483,7 +484,7 @@ export const EventDetailsPage = () => {
                 >
                     <Upload
                         disabled={componentDisabled}
-                        action=""
+                        action={FILE_UPLOAD_URL}
                         listType="picture"
                         maxCount={1}
                         accept=".png,.jpeg"
@@ -542,7 +543,7 @@ export const EventDetailsPage = () => {
                     >
                         {currentEvent.listImage.length > 0 ?
                             <Upload
-                                action=''
+                                action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
                                 accept=".png,.jpeg"
@@ -552,7 +553,7 @@ export const EventDetailsPage = () => {
                                 <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
                             </Upload>
                             : <Upload
-                                action=""
+                                action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
                                 accept=".png,.jpeg"

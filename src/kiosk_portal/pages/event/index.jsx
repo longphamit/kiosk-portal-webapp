@@ -28,6 +28,8 @@ import "./styles.css"
 import { TYPE_SERVER } from "../../../@app/constants/key";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { ROLE_ADMIN } from "../../../@app/constants/role";
+import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
+import { ACCEPT_IMAGE } from "../../constants/accept_file";
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -641,10 +643,10 @@ const EventManagerPage = () => {
                         ]}
                     >
                         <Upload
-                            action=""
+                            action={FILE_UPLOAD_URL}
                             listType="picture"
                             maxCount={1}
-                            accept=".png,.jpeg"
+                            accept={ACCEPT_IMAGE}
                             beforeUpload={beforeUpload}
                         >
                             <Button icon={<UploadOutlined />}>Upload</Button>
@@ -655,10 +657,10 @@ const EventManagerPage = () => {
                         label="List Image"
                     >
                         <Upload
-                            action=""
+                            action={FILE_UPLOAD_URL}
                             listType="picture"
                             maxCount={5}
-                            accept=".png,.jpeg"
+                            accept={ACCEPT_IMAGE}
                             beforeUpload={beforeUpload}
                         >
                             <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>

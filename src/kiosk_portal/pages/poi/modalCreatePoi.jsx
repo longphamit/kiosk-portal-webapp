@@ -23,6 +23,8 @@ import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
+import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 
 const ModalCreatePoi = ({
   modalToIndex,
@@ -354,10 +356,10 @@ const ModalCreatePoi = ({
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action={FILE_UPLOAD_URL}
               listType="picture"
               maxCount={1}
-              accept=".png,.jpeg"
+              accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
@@ -374,10 +376,10 @@ const ModalCreatePoi = ({
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action={FILE_UPLOAD_URL}
               listType="picture"
               maxCount={5}
-              accept=".png,.jpeg"
+              accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>

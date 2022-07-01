@@ -26,6 +26,8 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getPoiByIdService } from "../../services/poi_service";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
+import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -414,10 +416,10 @@ const DetailPoiPage = () => {
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action={FILE_UPLOAD_URL}
               listType="picture"
               maxCount={1}
-              accept=".png,.jpeg"
+              accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
               defaultFileList={[
                 {
@@ -443,10 +445,11 @@ const DetailPoiPage = () => {
               ]}
             >
               <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                action={FILE_UPLOAD_URL}
                 listType="picture"
                 maxCount={5}
-                accept=".png,.jpeg"
+                accept={ACCEPT_IMAGE}
+                multiple
                 beforeUpload={beforeUpload}
                 defaultFileList={[...fileListImage]}
               >

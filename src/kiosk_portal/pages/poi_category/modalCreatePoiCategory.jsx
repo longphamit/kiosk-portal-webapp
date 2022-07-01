@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 import { createPoiCategoriesService } from "../../services/poi_category_service";
+import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 
 const ModalCreatePoiCategory = ({
   modalToIndex,
@@ -78,10 +80,10 @@ const ModalCreatePoiCategory = ({
             ]}
           >
             <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              action={FILE_UPLOAD_URL}
               listType="picture"
               maxCount={1}
-              accept=".png,.jpeg"
+              accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>
