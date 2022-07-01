@@ -623,6 +623,12 @@ const EventManagerPage = () => {
                     <Form.Item
                         name="address"
                         label='Address'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the address',
+                            },
+                        ]}
                     >
                         <TextArea />
                     </Form.Item>

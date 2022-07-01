@@ -25,8 +25,11 @@ import { getBase64 } from '../../../@app/utils/file_util';
 
 
 import "./styles.css"
-import { TYPE_SERVER } from '../../../@app/constants/key';
+import { TYPE_LOCAL, TYPE_SERVER } from '../../../@app/constants/key';
+import { localStorageGetReduxState } from '../../../@app/services/localstorage_service';
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
+import { ACCEPT_IMAGE } from '../../constants/accept_file';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -487,7 +490,7 @@ export const EventDetailsPage = () => {
                         action={FILE_UPLOAD_URL}
                         listType="picture"
                         maxCount={1}
-                        accept=".png,.jpeg"
+                        accept={ACCEPT_IMAGE}
                         beforeUpload={beforeUpload}
                         defaultFileList={[
                             {
@@ -501,7 +504,8 @@ export const EventDetailsPage = () => {
                         <Button icon={<UploadOutlined />}>Upload</Button>
                     </Upload>
                 </Form.Item>
-                {currentEvent.type == TYPE_SERVER ?
+                {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
+                    || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
                     <Row justify="center" align="middle">
                         <Col>
                             <Form.Item>
@@ -546,7 +550,8 @@ export const EventDetailsPage = () => {
                                 action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
-                                accept=".png,.jpeg"
+                                multiple
+                                accept={ACCEPT_IMAGE}
                                 beforeUpload={beforeUpload}
                                 defaultFileList={fileListImage}
                             >
@@ -556,7 +561,7 @@ export const EventDetailsPage = () => {
                                 action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
-                                accept=".png,.jpeg"
+                                accept={ACCEPT_IMAGE}
                                 beforeUpload={beforeUpload}
                             >
                                 <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
