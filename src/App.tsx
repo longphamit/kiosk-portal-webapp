@@ -14,7 +14,6 @@ function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   getTokenCustom(setTokenFound);
   onMessageListener().then(payload => {
-    
     console.log(payload);
   }).catch(err => console.log('failed: ', err));
   return (

@@ -14,7 +14,7 @@ import {
     TimePicker,
     Upload
 } from "antd";
-import { DeleteFilled, EyeFilled, UploadOutlined } from "@ant-design/icons";
+import { DeleteFilled, EyeFilled, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
@@ -460,7 +460,7 @@ const EventManagerPage = () => {
                                         type="primary"
                                         size={"large"}
                                     >
-                                        Search
+                                        <SearchOutlined/>
                                     </Button>
                                 </Form.Item>
                             </Col>
@@ -471,12 +471,12 @@ const EventManagerPage = () => {
                 <Col span={5} />
                 <Col span={4}>
                     <Button
-                        type="primary"
+                        className="success-button"
                         shape="round"
                         size={"large"}
                         onClick={showModalCreateEvent}
                     >
-                        Create Event
+                        <PlusOutlined/> Event
                     </Button>
                 </Col>
             </Row>
