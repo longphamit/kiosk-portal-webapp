@@ -14,7 +14,7 @@ import {
     TimePicker,
     Upload
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { DeleteFilled, EyeFilled, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
@@ -359,13 +359,13 @@ const EventManagerPage = () => {
             title: 'Name',
             dataIndex: "name",
             key: "name",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Description',
             dataIndex: "description",
             key: "description",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Time Start',
@@ -373,7 +373,7 @@ const EventManagerPage = () => {
             key: "timeStart",
             render: (text) => {
                 let data = convertDate(text);
-                return <><a>{data.date}</a><br /><a>{data.time}</a></>
+                return <><p>{data.date}</p><br /><p>{data.time}</p></>
             },
         },
         {
@@ -382,20 +382,20 @@ const EventManagerPage = () => {
             key: "timeEnd",
             render: (text) => {
                 let data = convertDate(text);
-                return <><a>{data.date}</a><br /><a>{data.time}</a></>
+                return <><p>{data.date}</p><br /><p>{data.time}</p></>
             },
         },
         {
             title: 'Address',
             dataIndex: "address",
             key: "address",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Created By',
             dataIndex: "type",
             key: "type",
-            render: (text) => text == TYPE_SERVER ? <a>Admin</a> : <a>Location Owner</a>,
+            render: (text) => text == TYPE_SERVER ? <p>Admin</p> : <p>Location Owner</p>,
         },
         {
             title: 'Action',
@@ -403,24 +403,24 @@ const EventManagerPage = () => {
             render: (text, record, dataIndex) => (
                 <Space size="middle">
                     <Button
-                        className="warn-button"
+                        className="infor-button"
                         shape="default"
                         onClick={() => {
                             onNavigate({ pathname: '/./event', search: '?id=' + record.id });
                         }}
                     >
-                        Details
+                     <EyeFilled/>   Details
                     </Button>
 
                     <Button
-                        type="primary"
+                        className="danger-button"
                         shape="default"
                         name={record}
                         onClick={() => {
                             handleDeleteEvent(record);
                         }}
                     >
-                        Delete
+                    <DeleteFilled/>    Delete
                     </Button>
 
                 </Space>

@@ -6,9 +6,10 @@ import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
 import DetailPoiPage from "./";
-import { SearchOutlined, PlusOutlined, EditFilled } from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined, EyeFilled } from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
+import { TYPE_SERVER } from "../../../@app/constants/key";
 
 const PoiPage = () => {
   const { t } = useTranslation();
@@ -152,39 +153,33 @@ const PoiPage = () => {
     {
       title: "Image",
       render: (text, record, dataIndex) => (
-        <img src={record.thumbnail.link} width={100} height={100} />
+        <img src={record.thumbnail.link} width={50} height={50} />
       ),
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: "Open Day",
       dataIndex: "dayOfWeek",
       key: "dayOfWeek",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Type",
+      title: "Create By",
       dataIndex: "type",
       key: "type",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text===TYPE_SERVER?"Admin":"Location owner"}</p>,
     },
 
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text, record, dataIndex) => <a>{text}</a>,
+      render: (text, record, dataIndex) => <p>{text}</p>,
     },
     {
       title: t("action"),
@@ -192,22 +187,13 @@ const PoiPage = () => {
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
-            className="warn-button"
+            className="infor-button"
             shape="default"
             onClick={() => {
               onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
             }}
           >
-            Details
-          </Button>
-          <Button
-            className="infor-button"
-            shape="default"
-            onClick={() => {
-              // onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
-            }}
-          >
-            <EditFilled /> Update
+          <EyeFilled/>  Details
           </Button>
         </Space>
       ),

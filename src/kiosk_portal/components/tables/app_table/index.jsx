@@ -327,27 +327,27 @@ const ApplicationTable = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <a href={text}>{text}</a>,
+      render: (text) => <p href={text}>{text}</p>,
     },
 
     {
       title: "Category",
       dataIndex: "appCategoryName",
       key: "appCategoryName",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
 
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text, record, dataIndex) => <a>{text}</a>,
+      render: (text, record, dataIndex) => <p>{text}</p>,
     },
 
     {

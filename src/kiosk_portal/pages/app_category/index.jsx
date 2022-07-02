@@ -23,7 +23,7 @@ const AppCategoryPage = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
   ];
   const getAppCategoryList = async (page, size) => {

@@ -95,7 +95,7 @@ const PoiCategory = () => {
       dataIndex: "logo",
       key: "logo",
       render: (text, record, dataIndex) => (
-        <img src={record.logo} width={100} height={100} />
+        <img src={record.logo} width={50} height={50} />
       ),
     },
     {
