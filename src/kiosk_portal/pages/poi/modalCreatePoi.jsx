@@ -118,34 +118,36 @@ const ModalCreatePoi = ({
 
         let listImage = [];
         let formatImage = [];
+        let newPoi;
         setInputListImage(values.listImage.fileList);
         await Promise.all(
           inputListImage.map(async (value) => {
             result = await getBase64(value.originFileObj);
             formatImage = result.split(",");
             listImage.push(formatImage[1]);
-          })
+          }),
+          (newPoi = {
+            name: values.name,
+            description: values.description,
+            stringOpenTime: formatTimePicker(values.stringOpenTime),
+            stringCloseTime: formatTimePicker(values.stringCloseTime),
+            dayOfWeek: values.dayOfWeek.join("-"),
+            ward: objWard,
+            district: objDistrict,
+            city: objCity.name,
+            address: values.address,
+            poicategoryId: values.poicategoryId,
+            thumbnail: thumbnail[1],
+            listImage: listImage,
+          }),
+          console.log(newPoi)
         );
 
-        const newPoi = {
-          name: values.name,
-          description: values.description,
-          stringOpenTime: formatTimePicker(values.stringOpenTime),
-          stringCloseTime: formatTimePicker(values.stringCloseTime),
-          dayOfWeek: values.dayOfWeek.join("-"),
-          ward: objWard,
-          district: objDistrict,
-          city: objCity.name,
-          address: values.address,
-          poicategoryId: values.poicategoryId,
-          thumbnail: thumbnail[1],
-          listImage: listImage,
-        };
-        await createPoiService(newPoi).then(() => {
-          modalToIndex("create", null);
-          toast.success("Create Poi Success");
-          form.resetFields();
-        });
+        // await createPoiService(newPoi).then(() => {
+        //   modalToIndex("create", null);
+        //   toast.success("Create Poi Success");
+        //   form.resetFields();
+        // });
       } else {
         var errormsg = invalidMsg.join("-");
         toast.error(errormsg);
