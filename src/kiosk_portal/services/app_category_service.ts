@@ -7,3 +7,8 @@ export const getListAppCategoryService = async (page: any, size: any) => {
   );
   return response.data;
 };
+
+export const updateAppCategoryService = async (data: any) => {
+  const response = await request.put(`${HOST}/v1/categories`, data);
+  return response.data;
+};

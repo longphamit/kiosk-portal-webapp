@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
 import ModalCreatePoiCategory from "./modalCreatePoiCategory";
+import ModalUpdatePoiCategory from "./modalUpdatePoiCategory";
 
 const PoiCategory = () => {
   const { t } = useTranslation();
@@ -83,7 +84,6 @@ const PoiCategory = () => {
       );
       setTotalUnit(res.data.metadata.total);
       setListUnit(res.data.data);
-      console.log(res.data.data);
     } catch (error) {
       console.log(error);
     }
@@ -114,6 +114,7 @@ const PoiCategory = () => {
             shape="default"
             onClick={() => {
               setCurrentUnit(record);
+              console.log(currentUnit);
               showModal("update");
             }}
           >
@@ -158,6 +159,12 @@ const PoiCategory = () => {
         modalToIndex={onFinishModal}
         isCreateModalVisible={isCreateModalVisible}
         handleCancelModal={handleCancelModal}
+      />
+      <ModalUpdatePoiCategory
+        modalToIndex={onFinishModal}
+        isUpdateModalVisible={isUpdateModalVisible}
+        handleCancelModal={handleCancelModal}
+        currentUnit={currentUnit}
       />
     </>
   );
