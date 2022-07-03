@@ -351,9 +351,12 @@ export const EventDetailsPage = () => {
                             format="DD/MM/YYYY"
                             allowClear={false}
                             className='disable-input'
+                            
                             style={{
                                 height: "auto",
-                                width: '100%'
+                                width: '100%',
+                                backgroundColor:"#fff",
+                                color:"#000"
                             }}
                         />
                     </Form.Item>
@@ -426,9 +429,14 @@ export const EventDetailsPage = () => {
                         allowClear
                         disabled={componentDisabled}
                         className='disable-input'
+                        style={{
+                            backgroundColor:"#fff"
+                        }}
                     >
                         {proviceOptions.map(province => (
-                            <Option key={province.code}>{province.name}</Option>
+                            <Option style={{
+                                backgroundColor:"#fff"
+                            }} key={province.code}>{province.name}</Option>
                         ))}
                     </Select>
                 </Form.Item>

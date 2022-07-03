@@ -41,6 +41,7 @@ import {
   searchAccountService,
   updateAccountService,
 } from "../../services/account_service";
+import "./styles.css"
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState();
@@ -500,7 +501,9 @@ const AccountManagerPage = () => {
         </Col>
       </Row>
       {isListAccountLoading ? (
-        <Spin />
+        <Row span={24}>
+          <Spin className="center"/>
+        </Row>
       ) : (
         <Table columns={columns} dataSource={listAccount} pagination={false} />
       )}
