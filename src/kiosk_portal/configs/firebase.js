@@ -41,6 +41,10 @@ export const getTokenCustom = (setTokenFound) => {
 export const onMessageListener = () =>
   new Promise((resolve) => {
     onMessage(messaging, (payload) => {
+      console.log("foreground")
+      console.log(payload)
       resolve(payload);
+      return payload
     });
 });
+export default messaging;

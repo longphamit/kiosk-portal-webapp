@@ -4,7 +4,7 @@ importScripts("https://www.gstatic.com/firebasejs/8.9.0/firebase-analytics.js");
 importScripts("https://www.gstatic.com/firebasejs/8.9.0/firebase-messaging.js");
 
 if ("serviceWorker" in navigator) {
-  console.log("hellooooooo")
+  console.log("hellooooooo");
   navigator.serviceWorker
     .register("../firebase-messaging-sw.js")
     .then(function (registration) {
@@ -29,7 +29,17 @@ const firebaseConfig = {
 // phần firebaseConfig tương tự như ở trên nhé
 
 firebase.initializeApp(firebaseConfig);
-const messaging=firebase.messaging()
-messaging.onBackgroundMessage((payload)=>{
-  console.log(payload)
-})
+const messaging = firebase.messaging();
+messaging.onBackgroundMessage(function (payload) {
+  console.log("Received background message ", payload);
+
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+  };
+
+  return self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  );
+});
