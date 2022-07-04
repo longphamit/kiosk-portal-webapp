@@ -22,7 +22,7 @@ const ModalUpdatePoiCategory = ({
     form.resetFields();
   }, []);
 
-  const onFinishCreatePoi = async (values) => {
+  const onFinishUpdatePoi = async (values) => {
     try {
       console.log(values);
       if (isHasPicture) {
@@ -78,7 +78,7 @@ const ModalUpdatePoiCategory = ({
             {...formItemLayout}
             form={form}
             name="registerPoi"
-            onFinish={onFinishCreatePoi}
+            onFinish={onFinishUpdatePoi}
             scrollToFirstError
             initialValues={{
               name: currentUnit.name,
@@ -109,7 +109,7 @@ const ModalUpdatePoiCategory = ({
                     uid: "abc",
                     name: "thumbnail",
                     status: "done",
-                    thumbUrl: currentUnit.logo,
+                    url: currentUnit.logo,
                   },
                 ]}
               >

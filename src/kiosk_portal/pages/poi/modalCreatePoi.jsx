@@ -16,6 +16,7 @@ import {
   Select,
   TimePicker,
   Upload,
+  Spin,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
@@ -38,8 +39,8 @@ const ModalCreatePoi = ({
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
-  const [inputListImage, setInputListImage] = useState([]);
   const { Option } = Select;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(async () => {
     form.resetFields();
@@ -83,6 +84,7 @@ const ModalCreatePoi = ({
   };
 
   const onFinishCreatePoi = async (values) => {
+    setIsLoading(true);
     const invalidMsg = [];
     var check = true;
     try {
@@ -117,43 +119,42 @@ const ModalCreatePoi = ({
         thumbnail = result.split(",");
 
         let listImage = [];
-        let formatImage = [];
-        let newPoi;
-        setInputListImage(values.listImage.fileList);
         await Promise.all(
-          inputListImage.map(async (value) => {
-            result = await getBase64(value.originFileObj);
-            formatImage = result.split(",");
-            listImage.push(formatImage[1]);
-          }),
-          (newPoi = {
-            name: values.name,
-            description: values.description,
-            stringOpenTime: formatTimePicker(values.stringOpenTime),
-            stringCloseTime: formatTimePicker(values.stringCloseTime),
-            dayOfWeek: values.dayOfWeek.join("-"),
-            ward: objWard,
-            district: objDistrict,
-            city: objCity.name,
-            address: values.address,
-            poicategoryId: values.poicategoryId,
-            thumbnail: thumbnail[1],
-            listImage: listImage,
-          }),
-          console.log(newPoi)
+          values.listImage.fileList.map(async (value) => {
+            let formatImage = (await getBase64(value.originFileObj)).split(
+              ","
+            )[1];
+            listImage.push(formatImage);
+          })
         );
-
-        // await createPoiService(newPoi).then(() => {
-        //   modalToIndex("create", null);
-        //   toast.success("Create Poi Success");
-        //   form.resetFields();
-        // });
+        let newPoi = {
+          name: values.name,
+          description: values.description,
+          stringOpenTime: formatTimePicker(values.stringOpenTime),
+          stringCloseTime: formatTimePicker(values.stringCloseTime),
+          dayOfWeek: values.dayOfWeek.join("-"),
+          ward: objWard,
+          district: objDistrict,
+          city: objCity.name,
+          address: values.address,
+          poicategoryId: values.poicategoryId,
+          thumbnail: thumbnail[1],
+          listImage: listImage,
+        };
+        console.log(newPoi);
+        await createPoiService(newPoi).then(() => {
+          modalToIndex("create", null);
+          toast.success("Create Poi Success");
+          form.resetFields();
+        });
       } else {
         var errormsg = invalidMsg.join("-");
         toast.error(errormsg);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleCancelPoiInModal = () => {
@@ -388,9 +389,13 @@ const ModalCreatePoi = ({
             </Upload>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Create Poi
-            </Button>
+            {isLoading ? (
+              <Spin />
+            ) : (
+              <Button type="primary" htmlType="submit">
+                Create Poi
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Modal>

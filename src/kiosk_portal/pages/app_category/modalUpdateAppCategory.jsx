@@ -22,9 +22,8 @@ const ModalUpdateAppCategory = ({
     form.resetFields();
   }, []);
 
-  const onFinishCreatePoi = async (values) => {
+  const onFinishUpdatePoi = async (values) => {
     try {
-      console.log(values);
       if (isHasPicture) {
         let valueLogo = "";
         if (typeof values.logo === "undefined") {
@@ -70,7 +69,7 @@ const ModalUpdateAppCategory = ({
     <>
       {currentUnit ? (
         <Modal
-          title="Create Poi Category"
+          title="Update Application Category"
           visible={isUpdateModalVisible}
           onCancel={handleCancelPoiInModal}
           footer={null}
@@ -79,7 +78,7 @@ const ModalUpdateAppCategory = ({
             {...formItemLayout}
             form={form}
             name="registerPoi"
-            onFinish={onFinishCreatePoi}
+            onFinish={onFinishUpdatePoi}
             scrollToFirstError
             initialValues={{
               name: currentUnit.name,
@@ -119,7 +118,7 @@ const ModalUpdateAppCategory = ({
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Create Poi Category
+                Update Application Category
               </Button>
             </Form.Item>
           </Form>
