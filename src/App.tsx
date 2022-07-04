@@ -10,14 +10,21 @@ import { useTranslation, initReactI18next } from "react-i18next";
 import i18n from "./@app/configs/locales/i8n";
 import messaging, { getTokenCustom, onMessageListener } from "./kiosk_portal/configs/firebase";
 import { onMessage } from "firebase/messaging";
+import { notification } from "antd";
+import { SmileOutlined } from "@ant-design/icons";
 
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
   getTokenCustom(setTokenFound);
   onMessage(messaging, (payload) => {
     console.log("foreground")
-    console.log(payload)
-    toast.success("hello")
+    console.log(payload.notification?.body)
+    console.log(payload.notification?.title)
+    notification.open({
+      message: payload.notification?.title,
+      description: payload.notification?.body,
+      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+    });
   });
   return (
     <Provider store={store}>
