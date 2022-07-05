@@ -28,6 +28,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getPoiByIdService,
   updatePoiBasicService,
+  updatePoiListImgService,
 } from "../../services/poi_service";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
@@ -43,12 +44,12 @@ const DetailPoiPage = () => {
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
-  const [inputListImage, setInputListImage] = useState([]);
   const [currentItem, setCurrentItem] = useState();
   const [listProvinces, setListProvinces] = useState([]);
   const [listPoiCategories, setListPoiCategories] = useState([]);
   const [fileListImage, setFileListImage] = useState();
   const [isHasPicture, setIsHasPicture] = useState(true);
+  const [listRemoveImg, setListRemoveImg] = useState([]);
   const { Option } = Select;
 
   let navigate = useNavigate();
@@ -154,12 +155,28 @@ const DetailPoiPage = () => {
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
       }
-      if (values.dayOfWeek.includes("-")) {
-        dOW = values.dayOfWeek;
-      } else {
-        dOW = values.dayOfWeek.join("-");
+      if (isHasPicture === false) {
+        invalidMsg.push("Please choose logo \n");
+        check = false;
       }
+      if (Array.isArray(values.dayOfWeek)) {
+        dOW = values.dayOfWeek.join("-");
+      } else {
+        dOW = values.dayOfWeek;
+      }
+      console.log(dOW);
+
       if (check) {
+        let valueLogo = "";
+        if (typeof values.thumbnail === "undefined") {
+          valueLogo = "";
+        } else {
+          let inputLogo = [];
+          let result = await getBase64(values.thumbnail.file.originFileObj);
+          inputLogo = result.split(",");
+          valueLogo = inputLogo[1];
+        }
+
         let objCity = listProvinces.find(
           (element) => element.code === values.city
         );
@@ -207,7 +224,10 @@ const DetailPoiPage = () => {
           city: objCity,
           address: values.address,
           poicategoryId: values.poicategoryId,
+          thumbnailId: currentItem.thumbnail.id,
+          thumbnail: valueLogo,
         };
+        console.log(updatePoi);
         await updatePoiBasicService(updatePoi).then(() => {
           toast.success("Update Poi Success");
         });
@@ -220,51 +240,26 @@ const DetailPoiPage = () => {
     }
   };
 
-  const onFinishUpdateThumbnail = async (values) => {
-    try {
-      if (isHasPicture) {
-        let valueLogo = "";
-        if (typeof values.thumbnail === "undefined") {
-          valueLogo = currentItem.thumbnail.link;
-        } else {
-          let inputLogo = [];
-          let result = await getBase64(values.thumbnail.file.originFileObj);
-          inputLogo = result.split(",");
-          valueLogo = inputLogo[1];
-        }
-
-        const updateItem = {
-          id: currentItem.thumbnail.id,
-          // id: currentItem.id,
-          image: valueLogo,
-        };
-        console.log(updateItem);
-
-        await updatePoiBasicService(updateItem).then(() => {
-          toast.success("Update Poi Category Success");
-          // resetField();
-        });
-      } else {
-        toast.error("Please choose logo");
-      }
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
-  };
   const onFinishUpdateListImage = async (values) => {
     let listImage = [];
     let formatImage = [];
-    setInputListImage(values.listImage.fileList);
-    inputListImage.map(async (value) => {
-      let result = await getBase64(value.originFileObj);
-      formatImage = result.split(",");
-      listImage.push(formatImage[1]);
-    });
+    await Promise.all(
+      values.listImage.fileList.map(async (value) => {
+        if (value?.originFileObj) {
+          let result = await getBase64(value.originFileObj);
+          formatImage = result.split(",");
+          listImage.push(formatImage[1]);
+        }
+      })
+    );
     const updateListImage = {
-      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      removeFields: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-      addFields: ["string"],
+      id: currentItem.id,
+      removeFields: listRemoveImg,
+      addFields: listImage,
     };
+    await updatePoiListImgService(updateListImage).then(() => {
+      toast.success("Update List Img Poi Success");
+    });
   };
 
   const onChangeThumbnail = (file) => {
@@ -274,12 +269,21 @@ const DetailPoiPage = () => {
       setIsHasPicture(true);
     }
   };
+
+  const onChangeListImage = (file) => {
+    if (file.file.status === "removed") {
+      if (file.file.url.includes("https://firebasestorage.googleapis.com")) {
+        console.log("abc");
+        setListRemoveImg((prevArray) => [...prevArray, file.file.uid]);
+      }
+    }
+  };
   return (
     <>
       {currentItem ? (
         <Row style={{ padding: 10 }}>
           <Col span={14}>
-            <Card title="Basic Information" extra={<a href="#">Edit</a>}>
+            <Card title="Basic Information">
               <Form
                 {...formItemLayout}
                 form={formBasic}
@@ -482,21 +486,6 @@ const DetailPoiPage = () => {
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item {...tailFormItemLayout}>
-                  <Button type="primary" htmlType="submit">
-                    Update
-                  </Button>
-                </Form.Item>
-              </Form>
-            </Card>
-            <Card title="Thumbnail" extra={<a href="#">Edit</a>}>
-              <Form
-                {...formItemLayout}
-                form={formThumbnail}
-                name="thumbnail"
-                onFinish={onFinishUpdateThumbnail}
-                scrollToFirstError
-              >
                 <Form.Item name="thumbnail" label="Avatar">
                   <Upload
                     action={FILE_UPLOAD_URL}
@@ -524,7 +513,7 @@ const DetailPoiPage = () => {
                 </Form.Item>
               </Form>
             </Card>
-            <Card title="List Image" extra={<a href="#">Edit</a>}>
+            <Card title="List Image">
               <Form
                 {...formItemLayout}
                 form={formListImg}
@@ -550,6 +539,7 @@ const DetailPoiPage = () => {
                       accept={ACCEPT_IMAGE}
                       multiple
                       beforeUpload={beforeUpload}
+                      onChange={onChangeListImage}
                       defaultFileList={[...fileListImage]}
                     >
                       <Button icon={<UploadOutlined />}>

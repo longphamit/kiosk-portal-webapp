@@ -23,3 +23,8 @@ export const updatePoiBasicService = async (data: any) => {
   return response.data;
 };
 
+export const updatePoiListImgService = async (data: any) => {
+  console.log(data)
+  const response = await request.put(`${HOST}/v1/pois/replace`, data);
+  return response.data;
+};
