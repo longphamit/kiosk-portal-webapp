@@ -98,6 +98,9 @@ const EventManagerPage = () => {
             },
         },
     };
+    const typesForAdmin = [];
+    const typesForLocatioOwner = [];
+  
     const types = [
         {
             name: "Name",

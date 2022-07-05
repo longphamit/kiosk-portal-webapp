@@ -28,14 +28,14 @@ import {
   EditFilled,
   ArrowUpOutlined,
   DeleteFilled
-  
+
 } from "@ant-design/icons";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [listTemplate, setListTemplate] = useState([]);
   const [totalTemplate, setTotalTemplate] = useState(0);
   const [numTemplateInPage, setNumTemplateInPage] = useState(10);
-  const [querySearch, setQuerySearch] = useState("");
+  const [querySearch, setQuerySearch] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
   const [isCreateTemplateModalVisible, setIsCreateTemplateModalVisible] =
@@ -46,20 +46,36 @@ const TemplateManagerPage = () => {
   let navigate = useNavigate();
   const getListTemplateFunction = async (currentPageToGetList, numInPage) => {
     try {
-      let name = querySearch !== "" ? querySearch : "";
-      const res = await getListTemplateService(
-        currentPageToGetList,
-        numInPage,
-        name
-      );
+      setCurrentPage(1);
+      if (Object.keys(querySearch).length !== 0 && checkEmptyObj(querySearch)) {
+        const res = await getListTemplateService(
+          currentPageToGetList,
+          numInPage,
+          querySearch.name,
+          querySearch.status
+        );
+        setTotalTemplate(res.data.metadata.total);
+        setListTemplate(res.data.data);
+        return;
+      }
+      const res = await getListTemplateService(currentPageToGetList, numInPage, '', '');
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
-      console.log(res);
       return;
     } catch (error) {
+      setCurrentPage(1);
+      setTotalTemplate(0);
+      setListTemplate([]);
       console.log(error);
     }
   };
+  const checkEmptyObj = (obj) => {
+    for (let i in obj) {
+      if (obj[i] !== '')
+        return false;
+    }
+    return true;
+  }
   const onNavigate = (url) => {
     navigate(url);
   };
@@ -98,7 +114,6 @@ const TemplateManagerPage = () => {
     };
     try {
       const res = await updateTemplateService(data);
-      handleCancelEditTemplate();
       toast("Update successful");
       getListTemplateFunction(currentPage, numTemplateInPage);
     } catch (e) {
@@ -107,12 +122,19 @@ const TemplateManagerPage = () => {
   };
   const onFinishSearch = async (values) => {
     try {
+      // Only search by name and status
+      let searchObj = {
+        name: values.searchString,
+        status: values.status
+      }
+      setQuerySearch(searchObj);
+      setCurrentPage(1);
       const res = await getListTemplateService(
         1,
         numTemplateInPage,
-        values.searchString
+        values.searchString,
+        values.status
       );
-      setCurrentPage(1);
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
     } catch (e) {
@@ -133,10 +155,7 @@ const TemplateManagerPage = () => {
     try {
       let res = await createTemplateService(data);
       handleCancelCreateTemplate();
-
       onNavigate({ pathname: '/./create-template', search: '?id=' + res.data.id });
-      // toast("Create successful");
-      // getListTemplateFunction(currentPage, numTemplateInPage);
     } catch (e) {
       toast("Create failed");
     }
@@ -217,7 +236,7 @@ const TemplateManagerPage = () => {
               showModalEditTemplate();
             }}
           >
-            <EditFilled/> Edit
+            <EditFilled /> Edit
           </Button>
 
           <Button
@@ -228,7 +247,7 @@ const TemplateManagerPage = () => {
               handleDeleteTemplate(record);
             }}
           >
-           <DeleteFilled/> Delete
+            <DeleteFilled /> Delete
           </Button>
         </Space>
       ),
@@ -254,6 +273,7 @@ const TemplateManagerPage = () => {
             initialValues={{
               type: "Name",
               searchString: "",
+              status: ''
             }}
           >
             <Row>
@@ -267,6 +287,15 @@ const TemplateManagerPage = () => {
                   />
                 </Form.Item>
               </Col>
+              <Col span={5}>
+                <Form.Item name={'status'} style={{ marginTop: 5 }}>
+                  <Select >
+                    <Option value="">All Status</Option>
+                    <Option value="incomplete">Incomplete</Option>
+                    <Option value="complete">Complete</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col span={3}>
                 <Form.Item>
                   <Button
@@ -275,7 +304,7 @@ const TemplateManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    <SearchOutlined/>
+                    <SearchOutlined />
                   </Button>
                 </Form.Item>
               </Col>
@@ -288,7 +317,7 @@ const TemplateManagerPage = () => {
             className="success-button"
             onClick={showModalCreateTemplate}
           >
-            <PlusOutlined/> Template
+            <PlusOutlined /> Template
           </Button>
         </Col>
       </Row>
@@ -296,7 +325,7 @@ const TemplateManagerPage = () => {
       <Pagination
         defaultCurrent={1}
         total={totalTemplate}
-        pageSize={5}
+        pageSize={numTemplateInPage}
         onChange={handleChangeNumberOfPaging}
       />
 
@@ -331,7 +360,7 @@ const TemplateManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input description",
+                message: "Please input décription",
               },
             ]}
           >
@@ -357,6 +386,8 @@ const TemplateManagerPage = () => {
             {...formItemLayout}
             form={form}
             name="edit"
+            wrapperCol={{ span: 19 }}
+            labelCol={{ span: 5 }}
             onFinish={onFinishEditTemplate}
             scrollToFirstError
             initialValues={{
@@ -380,15 +411,33 @@ const TemplateManagerPage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="description" label="Description">
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input décription",
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
 
-            <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
+
+            <Row align="center" style={{ marginBottom: 10 }}>
+              <Button type="primary" htmlType="submit" style={{ width: 170 }}>
                 Save
               </Button>
-            </Form.Item>
+            </Row>
+
+
+            <Row align="center">
+              <Button type="primary" style={{ width: 170 }}
+                onClick={() => onNavigate({ pathname: '/./edit-template', search: '?id=' + currentItem.id })}>
+                Arrange Component
+              </Button>
+            </Row>
           </Form>
         </Modal>
       ) : null}

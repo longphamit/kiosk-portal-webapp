@@ -1,5 +1,5 @@
 import { Button, Col, Input, Modal, Row, Select } from "antd";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TextArea from "antd/lib/input/TextArea";
 import { DragDropContext } from "react-beautiful-dnd";
 import "./styles.css"
@@ -10,8 +10,7 @@ import { getListAvailableCategoriesService, getListAvailableEventsService } from
 import { Option } from "antd/lib/mentions";
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { createAppCategoryPosition, createEventPosition, getTemplateById } from "../../services/template_service";
-import { async } from "@firebase/util";
+import { getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
 
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
@@ -20,7 +19,7 @@ const ROOT_ROW_CATEGORY = "categoryavailable";
 const ROOT_ROW_EVENT = "eventavailable";
 const FIRST_ROW_EVENT = "eventrow1"
 const FIRST_ROW_CATEGORY = "categoryrow1"
-const CreateTemplatePage = () => {
+const EditTemplatePage = () => {
     const [isChanging, setChanging] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedType, setSelectedType] = useState(SELECTED_TYPE_CATEGORY);
@@ -28,58 +27,155 @@ const CreateTemplatePage = () => {
     const [eventComponents, setEventComponents] = useState({});
     const [currentTemplate, setCurrentTemplate] = useState({});
     let navigate = useNavigate();
-    const getListCategoryFunction = async () => {
+    const getAllAppCategories = async () => {
         try {
             let res = await getListAvailableCategoriesService();
             let categories = res.data.map(category => ({ id: category.id, image: category.logo, name: category.name }));
-            let data = { [`${ROOT_ROW_CATEGORY}`]: categories, [`${FIRST_ROW_CATEGORY}`]: [] };
-            setCategoryComponents(data);
+            return categories;
         } catch (e) {
-            setCategoryComponents([]);
+            return [];
         }
     }
     const onNavigate = (url) => {
         navigate(url);
     };
-    const getAvailabelEvents = async () => {
+    const getAllEvents = async () => {
         try {
             let res = await getListAvailableEventsService();
             let events = [];
             for (const data of res.data) {
-                let eventModal = createEventModel(data);
+                let eventModel = createEventModel(data);
                 let event = {
                     id: data.id,
                     name: data.name,
                     image: data.thumbnail.link,
-                    event: eventModal
+                    event: eventModel
                 }
                 events.push(event);
             }
-            let data = { [`${ROOT_ROW_EVENT}`]: events, [`${FIRST_ROW_EVENT}`]: [] };
-            setEventComponents(data)
+            return events;
         } catch (e) {
-            console.log(e)
-            setEventComponents([]);
+            return [];
         }
     }
     const getTemplateInfo = async () => {
         let id = searchParams.get("id");
-        if (id == null) {
+        if (id === null) {
             onNavigate('/././unauth')
         } else {
             try {
                 let res = await getTemplateById(id);
                 setCurrentTemplate(res.data);
             } catch (e) {
+                console.log(e)
                 setCurrentTemplate({});
             }
         }
     }
-
+    const removeComponentIfExisted = (id, list) => {
+        for (let component of list) {
+            if (component.id === id) {
+                list.pop(component);
+                return list;
+            }
+        }
+        return list;
+    }
+    const isColumnExisted = (rowIndex, componentsObj) => {
+        if (componentsObj['row' + `${rowIndex}`] === undefined) {
+            return false;
+        }
+        return true;
+    }
+    const getComponentFromList = (id, list) => {
+        for (let component of list) {
+            if (component.id == id) {
+                return component;
+            }
+        }
+        return {};
+    }
+    const reorderKeysOfObject = (component) => {
+        return Object.keys(component).sort().reduce(
+            (obj, key) => {
+                obj[key] = component[key];
+                return obj;
+            },
+            {}
+        );
+    }
+    const getEventPositions = async () => {
+        try {
+            let allEvents = await getAllEvents();
+            let res = await getEventPositionService(searchParams.get("id"));
+            let data = {};
+            let listEventPosition = res.data.listPosition;
+            if (listEventPosition.length !== 0) {
+                for (let p of listEventPosition) {
+                    if (p.components.length !== 0) {
+                        let dataTemp = []
+                        for (let component of p.components) {
+                            let event = getComponentFromList(component.eventId, allEvents);
+                            if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
+                                allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
+                                let eventTemp = {
+                                    id: component.eventId,
+                                    name: component.eventName,
+                                    image: event.image === undefined ? '' : event.image, // get event thumbnail
+                                    event: event.event
+                                }
+                                dataTemp[component.columnIndex] = eventTemp;
+                            }
+                        }
+                        let rowIndex = p.rowIndex;
+                        if (!isColumnExisted(rowIndex, data)) {
+                            data['eventrow' + `${rowIndex + 1}`] = dataTemp;
+                        }
+                    }
+                }
+            } else {
+                data[`${FIRST_ROW_EVENT}`] = [];
+            }
+            data[`${ROOT_ROW_EVENT}`] = allEvents;
+            setEventComponents(reorderKeysOfObject(data));
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    const getAppCategoryPositions = async () => {
+        try {
+            let allCategories = await getAllAppCategories();
+            let res = await getAppCategoryPositionService(searchParams.get("id"));
+            let data = {};
+            let listAppCategoryPosition = res.data.listPosition;
+            if (listAppCategoryPosition.length !== 0) {
+                for (let p of listAppCategoryPosition) {
+                    if (p.components.length !== 0) {
+                        let dataTemp = []
+                        for (let component of p.components) {
+                            let appCategory = getComponentFromList(component.appCategoryId, allCategories);
+                            allCategories = removeComponentIfExisted(component.appCategoryId, allCategories); // set available row
+                            dataTemp[component.columnIndex] = { id: appCategory.appCategoryId, image: appCategory.image, name: appCategory.name }
+                        }
+                        let rowIndex = p.rowIndex;
+                        if (!isColumnExisted(rowIndex, data)) {
+                            data['categoryrow' + `${rowIndex + 1}`] = dataTemp;
+                        }
+                    }
+                }
+            } else {
+                data[`${FIRST_ROW_CATEGORY}`] = [];
+            }
+            data[`${ROOT_ROW_CATEGORY}`] = allCategories;
+            setCategoryComponents(reorderKeysOfObject(data))
+        } catch (e) {
+            console.log(e);
+        }
+    }
     useEffect(() => {
-        getTemplateInfo()
-        getListCategoryFunction();
-        getAvailabelEvents();
+        getTemplateInfo();
+        getEventPositions();
+        getAppCategoryPositions();
     }, []);
     function generateRowName() {
         let defaultName = selectedType + "row";
@@ -93,7 +189,8 @@ const CreateTemplatePage = () => {
     }
     const createEventModel = (event) => {
         let imgs = [];
-        event.listImage.map(img => imgs.push(img.link));
+        if (event.listImage !==undefined && event.listImage.length != 0)
+            event.listImage.map(img => imgs.push(img.link));
         let data = {
             id: event.id,
             name: event.name,
@@ -130,8 +227,7 @@ const CreateTemplatePage = () => {
                 onOk: async () => {
                     {
                         try {
-                            await save();
-                            setChanging(false);
+                            await save()
                         } catch (e) {
 
                         }
@@ -139,7 +235,7 @@ const CreateTemplatePage = () => {
                 },
             });
         }
-
+        setChanging(false)
         setSelectedType(value);
     }
     function deleteRow(rowName) {
@@ -222,19 +318,16 @@ const CreateTemplatePage = () => {
             });
             if (listPosition.length == 0) {
                 toast.warn('Nothing added to the template');
-                return;
             }
             let request = {
                 templateId: currentTemplate.id,
                 listPosition: listPosition
             }
 
-            let res = await createAppCategoryPosition(request);
+            let res = await updateAppCategoryPosition(request);
             if (res.code === 200) {
-                setChanging(false)
                 toast.success("Save category components succesfully")
             }
-            return;
         }
         let listPosition = [];
         let rowIndex = 0;
@@ -254,14 +347,13 @@ const CreateTemplatePage = () => {
         });
         if (listPosition.length == 0) {
             toast.warn('Nothing added to the template');
-            return;
         }
         let request = {
             templateId: currentTemplate.id,
             listPosition: listPosition
         }
         try {
-            let res = await createEventPosition(request);
+            let res = await updateEventPosition(request);
             setChanging(false)
             if (res.code === 200) {
                 toast.success("Save event components succesfully")
@@ -451,4 +543,4 @@ const CreateTemplatePage = () => {
         }
     </>)
 }
-export default CreateTemplatePage;
+export default EditTemplatePage;
