@@ -81,14 +81,14 @@ const DetailPoiPage = () => {
       setListWardsInForm(resWard.data);
 
       let list = [];
-      res.data.listImage.map((img, index) => {
+      await Promise.all(res.data.listImage.map((img, index) => {
         list.push({
           uid: img.id,
           name: "image" + (parseInt(index) + 1),
           status: "done",
           url: img.link,
         });
-      });
+      }));
       setFileListImage(list);
     } catch (error) {
       toast.error(error.response.data.message);
