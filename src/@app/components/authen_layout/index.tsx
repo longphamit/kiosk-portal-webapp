@@ -146,6 +146,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Event
                 </Menu.Item>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="10"
+                  onClick={() => {
+                    onNavigate("/application-page");
+                  }}
+                >
+                  Application
+                </Menu.Item>
               </>
 
             ) : null}
@@ -196,18 +205,19 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Event
                 </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="application_market"
+                  onClick={() => {
+                    onNavigate("/application-market");
+                  }}
+                >
+                  Application Market
+                </Menu.Item>
               </>
             ) : null}
             <>
-              <Menu.Item
-                icon={<BlockOutlined />}
-                key="10"
-                onClick={() => {
-                  onNavigate("/application-page");
-                }}
-              >
-                Application
-              </Menu.Item>
+
             </>
 
             {role === ROLE_ADMIN || role === ROLE_SERVICE_PROVIDER ? (

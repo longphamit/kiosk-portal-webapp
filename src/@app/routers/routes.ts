@@ -5,6 +5,7 @@ import AccountManagerPage from "../../kiosk_portal/pages/account";
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import ApplicationPage from "../../kiosk_portal/pages/application";
 import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
+import ApplicationMarketPage from "../../kiosk_portal/pages/application_market";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import EventManagerPage from "../../kiosk_portal/pages/event";
@@ -146,9 +147,9 @@ const routes: Route[] = [
     path: "/application-page",
     isLayout: true,
     layout: AuthenLayout,
-    authen: false,
+    authen: true,
     breadcrumb: "",
-    roles: [""]
+    roles: [ROLE_ADMIN]
   },
   {
     component: TemplateManagerPage,
@@ -230,6 +231,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  },
+  {
+    component: ApplicationMarketPage ,
+    path: "/application-market",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
   }
 ];
 
