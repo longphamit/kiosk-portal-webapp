@@ -298,8 +298,8 @@ const CreateTemplatePage = () => {
                                         }
                                     </Row>
                                 </div>
-                                <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}>
-                                    <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
+                                {/* <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}> */}
+                                    {/* <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}> */}
                                         <ComponentList
                                             internalScroll
                                             key={e[0]}
@@ -307,8 +307,8 @@ const CreateTemplatePage = () => {
                                             listType="CARD"
                                             components={e[1]}
                                         />
-                                    </div>
-                                </Row>
+                                    {/* </div> */}
+                                {/* </Row> */}
                             </div>
                         ))}
                     </div>
@@ -332,7 +332,8 @@ const CreateTemplatePage = () => {
                     }
                 }}>
                     <div>
-                        {Object.entries(eventComponents).map((e, i) => (
+                        {Object.entries(eventComponents).map((e, i) => {
+                            return (
                             <div >
                                 <div style={{ fontSize: 20, paddingTop: 10 }}>
                                     <Row>
@@ -348,8 +349,8 @@ const CreateTemplatePage = () => {
                                         }
                                     </Row>
                                 </div>
-                                <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)' }}>
-                                    <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
+                                {/* <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', height: 200 }}> */}
+                                    {/* <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200, width: '100%' }}> */}
                                         <ComponentList
                                             internalScroll
                                             key={e[0]}
@@ -358,10 +359,10 @@ const CreateTemplatePage = () => {
                                             components={e[1]}
                                             event={e}
                                         />
-                                    </div>
-                                </Row>
+                                    {/* </div> */}
+                                {/* </Row> */}
                             </div>
-                        ))}
+                        );})}
                     </div>
                 </DragDropContext>
             }

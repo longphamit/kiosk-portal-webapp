@@ -40,6 +40,7 @@ interface Template {
     name: string
 }
 export const ComponentList: React.FC<Props> = ({ listId, listType, components }) => {
+
     const [isEventDetailsModalVisible, setEventDetailsModalVisible] = useState(false);
     const [isCategoryDetailsModalVisible, setCategoryDetailsModalVisible] = useState(false);
     const [currentEvent, setCurrentEvent] = useState<event>();
@@ -68,8 +69,7 @@ export const ComponentList: React.FC<Props> = ({ listId, listType, components })
                     dropProvided
                 ) => (
                     <div {...dropProvided.droppableProps}>
-                        <div>
-                            <div style={{ display: "flex" }} ref={dropProvided.innerRef}>
+                            <div style={{ display: "flex", marginTop: '20px', overflowX: 'scroll', overflowY: 'hidden', height: 200, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)'  }} ref={dropProvided.innerRef}>
                                 {components.map((component, index) => (
                                     component.event ? (
                                         <Draggable key={component.id} draggableId={component.id} index={index}>
@@ -128,7 +128,6 @@ export const ComponentList: React.FC<Props> = ({ listId, listType, components })
                                 ))}
                                 {dropProvided.placeholder}
                             </div>
-                        </div>
                     </div>
                 )}
             </Droppable>
