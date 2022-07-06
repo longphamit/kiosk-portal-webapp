@@ -12,6 +12,7 @@ import EventManagerPage from "../../kiosk_portal/pages/event";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
+import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
@@ -235,6 +236,15 @@ const routes: Route[] = [
   {
     component: ApplicationMarketPage ,
     path: "/application-market",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: MyApplicationPage ,
+    path: "/my-application",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
