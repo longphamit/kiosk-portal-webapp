@@ -33,6 +33,7 @@ import {
 
 import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
+import { signOutService } from "../../services/auth_service";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -42,7 +43,8 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const { t } = useTranslation();
   const [time, setTime] = useState(new Date().toLocaleString());
   let navigate = useNavigate();
-  const logout = () => {
+  const logout = async() => {
+    await signOutService()
     localStorageClearService();
     navigate("/signin");
     toast("Logout successfull");

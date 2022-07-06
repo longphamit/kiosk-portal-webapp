@@ -15,7 +15,6 @@ import { SmileOutlined } from "@ant-design/icons";
 
 function App() {
   const [isTokenFound, setTokenFound] = useState(false);
-  getTokenCustom(setTokenFound);
   onMessage(messaging, (payload) => {
     console.log("foreground")
     console.log(payload.notification?.body)
