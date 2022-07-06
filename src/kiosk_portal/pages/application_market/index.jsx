@@ -18,6 +18,7 @@ const ApplicationMarketPage = () => {
   const [totalApplication, setTotalApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const getListApplicationFunction = async (
     currentPageToGetList,
     numInPage
@@ -47,14 +48,18 @@ const ApplicationMarketPage = () => {
       cancelText: "No",
       onOk: async () => {
         {
+          setIsLoading(true);
           try {
             const installObj = {
               serviceApplicationId: values.id,
             };
             await installApplicationService(installObj);
-            toast.success("Delete successful");
+            toast.success("Install successful");
+            getListApplicationFunction(currentPage, numApplicationInPage);
           } catch (error) {
             toast.error(error.response.data.message);
+          } finally {
+            setIsLoading(false);
           }
         }
       },
@@ -117,15 +122,28 @@ const ApplicationMarketPage = () => {
           >
             <EyeFilled /> Detail
           </Button>
-          {}
-          <Button
-            className="success-button"
-            onClick={() => {
-              onFinishInstallApplication(record);
-            }}
-          >
-            <DownloadOutlined /> Install
-          </Button>
+          {record.partyServiceApplication ? (
+            <Button
+              className="success-button"
+              onClick={() => {
+                onFinishInstallApplication(record);
+              }}
+              disabled
+            >
+              <DownloadOutlined /> Already install
+            </Button>
+          ) : isLoading ? (
+            <spin />
+          ) : (
+            <Button
+              className="success-button"
+              onClick={() => {
+                onFinishInstallApplication(record);
+              }}
+            >
+              <DownloadOutlined /> Install
+            </Button>
+          )}
         </Space>
       ),
     },
