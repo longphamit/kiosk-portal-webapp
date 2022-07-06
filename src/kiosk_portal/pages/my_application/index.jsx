@@ -7,36 +7,32 @@ import { localStorageGetReduxState } from "../../../@app/services/localstorage_s
 import { useNavigate } from "react-router-dom";
 import { getListApplicationService } from "../../services/application_service";
 import { getAllCategoriesService } from "../../services/categories_service";
-import { installApplicationService } from "../../services/party_service_application";
+import {
+  getListMyAppService,
+  installApplicationService,
+} from "../../services/party_service_application";
 import { toast } from "react-toastify";
 
-const ApplicationMarketPage = () => {
+const MyApplicationPage = () => {
   const navigator = useNavigate();
   const { t } = useTranslation();
   const role = localStorageGetReduxState().auth.role;
-  const [listApplication, setListApplication] = useState([]);
-  const [totalApplication, setTotalApplication] = useState(0);
+  const [listMyApplication, setListMyApplication] = useState([]);
+  const [totalMyApplication, setTotalMyApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
-  const getListApplicationFunction = async (
-    currentPageToGetList,
-    numInPage
-  ) => {
+  const getListMyAppFunction = async (currentPageToGetList, numInPage) => {
     try {
-      const res = await getListApplicationService(
+      const res = await getListMyAppService(
         "",
-        "",
-        "",
-        "",
-        "available",
         numInPage,
         currentPageToGetList
       );
       console.log(res);
-      setTotalApplication(res.data.metadata.total);
-      setListApplication(res.data.data);
+      setTotalMyApplication(res.data.metadata.total);
+      setListMyApplication(res.data.data);
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log(error);
     }
   };
 
@@ -62,37 +58,37 @@ const ApplicationMarketPage = () => {
   };
 
   useEffect(async () => {
-    getListApplicationFunction(currentPage, numApplicationInPage);
+    getListMyAppFunction(currentPage, numApplicationInPage);
   }, []);
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListApplicationFunction(page, numApplicationInPage);
+    await getListMyAppFunction(page, numApplicationInPage);
   };
   const columns = [
     {
       title: "Logo",
-      dataIndex: "logo",
-      key: "logo",
+      dataIndex: "serviceApplicationLogo",
+      key: "serviceApplicationLogo",
       render: (text) => <img style={{ height: 80, weight: 80 }} src={text} />,
     },
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "serviceApplicationName",
+      key: "serviceApplicationName",
       render: (text) => <p>{text}</p>,
     },
     {
       title: "Link",
-      dataIndex: "link",
-      key: "link",
+      dataIndex: "serviceApplicationLink",
+      key: "serviceApplicationLink",
       render: (text) => <p href={text}>{text}</p>,
     },
 
     {
       title: "Category",
-      dataIndex: "appCategoryName",
-      key: "appCategoryName",
+      dataIndex: "appcategoryName",
+      key: "appcategoryName",
       render: (text) => <p>{text}</p>,
     },
 
@@ -112,7 +108,7 @@ const ApplicationMarketPage = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.id}`);
+              toast.error("Chưa làm bạn êy");
             }}
           >
             <EyeFilled /> Detail
@@ -121,10 +117,10 @@ const ApplicationMarketPage = () => {
           <Button
             className="success-button"
             onClick={() => {
-              onFinishInstallApplication(record);
+              toast.error("Chưa làm bạn êy");
             }}
           >
-            <DownloadOutlined /> Install
+            <DownloadOutlined /> Uninstall
           </Button>
         </Space>
       ),
@@ -135,16 +131,16 @@ const ApplicationMarketPage = () => {
     <>
       <Table
         columns={columns}
-        dataSource={listApplication}
+        dataSource={listMyApplication}
         pagination={false}
       />
       <Pagination
         defaultCurrent={1}
-        total={totalApplication}
+        total={totalMyApplication}
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
     </>
   );
 };
-export default ApplicationMarketPage;
+export default MyApplicationPage;

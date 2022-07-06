@@ -214,6 +214,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Application Market
                 </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="my-application"
+                  onClick={() => {
+                    onNavigate("/my-application");
+                  }}
+                >
+                  My Application
+                </Menu.Item>
               </>
             ) : null}
             <>
