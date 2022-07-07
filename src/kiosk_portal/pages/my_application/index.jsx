@@ -1,5 +1,5 @@
 import { Button, Modal, Pagination, Space, Table } from "antd";
-import { EyeFilled, DownloadOutlined } from "@ant-design/icons";
+import { EyeFilled, DownloadOutlined, CloseCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -115,12 +115,12 @@ const MyApplicationPage = () => {
           </Button>
           {}
           <Button
-            className="success-button"
+            className="danger-button"
             onClick={() => {
               toast.error("Chưa làm bạn êy");
             }}
           >
-            <DownloadOutlined /> Uninstall
+            <CloseCircleFilled /> Uninstall
           </Button>
         </Space>
       ),

@@ -102,13 +102,6 @@ const ApplicationMarketPage = () => {
     },
 
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text, record, dataIndex) => <p>{text}</p>,
-    },
-
-    {
       title: t("action"),
       key: "action",
       render: (text, record, dataIndex) => (
