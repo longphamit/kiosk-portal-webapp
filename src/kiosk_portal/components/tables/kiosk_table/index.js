@@ -130,9 +130,9 @@ const KioskTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+          <Tag color={"green"}>Activate</Tag>
         ) : (
-          <Tag color={"red"}>{t("deactivate")}</Tag>
+          <Tag color={"red"}>Deactivate</Tag>
         ),
     },
     {
