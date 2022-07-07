@@ -37,7 +37,7 @@ const AccountDetailPage = () => {
                     {accountDetail.creatorMail}
                   </Descriptions.Item>
                   <Descriptions.Item label="Status" labelStyle={{fontWeight:"bold"}}>{
-                    accountDetail.status === "active" ? (
+                    accountDetail.status === "activate" ? (
                       <Tag color="green">{t("activate")}</Tag>
                     ) : (
                       <Tag color="red">{t("deactivate")}</Tag>

@@ -86,7 +86,7 @@ const KioskTable = ({ partyId }) => {
       align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
+        record.status === "activate" ? (
           <Tag color={"green"}>{t("active")}</Tag>
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
@@ -129,7 +129,7 @@ const KioskTable = ({ partyId }) => {
       align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
+        record.status === "activate" ? (
           <Tag color={"green"}>{t("active")}</Tag>
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
@@ -182,6 +182,7 @@ const KioskTable = ({ partyId }) => {
       kioskPage,
       kioskPageSize
     );
+    console.log(data)
     setListKiosk(data.data);
     setKioskPage(data.metadata.page);
     setKioskTotal(data.metadata.total);
