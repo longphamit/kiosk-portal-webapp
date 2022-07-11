@@ -12,6 +12,7 @@ import EventManagerPage from "../../kiosk_portal/pages/event";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
+import KioskDetailPage from "../../kiosk_portal/pages/kiosk_detail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
@@ -150,7 +151,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_ADMIN]
+    roles: [ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
   },
   {
     component: TemplateManagerPage,
@@ -186,7 +187,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_ADMIN, ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_ADMIN,ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER]
   },
   {
     component: CreateTemplatePage,
@@ -250,7 +251,8 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_LOCATION_OWNER]
-  }
+  },
+  
 ];
 
 export default routes;

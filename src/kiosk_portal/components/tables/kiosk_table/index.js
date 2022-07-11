@@ -144,6 +144,9 @@ const KioskTable = ({ partyId }) => {
           <Button className="warn-button" shape="default" onClick={() => {}}>
             {t("edit")}
           </Button>
+          <Button className="infor-button" shape="default" onClick={() => {}}>
+            Detail
+          </Button>
           <Popconfirm
             title="Are you sure, you want to change status this kiosk?"
             onConfirm={() => onConfirmChangeStatus(record.id)}

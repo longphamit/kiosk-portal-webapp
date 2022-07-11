@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ROLE_ADMIN } from "../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { getApplicationServiceById } from "../../services/application_service";
 import {
@@ -32,13 +32,17 @@ const ApplicationDetailPage = () => {
   const getAppById = async () => {
     const res = await getApplicationServiceById(appId);
     setApp(res.data);
-    console.log(res.data);
+    console.log("hahahaha")
+    console.log(res);
   };
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
-      const res = await getInprogressAppPublishRequestByAppIdService(appId);
-      console.log(res.data);
-      setInprogressPublish(res.data);
+      if(role===ROLE_SERVICE_PROVIDER||role===ROLE_ADMIN){
+        const res = await getInprogressAppPublishRequestByAppIdService(appId);
+        console.log(res.data);
+        setInprogressPublish(res.data);
+      }
+    
     } catch (e) {
       setInprogressPublish(null);
       console.log(e);

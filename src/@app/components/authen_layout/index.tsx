@@ -43,8 +43,8 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const { t } = useTranslation();
   const [time, setTime] = useState(new Date().toLocaleString());
   let navigate = useNavigate();
-  const logout = async() => {
-    await signOutService()
+  const logout = async () => {
+    await signOutService();
     localStorageClearService();
     navigate("/signin");
     toast("Logout successfull");
@@ -148,17 +148,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Event
                 </Menu.Item>
-                <Menu.Item
-                  icon={<BlockOutlined />}
-                  key="10"
-                  onClick={() => {
-                    onNavigate("/application-page");
-                  }}
-                >
-                  Application
-                </Menu.Item>
               </>
-
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
@@ -227,20 +217,29 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
               </>
             ) : null}
-            <>
-
-            </>
+            <></>
 
             {role === ROLE_ADMIN || role === ROLE_SERVICE_PROVIDER ? (
-              <Menu.Item
-                key="11"
-                icon={<ArrowUpOutlined />}
-                onClick={() => {
-                  onNavigate("/application-publish-request");
-                }}
-              >
-                App Publish
-              </Menu.Item>
+              <>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="10"
+                  onClick={() => {
+                    onNavigate("/application-page");
+                  }}
+                >
+                  Application
+                </Menu.Item>
+                <Menu.Item
+                  key="11"
+                  icon={<ArrowUpOutlined />}
+                  onClick={() => {
+                    onNavigate("/application-publish-request");
+                  }}
+                >
+                  App Publish
+                </Menu.Item>
+              </>
             ) : null}
             {/* <SubMenu
               key="sub3"

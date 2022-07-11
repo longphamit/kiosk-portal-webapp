@@ -108,7 +108,7 @@ const MyApplicationPage = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              toast.error("Chưa làm bạn êy");
+              navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
             <EyeFilled /> Detail
