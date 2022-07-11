@@ -95,6 +95,7 @@ const ApplicationTable = () => {
         "",
         "",
         "",
+        "",
         numInPage,
         currentPageToGetList
       );
