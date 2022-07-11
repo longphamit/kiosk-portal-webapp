@@ -29,6 +29,7 @@ const ApplicationMarketPage = () => {
         "",
         "",
         "",
+        "",
         "available",
         numInPage,
         currentPageToGetList
