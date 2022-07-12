@@ -74,13 +74,15 @@ const EditTemplatePage = () => {
         }
     }
     const removeComponentIfExisted = (id, list) => {
-        let removeIndex = []
+        const removeIndex = []
         for (let i = 0; i < list.length; i++) {
-            if (list[i].id == id)
+            console.log(list[i].id)
+            if (list[i].id === id) {
                 removeIndex.push(i);
+            }
         }
-        for (let index in removeIndex) {
-            delete list[index];
+        for (let index of removeIndex) {
+            list.splice(index,1)
         }
         return list
     }
@@ -151,9 +153,15 @@ const EditTemplatePage = () => {
                     if (p.components.length !== 0) {
                         let dataTemp = []
                         for (let component of p.components) {
+                            console.log("component")
+                            console.log(component)
                             let event = getComponentFromList(component.eventId, allEvents);
+                            console.log("check event")
+                            console.log(event)
                             if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
+                                console.log("all event")
                                 allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
+                                console.log(allEvents)
                                 let eventTemp = {
                                     id: component.eventId,
                                     name: component.eventName,
