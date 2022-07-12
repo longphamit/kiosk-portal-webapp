@@ -1,5 +1,6 @@
 import {
   AutoComplete,
+  Breadcrumb,
   Button,
   Checkbox,
   Col,
@@ -22,6 +23,8 @@ import {
   EditFilled,
   PoweroffOutlined,
   ArrowUpOutlined,
+  HomeOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,6 +46,8 @@ import {
 } from "../../services/account_service";
 import "./styles.css"
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
+import CustomBreadCumb from "../impl/breadcumb";
+import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../impl/breadcumb_constant";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState();
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -409,8 +414,17 @@ const AccountManagerPage = () => {
       },
     ],
   };
+
+  const breadCumbData = [
+    {
+      href: ACCOUNT_MANAGER_HREF,
+      label: ACCOUNT_MANAGER_LABEL,
+      icon: <UserOutlined />
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
@@ -616,8 +630,8 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                  return <Option value={item.id}>{item.name}</Option>;
+                })
                 : null}
             </Select>
           </Form.Item>

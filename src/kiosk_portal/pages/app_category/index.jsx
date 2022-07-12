@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
 import ModalUpdateAppCategory from "./modalUpdateAppCategory";
+import { APP_CATEGORY_MANAGER_HREF, APP_CATEGORY_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const AppCategoryPage = () => {
   const [appCategoryList, setAppCategoryList] = useState([]);
@@ -94,9 +96,16 @@ const AppCategoryPage = () => {
   useEffect(async () => {
     getAppCategoryList(appCategoryPage, appCategoryPageSize);
   }, []);
-
+  const breadCumbData = [
+    {
+      href: APP_CATEGORY_MANAGER_HREF,
+      label: APP_CATEGORY_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Modal
         title="Create Application"
         visible={isCreateCategoryModalVisible}

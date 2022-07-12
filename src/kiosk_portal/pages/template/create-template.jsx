@@ -11,6 +11,8 @@ import { Option } from "antd/lib/mentions";
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createAppCategoryPosition, getTemplateById } from "../../services/template_service";
+import CustomBreadCumb from "../impl/breadcumb";
+import { TEMPLATE_CREATE_HREF, TEMPLATE_CREATE_LABEL, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../impl/breadcumb_constant";
 
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
@@ -41,6 +43,7 @@ const CreateTemplatePage = () => {
     const onNavigate = (url) => {
         navigate(url);
     };
+
     const getAvailabelEvents = async () => {
         try {
             let res = await getListAvailableEventsService();
@@ -69,7 +72,7 @@ const CreateTemplatePage = () => {
         } else {
             try {
                 let res = await getTemplateById(id);
-              
+
 
                 setCurrentTemplate(res.data);
                 console.log(res.data);
@@ -221,7 +224,20 @@ const CreateTemplatePage = () => {
             console.log(res);
         }
     }
+    const breadCumbData = [
+        {
+            href: TEMPLATE_MANAGER_HREF,
+            label: TEMPLATE_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: TEMPLATE_CREATE_HREF,
+            label: TEMPLATE_CREATE_LABEL,
+            icon: null
+        },
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         <div id="account-info-panel">
             <Row>
                 <Col span={20}>
@@ -230,7 +246,7 @@ const CreateTemplatePage = () => {
                             Name:
                         </Col>
                         <Col span={12}>
-                            <Input value={currentTemplate.name} contentEditable={false}/>
+                            <Input value={currentTemplate.name} contentEditable={false} />
                         </Col>
 
                     </Row><Row>
@@ -238,7 +254,7 @@ const CreateTemplatePage = () => {
                             Description:
                         </Col>
                         <Col span={12}>
-                            <TextArea rows='1' value={currentTemplate.description} contentEditable={false}/>
+                            <TextArea rows='1' value={currentTemplate.description} contentEditable={false} />
                         </Col>
                     </Row>
                 </Col>

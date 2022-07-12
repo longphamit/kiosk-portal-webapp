@@ -30,6 +30,8 @@ import { localStorageGetReduxState } from '../../../@app/services/localstorage_s
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
+import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../impl/breadcumb_constant';
+import CustomBreadCumb from '../impl/breadcumb';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -292,7 +294,20 @@ export const EventDetailsPage = () => {
         }));
         setFileListImage(list);
     }
+    const breadCumbData = [
+        {
+            href: EVENT_MANAGER_HREF,
+            label: EVENT_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: EVENT_DETAILS_HREF,
+            label: EVENT_DETAILS_LABEL,
+            icon: null
+        },
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         {currentEvent ?
             <Form
                 labelCol={{ span: 2 }}
@@ -351,12 +366,12 @@ export const EventDetailsPage = () => {
                             format="DD/MM/YYYY"
                             allowClear={false}
                             className='disable-input'
-                            
+
                             style={{
                                 height: "auto",
                                 width: '100%',
-                                backgroundColor:"#fff",
-                                color:"#000"
+                                backgroundColor: "#fff",
+                                color: "#000"
                             }}
                         />
                     </Form.Item>
@@ -430,12 +445,12 @@ export const EventDetailsPage = () => {
                         disabled={componentDisabled}
                         className='disable-input'
                         style={{
-                            backgroundColor:"#fff"
+                            backgroundColor: "#fff"
                         }}
                     >
                         {proviceOptions.map(province => (
                             <Option style={{
-                                backgroundColor:"#fff"
+                                backgroundColor: "#fff"
                             }} key={province.code}>{province.name}</Option>
                         ))}
                     </Select>

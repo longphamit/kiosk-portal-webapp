@@ -46,6 +46,8 @@ import {
   splitTimeString,
 } from "../../../@app/utils/date_util";
 import { getListTemplateService } from "../../services/template_service";
+import { SCHEDULE_MANAGER_HREF, SCHEDULE_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
@@ -422,8 +424,16 @@ const ScheduleManagerPage = () => {
       </Select>
     </Form.Item>
   );
+  const breadCumbData = [
+    {
+      href: SCHEDULE_MANAGER_HREF,
+      label: SCHEDULE_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+    <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form

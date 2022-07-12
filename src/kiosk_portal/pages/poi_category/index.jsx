@@ -3,6 +3,8 @@ import { Pagination, Space, Table, Button, Row, Col, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
+import CustomBreadCumb from "../impl/breadcumb";
+import { POI_CATEGORY_MANAGER_HREF, POI_CATEGORY_MANAGER_LABEL } from "../impl/breadcumb_constant";
 import ModalCreatePoiCategory from "./modalCreatePoiCategory";
 import ModalUpdatePoiCategory from "./modalUpdatePoiCategory";
 
@@ -134,8 +136,16 @@ const PoiCategory = () => {
       ),
     },
   ];
+  const breadCumbData = [
+    {
+      href: POI_CATEGORY_MANAGER_HREF,
+      label: POI_CATEGORY_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={20} />
         <Col span={4}>

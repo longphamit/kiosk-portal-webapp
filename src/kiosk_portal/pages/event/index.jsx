@@ -30,6 +30,8 @@ import { localStorageGetReduxState } from "../../../@app/services/localstorage_s
 import { ROLE_ADMIN } from "../../../@app/constants/role";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -409,7 +411,7 @@ const EventManagerPage = () => {
                             onNavigate({ pathname: '/./event', search: '?id=' + record.id });
                         }}
                     >
-                     <EyeFilled/>   Details
+                        <EyeFilled />   Details
                     </Button>
 
                     <Button
@@ -420,16 +422,23 @@ const EventManagerPage = () => {
                             handleDeleteEvent(record);
                         }}
                     >
-                    <DeleteFilled/>    Delete
+                        <DeleteFilled />    Delete
                     </Button>
 
                 </Space>
             ),
         },
     ];
+    const breadCumbData = [
+        {
+            href: EVENT_MANAGER_HREF,
+            label: EVENT_MANAGER_LABEL,
+            icon: null
+        },
+    ]
     return (
         <>
-
+            <CustomBreadCumb props={breadCumbData} />
             <Row style={{ padding: 10 }}>
                 <Col span={15}>
                     <Form
@@ -460,7 +469,7 @@ const EventManagerPage = () => {
                                         type="primary"
                                         size={"large"}
                                     >
-                                        <SearchOutlined/>
+                                        <SearchOutlined />
                                     </Button>
                                 </Form.Item>
                             </Col>
@@ -476,7 +485,7 @@ const EventManagerPage = () => {
                         size={"large"}
                         onClick={showModalCreateEvent}
                     >
-                        <PlusOutlined/> Event
+                        <PlusOutlined /> Event
                     </Button>
                 </Col>
             </Row>
