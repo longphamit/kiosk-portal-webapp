@@ -9,7 +9,8 @@ import {
     Row,
     Col,
     Modal,
-    Card
+    Card,
+    Spin
 } from 'antd';
 
 import moment from 'moment';
@@ -31,13 +32,15 @@ import { localStorageGetReduxState } from '../../../@app/services/localstorage_s
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
-import { async } from '@firebase/util';
 import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
 const DISTRICT_TYPE = "DISTRICT";
 export const EventDetailsPage = () => {
+    const [isLoadingListImage, setIsLoadingListImage] = useState(false);
+    const [isLoadingBasicInfo, setIsLoadingBasicInfo] = useState(false);
+    const [isUpdateListImage, setUpdateListImage] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentEvent, setCurrentEvent] = useState();
     const [districtOptions, setDistrictOptions] = useState([]);
@@ -45,8 +48,7 @@ export const EventDetailsPage = () => {
     const [proviceOptions, setProviceOptions] = useState([]);
     const [form] = Form.useForm();
     const [formUploadImages] = Form.useForm();
-    const [fileListImage, setFileListImage] = useState([]);
-    const [listRemoveImg, setListRemoveImg] = useState([]);
+    const [fileListImage, setFileListImage] = useState();
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
         getDistricts(selectedOptions);
@@ -54,11 +56,10 @@ export const EventDetailsPage = () => {
     const getDistricts = async (selectedCity) => {
         try {
             let res = await getListDistrictService(selectedCity);
-            console.log(selectedCity);
             setDistrictOptions(res.data);
             return;
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
     const getWards = async (selectedDistrict) => {
@@ -66,7 +67,7 @@ export const EventDetailsPage = () => {
             let res = await getListWardService(selectedDistrict);
             setWardOptions(res.data);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
     const onDistrictChange = async (value) => {
@@ -76,15 +77,6 @@ export const EventDetailsPage = () => {
     const onNavigate = (url) => {
         navigate(url);
     };
-    const getCity = async () => {
-        try {
-            let res = await getListProvinceService();
-            setProviceOptions(res.data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     const getInitValue = async () => {
         let id = searchParams.get("id");
         if (id == null) {
@@ -110,7 +102,6 @@ export const EventDetailsPage = () => {
             setWardOptions(resWard.data);
 
             let list = [];
-            console.log("push image to list")
             await Promise.all(res.data.listImage.map((img, index) => {
                 list.push({
                     uid: img.id,
@@ -121,7 +112,7 @@ export const EventDetailsPage = () => {
             }));
             setFileListImage(list);
         } catch (error) {
-            toast.error(error.response.data.message);
+            console.error(error)
             setCurrentEvent({});
         }
     };
@@ -158,6 +149,7 @@ export const EventDetailsPage = () => {
 
     }
     const onClickSubmit = async (values) => {
+        setIsLoadingBasicInfo(true);
         //Start to check date time of event
         let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
 
@@ -216,7 +208,6 @@ export const EventDetailsPage = () => {
             let res = await updateEventService(data);
             if (res.code == 200) {
                 toast.success('Update Success');
-                // getEventInfo();
             } else if (res.code == 400) {
                 toast.success(res.message);
             }
@@ -225,7 +216,9 @@ export const EventDetailsPage = () => {
             if (e.response.code == 400) {
                 toast.error(e.response.data.message + '. Please edit date and time');
             }
-            console.log(e);
+            console.error(e);
+        } finally {
+            setIsLoadingBasicInfo(false);
         }
     }
     const formatDatePicker = (str) => {
@@ -266,17 +259,13 @@ export const EventDetailsPage = () => {
         }
         return e && e.fileList;
     };
-    const onChangeListImage = (file) => {
-        if (file.file.status === "removed") {
-            if (file.file.url.includes("https://firebasestorage.googleapis.com")) {
-                console.log("abc");
-                setListRemoveImg((prevArray) => [...prevArray, file.file.uid]);
-            }
-        }
-    };
     const onFinishUpdateListImage = async (values) => {
+        if (!isUpdateListImage) {
+            toast.info("Nothing changed!");
+            return;
+        }
+        setIsLoadingListImage(true);
         //Add images
-
         let existingImage = [];
         let addFields = [];
         if (values.listImage === undefined || values.listImage.fileList === undefined) { // not update any image
@@ -307,6 +296,8 @@ export const EventDetailsPage = () => {
         try {
             await updateListImageService(data);
             toast.success("Update success");
+            setUpdateListImage(false);
+            setIsLoadingListImage(false);
         } catch (e) {
             console.log(e)
         }
@@ -530,7 +521,9 @@ export const EventDetailsPage = () => {
                         <Row justify="center" align="middle">
                             <Col>
                                 <Form.Item>
-                                    <Button type="primary" htmlType="submit" >Update</Button>
+                                    {isLoadingBasicInfo === false ?
+                                        <Button type="primary" htmlType="submit" >Update</Button> : <Spin />}
+
                                 </Form.Item>
                             </Col>
                         </Row> : null
@@ -546,18 +539,22 @@ export const EventDetailsPage = () => {
                     name="listImg"
                     onFinish={onFinishUpdateListImage}
                     scrollToFirstError
+                    labelCol={{ span: 2 }}
+                    wrapperCol={{ span: 20 }}
+                    layout="horizontal"
                 >
-                    {fileListImage.length>0 ? (
-                        <Form.Item
-                            name="listImage"
-                            label="List Image"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Please choose application logo!",
-                                },
-                            ]}
-                        >
+
+                    <Form.Item
+                        name="listImage"
+                        label="List Image"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose application logo!",
+                            },
+                        ]}
+                    >
+                        {fileListImage ? (
                             <Upload
                                 action={FILE_UPLOAD_URL}
                                 listType="picture"
@@ -565,20 +562,29 @@ export const EventDetailsPage = () => {
                                 accept={ACCEPT_IMAGE}
                                 multiple
                                 beforeUpload={beforeUpload}
-                                onChange={onChangeListImage}
+                                onChange={() => setUpdateListImage(true)}
                                 defaultFileList={[...fileListImage]}
                             >
                                 <Button icon={<UploadOutlined />}>
                                     Upload ( Max:5 )
                                 </Button>
                             </Upload>
-                        </Form.Item>
-                    ) : null}
-                    <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Update
-                        </Button>
+                        ) : null}
                     </Form.Item>
+                    <Row justify="center" align="middle">
+                        <Col>
+                            <Form.Item {...tailFormItemLayout}>
+
+                                {isLoadingListImage === false ?
+                                    <Button type="primary" htmlType="submit">
+                                        Update
+                                    </Button>
+                                    : <Spin />
+                                }
+
+                            </Form.Item>
+                        </Col>
+                    </Row>
                 </Form>
             </Card> : null
         }

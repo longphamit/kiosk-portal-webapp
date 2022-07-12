@@ -10,6 +10,7 @@ import {
     Row,
     Select,
     Space,
+    Spin,
     Table,
     Tag,
     TimePicker,
@@ -35,6 +36,7 @@ import { STATUS_COMING_SOON, STATUS_END, STATUS_ON_GOING } from "../../constants
 import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
 import CustomBreadCumb from "../impl/breadcumb";
 const EventManagerPage = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [querySearch, setQuerySearch] = useState('');
@@ -76,7 +78,7 @@ const EventManagerPage = () => {
             setListEvent(res.data.data);
             return;
         } catch (error) {
-            if(error.response.code === 400){
+            if (error.response.code === 400) {
                 toast.error("Cannot get events")
             }
             resetPage();
@@ -209,6 +211,7 @@ const EventManagerPage = () => {
 
     const onFinishCreateEvent = async (values) => {
         try {
+            setIsLoading(true);
             //Start to check date time of event
             let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
 
@@ -216,12 +219,14 @@ const EventManagerPage = () => {
                 toast.error("Date start is over");
                 return;
             }
-
-            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0])) { //Compare on hour
+            console.log(parseInt(moment(values.timeStart).format('H')))
+            console.log(strDateResultFromNow)
+            console.log(parseInt(strDateResultFromNow.split(' ')[0]))
+            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && !strDateResultFromNow.includes('minutes')) { //Compare on hour
                 toast.error("Time start must be late from now");
                 return;
-            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0])) { // Compare on minute
-
+            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0]) ||
+                parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && strDateResultFromNow.includes('minutes')) { // Compare on minute
                 if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
                     toast.error("Time start must be late from now");
                     return;
@@ -263,6 +268,8 @@ const EventManagerPage = () => {
         } catch (error) {
             toast.error('Create failed!')
             console.log(error);
+        } finally {
+            setIsLoading(false)
         }
     };
     const getName = (list, code) => {
@@ -353,19 +360,22 @@ const EventManagerPage = () => {
         setIsCreateEventModalVisible(false);
     };
     const handleDeleteEvent = async (record) => {
-        console.log(record);
+
         Modal.confirm({
             title: 'Confirm delete the event',
             okText: "Yes",
             cancelText: 'No',
             onOk: async () => {
                 {
+                    setIsLoading(true);
                     try {
                         await deleteEventService(record.id);
                         getListEventFunction(currentPage, numEventInPage);
                         toast("Delete successful");
                     } catch (e) {
-                        toast("Delete failed");
+                        toast.error(e.response.data.message);
+                    } finally {
+                        setIsLoading(false);
                     }
                 }
             },
@@ -749,9 +759,11 @@ const EventManagerPage = () => {
                         </Upload>
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Create Event
-                        </Button>
+                        {isLoading === false ?
+                            <Button type="primary" htmlType="submit">
+                                Create Event
+                            </Button> : <Spin />
+                        }
                     </Form.Item>
                 </Form>
             </Modal>
