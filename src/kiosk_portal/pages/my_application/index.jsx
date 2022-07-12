@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getListApplicationService } from "../../services/application_service";
 import { getAllCategoriesService } from "../../services/categories_service";
 import {
+  changeStatusMyAppService,
   getListMyAppService,
   installApplicationService,
 } from "../../services/party_service_application";
@@ -25,6 +26,7 @@ const MyApplicationPage = () => {
     try {
       const res = await getListMyAppService(
         "",
+        "installed",
         numInPage,
         currentPageToGetList
       );
@@ -36,20 +38,19 @@ const MyApplicationPage = () => {
     }
   };
 
-  const onFinishInstallApplication = (values) => {
+  const onUninstallApplication = (value) => {
     Modal.confirm({
-      title: "Confirm delete the template",
+      title: "Confirm Uninstall this application",
       okText: "Yes",
       cancelText: "No",
       onOk: async () => {
         {
           try {
-            const installObj = {
-              serviceApplicationId: values.id,
-            };
-            await installApplicationService(installObj);
-            toast.success("Delete successful");
+            await changeStatusMyAppService(value.serviceApplicationId);
+            await getListMyAppFunction(currentPage, numApplicationInPage);
+            toast.success("Uninstall successful");
           } catch (error) {
+            console.log(error)
             toast.error(error.response.data.message);
           }
         }
@@ -113,15 +114,16 @@ const MyApplicationPage = () => {
           >
             <EyeFilled /> Detail
           </Button>
-          {}
-          <Button
-            className="danger-button"
-            onClick={() => {
-              toast.error("Chưa làm bạn êy");
-            }}
-          >
-            <CloseCircleFilled /> Uninstall
-          </Button>
+          {
+            record.status === "installed" ? <Button
+              className="danger-button"
+              onClick={() => {
+                onUninstallApplication(record)
+              }}
+            >
+              <CloseCircleFilled /> Uninstall
+            </Button> : <></>
+          }
         </Space>
       ),
     },

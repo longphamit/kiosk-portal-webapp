@@ -44,7 +44,7 @@ const ApplicationMarketPage = () => {
 
   const onFinishInstallApplication = (values) => {
     Modal.confirm({
-      title: "Confirm delete the template",
+      title: "Confirm install this application",
       okText: "Yes",
       cancelText: "No",
       onOk: async () => {
@@ -116,7 +116,7 @@ const ApplicationMarketPage = () => {
           >
             <EyeFilled /> Detail
           </Button>
-          {record.partyServiceApplication ? (
+          {record.partyServiceApplication && record.partyServiceApplication.status == 'installed' ? (
             <Button
               className="success-button"
               onClick={() => {
