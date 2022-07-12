@@ -76,7 +76,6 @@ const EditTemplatePage = () => {
     const removeComponentIfExisted = (id, list) => {
         const removeIndex = []
         for (let i = 0; i < list.length; i++) {
-            console.log(list[i].id)
             if (list[i].id === id) {
                 removeIndex.push(i);
             }
