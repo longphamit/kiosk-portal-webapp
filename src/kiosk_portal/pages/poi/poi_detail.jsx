@@ -34,6 +34,8 @@ import { getListPoiCategoriesService } from "../../services/poi_category_service
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { async } from "@firebase/util";
+import { POI_DETAILS_HREF, POI_DETAILS_LABEL, POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -101,7 +103,18 @@ const DetailPoiPage = () => {
     formThumbnail.resetFields();
     formListImg.resetFields();
   };
-
+  const breadCumbData = [
+    {
+      href: POI_MANAGER_HREF,
+      label: POI_MANAGER_LABEL,
+      icon: null
+    },
+    {
+      href: POI_DETAILS_HREF,
+      label: POI_DETAILS_LABEL,
+      icon: null
+    },
+  ]
   useEffect(async () => {
     resetField();
     await getInitValue();
@@ -280,6 +293,7 @@ const DetailPoiPage = () => {
   };
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       {currentItem ? (
         <Row style={{ padding: 10 }}>
           <Col span={14}>
@@ -420,10 +434,10 @@ const DetailPoiPage = () => {
                   <Select name="selectProvince" onChange={handleProvinceChange}>
                     {listProvinces
                       ? listProvinces.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -443,10 +457,10 @@ const DetailPoiPage = () => {
                   >
                     {listDistrictsInForm
                       ? listDistrictsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -463,10 +477,10 @@ const DetailPoiPage = () => {
                   <Select name="selectWards">
                     {listWardsInForm
                       ? listWardsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>

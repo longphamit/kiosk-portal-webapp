@@ -20,6 +20,8 @@ import {
   approveAppPublishRequestService,
   getInprogressAppPublishRequestByAppIdService,
 } from "../../services/app_publish_request_service";
+import CustomBreadCumb from "../impl/breadcumb";
+import { APP_DETAILS_HREF, APP_DETAILS_LABEL, APP_MANAGER_HREF, APP_MANAGER_LABEL } from "../impl/breadcumb_constant";
 import FormDenyAppPublishRequest from "./formDenyPublishRequest";
 import "./styles.css";
 const ApplicationDetailPage = () => {
@@ -68,8 +70,21 @@ const ApplicationDetailPage = () => {
     await getAppById();
     toast.success("Approve publish app success");
   };
+  const breadCumbData = [
+    {
+      href: APP_MANAGER_HREF,
+      label: APP_MANAGER_LABEL,
+      icon: null
+    },
+    {
+      href: APP_DETAILS_HREF,
+      label: APP_DETAILS_LABEL,
+      icon: null
+    }
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       {app ? (
         <>
           <div id="account-info-panel">
@@ -128,7 +143,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             approveAppPublishRequest();
                           }}
-                          onCancel={() => {}}
+                          onCancel={() => { }}
                           okText="Yes"
                           cancelText="No"
                         >
@@ -144,7 +159,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             setDenyAppPublishModalVisible(true);
                           }}
-                          onCancel={() => {}}
+                          onCancel={() => { }}
                           okText="Yes"
                           cancelText="No"
                         >

@@ -1,4 +1,8 @@
+import CustomBreadCumb from "../impl/breadcumb";
+
 const HomePage = () =>{
-    return (<></>)
+    return (<>
+    <CustomBreadCumb props={[]}></CustomBreadCumb>
+    </>)
 }
 export default HomePage;

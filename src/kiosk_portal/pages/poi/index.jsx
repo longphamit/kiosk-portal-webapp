@@ -10,6 +10,8 @@ import { SearchOutlined, PlusOutlined, EyeFilled } from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
 import { TYPE_SERVER } from "../../../@app/constants/key";
+import { POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const PoiPage = () => {
   const { t } = useTranslation();
@@ -55,7 +57,13 @@ const PoiPage = () => {
       console.log(error);
     }
   };
-
+  const breadCumbData = [
+    {
+      href: POI_MANAGER_HREF,
+      label: POI_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   useEffect(async () => {
     getListPoiFunction("", "", "", "", "", "", "", currentPage, numUnitInPage);
     const resProvinces = await getListProvinceService();
@@ -132,7 +140,7 @@ const PoiPage = () => {
     }
   };
 
-  const onSearchModal = async (data) => {};
+  const onSearchModal = async (data) => { };
 
   const handleCancelModalPoi = (type) => {
     if (type === "create") {
@@ -172,7 +180,7 @@ const PoiPage = () => {
       title: "Create By",
       dataIndex: "type",
       key: "type",
-      render: (text) => <p>{text===TYPE_SERVER?"Admin":"Location owner"}</p>,
+      render: (text) => <p>{text === TYPE_SERVER ? "Admin" : "Location owner"}</p>,
     },
 
     {
@@ -193,7 +201,7 @@ const PoiPage = () => {
               onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
             }}
           >
-          <EyeFilled/>  Details
+            <EyeFilled />  Details
           </Button>
         </Space>
       ),
@@ -202,6 +210,7 @@ const PoiPage = () => {
 
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form form={form} name="search" onFinish={onFinishSearch}>
