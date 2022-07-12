@@ -32,6 +32,7 @@ import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
 import { async } from '@firebase/util';
+import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -45,6 +46,7 @@ export const EventDetailsPage = () => {
     const [form] = Form.useForm();
     const [formUploadImages] = Form.useForm();
     const [fileListImage, setFileListImage] = useState([]);
+    const [listRemoveImg, setListRemoveImg] = useState([]);
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
         getDistricts(selectedOptions);
@@ -108,6 +110,7 @@ export const EventDetailsPage = () => {
             setWardOptions(resWard.data);
 
             let list = [];
+            console.log("push image to list")
             await Promise.all(res.data.listImage.map((img, index) => {
                 list.push({
                     uid: img.id,
@@ -262,6 +265,14 @@ export const EventDetailsPage = () => {
             return e;
         }
         return e && e.fileList;
+    };
+    const onChangeListImage = (file) => {
+        if (file.file.status === "removed") {
+            if (file.file.url.includes("https://firebasestorage.googleapis.com")) {
+                console.log("abc");
+                setListRemoveImg((prevArray) => [...prevArray, file.file.uid]);
+            }
+        }
     };
     const onFinishUpdateListImage = async (values) => {
         //Add images
@@ -527,16 +538,16 @@ export const EventDetailsPage = () => {
                 </Form>
             </Card> : null
         }
-
         {currentEvent ?
-            < Card title="List Image">
-                <Form form={formUploadImages}
+            <Card title="List Image">
+                <Form
+                    {...formItemLayout}
+                    form={formUploadImages}
+                    name="listImg"
                     onFinish={onFinishUpdateListImage}
-                    initialValues={{
-                        listImage: fileListImage
-                    }}
+                    scrollToFirstError
                 >
-                    {fileListImage ? (
+                    {fileListImage.length>0 ? (
                         <Form.Item
                             name="listImage"
                             label="List Image"
@@ -554,6 +565,7 @@ export const EventDetailsPage = () => {
                                 accept={ACCEPT_IMAGE}
                                 multiple
                                 beforeUpload={beforeUpload}
+                                onChange={onChangeListImage}
                                 defaultFileList={[...fileListImage]}
                             >
                                 <Button icon={<UploadOutlined />}>
@@ -562,14 +574,11 @@ export const EventDetailsPage = () => {
                             </Upload>
                         </Form.Item>
                     ) : null}
-                    {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
-                        || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
-                        <Form.Item>
-                            <Row justify="center" align="middle">
-                                <Button type='primary' htmlType="submit" >Update</Button>
-                            </Row>
-                        </Form.Item> : null
-                    }
+                    <Form.Item {...tailFormItemLayout}>
+                        <Button type="primary" htmlType="submit">
+                            Update
+                        </Button>
+                    </Form.Item>
                 </Form>
             </Card> : null
         }
