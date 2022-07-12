@@ -31,6 +31,7 @@ import { localStorageGetReduxState } from '../../../@app/services/localstorage_s
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
+import { async } from '@firebase/util';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -81,10 +82,50 @@ export const EventDetailsPage = () => {
             console.log(e);
         }
     }
+
+    const getInitValue = async () => {
+        let id = searchParams.get("id");
+        if (id == null) {
+            onNavigate("/././unauth");
+            return;
+        }
+        try {
+            let res = await getEventByIdService(id);
+            setCurrentEvent(res.data);
+            const resProvinces = await getListProvinceService();
+            setProviceOptions(resProvinces.data);
+            //set up init list district
+            let codeProvince = resProvinces.data.find(
+                (element) => element.name === res.data.city
+            ).code;
+            const resDistrict = await getListDistrictService(codeProvince);
+            setDistrictOptions(resDistrict.data);
+            //set up init list ward
+            let codeDistrict = resDistrict.data.find(
+                (element) => element.name === res.data.district
+            ).code;
+            const resWard = await getListWardService(codeDistrict);
+            setWardOptions(resWard.data);
+
+            let list = [];
+            await Promise.all(res.data.listImage.map((img, index) => {
+                list.push({
+                    uid: img.id,
+                    name: "image" + (parseInt(index) + 1),
+                    status: "done",
+                    url: img.link,
+                });
+            }));
+            setFileListImage(list);
+        } catch (error) {
+            toast.error(error.response.data.message);
+            setCurrentEvent({});
+        }
+    };
+
     let navigate = useNavigate();
     useEffect(async () => {
-        getCity();
-        getEventInfo();
+        getInitValue();
 
     }, []);
     const getDefaultName = (type) => {
@@ -172,7 +213,7 @@ export const EventDetailsPage = () => {
             let res = await updateEventService(data);
             if (res.code == 200) {
                 toast.success('Update Success');
-                getEventInfo();
+                // getEventInfo();
             } else if (res.code == 400) {
                 toast.success(res.message);
             }
@@ -207,20 +248,7 @@ export const EventDetailsPage = () => {
         }
         return true;
     }
-    const getEventInfo = async () => {
-        let id = searchParams.get("id");
-        if (id == null) {
-            onNavigate('/././unauth')
-            return;
-        }
-        try {
-            let res = await getEventByIdService(id);
-            setCurrentEvent(res.data);
-        } catch (e) {
-            console.log(e)
-            setCurrentEvent({});
-        }
-    }
+
     const formatTime = 'HH:mm';
     const formatDate = "DD/MM/YYYY";
     const getTime = (str) => {
@@ -271,16 +299,6 @@ export const EventDetailsPage = () => {
         } catch (e) {
             console.log(e)
         }
-    }
-    const loadFileList = () => {
-        let list = []
-        currentEvent.listImage.map((img, index) => list.push({
-            uid: img.id,
-            name: "image" + (parseInt(index) + 1),
-            status: "done",
-            url: img.link,
-        }));
-        setFileListImage(list);
     }
     return (<>
         {currentEvent ?
@@ -509,7 +527,7 @@ export const EventDetailsPage = () => {
                 </Form>
             </Card> : null
         }
-    
+
         {currentEvent ?
             < Card title="List Image">
                 <Form form={formUploadImages}
@@ -518,33 +536,32 @@ export const EventDetailsPage = () => {
                         listImage: fileListImage
                     }}
                 >
-                    <Form.Item
-                        name="listImage"
-                        label="List Image"
-                    >
-                        {currentEvent.listImage.length > 0 ?
+                    {fileListImage ? (
+                        <Form.Item
+                            name="listImage"
+                            label="List Image"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please choose application logo!",
+                                },
+                            ]}
+                        >
                             <Upload
                                 action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
+                                accept={ACCEPT_IMAGE}
                                 multiple
-                                accept={ACCEPT_IMAGE}
                                 beforeUpload={beforeUpload}
-                                defaultFileList={fileListImage}
+                                defaultFileList={[...fileListImage]}
                             >
-                                <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+                                <Button icon={<UploadOutlined />}>
+                                    Upload ( Max:5 )
+                                </Button>
                             </Upload>
-                            : <Upload
-                                action={FILE_UPLOAD_URL}
-                                listType="picture"
-                                maxCount={5}
-                                accept={ACCEPT_IMAGE}
-                                beforeUpload={beforeUpload}
-                            >
-                                <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
-                            </Upload>
-                        }
-                    </Form.Item>
+                        </Form.Item>
+                    ) : null}
                     {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
                         || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
                         <Form.Item>

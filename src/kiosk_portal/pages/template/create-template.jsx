@@ -58,8 +58,8 @@ const CreateTemplatePage = () => {
             let data = { [`${ROOT_ROW_EVENT}`]: events, [`${FIRST_ROW_EVENT}`]: [] };
             setEventComponents(data)
         } catch (e) {
-            console.log(e)
-            setEventComponents([]);
+            console.error(e)
+            setEventComponents({});
         }
     }
     const getTemplateInfo = async () => {
@@ -349,17 +349,14 @@ const CreateTemplatePage = () => {
                                             }
                                         </Row>
                                     </div>
-                                    <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}>
-                                        <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
-                                            <ComponentList
-                                                internalScroll
-                                                key={e[0]}
-                                                listId={e[0]}
-                                                listType="CARD"
-                                                components={e[1]}
-                                            />
-                                        </div>
-                                    </Row>
+                                    <ComponentList
+                                        internalScroll
+                                        key={e[0]}
+                                        listId={e[0]}
+                                        listType="CARD"
+                                        components={e[1]}
+                                    />
+
                                 </div>
                             ))}
                         </div>
@@ -405,18 +402,14 @@ const CreateTemplatePage = () => {
                                             }
                                         </Row>
                                     </div>
-                                    <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}>
-                                        <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
-                                            <ComponentList
-                                                internalScroll
-                                                key={e[0]}
-                                                listId={e[0]}
-                                                listType="CARD"
-                                                components={e[1]}
-                                                event={e}
-                                            />
-                                        </div>
-                                    </Row>
+                                    <ComponentList
+                                        internalScroll
+                                        key={e[0]}
+                                        listId={e[0]}
+                                        listType="CARD"
+                                        components={e[1]}
+                                        event={e}
+                                    />
                                 </div>
                             ))}
                         </div>

@@ -11,6 +11,7 @@ import { Option } from "antd/lib/mentions";
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
+import { async } from "@firebase/util";
 
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
@@ -73,13 +74,15 @@ const EditTemplatePage = () => {
         }
     }
     const removeComponentIfExisted = (id, list) => {
-        for (let component of list) {
-            if (component.id === id) {
-                list.pop(component);
-                return list;
-            }
+        let removeIndex = []
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].id == id)
+                removeIndex.push(i);
         }
-        return list;
+        for (let index in removeIndex) {
+            delete list[index];
+        }
+        return list
     }
     const isColumnExisted = (rowIndex, componentsObj) => {
         if (componentsObj['row' + `${rowIndex}`] === undefined) {
@@ -106,6 +109,39 @@ const EditTemplatePage = () => {
     }
     const getEventPositions = async () => {
         try {
+            // let allEvents = await getAllEvents();
+            // let res = await getEventPositionService(searchParams.get("id"));
+            // let data = {};
+            // let listEventPosition = res.data.listPosition;
+            // listEventPosition.map(p => {
+            //     if (p.components.length !== 0) {
+            //         let dataTemp = [];
+            //         for (let component of p.components) {
+            //             let event = getComponentFromList(component.eventId, allEvents);
+            //             if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
+            //                 allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
+            //                 let eventTemp = {
+            //                     id: component.eventId,
+            //                     name: component.eventName,
+            //                     image: event.image === undefined ? '' : event.image, // get event thumbnail
+            //                     event: event.event
+            //                 }
+            //                 dataTemp[component.columnIndex] = eventTemp;
+            //             }
+            //         }
+            //         let rowIndex = p.rowIndex;
+            //         if (!isColumnExisted(rowIndex, data)) {
+            //             data['eventrow' + `${rowIndex + 1}`] = dataTemp;
+            //         }
+            //     }
+            // })
+
+            // if (listEventPosition.length === 0) {
+            //     data[`${FIRST_ROW_EVENT}`] = [];
+            // }
+            // setEventComponents(data)
+            // console.log(data)
+
             let allEvents = await getAllEvents();
             let res = await getEventPositionService(searchParams.get("id"));
             let data = {};
@@ -137,9 +173,9 @@ const EditTemplatePage = () => {
                 data[`${FIRST_ROW_EVENT}`] = [];
             }
             data[`${ROOT_ROW_EVENT}`] = allEvents;
-            setEventComponents(reorderKeysOfObject(data));
+            setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
     const getAppCategoryPositions = async () => {
@@ -169,7 +205,7 @@ const EditTemplatePage = () => {
             data[`${ROOT_ROW_CATEGORY}`] = allCategories;
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
     useEffect(() => {
@@ -189,7 +225,7 @@ const EditTemplatePage = () => {
     }
     const createEventModel = (event) => {
         let imgs = [];
-        if (event.listImage !==undefined && event.listImage.length != 0)
+        if (event.listImage !== undefined && event.listImage.length != 0)
             event.listImage.map(img => imgs.push(img.link));
         let data = {
             id: event.id,
@@ -318,6 +354,7 @@ const EditTemplatePage = () => {
             });
             if (listPosition.length == 0) {
                 toast.warn('Nothing added to the template');
+                return;
             }
             let request = {
                 templateId: currentTemplate.id,
@@ -327,7 +364,9 @@ const EditTemplatePage = () => {
             let res = await updateAppCategoryPosition(request);
             if (res.code === 200) {
                 toast.success("Save category components succesfully")
+                return;
             }
+            return;
         }
         let listPosition = [];
         let rowIndex = 0;
@@ -347,6 +386,7 @@ const EditTemplatePage = () => {
         });
         if (listPosition.length == 0) {
             toast.warn('Nothing added to the template');
+            return;
         }
         let request = {
             templateId: currentTemplate.id,
@@ -357,6 +397,7 @@ const EditTemplatePage = () => {
             setChanging(false)
             if (res.code === 200) {
                 toast.success("Save event components succesfully")
+                return;
             }
         } catch (e) {
             toast.error('Save failed!');
@@ -404,7 +445,7 @@ const EditTemplatePage = () => {
                         if (!destination) {
                             return;
                         }
-                        if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 2) {
+                        if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 5) {
                             if (source.droppableId !== destination.droppableId) {
                                 toast.warn('Maxium only 5');
                                 return;
@@ -441,17 +482,13 @@ const EditTemplatePage = () => {
                                             }
                                         </Row>
                                     </div>
-                                    <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}>
-                                        <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
-                                            <ComponentList
-                                                internalScroll
-                                                key={e[0]}
-                                                listId={e[0]}
-                                                listType="CARD"
-                                                components={e[1]}
-                                            />
-                                        </div>
-                                    </Row>
+                                    <ComponentList
+                                        internalScroll
+                                        key={e[0]}
+                                        listId={e[0]}
+                                        listType="CARD"
+                                        components={e[1]}
+                                    />
                                 </div>
                             ))}
                         </div>
@@ -497,18 +534,15 @@ const EditTemplatePage = () => {
                                             }
                                         </Row>
                                     </div>
-                                    <Row span={22} style={{ padding: 20, borderRadius: 10, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', border: '.5px solid grey' }}>
-                                        <div style={{ backgroundColor: '#ebeef2', boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)', display: 'flex', paddingTop: 20, flexDirection: 'column', height: 200 }}>
-                                            <ComponentList
-                                                internalScroll
-                                                key={e[0]}
-                                                listId={e[0]}
-                                                listType="CARD"
-                                                components={e[1]}
-                                                event={e}
-                                            />
-                                        </div>
-                                    </Row>
+                                    <ComponentList
+                                        internalScroll
+                                        key={e[0]}
+                                        listId={e[0]}
+                                        listType="CARD"
+                                        components={e[1]}
+                                        event={e}
+                                    />
+
                                 </div>
                             ))}
                         </div>
