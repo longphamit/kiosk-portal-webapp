@@ -1,8 +1,11 @@
-import { Button, Col, Modal, Pagination, Row, Table } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Col, Modal, Pagination, Row, Space, Table } from "antd";
+import { EditFilled, PlusOutlined, PoweroffOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
+import ModalUpdateAppCategory from "./modalUpdateAppCategory";
+import { APP_CATEGORY_MANAGER_HREF, APP_CATEGORY_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const AppCategoryPage = () => {
   const [appCategoryList, setAppCategoryList] = useState([]);
@@ -11,7 +14,8 @@ const AppCategoryPage = () => {
   const [appCategoryPageTotal, setAppCategoryPageTotal] = useState(0);
   const [isCreateCategoryModalVisible, setIsCreateCategoryModalVisible] =
     useState(false);
-
+  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+  const [currentUnit, setCurrentUnit] = useState(null);
   const columns = [
     {
       title: "Logo",
@@ -23,7 +27,28 @@ const AppCategoryPage = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record, dataIndex) => (
+        <Space size="middle">
+          <Button
+            className="infor-button"
+            shape="default"
+            onClick={() => {
+              setCurrentUnit(record);
+              showModal("update");
+            }}
+          >
+            <EditFilled /> UPDATE
+          </Button>
+          <Button type="primary" shape="default" name={record} onClick={{}}>
+            <PoweroffOutlined /> Change Status
+          </Button>
+        </Space>
+      ),
     },
   ];
   const getAppCategoryList = async (page, size) => {
@@ -49,12 +74,38 @@ const AppCategoryPage = () => {
     await getAppCategoryList(appCategoryPage, appCategoryPageSize);
   };
 
+  const showModal = (type) => {
+    if (type === "update") {
+      setIsUpdateModalVisible(true);
+    }
+  };
+
+  const onFinishModal = async (type) => {
+    if (type === "update") {
+      setIsUpdateModalVisible(false);
+    }
+    await getAppCategoryList(appCategoryPage, appCategoryPageSize);
+  };
+
+  const handleCancelModal = (type) => {
+    if (type === "update") {
+      setIsUpdateModalVisible(false);
+    }
+  };
+
   useEffect(async () => {
     getAppCategoryList(appCategoryPage, appCategoryPageSize);
   }, []);
-
+  const breadCumbData = [
+    {
+      href: APP_CATEGORY_MANAGER_HREF,
+      label: APP_CATEGORY_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Modal
         title="Create Application"
         visible={isCreateCategoryModalVisible}
@@ -63,7 +114,12 @@ const AppCategoryPage = () => {
       >
         <FormCreateCategory visible={onFinishModalCreateCategory} />
       </Modal>
-
+      <ModalUpdateAppCategory
+        modalToIndex={onFinishModal}
+        isUpdateModalVisible={isUpdateModalVisible}
+        handleCancelModal={handleCancelModal}
+        currentUnit={currentUnit}
+      />
       <Row style={{ padding: 10 }}>
         <Col span={15}></Col>
         <Col span={5} />

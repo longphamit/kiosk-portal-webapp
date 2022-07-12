@@ -86,7 +86,7 @@ const KioskTable = ({ partyId }) => {
       align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
+        record.status === "activate" ? (
           <Tag color={"green"}>{t("active")}</Tag>
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
@@ -129,10 +129,10 @@ const KioskTable = ({ partyId }) => {
       align: "center",
       key: "status",
       render: (text, record, dataIndex) =>
-        record.status === "active" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+        record.status === "activate" ? (
+          <Tag color={"green"}>Activate</Tag>
         ) : (
-          <Tag color={"red"}>{t("deactivate")}</Tag>
+          <Tag color={"red"}>Deactivate</Tag>
         ),
     },
     {
@@ -143,6 +143,9 @@ const KioskTable = ({ partyId }) => {
         <Space size="middle">
           <Button className="warn-button" shape="default" onClick={() => {}}>
             {t("edit")}
+          </Button>
+          <Button className="infor-button" shape="default" onClick={() => {}}>
+            Detail
           </Button>
           <Popconfirm
             title="Are you sure, you want to change status this kiosk?"
@@ -182,6 +185,7 @@ const KioskTable = ({ partyId }) => {
       kioskPage,
       kioskPageSize
     );
+    console.log(data)
     setListKiosk(data.data);
     setKioskPage(data.metadata.page);
     setKioskTotal(data.metadata.total);

@@ -10,3 +10,8 @@ export const createPoiCategoriesService = async (data: any) => {
     const response = await request.post(`${HOST}/v1/poiCategories`, data);
     return response.data;
 };
+
+export const updatePoiCategoryService = async (data: any) => {
+    const response = await request.put(`${HOST}/v1/poiCategories`, data);
+    return response.data;
+  };

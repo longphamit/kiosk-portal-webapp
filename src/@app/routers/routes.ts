@@ -1,16 +1,20 @@
 import { ReactNode } from "react";
+import { ACCOUNT_MANAGER_PATH, APP_CATEGORY_MANAGER_PATH, APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH, KIOSK_MANAGER_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from "../../kiosk_portal/constants/path_constants";
 import AccountManagerPage from "../../kiosk_portal/pages/account";
 
 
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import ApplicationPage from "../../kiosk_portal/pages/application";
 import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
+import ApplicationMarketPage from "../../kiosk_portal/pages/application_market";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import EventManagerPage from "../../kiosk_portal/pages/event";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
+import KioskDetailPage from "../../kiosk_portal/pages/kiosk_detail";
+import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
@@ -90,7 +94,7 @@ const routes: Route[] = [
   },
   {
     component: HomePage,
-    path: "/homepage",
+    path: HOME_PAGE_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: false,
@@ -99,7 +103,7 @@ const routes: Route[] = [
   },
   {
     component: AccountManagerPage,
-    path: "/account-manager",
+    path: ACCOUNT_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -117,7 +121,7 @@ const routes: Route[] = [
   },
   {
     component: ScheduleManagerPage,
-    path: "/schedule-manager",
+    path: SCHEDULE_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -126,7 +130,7 @@ const routes: Route[] = [
   },
   {
     component: KioskPage,
-    path: "/kiosk",
+    path: KIOSK_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -135,7 +139,7 @@ const routes: Route[] = [
   },
   {
     component: ServiceApplicationPublishRequestPage,
-    path: "/application-publish-request",
+    path: APP_PUBLISH_REQUEST_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -144,16 +148,16 @@ const routes: Route[] = [
   },
   {
     component: ApplicationPage,
-    path: "/application-page",
+    path: APP_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
-    authen: false,
+    authen: true,
     breadcrumb: "",
-    roles: [""]
+    roles: [ROLE_ADMIN,ROLE_SERVICE_PROVIDER]
   },
   {
     component: TemplateManagerPage,
-    path: "/template-manager",
+    path: TEMPLATE_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -162,7 +166,7 @@ const routes: Route[] = [
   },
   {
     component: PoiPage,
-    path: "/poi-page",
+    path: POI_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -171,7 +175,7 @@ const routes: Route[] = [
   },
   {
     component: AppCategoryPage,
-    path: "/app-category",
+    path: APP_CATEGORY_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -185,7 +189,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_ADMIN, ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_ADMIN,ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER]
   },
   {
     component: CreateTemplatePage,
@@ -207,7 +211,7 @@ const routes: Route[] = [
   },
   {
     component: PoiCategory,
-    path: "/poi-category",
+    path: POI_CATEGORY_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -216,7 +220,7 @@ const routes: Route[] = [
   },
   {
     component: EventManagerPage,
-    path: "/event-manager",
+    path: EVENT_MANAGER_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -233,14 +237,33 @@ const routes: Route[] = [
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
   },
   {
-    component: DetailPoiPage ,
+    component: DetailPoiPage,
     path: "/poi",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
-  }
+  },
+  {
+    component: ApplicationMarketPage ,
+    path: "/application-market",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: MyApplicationPage ,
+    path: "/my-application",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  
 ];
 
 export default routes;

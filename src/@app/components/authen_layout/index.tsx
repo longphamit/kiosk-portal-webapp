@@ -33,6 +33,7 @@ import {
 
 import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
+import { signOutService } from "../../services/auth_service";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -42,7 +43,8 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const { t } = useTranslation();
   const [time, setTime] = useState(new Date().toLocaleString());
   let navigate = useNavigate();
-  const logout = () => {
+  const logout = async () => {
+    await signOutService();
     localStorageClearService();
     navigate("/signin");
     toast("Logout successfull");
@@ -147,7 +149,6 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   Event
                 </Menu.Item>
               </>
-
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
@@ -196,30 +197,49 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Event
                 </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="application_market"
+                  onClick={() => {
+                    onNavigate("/application-market");
+                  }}
+                >
+                  Application Market
+                </Menu.Item>
+                <Menu.Item
+                  icon={<FundOutlined />}
+                  key="my-application"
+                  onClick={() => {
+                    onNavigate("/my-application");
+                  }}
+                >
+                  My Application
+                </Menu.Item>
               </>
             ) : null}
-            <>
-              <Menu.Item
-                icon={<BlockOutlined />}
-                key="10"
-                onClick={() => {
-                  onNavigate("/application-page");
-                }}
-              >
-                Application
-              </Menu.Item>
-            </>
+            <></>
 
             {role === ROLE_ADMIN || role === ROLE_SERVICE_PROVIDER ? (
-              <Menu.Item
-                key="11"
-                icon={<ArrowUpOutlined />}
-                onClick={() => {
-                  onNavigate("/application-publish-request");
-                }}
-              >
-                App Publish
-              </Menu.Item>
+              <>
+                <Menu.Item
+                  icon={<BlockOutlined />}
+                  key="10"
+                  onClick={() => {
+                    onNavigate("/application-page");
+                  }}
+                >
+                  Application
+                </Menu.Item>
+                <Menu.Item
+                  key="11"
+                  icon={<ArrowUpOutlined />}
+                  onClick={() => {
+                    onNavigate("/application-publish-request");
+                  }}
+                >
+                  App Publish
+                </Menu.Item>
+              </>
             ) : null}
             {/* <SubMenu
               key="sub3"

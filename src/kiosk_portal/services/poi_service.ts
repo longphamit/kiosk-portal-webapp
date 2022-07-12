@@ -17,3 +17,14 @@ export const getPoiByIdService = async (id:any) => {
       `${HOST}/v1/pois/${id}`);
   return response.data;
 };
+
+export const updatePoiBasicService = async (data: any) => {
+  const response = await request.put(`${HOST}/v1/pois`, data);
+  return response.data;
+};
+
+export const updatePoiListImgService = async (data: any) => {
+  console.log(data)
+  const response = await request.put(`${HOST}/v1/pois/replace`, data);
+  return response.data;
+};

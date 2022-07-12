@@ -14,7 +14,7 @@ import {
     TimePicker,
     Upload
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { DeleteFilled, EyeFilled, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
@@ -30,6 +30,8 @@ import { localStorageGetReduxState } from "../../../@app/services/localstorage_s
 import { ROLE_ADMIN } from "../../../@app/constants/role";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -362,13 +364,13 @@ const EventManagerPage = () => {
             title: 'Name',
             dataIndex: "name",
             key: "name",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Description',
             dataIndex: "description",
             key: "description",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Time Start',
@@ -376,7 +378,7 @@ const EventManagerPage = () => {
             key: "timeStart",
             render: (text) => {
                 let data = convertDate(text);
-                return <><a>{data.date}</a><br /><a>{data.time}</a></>
+                return <><p>{data.date}</p><br /><p>{data.time}</p></>
             },
         },
         {
@@ -385,20 +387,20 @@ const EventManagerPage = () => {
             key: "timeEnd",
             render: (text) => {
                 let data = convertDate(text);
-                return <><a>{data.date}</a><br /><a>{data.time}</a></>
+                return <><p>{data.date}</p><br /><p>{data.time}</p></>
             },
         },
         {
             title: 'Address',
             dataIndex: "address",
             key: "address",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
         },
         {
             title: 'Created By',
             dataIndex: "type",
             key: "type",
-            render: (text) => text == TYPE_SERVER ? <a>Admin</a> : <a>Location Owner</a>,
+            render: (text) => text == TYPE_SERVER ? <p>Admin</p> : <p>Location Owner</p>,
         },
         {
             title: 'Action',
@@ -406,33 +408,40 @@ const EventManagerPage = () => {
             render: (text, record, dataIndex) => (
                 <Space size="middle">
                     <Button
-                        className="warn-button"
+                        className="infor-button"
                         shape="default"
                         onClick={() => {
                             onNavigate({ pathname: '/./event', search: '?id=' + record.id });
                         }}
                     >
-                        Details
+                        <EyeFilled />   Details
                     </Button>
 
                     <Button
-                        type="primary"
+                        className="danger-button"
                         shape="default"
                         name={record}
                         onClick={() => {
                             handleDeleteEvent(record);
                         }}
                     >
-                        Delete
+                        <DeleteFilled />    Delete
                     </Button>
 
                 </Space>
             ),
         },
     ];
+    const breadCumbData = [
+        {
+            href: EVENT_MANAGER_HREF,
+            label: EVENT_MANAGER_LABEL,
+            icon: null
+        },
+    ]
     return (
         <>
-
+            <CustomBreadCumb props={breadCumbData} />
             <Row style={{ padding: 10 }}>
                 <Col span={15}>
                     <Form
@@ -463,7 +472,7 @@ const EventManagerPage = () => {
                                         type="primary"
                                         size={"large"}
                                     >
-                                        Search
+                                        <SearchOutlined />
                                     </Button>
                                 </Form.Item>
                             </Col>
@@ -474,12 +483,12 @@ const EventManagerPage = () => {
                 <Col span={5} />
                 <Col span={4}>
                     <Button
-                        type="primary"
+                        className="success-button"
                         shape="round"
                         size={"large"}
                         onClick={showModalCreateEvent}
                     >
-                        Create Event
+                        <PlusOutlined /> Event
                     </Button>
                 </Col>
             </Row>

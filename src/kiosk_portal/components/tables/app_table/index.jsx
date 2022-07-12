@@ -21,7 +21,7 @@ import {
   EyeFilled,
   EditFilled,
   ArrowUpOutlined,
-  DownloadOutlined
+  DownloadOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,10 +42,17 @@ import {
   sendReqPublishApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
-import { getAllCategoriesService, getListCategoriesService } from "../../../services/categories_service";
+import {
+  getAllCategoriesService,
+  getListCategoriesService,
+} from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
+import {
+  ROLE_ADMIN,
+  ROLE_LOCATION_OWNER,
+  ROLE_SERVICE_PROVIDER,
+} from "../../../../@app/constants/role";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -83,8 +90,14 @@ const ApplicationTable = () => {
       //   return;
       // }
       const res = await getListApplicationService(
-        currentPageToGetList,
-        numInPage
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        numInPage,
+        currentPageToGetList
       );
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
@@ -327,27 +340,27 @@ const ApplicationTable = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <a href={text}>{text}</a>,
+      render: (text) => <p href={text}>{text}</p>,
     },
 
     {
       title: "Category",
       dataIndex: "appCategoryName",
       key: "appCategoryName",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
 
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text, record, dataIndex) => <a>{text}</a>,
+      render: (text, record, dataIndex) => <p>{text}</p>,
     },
 
     {
@@ -359,55 +372,59 @@ const ApplicationTable = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.id}`)
+              navigator(`/app-detail/${record.id}`);
             }}
           >
             <EyeFilled /> Detail
           </Button>
-          {
-            role ? role === ROLE_SERVICE_PROVIDER ? <>
-              <Button
-                className="warn-button"
-                shape="default"
-                onClick={() => {
-                  setCurrentItem(record);
-                  showModalEditApplication();
-                }}
-              >
-                <EditFilled />Update
-              </Button>
-              {record.status === "unavailable" ? (
+          {role ? (
+            role === ROLE_SERVICE_PROVIDER ? (
+              <>
                 <Button
-                  type="primary"
+                  className="warn-button"
                   shape="default"
-                  name={record}
                   onClick={() => {
-                    handleChangeStatusApplication(record);
+                    setCurrentItem(record);
+                    showModalEditApplication();
                   }}
                 >
-                  <ArrowUpOutlined /> Publish
+                  <EditFilled />
+                  Update
                 </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  shape="default"
-                  disabled="false"
-                  name={record}
-                  onClick={() => {
-                    handleChangeStatusApplication(record);
-                  }}
-                >
-                  <ArrowUpOutlined /> Publish
-                </Button>
-              )}
-            </> : null : null
-          }
-          {
-            role ? role == ROLE_LOCATION_OWNER ?
+                {record.status === "unavailable" ? (
+                  <Button
+                    type="primary"
+                    shape="default"
+                    name={record}
+                    onClick={() => {
+                      handleChangeStatusApplication(record);
+                    }}
+                  >
+                    <ArrowUpOutlined /> Publish
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    shape="default"
+                    disabled="false"
+                    name={record}
+                    onClick={() => {
+                      handleChangeStatusApplication(record);
+                    }}
+                  >
+                    <ArrowUpOutlined /> Publish
+                  </Button>
+                )}
+              </>
+            ) : null
+          ) : null}
+          {role ? (
+            role == ROLE_LOCATION_OWNER ? (
               <Button className="success-button">
                 <DownloadOutlined /> Install
-              </Button> : null : null
-          }
+              </Button>
+            ) : null
+          ) : null}
         </Space>
       ),
     },
@@ -483,24 +500,27 @@ const ApplicationTable = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearch}
                 >
-                  <SearchOutlined />Advanced
+                  <SearchOutlined />
+                  Advanced
                 </Button>
               </Col>
             </Row>
           </Form>
         </Col>
         <Col span={5} />
-        {
-          role ? (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) ? <Col span={4}>
-            <Button
-              className="success-button"
-              size={"large"}
-              onClick={showModalCreateApplication}
-            >
-              <PlusOutlined /> Application
-            </Button>
-          </Col> : null : null
-        }
+        {role ? (
+          role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN ? (
+            <Col span={4}>
+              <Button
+                className="success-button"
+                size={"large"}
+                onClick={showModalCreateApplication}
+              >
+                <PlusOutlined /> Application
+              </Button>
+            </Col>
+          ) : null
+        ) : null}
       </Row>
       <Table
         columns={columns}
@@ -769,8 +789,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                   : null}
               </Select>
             </Form.Item>

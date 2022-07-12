@@ -27,6 +27,7 @@ import {
 import {
   createScheduleService,
   getListScheduleService,
+  updateScheduleService,
 } from "../../services/schedule_service";
 import {
   SearchOutlined,
@@ -35,8 +36,7 @@ import {
   EditFilled,
   ArrowUpOutlined,
   DeleteFilled,
-  PoweroffOutlined
-  
+  PoweroffOutlined,
 } from "@ant-design/icons";
 import {
   convertDate,
@@ -45,8 +45,9 @@ import {
   getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
-import FormAddTemplate from "./formAddTemplate";
 import { getListTemplateService } from "../../services/template_service";
+import { SCHEDULE_MANAGER_HREF, SCHEDULE_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../impl/breadcumb";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
@@ -66,8 +67,6 @@ const ScheduleManagerPage = () => {
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
 
-  const [isAddTemplateModalVisible, setIsAddTemplateModalVisible] =
-    useState(false);
   const [form] = Form.useForm();
 
   const getListTemplateFunction = async () => {
@@ -134,21 +133,38 @@ const ScheduleManagerPage = () => {
     },
   };
   const onFinishEditAccount = async (values) => {
-    const updateAccount = {
-      id: values.id,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      address: values.address,
-      dateOfBirth: values.dateOfBirth,
-    };
+    const invalidMsg = [];
+    var check = true;
+    let dOW = "";
     try {
-      await updateAccountService(updateAccount).then(() => {
-        getListScheduleFunction(currentPage, numScheduleInPage);
-        setIsCreateScheduleModalVisible(false);
-        toast.success(t("toastsuccesscreateschedule"));
-        setIsEditScheduleModalVisible(false);
-      });
+      if (values.timeStart - values.timeEnd > 0) {
+        invalidMsg.push("Time start need to before or match with time end\n");
+        check = false;
+      }
+      if (Array.isArray(values.dayOfWeek)) {
+        dOW = values.dayOfWeek.join("-");
+      } else {
+        dOW = values.dayOfWeek;
+      }
+      if (check) {
+        const updateSchedule = {
+          id: currentItem.id,
+          name: values.name,
+          stringTimeStart: formatTimePicker(values.timeStart),
+          stringTimeEnd: formatTimePicker(values.timeEnd),
+          dayOfWeek: dOW,
+          status: currentItem.status,
+        };
+        console.log(updateSchedule);
+        await updateScheduleService(updateSchedule).then(() => {
+          getListScheduleFunction(currentPage, numScheduleInPage);
+          setIsEditScheduleModalVisible(false);
+          toast.success("Update Schedule Success");
+        });
+      } else {
+        var errormsg = invalidMsg.join("-");
+        toast.error(errormsg);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -225,49 +241,25 @@ const ScheduleManagerPage = () => {
     setIsEditScheduleModalVisible(true);
   };
 
-  const handleShowModalAddTemplate = () => {
-    setIsAddTemplateModalVisible(true);
-  };
-  const handleCancelModalAddTemplate = () => {
-    setIsAddTemplateModalVisible(false);
-  };
-
-  const onFinishModalAddTemplate = async (childdata) => {
-    setIsAddTemplateModalVisible(childdata);
-    await getListScheduleFunction(currentPage, numScheduleInPage);
-  };
-
   const handleCancelEditSchedule = () => {
     setIsEditScheduleModalVisible(false);
   };
   const onFinishCreateSchedule = async (values) => {
-    var today = new Date();
     const invalidMsg = [];
     var check = true;
     try {
-      // if (today - values.timeStart > 0 || today - values.timeEnd > 0) {
-      //   invalidMsg.push("Time start and time end need to after today \n");
-      //   check = false;
-      // }
-      if (values.dateStart - values.dateEnd > 0) {
-        invalidMsg.push("Date start need to before or match with date end\n");
-        check = false;
-      }
       if (values.timeStart - values.timeEnd > 0) {
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
       }
       if (check) {
-        const newSchedule = {
+        const createSchedule = {
           name: values.name,
-          dateStart: formatDatePicker(values.dateStart),
-          dateEnd: formatDatePicker(values.dateEnd),
           stringTimeStart: formatTimePicker(values.timeStart),
           stringTimeEnd: formatTimePicker(values.timeEnd),
           dayOfWeek: values.dayOfWeek.join("-"),
         };
-        console.log(newSchedule);
-        await createScheduleService(newSchedule).then(() => {
+        await createScheduleService(createSchedule).then(() => {
           getListScheduleFunction(currentPage, numScheduleInPage);
           setIsCreateScheduleModalVisible(false);
           toast.success(t("toastsuccesscreateschedule"));
@@ -304,10 +296,7 @@ const ScheduleManagerPage = () => {
       onOk: async () => {
         {
           try {
-            await changeStatusAccountService(record.id, null).then(() => {
-              getListScheduleFunction(currentPage, numScheduleInPage);
-              toast.success(t("toastsuccesschangestatus"));
-            });
+            toast.error("Chưa làm");
           } catch (error) {
             console.log(error);
           }
@@ -351,24 +340,6 @@ const ScheduleManagerPage = () => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("dayofweek"),
-      dataIndex: "dayOfWeek",
-      key: "dayOfWeek",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: t("datestart"),
-      dataIndex: "dateStart",
-      key: "dateStart",
-      render: (text) => <a>{convertDate(text)}</a>,
-    },
-    {
-      title: t("dateend"),
-      dataIndex: "dateEnd",
-      key: "dateEnd",
-      render: (text) => <a>{convertDate(text)}</a>,
-    },
-    {
       title: t("timestart"),
       dataIndex: "timeStart",
       key: "timeStart",
@@ -405,17 +376,16 @@ const ScheduleManagerPage = () => {
               showModalEditSchedule();
             }}
           >
-           <EditFilled/> {t("edit")}
+            <EditFilled /> {t("edit")}
           </Button>
           <Button
             className="warn-button"
             shape="default"
             onClick={() => {
-              setCurrentItem(record);
-              handleShowModalAddTemplate();
+              toast.error("Chưa làm");
             }}
           >
-            <PlusOutlined/> Template
+            <PlusOutlined /> Template
           </Button>
           {record.roleName === "Admin" ? (
             <Button
@@ -426,7 +396,7 @@ const ScheduleManagerPage = () => {
                 handleChangeStatusSchedule(record);
               }}
             >
-            <PoweroffOutlined/>  {t("change-status")}
+              <PoweroffOutlined /> {t("change-status")}
             </Button>
           ) : (
             <Button
@@ -437,7 +407,7 @@ const ScheduleManagerPage = () => {
                 handleChangeStatusSchedule(record);
               }}
             >
-            <PoweroffOutlined/>  {t("change-status")}
+              <PoweroffOutlined /> {t("change-status")}
             </Button>
           )}
         </Space>
@@ -454,8 +424,16 @@ const ScheduleManagerPage = () => {
       </Select>
     </Form.Item>
   );
+  const breadCumbData = [
+    {
+      href: SCHEDULE_MANAGER_HREF,
+      label: SCHEDULE_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+    <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
@@ -486,7 +464,7 @@ const ScheduleManagerPage = () => {
                     type="primary"
                     size={"large"}
                   >
-                    <SearchOutlined/>
+                    <SearchOutlined />
                   </Button>
                 </Form.Item>
               </Col>
@@ -498,7 +476,7 @@ const ScheduleManagerPage = () => {
                   size={"large"}
                   onClick={showModalAdvancedSearchSchedule}
                 >
-                  <SearchOutlined/> Advance
+                  <SearchOutlined /> Advance
                 </Button>
               </Col>
             </Row>
@@ -512,7 +490,7 @@ const ScheduleManagerPage = () => {
             onClick={showModalCreateSchedule}
           >
             {/* {t("createschedule")} */}
-            <PlusOutlined/> Schedule
+            <PlusOutlined /> Schedule
           </Button>
         </Col>
       </Row>
@@ -523,19 +501,6 @@ const ScheduleManagerPage = () => {
         pageSize={5}
         onChange={handleChangeNumberOfPaging}
       />
-
-      <Modal
-        title="Add Template"
-        visible={isAddTemplateModalVisible}
-        onCancel={handleCancelModalAddTemplate}
-        footer={null}
-      >
-        <FormAddTemplate
-          modalToIndex={onFinishModalAddTemplate}
-          indexToModal={currentItem}
-          listTemplate={listTemplate}
-        />
-      </Modal>
 
       <Modal
         title={t("createschedule")}
@@ -563,46 +528,6 @@ const ScheduleManagerPage = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="dateStart"
-            label={t("datestart")}
-            rules={[
-              {
-                required: true,
-                message: t("reqdatestartschedule"),
-              },
-            ]}
-          >
-            <DatePicker
-              placeholder={t("selecttime")}
-              format="DD/MM/YYYY"
-              allowClear={false}
-              style={{
-                height: "auto",
-                width: "auto",
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="dateEnd"
-            label={t("dateend")}
-            rules={[
-              {
-                required: true,
-                message: t("reqdateendschedule"),
-              },
-            ]}
-          >
-            <DatePicker
-              placeholder={t("selecttime")}
-              format="DD/MM/YYYY"
-              allowClear={false}
-              style={{
-                height: "auto",
-                width: "auto",
-              }}
-            />
-          </Form.Item>
-          <Form.Item
             name="timeStart"
             label={t("timestart")}
             rules={[
@@ -612,7 +537,7 @@ const ScheduleManagerPage = () => {
               },
             ]}
           >
-            <TimePicker allowClear={false} />
+            <TimePicker allowClear={false} format="HH:mm" />
           </Form.Item>
           <Form.Item
             name="timeEnd"
@@ -624,7 +549,7 @@ const ScheduleManagerPage = () => {
               },
             ]}
           >
-            <TimePicker allowClear={false} />
+            <TimePicker allowClear={false} format="HH:mm" />
           </Form.Item>
           <Form.Item name="dayOfWeek" label={t("dayofweek")}>
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
@@ -660,56 +585,10 @@ const ScheduleManagerPage = () => {
           </Form.Item>
         </Form>
       </Modal>
-      <Modal
-        title="Advanced Search"
-        visible={isAdvancedSearchModalVisible}
-        onCancel={handleCloseModalAdvancedSearchSchedule}
-        footer={null}
-      >
-        <Form
-          {...formItemLayout}
-          form={form}
-          name="advancedSearch"
-          onFinish={onFinishAdvancedSearch}
-          scrollToFirstError
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 14 }}
-          initialValues={{
-            address: "",
-            email: "",
-            firstName: "",
-            lastName: "",
-            phoneNumber: "",
-          }}
-        >
-          <Form.Item name="firstName" label={t("firstname")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="lastName" label={t("lastname")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="phoneNumber" label={t("phonenumber")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label={t("email")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="address" label={t("address")}>
-            <Input />
-          </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Space align="center">
-              <Button align="center" type="primary" htmlType="submit">
-                Search
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Modal>
       {currentItem ? (
         <Modal
           key={currentItem.id}
-          title={t("edit")}
+          title="Edit Schedule"
           visible={isEditScheduleModalVisible}
           onCancel={handleCancelEditSchedule}
           footer={null}
@@ -722,92 +601,81 @@ const ScheduleManagerPage = () => {
             onFinish={onFinishEditAccount}
             scrollToFirstError
             initialValues={{
-              firstName: currentItem.firstName,
-              lastName: currentItem.lastName,
-              phoneNumber: currentItem.phoneNumber,
-              address: currentItem.address,
-              dateOfBirth: getDate(currentItem.dateOfBirth),
-              id: currentItem.id,
+              name: currentItem.name,
+              timeStart: moment(
+                currentItem.timeStart.split(".")[0],
+                "HH:mm:ss"
+              ),
+              timeEnd: moment(currentItem.timeEnd.split(".")[0], "HH:mm:ss"),
+              dayOfWeek: currentItem.dayOfWeek,
             }}
           >
-            <Form.Item name="id" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
             <Form.Item
-              name="firstName"
-              label={t("firstname")}
+              name="name"
+              label={t("name")}
               rules={[
                 {
                   required: true,
-                  message: t("reqfirstname"),
+                  message: t("reqnameschedule"),
                 },
               ]}
             >
               <Input />
             </Form.Item>
             <Form.Item
-              name="lastName"
-              label={t("lastname")}
+              name="timeStart"
+              label={t("timestart")}
               rules={[
                 {
                   required: true,
-                  message: t("reqlastname"),
+                  message: t("reqtimestartschedule"),
                 },
               ]}
             >
-              <Input />
+              <TimePicker allowClear={false} format="HH:mm" />
             </Form.Item>
             <Form.Item
-              name="phoneNumber"
-              label={t("phonenumber")}
+              name="timeEnd"
+              label={t("timeend")}
               rules={[
                 {
-                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                  message: t("formatphonenumber"),
-                },
-                {
                   required: true,
-                  message: t("reqphonenumber"),
+                  message: t("reqtimeendschedule"),
                 },
               ]}
             >
-              <Input style={{ width: "100%" }} />
+              <TimePicker allowClear={false} format="HH:mm" />
             </Form.Item>
-            <Form.Item
-              name="address"
-              label={t("address")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqaddress"),
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="dateOfBirth"
-              label={t("dob")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqname"),
-                },
-              ]}
-            >
-              <DatePicker
-                placeholder={t("selectdob")}
-                format="DD/MM/YYYY"
-                allowClear={false}
-                style={{
-                  height: "auto",
-                  width: "auto",
-                }}
-              />
+            <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+              <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
+                <Row>
+                  <Col span={8}>
+                    <Checkbox value="Monday">{t("monday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Tuesday">{t("tuesday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Wednesday">{t("wednesday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Thursday">{t("thursday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Friday">{t("friday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Saturday">{t("saturday")}</Checkbox>
+                  </Col>
+                  <Col span={8}>
+                    <Checkbox value="Sunday">{t("sunday")}</Checkbox>
+                  </Col>
+                </Row>
+              </Checkbox.Group>
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Save
+                Edit Schedule
               </Button>
             </Form.Item>
           </Form>

@@ -1,5 +1,6 @@
 import {
   AutoComplete,
+  Breadcrumb,
   Button,
   Checkbox,
   Col,
@@ -22,6 +23,8 @@ import {
   EditFilled,
   PoweroffOutlined,
   ArrowUpOutlined,
+  HomeOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,7 +44,10 @@ import {
   searchAccountService,
   updateAccountService,
 } from "../../services/account_service";
+import "./styles.css"
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
+import CustomBreadCumb from "../impl/breadcumb";
+import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../impl/breadcumb_constant";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState();
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -301,37 +307,37 @@ const AccountManagerPage = () => {
       title: t("firstname"),
       dataIndex: "firstName",
       key: "firstname",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: t("lastname"),
       dataIndex: "lastName",
       key: "lastname",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: t("phonenumber"),
       dataIndex: "phoneNumber",
       key: "phonenumber",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: t("email"),
       dataIndex: "email",
       key: "email",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: t("dob"),
       dataIndex: "dateOfBirth",
       key: "dob",
-      render: (text) => <a>{converDate(text)}</a>,
+      render: (text) => <p>{converDate(text)}</p>,
     },
     {
       title: t("role"),
       dataIndex: "roleName",
       key: "role",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
       title: t("status"),
@@ -408,8 +414,17 @@ const AccountManagerPage = () => {
       },
     ],
   };
+
+  const breadCumbData = [
+    {
+      href: ACCOUNT_MANAGER_HREF,
+      label: ACCOUNT_MANAGER_LABEL,
+      icon: <UserOutlined />
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
@@ -500,7 +515,9 @@ const AccountManagerPage = () => {
         </Col>
       </Row>
       {isListAccountLoading ? (
-        <Spin />
+        <Row span={24}>
+          <Spin className="center"/>
+        </Row>
       ) : (
         <Table columns={columns} dataSource={listAccount} pagination={false} />
       )}
@@ -613,8 +630,8 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                  return <Option value={item.id}>{item.name}</Option>;
+                })
                 : null}
             </Select>
           </Form.Item>

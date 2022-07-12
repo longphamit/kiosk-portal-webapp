@@ -1,13 +1,18 @@
 import { HOST } from "../constants/host";
 import request from "../utils/http_client";
 
-export const signInService=async(email:string,password:string)=>{
+export const signInService=async(email:string,password:string,deviceId:any)=>{
    const response= await request.post(`${HOST}/v1/auth`,{
         email,
-        password
+        password,
+        deviceId
     })
     return response.data
 };
+export const signOutService=async()=>{
+    const response= await request.post(`${HOST}/v1/auth/logout`,{})
+     return response.data
+ };
 export const signUpService=async(firstName:string,lastName:string,gender:string,dob:Date,username:string,phone:string,email:string,cardNumber:string,password:string)=>{
     const response=await request.post(`${HOST}/user/sign-up`,{
         firstName,

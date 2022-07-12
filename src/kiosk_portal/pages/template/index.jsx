@@ -30,6 +30,8 @@ import {
   DeleteFilled
 
 } from "@ant-design/icons";
+import CustomBreadCumb from "../impl/breadcumb";
+import { TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../impl/breadcumb_constant";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [listTemplate, setListTemplate] = useState([]);
@@ -262,8 +264,16 @@ const TemplateManagerPage = () => {
       </Select>
     </Form.Item>
   );
+  const breadCumbData = [
+    {
+      href: TEMPLATE_MANAGER_HREF,
+      label: TEMPLATE_MANAGER_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
