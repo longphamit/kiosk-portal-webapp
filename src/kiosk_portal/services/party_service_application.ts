@@ -6,7 +6,13 @@ export const installApplicationService = async (data: any) => {
     return response.data;
   };
 
-export const getListMyAppService = async (ServiceApplicationName:any,size:any,page:any) => {
-    const response = await request.get(`${HOST}/v1/my-app?ServiceApplicationName=${ServiceApplicationName}&size=${size}&page=${page}`);
+export const getListMyAppService = async (ServiceApplicationName:any,status:any,size:any,page:any) => {
+    const response = await request.get(`${HOST}/v1/my-app?ServiceApplicationName=${ServiceApplicationName}&size=${size}&page=${page}&status=${status}`);
     return response.data;
+};
+export const changeStatusMyAppService = async (serviceApplication:any) => {
+  const response = await request.patch(`${HOST}/v1/my-app/status`,{
+    "serviceApplication":serviceApplication
+  });
+  return response.data;
 };
