@@ -52,7 +52,12 @@ export const deleteEventService = async (id: any) => {
     return response.data;
 };
 
-export const updateListImage = async (data: any) => {
+export const updateListImageService = async (data: any) => {
     const response = await request.put(`${HOST}/v1/events/replace`, data);
     return response.data;
+}
+
+export const updateThumbnailService = async (data:any) =>{
+    const response = await request.patch(`${HOST}/v1/events/image`, data);
+    return response.data
 }

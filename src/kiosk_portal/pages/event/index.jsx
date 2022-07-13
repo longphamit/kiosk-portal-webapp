@@ -10,7 +10,9 @@ import {
     Row,
     Select,
     Space,
+    Spin,
     Table,
+    Tag,
     TimePicker,
     Upload
 } from "antd";
@@ -27,12 +29,14 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css"
 import { TYPE_SERVER } from "../../../@app/constants/key";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
-import { ROLE_ADMIN } from "../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
+import { STATUS_COMING_SOON, STATUS_END, STATUS_ON_GOING } from "../../constants/event_constants";
 import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
 import CustomBreadCumb from "../impl/breadcumb";
 const EventManagerPage = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [querySearch, setQuerySearch] = useState('');
@@ -46,7 +50,7 @@ const EventManagerPage = () => {
     const [wardOptions, setWardOptions] = useState([]);
     const [listEvent, setListEvent] = useState([]);
     useState(false);
-    const [form] = Form.useForm();
+    const [form, searchForm] = Form.useForm();
     let navigate = useNavigate();
     const getCity = async () => {
         try {
@@ -74,6 +78,10 @@ const EventManagerPage = () => {
             setListEvent(res.data.data);
             return;
         } catch (error) {
+            if (error.response.code === 400) {
+                toast.error("Cannot get events")
+            }
+            resetPage();
             console.log(error);
         }
     };
@@ -100,7 +108,7 @@ const EventManagerPage = () => {
             },
         },
     };
-    const types = [
+    const typesForAdmin = [
         {
             name: "Name",
             label: "Name",
@@ -125,29 +133,61 @@ const EventManagerPage = () => {
             name: "Street",
             label: "Street",
         },
-        localStorageGetReduxState().auth.role == ROLE_ADMIN ?
-            ({
-                name: "CreatorName",
-                label: "Creator Name",
-            },
-            {
-                name: "Type",
-                label: "Type",
-            },
-            {
-                name: "CreatorEmail",
-                label: "Creator Email",
-            }) : {}
+        {
+            name: "CreatorName",
+            label: "Creator Name",
+        },
+        {
+            name: "Type",
+            label: "Type",
+        },
+        {
+            name: "CreatorEmail",
+            label: "Creator Email",
+        }
     ];
+    const typesForLocatioOwner = [
+        {
+            name: "Name",
+            label: "Name",
+        },
+        {
+            name: "Ward",
+            label: "Ward",
+        },
+        {
+            name: "District",
+            label: "District",
+        },
+        {
+            name: "City",
+            label: "City",
+        },
+        {
+            name: "Status",
+            label: "Status",
+        },
+        {
+            name: "Street",
+            label: "Street",
+        },
+    ];
+
+
     const prefixSearch = (
         <Form.Item name="type" noStyle>
             <Select
                 onChange={(e) => { e == null ? setSelectedSearchType('Name') : setSelectedSearchType(e) }}
                 defaultValue="Name"
-            >
-                {types.map((item) => {
-                    return <Option value={item.name}>{item.label}</Option>;
-                })}
+            >   {
+                    localStorageGetReduxState().auth.role == ROLE_ADMIN ?
+                        typesForAdmin.map((item) => {
+                            return <Option value={item.name}>{item.label}</Option>
+                        }) : localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
+                            typesForLocatioOwner.map((item) => {
+                                return <Option value={item.name}>{item.label}</Option>
+                            }) : null
+                }
             </Select>
         </Form.Item>
     );
@@ -171,6 +211,7 @@ const EventManagerPage = () => {
 
     const onFinishCreateEvent = async (values) => {
         try {
+            setIsLoading(true);
             //Start to check date time of event
             let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
 
@@ -178,12 +219,14 @@ const EventManagerPage = () => {
                 toast.error("Date start is over");
                 return;
             }
-
-            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0])) { //Compare on hour
+            console.log(parseInt(moment(values.timeStart).format('H')))
+            console.log(strDateResultFromNow)
+            console.log(parseInt(strDateResultFromNow.split(' ')[0]))
+            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && !strDateResultFromNow.includes('minutes')) { //Compare on hour
                 toast.error("Time start must be late from now");
                 return;
-            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0])) { // Compare on minute
-
+            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0]) ||
+                parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && strDateResultFromNow.includes('minutes')) { // Compare on minute
                 if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
                     toast.error("Time start must be late from now");
                     return;
@@ -225,6 +268,8 @@ const EventManagerPage = () => {
         } catch (error) {
             toast.error('Create failed!')
             console.log(error);
+        } finally {
+            setIsLoading(false)
         }
     };
     const getName = (list, code) => {
@@ -239,7 +284,6 @@ const EventManagerPage = () => {
         let ward = '';
         let district = '';
         let city = '';
-        let status = '';
         let street = '';
         let creatorName = '';
         let creatorEmail = '';
@@ -257,9 +301,6 @@ const EventManagerPage = () => {
                 break;
             case 'City':
                 city = value;
-                break;
-            case 'Status':
-                status = value;
                 break;
             case 'Street':
                 street = value;
@@ -279,7 +320,6 @@ const EventManagerPage = () => {
             ward: ward,
             district: district,
             city: city,
-            status: status,
             street: street,
             creatorName: creatorName,
             creatorEmail: creatorEmail,
@@ -287,7 +327,7 @@ const EventManagerPage = () => {
         }
     }
     const onFinishSearch = async (values) => {
-        if (values.searchString === '') {
+        if (values.searchString === '' && values.status === '') {
             setIsSearch(false);
             getListEventFunction(1, numEventInPage)
             return;
@@ -295,6 +335,10 @@ const EventManagerPage = () => {
         let searchStr = buildEventParamsSearch(values.searchString);
         searchStr["size"] = numEventInPage;
         searchStr["page"] = 1;
+        searchStr["status"] = values.status;
+        if (localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) {
+            searchStr["type"] = "local";
+        }
         try {
             const res = await searchEventService(searchStr);
             setCurrentPage(1);
@@ -303,27 +347,35 @@ const EventManagerPage = () => {
             setListEvent(res.data.data);
         } catch (e) {
             toast("Cannot found!")
+            resetPage()
             console.log(e)
         }
-
     };
+    const resetPage = () => {
+        setCurrentPage(1);
+        setTotalEvent(0);
+        setListEvent(0);
+    }
     const handleCancelCreateEvent = () => {
         setIsCreateEventModalVisible(false);
     };
     const handleDeleteEvent = async (record) => {
-        console.log(record);
+
         Modal.confirm({
             title: 'Confirm delete the event',
             okText: "Yes",
             cancelText: 'No',
             onOk: async () => {
                 {
+                    setIsLoading(true);
                     try {
                         await deleteEventService(record.id);
                         getListEventFunction(currentPage, numEventInPage);
                         toast("Delete successful");
                     } catch (e) {
-                        toast("Delete failed");
+                        toast.error(e.response.data.message);
+                    } finally {
+                        setIsLoading(false);
                     }
                 }
             },
@@ -394,6 +446,20 @@ const EventManagerPage = () => {
             render: (text) => <p>{text}</p>,
         },
         {
+            title: 'Status',
+            dataIndex: "status",
+            key: "status",
+            render: (text) => text === STATUS_COMING_SOON ? (
+                <Tag color={"yellow"}>Up coming</Tag>
+            ) : text === STATUS_ON_GOING ?
+                (
+                    <Tag color={"green"}>On going</Tag>
+                ) :
+                (
+                    <Tag color={"grey"}>End</Tag>
+                )
+        },
+        {
             title: 'Created By',
             dataIndex: "type",
             key: "type",
@@ -442,12 +508,13 @@ const EventManagerPage = () => {
             <Row style={{ padding: 10 }}>
                 <Col span={15}>
                     <Form
-                        form={form}
+                        form={searchForm}
                         name="search"
                         onFinish={onFinishSearch}
                         initialValues={{
                             type: "Name",
                             searchString: "",
+                            status: ""
                         }}
                     >
                         <Row>
@@ -459,6 +526,16 @@ const EventManagerPage = () => {
                                         placeholder="Search..."
                                         value=""
                                     />
+                                </Form.Item>
+                            </Col>
+                            <Col span={5}>
+                                <Form.Item name='status' style={{ marginTop: 5 }}>
+                                    <Select >
+                                        <Option value="">All Status</Option>
+                                        <Option value={STATUS_COMING_SOON}>Up coming</Option>
+                                        <Option value={STATUS_ON_GOING}>On going</Option>
+                                        <Option value={STATUS_END}>End</Option>
+                                    </Select>
                                 </Form.Item>
                             </Col>
                             <Col span={3}>
@@ -493,7 +570,7 @@ const EventManagerPage = () => {
             <Pagination
                 defaultCurrent={1}
                 total={totalEvent}
-                pageSize={5}
+                pageSize={numEventInPage}
                 onChange={handleChangeNumberOfPaging}
             />
 
@@ -682,9 +759,11 @@ const EventManagerPage = () => {
                         </Upload>
                     </Form.Item>
                     <Form.Item {...tailFormItemLayout}>
-                        <Button type="primary" htmlType="submit">
-                            Create Event
-                        </Button>
+                        {isLoading === false ?
+                            <Button type="primary" htmlType="submit">
+                                Create Event
+                            </Button> : <Spin />
+                        }
                     </Form.Item>
                 </Form>
             </Modal>

@@ -1,4 +1,4 @@
-import { Button, Modal, Pagination, Space, Table } from "antd";
+import { Button, Modal, Pagination, Space, Spin, Table } from "antd";
 import { EyeFilled, DownloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -127,7 +127,7 @@ const ApplicationMarketPage = () => {
               <DownloadOutlined /> Already install
             </Button>
           ) : isLoading ? (
-            <spin />
+            <Spin />
           ) : (
             <Button
               className="success-button"
