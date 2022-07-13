@@ -297,9 +297,10 @@ export const EventDetailsPage = () => {
             await updateListImageService(data);
             toast.success("Update success");
             setUpdateListImage(false);
-            setIsLoadingListImage(false);
         } catch (e) {
             console.log(e)
+        } finally {
+            setIsLoadingListImage(false);
         }
     }
     return (<>

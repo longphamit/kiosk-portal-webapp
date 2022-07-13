@@ -8,6 +8,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
 } from "antd";
@@ -34,6 +35,9 @@ import CustomBreadCumb from "../impl/breadcumb";
 import { TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../impl/breadcumb_constant";
 const TemplateManagerPage = () => {
   const { Option } = Select;
+  const [isEditLoading, setEditLoading] = useState(false);
+  const [isCreateLoading, setCreateLoading] = useState(false);
+  const [isDeleteLoading, setDeleteLoading] = useState(false);
   const [listTemplate, setListTemplate] = useState([]);
   const [totalTemplate, setTotalTemplate] = useState(0);
   const [numTemplateInPage, setNumTemplateInPage] = useState(10);
@@ -109,6 +113,7 @@ const TemplateManagerPage = () => {
     },
   };
   const onFinishEditTemplate = async (values) => {
+    setEditLoading(true);
     let data = {
       id: values.id,
       name: values.Name ?? "",
@@ -119,7 +124,10 @@ const TemplateManagerPage = () => {
       toast("Update successful");
       getListTemplateFunction(currentPage, numTemplateInPage);
     } catch (e) {
+      console.error(e);
       toast("Update failed");
+    } finally {
+      setEditLoading(false)
     }
   };
   const onFinishSearch = async (values) => {
@@ -150,6 +158,7 @@ const TemplateManagerPage = () => {
     setIsEditTemplateModalVisible(false);
   };
   const onFinishCreateTemplate = async (values) => {
+    setCreateLoading(true);
     let data = {
       name: values.Name ?? "",
       description: values.description ?? "",
@@ -159,8 +168,12 @@ const TemplateManagerPage = () => {
       handleCancelCreateTemplate();
       onNavigate({ pathname: '/./create-template', search: '?id=' + res.data.id });
     } catch (e) {
+      console.error(e)
       toast("Create failed");
+    } finally {
+      setCreateLoading(false)
     }
+
   };
 
   const showModalCreateTemplate = () => {
@@ -172,19 +185,21 @@ const TemplateManagerPage = () => {
     setIsCreateTemplateModalVisible(false);
   };
   const handleDeleteTemplate = async (record) => {
-    console.log(record);
     Modal.confirm({
       title: "Confirm delete the template",
       okText: "Yes",
       cancelText: "No",
       onOk: async () => {
         {
+          setDeleteLoading(true);
           try {
             await deleteTemplateService(record.id);
             getListTemplateFunction(currentPage, numTemplateInPage);
             toast("Delete successful");
           } catch (e) {
             toast("Delete failed");
+          } finally {
+            setDeleteLoading(false);
           }
         }
       },
@@ -240,17 +255,18 @@ const TemplateManagerPage = () => {
           >
             <EditFilled /> Edit
           </Button>
-
-          <Button
-            type="primary"
-            shape="default"
-            name={record}
-            onClick={() => {
-              handleDeleteTemplate(record);
-            }}
-          >
-            <DeleteFilled /> Delete
-          </Button>
+          {isDeleteLoading == false ?
+            <Button
+              type="primary"
+              shape="default"
+              name={record}
+              onClick={() => {
+                handleDeleteTemplate(record);
+              }}
+            >
+              <DeleteFilled /> Delete
+            </Button> : <Spin />
+          }
         </Space>
       ),
     },
@@ -376,10 +392,13 @@ const TemplateManagerPage = () => {
           >
             <Input />
           </Form.Item>
+
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              CONTINUE
-            </Button>
+            {isCreateLoading === false ?
+              <Button type="primary" htmlType="submit">
+                CONTINUE
+              </Button>
+              : <Spin />}
           </Form.Item>
         </Form>
       </Modal>
@@ -434,23 +453,28 @@ const TemplateManagerPage = () => {
               <Input />
             </Form.Item>
 
+            {isEditLoading === false ?
+              <div>
+                <Row align="center" style={{ marginBottom: 10 }}>
+                  <Button type="primary" htmlType="submit" style={{ width: 170 }}>
+                    Save
+                  </Button>
+                </Row>
 
-            <Row align="center" style={{ marginBottom: 10 }}>
-              <Button type="primary" htmlType="submit" style={{ width: 170 }}>
-                Save
-              </Button>
-            </Row>
 
+                <Row align="center">
+                  <Button type="primary" style={{ width: 170 }}
+                    onClick={() => onNavigate({ pathname: '/./edit-template', search: '?id=' + currentItem.id })}>
+                    Arrange Component
+                  </Button>
+                </Row>
 
-            <Row align="center">
-              <Button type="primary" style={{ width: 170 }}
-                onClick={() => onNavigate({ pathname: '/./edit-template', search: '?id=' + currentItem.id })}>
-                Arrange Component
-              </Button>
-            </Row>
+              </div>
+              : <Row align="center"><Spin /> </Row>}
           </Form>
         </Modal>
-      ) : null}
+      ) : null
+      }
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, Col, Input, Modal, Row, Select } from "antd";
+import { Button, Col, Input, Modal, Row, Select, Spin } from "antd";
 import React, { useState, useEffect } from "react";
 import TextArea from "antd/lib/input/TextArea";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -22,6 +22,7 @@ const FIRST_ROW_EVENT = "eventrow1"
 const FIRST_ROW_CATEGORY = "categoryrow1"
 const CreateTemplatePage = () => {
     const [isChanging, setChanging] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedType, setSelectedType] = useState(SELECTED_TYPE_CATEGORY);
     const [categoryComponents, setCategoryComponents] = useState({});
@@ -202,6 +203,7 @@ const CreateTemplatePage = () => {
     }
 
     const save = async () => {
+        setLoading(true);
         if (selectedType === SELECTED_TYPE_CATEGORY) {
             let listPosition = [];
             let rowIndex = 0;
@@ -222,19 +224,26 @@ const CreateTemplatePage = () => {
             });
             if (listPosition.length == 0) {
                 toast.warn('Nothing added to the template');
+                setLoading(false);
                 return;
             }
             let request = {
                 templateId: currentTemplate.id,
                 listPosition: listPosition
             }
-
-            let res = await createAppCategoryPosition(request);
-            if (res.code === 200) {
-                setChanging(false)
-                toast.success("Save category components succesfully")
+            try {
+                let res = await createAppCategoryPosition(request);
+                if (res.code === 200) {
+                    setChanging(false)
+                    toast.success("Save category components succesfully")
+                }
+            } catch (e) {
+                toast.error('Save failed!');
+                console.error(e);
+            } finally {
+                setLoading(false);
+                return;
             }
-            return;
         }
         let listPosition = [];
         let rowIndex = 0;
@@ -254,6 +263,7 @@ const CreateTemplatePage = () => {
         });
         if (listPosition.length == 0) {
             toast.warn('Nothing added to the template');
+            setLoading(false);
             return;
         }
         let request = {
@@ -268,6 +278,10 @@ const CreateTemplatePage = () => {
             }
         } catch (e) {
             toast.error('Save failed!');
+            console.error(e);
+        } finally {
+            setLoading(false);
+            return;
         }
 
     }
@@ -436,8 +450,9 @@ const CreateTemplatePage = () => {
                 </Row>
                 <Row justify="center" align="middle" style={{ marginTop: 40 }}>
                     <Col>
-
-                        <Button type="primary" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { save() }}>Save</Button>
+                        {isLoading === false ?
+                            <Button type="primary" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { save() }}>Save</Button>
+                            : <Spin />}
                     </Col>
                 </Row>
             </div> : null
