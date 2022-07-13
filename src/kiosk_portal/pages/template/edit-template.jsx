@@ -358,11 +358,12 @@ const EditTemplatePage = () => {
                 }
 
             });
-            if (listPosition.length == 0) {
-                toast.warn('Nothing added to the template');
-                setLoading(false);
-                return;
-            }
+            // Not arrange any components to the template
+            // if (listPosition.length == 0) {
+            //     toast.warn('Nothing added to the template');
+            //     setLoading(false);
+            //     return;
+            // }
             let request = {
                 templateId: currentTemplate.id,
                 listPosition: listPosition
@@ -397,11 +398,12 @@ const EditTemplatePage = () => {
                 rowIndex++;
             }
         });
-        if (listPosition.length == 0) {
-            toast.warn('Nothing added to the template');
-            setLoading(false);
-            return;
-        }
+        // Not arrange any components to the template
+        // if (listPosition.length == 0) {
+        //     toast.warn('Nothing added to the template');
+        //     setLoading(false);
+        //     return;
+        // }
         let request = {
             templateId: currentTemplate.id,
             listPosition: listPosition
