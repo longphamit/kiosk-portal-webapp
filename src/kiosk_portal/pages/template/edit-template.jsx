@@ -76,13 +76,12 @@ const EditTemplatePage = () => {
     const removeComponentIfExisted = (id, list) => {
         const removeIndex = []
         for (let i = 0; i < list.length; i++) {
-            console.log(list[i].id)
             if (list[i].id === id) {
                 removeIndex.push(i);
             }
         }
         for (let index of removeIndex) {
-            list.splice(index,1)
+            list.splice(index, 1)
         }
         return list
     }
@@ -153,15 +152,9 @@ const EditTemplatePage = () => {
                     if (p.components.length !== 0) {
                         let dataTemp = []
                         for (let component of p.components) {
-                            console.log("component")
-                            console.log(component)
                             let event = getComponentFromList(component.eventId, allEvents);
-                            console.log("check event")
-                            console.log(event)
                             if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
-                                console.log("all event")
                                 allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
-                                console.log(allEvents)
                                 let eventTemp = {
                                     id: component.eventId,
                                     name: component.eventName,
@@ -181,6 +174,7 @@ const EditTemplatePage = () => {
                 data[`${FIRST_ROW_EVENT}`] = [];
             }
             data[`${ROOT_ROW_EVENT}`] = allEvents;
+            console.log(reorderKeysOfObject(data))
             setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
             console.error(e);
@@ -198,8 +192,9 @@ const EditTemplatePage = () => {
                         let dataTemp = []
                         for (let component of p.components) {
                             let appCategory = getComponentFromList(component.appCategoryId, allCategories);
+                            console.log(appCategory)
                             allCategories = removeComponentIfExisted(component.appCategoryId, allCategories); // set available row
-                            dataTemp[component.columnIndex] = { id: appCategory.appCategoryId, image: appCategory.image, name: appCategory.name }
+                            dataTemp[component.columnIndex] = { id: appCategory.id, image: appCategory.image, name: appCategory.name }
                         }
                         let rowIndex = p.rowIndex;
                         if (!isColumnExisted(rowIndex, data)) {
@@ -211,6 +206,7 @@ const EditTemplatePage = () => {
                 data[`${FIRST_ROW_CATEGORY}`] = [];
             }
             data[`${ROOT_ROW_CATEGORY}`] = allCategories;
+            console.log(reorderKeysOfObject(data))
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
             console.error(e);
