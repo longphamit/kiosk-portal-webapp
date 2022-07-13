@@ -93,64 +93,64 @@ export const ComponentList: React.FC<Props> = ({ listId, listType, components })
                 {(
                     dropProvided
                 ) => (
-                        <div {...dropProvided.droppableProps} style={{ display: "flex", marginTop: '20px', overflowX: 'scroll', overflowY: 'hidden', height: 200, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)'  }} ref={dropProvided.innerRef}>
-                                {components.map((component, index) => (
-                                    component.event ? (
-                                        <Draggable key={component.id} draggableId={component.id} index={index}>
-                                            {(
-                                                dragProvided
-                                            ) => (
-                                                <div
-                                                    {...dragProvided.dragHandleProps}
-                                                    {...dragProvided.draggableProps}
-                                                    ref={dragProvided.innerRef}
+                    <div {...dropProvided.droppableProps} style={{ display: "flex", marginTop: '20px', overflowX: 'scroll', overflowY: 'hidden', height: 200, boxShadow: ' 0px 10px 15px -3px rgba(0,0,0,0.1)' }} ref={dropProvided.innerRef}>
+                        {components.map((component, index) => (
+                            component.event ? (
+                                <Draggable key={component.id} draggableId={component.id} index={index}>
+                                    {(
+                                        dragProvided
+                                    ) => (
+                                        <div
+                                            {...dragProvided.dragHandleProps}
+                                            {...dragProvided.draggableProps}
+                                            ref={dragProvided.innerRef}
+                                        >
+                                            <div onClick={() => {
+                                                setEventDetailsModalVisible(true);
+                                                setCurrentEvent(component.event);
+                                            }}>
+                                                <Card
+                                                    hoverable
+                                                    style={{ width: 150, marginLeft: 20, marginRight: 20 }}
+                                                    size={'small'}
+                                                    cover={<img alt="example" src={component.image} style={{ height: 120 }}></img>}
                                                 >
-                                                    <div onClick={() => {
-                                                        setEventDetailsModalVisible(true);
-                                                        setCurrentEvent(component.event);
-                                                    }}>
-                                                        <Card
-                                                            hoverable
-                                                            style={{ width: 150, marginLeft: 20, marginRight: 20 }}
-                                                            size={'small'}
-                                                            cover={<img alt="example" src={component.image} style={{ height: 120 }}></img>}
-                                                        >
-                                                            <Meta title={component.name} description="" />
-                                                        </Card>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Draggable>) :
-                                        (<>
-                                            <Draggable key={component.id} draggableId={component.id} index={index}>
-                                                {(
-                                                    dragProvided
-                                                ) => (
-                                                    <div
-                                                        {...dragProvided.dragHandleProps}
-                                                        {...dragProvided.draggableProps}
-                                                        ref={dragProvided.innerRef}
+                                                    <Meta title={component.name} description="" />
+                                                </Card>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Draggable>) :
+                                (<>
+                                    <Draggable key={component.id} draggableId={component.id} index={index}>
+                                        {(
+                                            dragProvided
+                                        ) => (
+                                            <div
+                                                {...dragProvided.dragHandleProps}
+                                                {...dragProvided.draggableProps}
+                                                ref={dragProvided.innerRef}
+                                            >
+                                                <div onClick={() => {
+                                                    getListAppByCategory(component.name);
+                                                    setCategoryDetailsModalVisible(true)
+                                                }}>
+                                                    <Card
+                                                        hoverable
+                                                        style={{ width: 150, marginLeft: 20, marginRight: 20 }}
+                                                        size={'small'}
+                                                        cover={<img alt="example" src={component.image} style={{ height: 120, }}></img>}
                                                     >
-                                                        <div onClick={() => {
-                                                            getListAppByCategory(component.name);
-                                                            setCategoryDetailsModalVisible(true)
-                                                        }}>
-                                                            <Card
-                                                                hoverable
-                                                                style={{ width: 150, marginLeft: 20, marginRight: 20 }}
-                                                                size={'small'}
-                                                                cover={<img alt="example" src={component.image} style={{ height: 120 }}></img>}
-                                                            >
-                                                                <Meta title={component.name} description="" />
-                                                            </Card>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        </>)
-                                ))}
-                                {dropProvided.placeholder}
-                            </div>
+                                                        <Meta title={component.name} description="" />
+                                                    </Card>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Draggable>
+                                </>)
+                        ))}
+                        {dropProvided.placeholder}
+                    </div>
                 )}
             </Droppable>
 
@@ -178,10 +178,9 @@ export const ComponentList: React.FC<Props> = ({ listId, listType, components })
                     renderItem={item => (
                         <List.Item>
                             <Card
-
                                 hoverable
-                                style={{ width: 240, verticalAlign: 'center' }}
-                                cover={<img alt="example" src={item.logo} />}
+                                style={{ width: 200, verticalAlign: 'center' }}
+                                cover={<img alt="example" src={item.logo} style={{ width: 200, height: 150 }} />}
                             >
                                 <Meta title={item.name} description={item.discription ?? '' + '\n' + item.link} />
                             </Card>
