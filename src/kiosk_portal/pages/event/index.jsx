@@ -416,12 +416,6 @@ const EventManagerPage = () => {
             render: (text) => <p>{text}</p>,
         },
         {
-            title: 'Description',
-            dataIndex: "description",
-            key: "description",
-            render: (text) => <p>{text}</p>,
-        },
-        {
             title: 'Time Start',
             dataIndex: "timeStart",
             key: "timeStart",
@@ -558,7 +552,6 @@ const EventManagerPage = () => {
                 <Col span={4}>
                     <Button
                         className="success-button"
-                        shape="round"
                         size={"large"}
                         onClick={showModalCreateEvent}
                     >

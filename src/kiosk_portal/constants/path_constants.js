@@ -18,4 +18,4 @@ export const SCHEDULE_MANAGER_PATH = '/schedule-manager'
 
 export const TEMPLATE_MANAGER_PATH = '/template-manager'
 
-export const HOME_PAGE_PATH = '/homepage'
+export const HOME_PAGE_PATH = '/'

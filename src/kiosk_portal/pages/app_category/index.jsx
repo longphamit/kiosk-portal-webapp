@@ -35,7 +35,7 @@ const AppCategoryPage = () => {
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
-            className="infor-button"
+            className="warn-button"
             shape="default"
             onClick={() => {
               setCurrentUnit(record);

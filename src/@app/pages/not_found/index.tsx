@@ -1,5 +1,6 @@
 import { Button, Col, Result, Row } from "antd";
 import { useNavigate } from "react-router-dom";
+import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 import { localStorageGetUserIdService } from "../../services/localstorage_service";
 
 const NotFoundPage: React.FC = () => {
@@ -17,7 +18,7 @@ const NotFoundPage: React.FC = () => {
               <Button
                 style={{ margin: 10 }}
                 type="primary"
-                onClick={() => navigate("/homepage")}
+                onClick={() => navigate(HOME_PAGE_PATH)}
               >
                 Home
               </Button>
