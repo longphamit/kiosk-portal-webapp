@@ -69,7 +69,7 @@ const EditTemplatePage = () => {
                 let res = await getTemplateById(id);
                 setCurrentTemplate(res.data);
             } catch (e) {
-                console.log(e)
+                console.error(e)
                 setCurrentTemplate({});
             }
         }
@@ -111,39 +111,6 @@ const EditTemplatePage = () => {
     }
     const getEventPositions = async () => {
         try {
-            // let allEvents = await getAllEvents();
-            // let res = await getEventPositionService(searchParams.get("id"));
-            // let data = {};
-            // let listEventPosition = res.data.listPosition;
-            // listEventPosition.map(p => {
-            //     if (p.components.length !== 0) {
-            //         let dataTemp = [];
-            //         for (let component of p.components) {
-            //             let event = getComponentFromList(component.eventId, allEvents);
-            //             if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
-            //                 allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
-            //                 let eventTemp = {
-            //                     id: component.eventId,
-            //                     name: component.eventName,
-            //                     image: event.image === undefined ? '' : event.image, // get event thumbnail
-            //                     event: event.event
-            //                 }
-            //                 dataTemp[component.columnIndex] = eventTemp;
-            //             }
-            //         }
-            //         let rowIndex = p.rowIndex;
-            //         if (!isColumnExisted(rowIndex, data)) {
-            //             data['eventrow' + `${rowIndex + 1}`] = dataTemp;
-            //         }
-            //     }
-            // })
-
-            // if (listEventPosition.length === 0) {
-            //     data[`${FIRST_ROW_EVENT}`] = [];
-            // }
-            // setEventComponents(data)
-            // console.log(data)
-
             let allEvents = await getAllEvents();
             let res = await getEventPositionService(searchParams.get("id"));
             let data = {};
@@ -175,7 +142,6 @@ const EditTemplatePage = () => {
                 data[`${FIRST_ROW_EVENT}`] = [];
             }
             data[`${ROOT_ROW_EVENT}`] = allEvents;
-            console.log(reorderKeysOfObject(data))
             setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
             console.error(e);
@@ -193,7 +159,6 @@ const EditTemplatePage = () => {
                         let dataTemp = []
                         for (let component of p.components) {
                             let appCategory = getComponentFromList(component.appCategoryId, allCategories);
-                            console.log(appCategory)
                             allCategories = removeComponentIfExisted(component.appCategoryId, allCategories); // set available row
                             dataTemp[component.columnIndex] = { id: appCategory.id, image: appCategory.image, name: appCategory.name }
                         }
@@ -207,7 +172,6 @@ const EditTemplatePage = () => {
                 data[`${FIRST_ROW_CATEGORY}`] = [];
             }
             data[`${ROOT_ROW_CATEGORY}`] = allCategories;
-            console.log(reorderKeysOfObject(data))
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
             console.error(e);
