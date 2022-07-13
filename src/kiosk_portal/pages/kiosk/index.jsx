@@ -1,7 +1,7 @@
 import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
 import KioskTable from "../../components/tables/kiosk_table";
-import CustomBreadCumb from "../impl/breadcumb";
-import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 
 
 const KioskPage = () => {

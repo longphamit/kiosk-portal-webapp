@@ -10,8 +10,8 @@ import { SearchOutlined, PlusOutlined, EyeFilled } from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
 import { TYPE_SERVER } from "../../../@app/constants/key";
-import { POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../impl/breadcumb_constant";
-import CustomBreadCumb from "../impl/breadcumb";
+import { POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const PoiPage = () => {
   const { t } = useTranslation();

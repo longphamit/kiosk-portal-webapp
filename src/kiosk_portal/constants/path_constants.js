@@ -19,3 +19,7 @@ export const SCHEDULE_MANAGER_PATH = '/schedule-manager'
 export const TEMPLATE_MANAGER_PATH = '/template-manager'
 
 export const HOME_PAGE_PATH = '/homepage'
+
+export const APPLICATION_MARKET_PATH = "/application-market"
+
+export const MY_APPLICATION_PATH ="/my-application"

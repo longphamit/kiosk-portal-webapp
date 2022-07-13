@@ -2,22 +2,21 @@ import { Button, Modal, Pagination, Space, Table } from "antd";
 import { EyeFilled, DownloadOutlined, CloseCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { MY_APPLICATION_HREF, MY_APPLICATION_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { useNavigate } from "react-router-dom";
-import { getListApplicationService } from "../../services/application_service";
-import { getAllCategoriesService } from "../../services/categories_service";
 import {
   changeStatusMyAppService,
   getListMyAppService,
   installApplicationService,
 } from "../../services/party_service_application";
 import { toast } from "react-toastify";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
 const MyApplicationPage = () => {
   const navigator = useNavigate();
   const { t } = useTranslation();
-  const role = localStorageGetReduxState().auth.role;
   const [listMyApplication, setListMyApplication] = useState([]);
   const [totalMyApplication, setTotalMyApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
@@ -30,7 +29,6 @@ const MyApplicationPage = () => {
         numInPage,
         currentPageToGetList
       );
-      console.log(res);
       setTotalMyApplication(res.data.metadata.total);
       setListMyApplication(res.data.data);
     } catch (error) {
@@ -60,6 +58,7 @@ const MyApplicationPage = () => {
 
   useEffect(async () => {
     getListMyAppFunction(currentPage, numApplicationInPage);
+    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
   }, []);
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -128,9 +127,16 @@ const MyApplicationPage = () => {
       ),
     },
   ];
-
+  const breadCumbData = [
+    {
+      href: MY_APPLICATION_HREF,
+      label: MY_APPLICATION_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Table
         columns={columns}
         dataSource={listMyApplication}
@@ -139,10 +145,11 @@ const MyApplicationPage = () => {
       <Pagination
         defaultCurrent={1}
         total={totalMyApplication}
-        pageSize={5}
+        pageSize={numApplicationInPage}
         onChange={handleChangeNumberOfPaging}
       />
     </>
+
   );
 };
 export default MyApplicationPage;

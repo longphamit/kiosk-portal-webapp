@@ -6,9 +6,11 @@ import { useTranslation } from "react-i18next";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { useNavigate } from "react-router-dom";
 import { getListApplicationService } from "../../services/application_service";
-import { getAllCategoriesService } from "../../services/categories_service";
 import { installApplicationService } from "../../services/party_service_application";
 import { toast } from "react-toastify";
+import { APPLICATION_MARKET_HREF, APPLICATION_MARKET_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
 const ApplicationMarketPage = () => {
   const navigator = useNavigate();
@@ -34,7 +36,6 @@ const ApplicationMarketPage = () => {
         numInPage,
         currentPageToGetList
       );
-      console.log(res);
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
@@ -69,6 +70,7 @@ const ApplicationMarketPage = () => {
 
   useEffect(async () => {
     getListApplicationFunction(currentPage, numApplicationInPage);
+    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
   }, []);
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -142,9 +144,16 @@ const ApplicationMarketPage = () => {
       ),
     },
   ];
-
+  const breadCumbData = [
+    {
+      href: APPLICATION_MARKET_HREF,
+      label: APPLICATION_MARKET_LABEL,
+      icon: null
+    },
+  ]
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <Table
         columns={columns}
         dataSource={listApplication}

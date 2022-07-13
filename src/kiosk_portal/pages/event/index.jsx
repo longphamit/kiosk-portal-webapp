@@ -30,8 +30,8 @@ import { localStorageGetReduxState } from "../../../@app/services/localstorage_s
 import { ROLE_ADMIN } from "../../../@app/constants/role";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
-import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
-import CustomBreadCumb from "../impl/breadcumb";
+import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const EventManagerPage = () => {
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);

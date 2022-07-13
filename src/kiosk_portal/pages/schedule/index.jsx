@@ -46,8 +46,8 @@ import {
   splitTimeString,
 } from "../../../@app/utils/date_util";
 import { getListTemplateService } from "../../services/template_service";
-import { SCHEDULE_MANAGER_HREF, SCHEDULE_MANAGER_LABEL } from "../impl/breadcumb_constant";
-import CustomBreadCumb from "../impl/breadcumb";
+import { SCHEDULE_MANAGER_HREF, SCHEDULE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
