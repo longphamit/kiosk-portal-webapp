@@ -34,8 +34,8 @@ import { getListPoiCategoriesService } from "../../services/poi_category_service
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { async } from "@firebase/util";
-import { POI_DETAILS_HREF, POI_DETAILS_LABEL, POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../impl/breadcumb_constant";
-import CustomBreadCumb from "../impl/breadcumb";
+import { POI_DETAILS_HREF, POI_DETAILS_LABEL, POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -31,8 +31,8 @@ import {
   DeleteFilled
 
 } from "@ant-design/icons";
-import CustomBreadCumb from "../impl/breadcumb";
-import { TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [isEditLoading, setEditLoading] = useState(false);

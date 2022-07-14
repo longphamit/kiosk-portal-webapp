@@ -33,8 +33,8 @@ import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { STATUS_COMING_SOON, STATUS_END, STATUS_ON_GOING } from "../../constants/event_constants";
-import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../impl/breadcumb_constant";
-import CustomBreadCumb from "../impl/breadcumb";
+import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const EventManagerPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);

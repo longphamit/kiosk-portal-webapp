@@ -6,11 +6,11 @@ import { useParams } from "react-router-dom";
 import { ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import ApplicationTable from "../../components/tables/app_table";
 import KioskTable from "../../components/tables/kiosk_table";
-
 import { getAccountByIdService } from "../../services/account_service";
-import CustomBreadCumb from "../impl/breadcumb";
-import { ACCOUNT_DETAILS_HREF, ACCOUNT_DETAILS_LABEL, ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { ACCOUNT_DETAILS_HREF, ACCOUNT_DETAILS_LABEL, ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import "./styles.css"
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
 const { Panel } = Collapse;
 const AccountDetailPage = () => {
   const { partyId } = useParams()
@@ -19,16 +19,12 @@ const AccountDetailPage = () => {
   const getAccountDetailById = async () => {
     const res = await getAccountByIdService(partyId)
     setAccountDetail(res.data)
-    console.log(res.data)
   }
-  useEffect(() => {
-    getAccountDetailById()
-  }, []);
   const breadCumbData = [
     {
       href: ACCOUNT_MANAGER_HREF,
       label: ACCOUNT_MANAGER_LABEL,
-      icon: <UserOutlined />
+      icon: null
     },
     {
       href: ACCOUNT_DETAILS_HREF,
@@ -36,9 +32,27 @@ const AccountDetailPage = () => {
       icon: null
     },
   ]
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
+  useEffect(() => {
+    getAccountDetailById();
+    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }, getCircularReplacer()));
+  }, []);
+
   return (
     <>
-    <CustomBreadCumb props={breadCumbData} />
+      <CustomBreadCumb props={breadCumbData} />
       {
         accountDetail ?
           <>

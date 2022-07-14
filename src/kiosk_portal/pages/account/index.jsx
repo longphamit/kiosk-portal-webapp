@@ -46,8 +46,9 @@ import {
 } from "../../services/account_service";
 import "./styles.css"
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import CustomBreadCumb from "../impl/breadcumb";
-import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../impl/breadcumb_constant";
+
+import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState();
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();

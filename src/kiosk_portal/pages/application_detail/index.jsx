@@ -13,17 +13,19 @@ import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ROLE_ADMIN, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { getApplicationServiceById } from "../../services/application_service";
 import {
   approveAppPublishRequestService,
   getInprogressAppPublishRequestByAppIdService,
 } from "../../services/app_publish_request_service";
-import CustomBreadCumb from "../impl/breadcumb";
-import { APP_DETAILS_HREF, APP_DETAILS_LABEL, APP_MANAGER_HREF, APP_MANAGER_LABEL } from "../impl/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { ACCOUNT_DETAILS_HREF, ACCOUNT_DETAILS_LABEL, ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL, APP_DETAILS_HREF, APP_DETAILS_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import FormDenyAppPublishRequest from "./formDenyPublishRequest";
 import "./styles.css";
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
+import { UserOutlined } from "@ant-design/icons";
 const ApplicationDetailPage = () => {
   const { appId } = useParams();
   const [app, setApp] = useState();
@@ -34,17 +36,15 @@ const ApplicationDetailPage = () => {
   const getAppById = async () => {
     const res = await getApplicationServiceById(appId);
     setApp(res.data);
-    console.log("hahahaha")
-    console.log(res);
   };
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
-      if(role===ROLE_SERVICE_PROVIDER||role===ROLE_ADMIN){
+      if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
         const res = await getInprogressAppPublishRequestByAppIdService(appId);
         console.log(res.data);
         setInprogressPublish(res.data);
       }
-    
+
     } catch (e) {
       setInprogressPublish(null);
       console.log(e);
@@ -70,21 +70,22 @@ const ApplicationDetailPage = () => {
     await getAppById();
     toast.success("Approve publish app success");
   };
-  const breadCumbData = [
-    {
-      href: APP_MANAGER_HREF,
-      label: APP_MANAGER_LABEL,
-      icon: null
-    },
-    {
-      href: APP_DETAILS_HREF,
-      label: APP_DETAILS_LABEL,
-      icon: null
-    }
-  ]
+  const getApplicationPage = () => {
+    const previousBreadCumb = JSON.parse(localStorage.getItem(PREVIOUS_PATH)).data;
+    previousBreadCumb.push(breadCumbData)
+    console.log(previousBreadCumb)
+    return previousBreadCumb;
+  }
+  const breadCumbData =
+  {
+    href: APP_DETAILS_HREF,
+    label: APP_DETAILS_LABEL,
+    icon: null
+  }
+
   return (
     <>
-      <CustomBreadCumb props={breadCumbData} />
+      <CustomBreadCumb props={getApplicationPage()} />
       {app ? (
         <>
           <div id="account-info-panel">

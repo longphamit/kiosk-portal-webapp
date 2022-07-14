@@ -40,7 +40,6 @@ const LoginPage: React.FC = () => {
     dispatch(loginAction({ email: values.email, password: values.password }))
       .then(async (response: any) => {
         setLoading(false);
-        console.log(response);
         if (response.error?.message === "Request failed with status code 404") {
           toast.error("Wrong Username or password");
         } else if(response.error?.message === "Request failed with status code 403")

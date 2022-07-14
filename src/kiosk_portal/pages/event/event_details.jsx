@@ -32,6 +32,8 @@ import { localStorageGetReduxState } from '../../../@app/services/localstorage_s
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
+import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
+import CustomBreadCumb from '../../components/breadcumb/breadcumb';
 import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
@@ -303,7 +305,20 @@ export const EventDetailsPage = () => {
             setIsLoadingListImage(false);
         }
     }
+    const breadCumbData = [
+        {
+            href: EVENT_MANAGER_HREF,
+            label: EVENT_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: EVENT_DETAILS_HREF,
+            label: EVENT_DETAILS_LABEL,
+            icon: null
+        }
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         {currentEvent ?
             <Card title="Basic Information">
                 <Form
