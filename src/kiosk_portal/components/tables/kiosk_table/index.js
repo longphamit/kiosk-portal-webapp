@@ -32,6 +32,7 @@ import {
   localStorageSaveReduxState,
 } from "../../../../@app/services/localstorage_service";
 import { ROLE_ADMIN } from "../../../../@app/constants/role";
+import { useNavigate } from "react-router-dom";
 
 const searchTypeKiosk = [
   {
@@ -41,6 +42,7 @@ const searchTypeKiosk = [
 ];
 const { Option } = Select;
 const KioskTable = ({ partyId }) => {
+  const navigator = useNavigate();
   const [listKiosk, setListKiosk] = useState([]);
   const [kioskTotal, setKioskTotal] = useState(0);
   const [kioskPage, setKioskPage] = useState(0);
@@ -141,7 +143,7 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="warn-button" shape="default" onClick={() => {}}>
+          <Button className="warn-button" shape="default" onClick={() => { }}>
             {t("edit")}
           </Button>
           <Button className="infor-button" shape="default" onClick={() => {}}>
@@ -156,12 +158,14 @@ const KioskTable = ({ partyId }) => {
               type="primary"
               shape="default"
               name={record}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               {t("change-status")}
             </Button>
           </Popconfirm>
-
+          <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
+            Scheduling
+          </Button>
           <Button
             className="success-button"
             onClick={() => {
@@ -205,7 +209,7 @@ const KioskTable = ({ partyId }) => {
       console.log(e);
     }
   };
-  const onFinishSearchKiosk = () => {};
+  const onFinishSearchKiosk = () => { };
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
