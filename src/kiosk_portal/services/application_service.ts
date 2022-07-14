@@ -9,7 +9,7 @@ export const getListApplicationService = async (Name:any,PartyName:any,PartyEmai
 };
 export const getListApplicationServiceByCategory = async (categoryName: any) => {
   const response = await request.get(
-    `${HOST}/v1/serviceApplications?page=1&AppCategoryName=${categoryName}`
+    `${HOST}/v1/serviceApplications?page=1&AppCategoryName=${categoryName}&status=installed`
   );
   return response.data;
 };
