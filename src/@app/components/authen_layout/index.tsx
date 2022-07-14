@@ -39,7 +39,7 @@ import { getPartyNotificationService } from "../../../kiosk_portal/services/part
 import CountTime from "./time";
 import TimeView from "./time";
 import { async } from "@firebase/util";
-import NotificationView from "./InfiniteScrollExample";
+import NotificationView from "./notification";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -76,9 +76,9 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
               </h2>
           </Col>
-          <Col span={12}/>
+          <Col span={10}/>
 
-          <Col span={2}>
+          <Col span={4}>
                 <NotificationView/>
           </Col>
         </Row>
