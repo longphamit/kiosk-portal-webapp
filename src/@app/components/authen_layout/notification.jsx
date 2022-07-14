@@ -13,7 +13,7 @@ import {
 
 import "./notification_styles.css"
 import { getPartyNotificationService } from "../../../kiosk_portal/services/party_notification_service";
-import { NotificationOutlined } from "@ant-design/icons";
+import { BellFilled, NotificationOutlined } from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
 
 const ContainerHeight = 450;
@@ -61,7 +61,7 @@ const NotificationView = () => {
       <Badge count={unseen}>
         <Popover
           placement="bottom"
-          title={"notifications"}
+          title={"Notifications"}
           content={
             <div style={{ overflow: "auto", padding: 8 }}>
               <VirtualList
@@ -101,7 +101,7 @@ const NotificationView = () => {
           }
           trigger="click"
         >
-          <Avatar shape="square" icon={<NotificationOutlined />} />
+          <Avatar shape="circle" style={{background:"#fff"}} icon={<BellFilled style={{color:"#000"}} />} />
         </Popover>
       </Badge>
     </>
