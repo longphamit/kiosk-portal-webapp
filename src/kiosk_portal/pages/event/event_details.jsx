@@ -40,6 +40,7 @@ const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
 const DISTRICT_TYPE = "DISTRICT";
 export const EventDetailsPage = () => {
+    const [isDisbale, setDisable] = useState(false);
     const [isLoadingListImage, setIsLoadingListImage] = useState(false);
     const [isLoadingBasicInfo, setIsLoadingBasicInfo] = useState(false);
     const [isUpdateListImage, setUpdateListImage] = useState(false);
@@ -87,6 +88,12 @@ export const EventDetailsPage = () => {
         }
         try {
             let res = await getEventByIdService(id);
+
+            ((res.data.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER) ||
+                (res.data.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN)) ?
+                setDisable(false) : setDisable(true)
+
+            console.log(isDisbale)
             setCurrentEvent(res.data);
             const resProvinces = await getListProvinceService();
             setProviceOptions(resProvinces.data);
@@ -113,10 +120,12 @@ export const EventDetailsPage = () => {
                 });
             }));
             setFileListImage(list);
+
         } catch (error) {
             console.error(error)
             setCurrentEvent({});
         }
+
     };
 
     let navigate = useNavigate();
@@ -167,7 +176,7 @@ export const EventDetailsPage = () => {
             toast.error("Time start must be late from now");
             setIsLoadingBasicInfo(true);
             return;
-        } else if (parseInt(moment(values.timeStart).format('H')) == hour) { 
+        } else if (parseInt(moment(values.timeStart).format('H')) == hour) {
             // Compare on minute
             if (moment(values.timeStart).format('m') < minute || moment(values.timeStart).format('m') == minute) {
                 toast.error("Time start must be late from now");
@@ -527,6 +536,7 @@ export const EventDetailsPage = () => {
                             action={FILE_UPLOAD_URL}
                             listType="picture"
                             maxCount={1}
+                            disabled={isDisbale}
                             accept={ACCEPT_IMAGE}
                             beforeUpload={beforeUpload}
                             defaultFileList={[
@@ -586,6 +596,7 @@ export const EventDetailsPage = () => {
                                 maxCount={5}
                                 accept={ACCEPT_IMAGE}
                                 multiple
+                                disabled={isDisbale}
                                 beforeUpload={beforeUpload}
                                 onChange={() => setUpdateListImage(true)}
                                 defaultFileList={[...fileListImage]}
