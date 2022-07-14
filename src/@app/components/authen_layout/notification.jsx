@@ -61,7 +61,7 @@ const NotificationView = () => {
       <Badge count={unseen}>
         <Popover
           placement="bottom"
-          title={"aaa"}
+          title={"notifications"}
           content={
             <div style={{ overflow: "auto", padding: 8 }}>
               <VirtualList
@@ -80,12 +80,11 @@ const NotificationView = () => {
                             <div
                               style={{
                                 padding: 5,
-
                                 width: 250,
                               }}
                             >
-                              title: {item.notiTitle}
-                              <div>content:{item.notiContent}</div>
+                              <div style={{fontWeight:"bold"}}>{item.notiTitle}</div>
+                              <div style={{textOverflow:"ellipsis",width:200,overflow: "hidden"}}>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</div>
                             </div>
                           </Col>
                           <Col></Col>
