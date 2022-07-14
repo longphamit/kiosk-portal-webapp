@@ -16,7 +16,7 @@ interface ListBreadCumbProps {
 }
 const CustomBreadCumb: React.FC<ListBreadCumbProps> = (props) => {
     return (
-        <Breadcrumb>
+        <Breadcrumb style={{marginBottom:10}}>
             <Breadcrumb.Item href={HOME_PAGE_PATH}>
                 <HomeOutlined />
             </Breadcrumb.Item>

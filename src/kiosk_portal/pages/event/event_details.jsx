@@ -305,7 +305,20 @@ export const EventDetailsPage = () => {
             setIsLoadingListImage(false);
         }
     }
+    const breadCumbData = [
+        {
+            href: EVENT_MANAGER_HREF,
+            label: EVENT_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: EVENT_DETAILS_HREF,
+            label: EVENT_DETAILS_LABEL,
+            icon: null
+        }
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         {currentEvent ?
             <Card title="Basic Information">
                 <Form
