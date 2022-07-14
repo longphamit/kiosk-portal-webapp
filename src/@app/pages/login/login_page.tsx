@@ -19,6 +19,7 @@ import {
 } from "../../constants/role";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 import { useState } from "react";
+import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
@@ -56,11 +57,11 @@ const LoginPage: React.FC = () => {
           } else {
             switch (response.payload.data.roleName) {
               case ROLE_ADMIN:
-                return navigate("/homepage");
+                return navigate(HOME_PAGE_PATH);
               case ROLE_LOCATION_OWNER:
-                return navigate("/homepage");
+                return navigate(HOME_PAGE_PATH);
               case ROLE_SERVICE_PROVIDER:
-                return navigate("/homepage");
+                return navigate(HOME_PAGE_PATH);
             }
             toast.success("Sign in successfull");
           }

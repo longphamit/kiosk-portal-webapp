@@ -9,6 +9,8 @@ import {
     Row,
     Col,
     Modal,
+    Card,
+    Spin
 } from 'antd';
 
 import moment from 'moment';
@@ -16,7 +18,7 @@ import { Option } from "antd/lib/mentions";
 import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getEventByIdService, updateEventService, updateListImage } from '../../services/event_service';
+import { getEventByIdService, updateEventService, updateListImage, updateListImageService } from '../../services/event_service';
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getListDistrictService, getListWardService } from "../../services/location_services";
 import { getListProvinceService } from '../../services/map_service';
@@ -32,22 +34,23 @@ import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
 import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
 import CustomBreadCumb from '../../components/breadcumb/breadcumb';
+import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
 const DISTRICT_TYPE = "DISTRICT";
 export const EventDetailsPage = () => {
+    const [isLoadingListImage, setIsLoadingListImage] = useState(false);
+    const [isLoadingBasicInfo, setIsLoadingBasicInfo] = useState(false);
+    const [isUpdateListImage, setUpdateListImage] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [currentEvent, setCurrentEvent] = useState();
-    const [componentDisabled, setComponentDisabled] = useState(true);
     const [districtOptions, setDistrictOptions] = useState([]);
     const [wardOptions, setWardOptions] = useState([]);
     const [proviceOptions, setProviceOptions] = useState([]);
     const [form] = Form.useForm();
     const [formUploadImages] = Form.useForm();
-    const [visible, setVisible] = useState(false);
-    const [fileListImage, setFileListImage] = useState([]);
-    const [thumbnail, setThumbnail] = useState('');
+    const [fileListImage, setFileListImage] = useState();
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
         getDistricts(selectedOptions);
@@ -55,11 +58,10 @@ export const EventDetailsPage = () => {
     const getDistricts = async (selectedCity) => {
         try {
             let res = await getListDistrictService(selectedCity);
-            console.log(selectedCity);
             setDistrictOptions(res.data);
             return;
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
     const getWards = async (selectedDistrict) => {
@@ -67,7 +69,7 @@ export const EventDetailsPage = () => {
             let res = await getListWardService(selectedDistrict);
             setWardOptions(res.data);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
     const onDistrictChange = async (value) => {
@@ -77,18 +79,49 @@ export const EventDetailsPage = () => {
     const onNavigate = (url) => {
         navigate(url);
     };
-    const getCity = async () => {
-        try {
-            let res = await getListProvinceService();
-            setProviceOptions(res.data);
-        } catch (e) {
-            console.log(e);
+    const getInitValue = async () => {
+        let id = searchParams.get("id");
+        if (id == null) {
+            onNavigate("/././unauth");
+            return;
         }
-    }
+        try {
+            let res = await getEventByIdService(id);
+            setCurrentEvent(res.data);
+            const resProvinces = await getListProvinceService();
+            setProviceOptions(resProvinces.data);
+            //set up init list district
+            let codeProvince = resProvinces.data.find(
+                (element) => element.name === res.data.city
+            ).code;
+            const resDistrict = await getListDistrictService(codeProvince);
+            setDistrictOptions(resDistrict.data);
+            //set up init list ward
+            let codeDistrict = resDistrict.data.find(
+                (element) => element.name === res.data.district
+            ).code;
+            const resWard = await getListWardService(codeDistrict);
+            setWardOptions(resWard.data);
+
+            let list = [];
+            await Promise.all(res.data.listImage.map((img, index) => {
+                list.push({
+                    uid: img.id,
+                    name: "image" + (parseInt(index) + 1),
+                    status: "done",
+                    url: img.link,
+                });
+            }));
+            setFileListImage(list);
+        } catch (error) {
+            console.error(error)
+            setCurrentEvent({});
+        }
+    };
+
     let navigate = useNavigate();
     useEffect(async () => {
-        getCity();
-        getEventInfo();
+        getInitValue();
 
     }, []);
     const getDefaultName = (type) => {
@@ -118,12 +151,7 @@ export const EventDetailsPage = () => {
 
     }
     const onClickSubmit = async (values) => {
-        // Editing
-        if (componentDisabled) {
-            setComponentDisabled(false);
-            return;
-        }
-        // Update event
+        setIsLoadingBasicInfo(true);
         //Start to check date time of event
         let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
 
@@ -182,8 +210,6 @@ export const EventDetailsPage = () => {
             let res = await updateEventService(data);
             if (res.code == 200) {
                 toast.success('Update Success');
-                getEventInfo();
-                setComponentDisabled(true);
             } else if (res.code == 400) {
                 toast.success(res.message);
             }
@@ -192,7 +218,9 @@ export const EventDetailsPage = () => {
             if (e.response.code == 400) {
                 toast.error(e.response.data.message + '. Please edit date and time');
             }
-            console.log(e);
+            console.error(e);
+        } finally {
+            setIsLoadingBasicInfo(false);
         }
     }
     const formatDatePicker = (str) => {
@@ -218,20 +246,7 @@ export const EventDetailsPage = () => {
         }
         return true;
     }
-    const getEventInfo = async () => {
-        let id = searchParams.get("id");
-        if (id == null) {
-            onNavigate('/././unauth')
-            return;
-        }
-        try {
-            let res = await getEventByIdService(id);
-            setCurrentEvent(res.data);
-        } catch (e) {
-            console.log(e)
-            setCurrentEvent({});
-        }
-    }
+
     const formatTime = 'HH:mm';
     const formatDate = "DD/MM/YYYY";
     const getTime = (str) => {
@@ -247,8 +262,12 @@ export const EventDetailsPage = () => {
         return e && e.fileList;
     };
     const onFinishUpdateListImage = async (values) => {
+        if (!isUpdateListImage) {
+            toast.info("Nothing changed!");
+            return;
+        }
+        setIsLoadingListImage(true);
         //Add images
-
         let existingImage = [];
         let addFields = [];
         if (values.listImage === undefined || values.listImage.fileList === undefined) { // not update any image
@@ -277,327 +296,300 @@ export const EventDetailsPage = () => {
             addFields: addFields
         }
         try {
-            await updateListImage(data);
+            await updateListImageService(data);
             toast.success("Update success");
-            setVisible(false);
+            setUpdateListImage(false);
         } catch (e) {
             console.log(e)
+        } finally {
+            setIsLoadingListImage(false);
         }
     }
-    const loadFileList = () => {
-        let list = []
-        currentEvent.listImage.map((img, index) => list.push({
-            uid: img.id,
-            name: "image" + (parseInt(index) + 1),
-            status: "done",
-            url: img.link,
-        }));
-        setFileListImage(list);
-    }
-    const breadCumbData = [
-        {
-            href: EVENT_MANAGER_HREF,
-            label: EVENT_MANAGER_LABEL,
-            icon: null
-        },
-        {
-            href: EVENT_DETAILS_HREF,
-            label: EVENT_DETAILS_LABEL,
-            icon: null
-        },
-    ]
     return (<>
-        <CustomBreadCumb props={breadCumbData} />
         {currentEvent ?
-            <Form
-                labelCol={{ span: 2 }}
-                wrapperCol={{ span: 20 }}
-                layout="horizontal"
-                form={form}
-                onFinish={onClickSubmit}
-                initialValues={{
-                    name: currentEvent.name,
-                    city: currentEvent.city,
-                    district: currentEvent.district,
-                    ward: currentEvent.ward,
-                    address: currentEvent.address,
-                    description: currentEvent.description,
-                    dateStart: moment(getDate(currentEvent.timeStart), formatDate),
-                    timeStart: moment(getTime(currentEvent.timeStart), formatTime),
-                    dateEnd: moment(getDate(currentEvent.timeEnd), formatDate),
-                    timeEnd: moment(getTime(currentEvent.timeEnd), formatTime),
-                    thumbnail: [
-                        {
-                            uid: "abc",
-                            name: "thumbnail",
-                            status: "done",
-                            url: currentEvent.thumbnail.link,
-                        },
-                    ]
-
-                }}
-            >
-                <Form.Item
-                    name="name"
-                    label='Name'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input name',
-                        },
-                    ]}
-                >
-                    <Input readOnly={componentDisabled} />
-                </Form.Item>
-                <Form.Item label="Time start" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
-                    <Form.Item name="dateStart"
-                        style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the start date'
-                            },
-                        ]}>
-
-
-                        <DatePicker
-                            disabled={componentDisabled}
-                            placeholder="Select date"
-                            format="DD/MM/YYYY"
-                            allowClear={false}
-                            className='disable-input'
-
-                            style={{
-                                height: "auto",
-                                width: '100%',
-                                backgroundColor: "#fff",
-                                color: "#000"
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item name="timeStart"
-                        style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the event start time'
-                            },
-                        ]}>
-                        <TimePicker
-                            disabled={componentDisabled}
-                            allowClear={false} format='HH:mm'
-                            style={{ width: '100%' }}
-                            className='disable-input'
-                        />
-                    </Form.Item>
-                </Form.Item>
-                <Form.Item label="Time end" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
-                    <Form.Item name="dateEnd"
-                        style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the end date'
-                            },
-                        ]}>
-                        <DatePicker
-                            disabled={componentDisabled}
-                            placeholder="Select date"
-                            format="DD/MM/YYYY"
-                            allowClear={false}
-                            className='disable-input'
-                            style={{
-                                height: "auto",
-                                width: '100%'
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item name="timeEnd"
-                        style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input the event end time'
-                            },
-                        ]}>
-                        <TimePicker
-                            allowClear={false}
-                            format='HH:mm'
-                            style={{ width: '100%' }}
-                            disabled={componentDisabled}
-                            className='disable-input'
-                        />
-                    </Form.Item>
-                </Form.Item>
-                <Form.Item
-                    name="city"
-                    label='City'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input the city',
-                        },
-                    ]}>
-                    <Select
-                        defaultValue={proviceOptions[0]}
-                        onChange={loadDistrict}
-                        allowClear
-                        disabled={componentDisabled}
-                        className='disable-input'
-                        style={{
-                            backgroundColor: "#fff"
-                        }}
-                    >
-                        {proviceOptions.map(province => (
-                            <Option style={{
-                                backgroundColor: "#fff"
-                            }} key={province.code}>{province.name}</Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    name="district"
-                    label='District'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input the district',
-                        },
-                    ]}
-                >
-                    <Select
-                        disabled={componentDisabled}
-                        className='disable-input'
-                        onChange={onDistrictChange}
-                    >
-                        {districtOptions.map(district => (
-                            <Option key={district.code}>{district.name}</Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    name="ward"
-                    label='Ward'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input the ward',
-                        },
-                    ]}
-                    className='disable-input'>
-                    <Select disabled={componentDisabled}>
-                        {wardOptions.map(ward => (
-                            <Option key={ward.code}>{ward.name}</Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    name="address"
-                    label='Address'
-                >
-                    <TextArea readOnly={componentDisabled} />
-                </Form.Item>
-                <Form.Item
-                    name="description"
-                    label='Description'
-                >
-                    <TextArea readOnly={componentDisabled} />
-                </Form.Item>
-                <Form.Item
-                    name="thumbnail"
-                    label="Thumbnail"
-                    getValueFromEvent={normFile}
-                >
-                    <Upload
-                        disabled={componentDisabled}
-                        action={FILE_UPLOAD_URL}
-                        listType="picture"
-                        maxCount={1}
-                        accept={ACCEPT_IMAGE}
-                        beforeUpload={beforeUpload}
-                        defaultFileList={[
+            <Card title="Basic Information">
+                <Form
+                    labelCol={{ span: 2 }}
+                    wrapperCol={{ span: 20 }}
+                    layout="horizontal"
+                    form={form}
+                    onFinish={onClickSubmit}
+                    initialValues={{
+                        name: currentEvent.name,
+                        city: currentEvent.city,
+                        district: currentEvent.district,
+                        ward: currentEvent.ward,
+                        address: currentEvent.address,
+                        description: currentEvent.description,
+                        dateStart: moment(getDate(currentEvent.timeStart), formatDate),
+                        timeStart: moment(getTime(currentEvent.timeStart), formatTime),
+                        dateEnd: moment(getDate(currentEvent.timeEnd), formatDate),
+                        timeEnd: moment(getTime(currentEvent.timeEnd), formatTime),
+                        thumbnail: [
                             {
                                 uid: "abc",
                                 name: "thumbnail",
                                 status: "done",
                                 url: currentEvent.thumbnail.link,
                             },
+                        ]
+
+                    }}
+                >
+
+                    <Form.Item
+                        name="name"
+                        label='Name'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input name',
+                            },
                         ]}
                     >
-                        <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                </Form.Item>
-                {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
-                    || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
-                    <Row justify="center" align="middle">
-                        <Col>
-                            <Form.Item>
-                                <Button onClick={() => { loadFileList(); setVisible(true); }}>
-                                    Update List Image
-                                </Button>
-                            </Form.Item>
-                        </Col>
-                        <Col span={1}>
-                        </Col>
-                        <Col>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit" > {componentDisabled ? 'Update Event' : 'Save Event'}</Button>
-                            </Form.Item>
-                        </Col>
-                    </Row> : null
-                }
-            </Form> : null
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Time start" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
+                        <Form.Item name="dateStart"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input the start date'
+                                },
+                            ]}>
+
+
+                            <DatePicker
+                                placeholder="Select date"
+                                format="DD/MM/YYYY"
+                                allowClear={false}
+                                className='disable-input'
+                                style={{
+                                    height: "auto",
+                                    width: '100%'
+                                }}
+                            />
+                        </Form.Item>
+                        <Form.Item name="timeStart"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input the event start time'
+                                },
+                            ]}>
+                            <TimePicker
+                                allowClear={false} format='HH:mm'
+                                style={{ width: '100%' }}
+                                className='disable-input'
+                            />
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item label="Time end" style={{ marginBottom: 0 }} rules={[{ required: true, message: '' }]}>
+                        <Form.Item name="dateEnd"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input the end date'
+                                },
+                            ]}>
+                            <DatePicker
+                                placeholder="Select date"
+                                format="DD/MM/YYYY"
+                                allowClear={false}
+                                className='disable-input'
+                                style={{
+                                    height: "auto",
+                                    width: '100%'
+                                }}
+                            />
+                        </Form.Item>
+                        <Form.Item name="timeEnd"
+                            style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input the event end time'
+                                },
+                            ]}>
+                            <TimePicker
+                                allowClear={false}
+                                format='HH:mm'
+                                style={{ width: '100%' }}
+                                className='disable-input'
+                            />
+                        </Form.Item>
+                    </Form.Item>
+                    <Form.Item
+                        name="city"
+                        label='City'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the city',
+                            },
+                        ]}>
+                        <Select
+                            defaultValue={proviceOptions[0]}
+                            onChange={loadDistrict}
+                            allowClear
+                            className='disable-input'
+                        >
+                            {proviceOptions.map(province => (
+                                <Option key={province.code}>{province.name}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="district"
+                        label='District'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the district',
+                            },
+                        ]}
+                    >
+                        <Select
+                            className='disable-input'
+                            onChange={onDistrictChange}
+                        >
+                            {districtOptions.map(district => (
+                                <Option key={district.code}>{district.name}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="ward"
+                        label='Ward'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the ward',
+                            },
+                        ]}
+                    >
+                        <Select>
+                            {wardOptions.map(ward => (
+                                <Option key={ward.code}>{ward.name}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item
+                        name="address"
+                        label='Address'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the address',
+                            },
+                        ]}
+                    >
+                        <TextArea />
+                    </Form.Item>
+                    <Form.Item
+                        name="description"
+                        label='Description'
+                    >
+                        <TextArea />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="thumbnail"
+                        label="Thumbnail"
+                        getValueFromEvent={normFile}
+                    >
+                        <Upload
+                            action={FILE_UPLOAD_URL}
+                            listType="picture"
+                            maxCount={1}
+                            accept={ACCEPT_IMAGE}
+                            beforeUpload={beforeUpload}
+                            defaultFileList={[
+                                {
+                                    uid: "abc",
+                                    name: "thumbnail",
+                                    status: "done",
+                                    url: currentEvent.thumbnail.link,
+                                },
+                            ]}
+                        >
+                            <Button icon={<UploadOutlined />}>Upload</Button>
+                        </Upload>
+                    </Form.Item>
+                    {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
+                        || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
+                        <Row justify="center" align="middle">
+                            <Col>
+                                <Form.Item>
+                                    {isLoadingBasicInfo === false ?
+                                        <Button type="primary" htmlType="submit" >Update</Button> : <Spin />}
+
+                                </Form.Item>
+                            </Col>
+                        </Row> : null
+                    }
+                </Form>
+            </Card> : null
         }
         {currentEvent ?
-            <Modal
-                title="List Image"
-                centered
-                visible={visible}
-                onCancel={() => setVisible(false)}
-                footer={null}
-                width={600}
-            >
-                <Form form={formUploadImages}
+            <Card title="List Image">
+                <Form
+                    {...formItemLayout}
+                    form={formUploadImages}
+                    name="listImg"
                     onFinish={onFinishUpdateListImage}
-                    initialValues={{
-                        listImage: fileListImage
-                    }}
+                    scrollToFirstError
+                    labelCol={{ span: 2 }}
+                    wrapperCol={{ span: 20 }}
+                    layout="horizontal"
                 >
 
                     <Form.Item
                         name="listImage"
                         label="List Image"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose application logo!",
+                            },
+                        ]}
                     >
-                        {currentEvent.listImage.length > 0 ?
+                        {fileListImage ? (
                             <Upload
                                 action={FILE_UPLOAD_URL}
                                 listType="picture"
                                 maxCount={5}
+                                accept={ACCEPT_IMAGE}
                                 multiple
-                                accept={ACCEPT_IMAGE}
                                 beforeUpload={beforeUpload}
-                                defaultFileList={fileListImage}
+                                onChange={() => setUpdateListImage(true)}
+                                defaultFileList={[...fileListImage]}
                             >
-                                <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+                                <Button icon={<UploadOutlined />}>
+                                    Upload ( Max:5 )
+                                </Button>
                             </Upload>
-                            : <Upload
-                                action={FILE_UPLOAD_URL}
-                                listType="picture"
-                                maxCount={5}
-                                accept={ACCEPT_IMAGE}
-                                beforeUpload={beforeUpload}
-                            >
-                                <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
-                            </Upload>
-                        }
+                        ) : null}
                     </Form.Item>
-                    <Form.Item>
-                        <Row justify="center" align="middle">
-                            <Button type='primary' htmlType="submit" >Save</Button>
-                        </Row>
-                    </Form.Item>
+                    <Row justify="center" align="middle">
+                        <Col>
+                            <Form.Item {...tailFormItemLayout}>
+
+                                {isLoadingListImage === false ?
+                                    <Button type="primary" htmlType="submit">
+                                        Update
+                                    </Button>
+                                    : <Spin />
+                                }
+
+                            </Form.Item>
+                        </Col>
+                    </Row>
                 </Form>
-            </Modal> : null
+            </Card> : null
         }
     </>);
 }

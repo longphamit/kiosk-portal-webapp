@@ -34,6 +34,7 @@ import {
 import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
 import { signOutService } from "../../services/auth_service";
+import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
@@ -63,7 +64,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
         <h2
           style={{ fontWeight: "bold", color: "#fff" }}
           onClick={() => {
-            onNavigate("/homepage");
+            onNavigate(HOME_PAGE_PATH);
           }}
         >
           TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
@@ -94,7 +95,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<HomeFilled />}
               key="1"
               onClick={() => {
-                onNavigate("/homepage");
+                onNavigate(HOME_PAGE_PATH);
               }}
             >
               {t("home")}
