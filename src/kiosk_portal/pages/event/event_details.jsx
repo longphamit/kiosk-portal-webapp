@@ -154,19 +154,24 @@ export const EventDetailsPage = () => {
         setIsLoadingBasicInfo(true);
         //Start to check date time of event
         let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
-
+        const d = new Date();
+        let hour = d.getHours();
+        let minute = d.getMinutes();
         if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
             toast.error("Date start is over");
+            setIsLoadingBasicInfo(true);
             return;
         }
 
-        if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0])) { //Compare on hour
+        if (parseInt(moment(values.timeStart).format('H')) < hour) { //Compare on hour
             toast.error("Time start must be late from now");
+            setIsLoadingBasicInfo(true);
             return;
-        } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0])) { // Compare on minute
-
-            if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
+        } else if (parseInt(moment(values.timeStart).format('H')) == hour) { 
+            // Compare on minute
+            if (moment(values.timeStart).format('m') < minute || moment(values.timeStart).format('m') == minute) {
                 toast.error("Time start must be late from now");
+                setIsLoadingBasicInfo(true);
                 return;
             }
         }
@@ -175,6 +180,7 @@ export const EventDetailsPage = () => {
         let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
         if (start > end) { // Check ending time
             toast.error("Please recheck date and time ending");
+            setIsLoadingBasicInfo(true);
             return;
         }
         //End to check date time of event
@@ -182,6 +188,7 @@ export const EventDetailsPage = () => {
         let thumbnail = values.thumbnail;
         if (!checkThumbnail(thumbnail)) { // Check thumbnail must import 
             toast.warn('Please add a thumbnail image');
+            setIsLoadingBasicInfo(true);
             return;
         }
         let base64Thumnail = '';
@@ -189,7 +196,8 @@ export const EventDetailsPage = () => {
             try {
                 base64Thumnail = (await getBase64(thumbnail[0].originFileObj)).split(",")[1]
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                setIsLoadingBasicInfo(true);
                 return;
             }
         }
@@ -272,6 +280,7 @@ export const EventDetailsPage = () => {
         let addFields = [];
         if (values.listImage === undefined || values.listImage.fileList === undefined) { // not update any image
             toast.info('Nothing changed to save!')
+            setIsLoadingListImage(false);
             return;
         } else if (values.listImage !== undefined && values.listImage.fileList !== undefined) {
             await Promise.all(values.listImage.fileList.map(async (value) => {
@@ -587,20 +596,21 @@ export const EventDetailsPage = () => {
                             </Upload>
                         ) : null}
                     </Form.Item>
-                    <Row justify="center" align="middle">
-                        <Col>
-                            <Form.Item {...tailFormItemLayout}>
-
-                                {isLoadingListImage === false ?
-                                    <Button type="primary" htmlType="submit">
-                                        Update
-                                    </Button>
-                                    : <Spin />
-                                }
-
-                            </Form.Item>
-                        </Col>
-                    </Row>
+                    {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
+                        || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
+                        <Row justify="center" align="middle">
+                            <Col>
+                                <Form.Item>
+                                    {isLoadingListImage === false ?
+                                        <Button type="primary" htmlType="submit">
+                                            Update
+                                        </Button>
+                                        : <Spin />
+                                    }
+                                </Form.Item>
+                            </Col>
+                        </Row> : null
+                    }
                 </Form>
             </Card> : null
         }
