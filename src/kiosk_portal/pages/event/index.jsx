@@ -214,21 +214,23 @@ const EventManagerPage = () => {
             setIsLoading(true);
             //Start to check date time of event
             let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
-
+            const d = new Date();
+            let hour = d.getHours();
+            let minute = d.getMinutes();
             if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
                 toast.error("Date start is over");
+                setIsLoading(true);
                 return;
             }
-            console.log(parseInt(moment(values.timeStart).format('H')))
-            console.log(strDateResultFromNow)
-            console.log(parseInt(strDateResultFromNow.split(' ')[0]))
-            if (parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && !strDateResultFromNow.includes('minutes')) { //Compare on hour
+            if (parseInt(moment(values.timeStart).format('H')) < hour) { //Compare on hour
                 toast.error("Time start must be late from now");
+                setIsLoading(true);
                 return;
-            } else if (parseInt(moment(values.timeStart).format('H')) == parseInt(strDateResultFromNow.split(' ')[0]) ||
-                parseInt(moment(values.timeStart).format('H')) < parseInt(strDateResultFromNow.split(' ')[0]) && strDateResultFromNow.includes('minutes')) { // Compare on minute
-                if (moment(values.timeStart).format('m') < moment().format('m') || moment(values.timeStart).format('m') == moment().format('m')) {
+            } else if (parseInt(moment(values.timeStart).format('H')) == hour) {
+                // Compare on minute
+                if (moment(values.timeStart).format('m') < minute || moment(values.timeStart).format('m') == minute) {
                     toast.error("Time start must be late from now");
+                    setIsLoading(true);
                     return;
                 }
             }
@@ -237,6 +239,7 @@ const EventManagerPage = () => {
             let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
             if (start > end) { // Check ending time
                 toast.error("Please recheck date and time ending");
+                setIsLoading(true);
                 return;
             }
             //End to check date time of event
@@ -267,7 +270,7 @@ const EventManagerPage = () => {
             toast.success('Create successful');
         } catch (error) {
             toast.error('Create failed!')
-            console.log(error);
+            console.error(error);
         } finally {
             setIsLoading(false)
         }
@@ -740,6 +743,12 @@ const EventManagerPage = () => {
                     <Form.Item
                         name="listImage"
                         label="List Image"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose list image",
+                            },
+                        ]}
                     >
                         <Upload
                             action={FILE_UPLOAD_URL}
