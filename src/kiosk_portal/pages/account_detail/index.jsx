@@ -24,7 +24,7 @@ const AccountDetailPage = () => {
     {
       href: ACCOUNT_MANAGER_HREF,
       label: ACCOUNT_MANAGER_LABEL,
-      icon: <UserOutlined />
+      icon: null
     },
     {
       href: ACCOUNT_DETAILS_HREF,
@@ -32,9 +32,22 @@ const AccountDetailPage = () => {
       icon: null
     },
   ]
+  const getCircularReplacer = () => {
+    const seen = new WeakSet();
+    return (key, value) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return;
+        }
+        seen.add(value);
+      }
+      return value;
+    };
+  };
+
   useEffect(() => {
-    getAccountDetailById()
-    // localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+    getAccountDetailById();
+    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }, getCircularReplacer()));
   }, []);
 
   return (
