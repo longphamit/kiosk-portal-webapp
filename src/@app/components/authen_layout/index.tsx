@@ -1,4 +1,4 @@
-import { Layout, Menu, Breadcrumb, Row } from "antd";
+import { Layout, Menu, Breadcrumb, Row,Col, Dropdown, Popover, Button, Badge, Avatar } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
@@ -11,6 +11,7 @@ import {
   ClockCircleOutlined,
   ToolOutlined,
   MenuOutlined,
+  NotificationOutlined,
 } from "@ant-design/icons";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import "./styles.css";
@@ -18,8 +19,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
-import useSelector from "../../hooks/use_selector";
-import { AppState } from "../../redux/stores";
 import {
   ROLE_ADMIN,
   ROLE_LOCATION_OWNER,
@@ -35,14 +34,21 @@ import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
 import { signOutService } from "../../services/auth_service";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
+import Column from "antd/lib/table/Column";
+import { getPartyNotificationService } from "../../../kiosk_portal/services/party_notification_service";
+import CountTime from "./time";
+import TimeView from "./time";
+import { async } from "@firebase/util";
+import NotificationView from "./InfiniteScrollExample";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const role = localStorageGetReduxState().auth.role;
+
   const { children } = props;
   const { t } = useTranslation();
-  const [time, setTime] = useState(new Date().toLocaleString());
+  
   let navigate = useNavigate();
   const logout = async () => {
     await signOutService();
@@ -53,22 +59,30 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const onNavigate = (url: string) => {
     navigate(url);
   };
+  
 
-  useEffect(() => {
-    setInterval(() => setTime(new Date().toLocaleString()), 1000);
-  });
   return (
     <Layout>
       <Header className="header">
-        <div className="logo" />
-        <h2
-          style={{ fontWeight: "bold", color: "#fff" }}
-          onClick={() => {
-            onNavigate(HOME_PAGE_PATH);
-          }}
-        >
-          TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
-        </h2>
+        <Row>
+          <Col span={10}>
+              <div className="logo" />
+              <h2
+                style={{ fontWeight: "bold", color: "#fff" }}
+                onClick={() => {
+                  onNavigate(HOME_PAGE_PATH);
+                }}
+              >
+                TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
+              </h2>
+          </Col>
+          <Col span={12}/>
+
+          <Col span={2}>
+                <NotificationView/>
+          </Col>
+        </Row>
+        
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
@@ -86,8 +100,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   fontSize: 12,
                 }}
               >
-                <ClockCircleOutlined style={{ marginRight: 10 }} />
-                {time}
+                <TimeView />
               </div>
             </Menu.Item>
 
