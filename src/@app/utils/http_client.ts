@@ -59,6 +59,16 @@ const createConfig = () => {
   };
   return getConfig;
 };
+const customCreateConfig = (payload: any) => {
+  let getConfig: AxiosRequestConfig<any> = {
+    headers: {
+      "Content-type": "Application/json",
+      Authorization: "Bearer " + getAccessToken(),
+    },
+    data: payload
+  };
+  return getConfig;
+};
 const multipartConfig = () => {
   let getConfig: AxiosRequestConfig<any> = {
     headers: {
@@ -74,6 +84,7 @@ const request = {
   put: (url: string, data: any) => axios.put(url, data, createConfig()),
   patch: (url: string, data: any) => axios.patch(url, data, createConfig()),
   delete: (url: string) => axios.delete(url, createConfig()),
+  deleteWithPayload: (url: string, payload: any) => axios.delete(url, customCreateConfig(payload)),
   post_multipart: (url: string, data: any) =>
     axios.post(url, data, multipartConfig()),
   patch_multipart: (url: string, data: any) =>
