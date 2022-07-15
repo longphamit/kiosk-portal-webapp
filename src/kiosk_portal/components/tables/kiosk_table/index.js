@@ -189,7 +189,6 @@ const KioskTable = ({ partyId }) => {
       kioskPage,
       kioskPageSize
     );
-    console.log(data)
     setListKiosk(data.data);
     setKioskPage(data.metadata.page);
     setKioskTotal(data.metadata.total);
