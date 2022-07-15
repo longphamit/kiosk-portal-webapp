@@ -1,6 +1,6 @@
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Collapse, Form, Modal, Row, Select, Spin } from 'antd';
+import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Select, Spin } from 'antd';
 import { Option } from 'antd/lib/mentions';
 import CustomBreadCumb from '../../../components/breadcumb/breadcumb';
 import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL, KIOSK_SCHEDULING_HREF, KIOSK_SCHEDULING_LABEL } from '../../../components/breadcumb/breadcumb_constant';
@@ -76,7 +76,7 @@ const KioskSchedulingPage = () => {
                 setListSchedule(res.data.data);
                 setCurrentSchedule(res.data.data[0]);
             }
-        );
+        ).catch((e) => console.error());
     }
     const getListTemplateAvailable = async () => {
         await getListTemplateWithoutParamService('').then(
@@ -84,7 +84,16 @@ const KioskSchedulingPage = () => {
                 setListTemplate(res.data.data);
                 setCurrentTemplate(res.data.data[0]);
             }
-        );
+        ).catch((e) => console.error());;
+    }
+    const getKisokSchedule = async (id) => {
+        try {
+            let res = await getKisokScheduleService(id);
+            setListKioskShedule(res.data.data)
+        } catch (e) {
+            setListKioskShedule([]);
+            console.error(e);
+        }
     }
     const initialize = async () => {
         //get kiosk Id
@@ -92,14 +101,7 @@ const KioskSchedulingPage = () => {
         let kioskId = pathParts[pathParts.length - 1]
         setKioskId(kioskId);
         // get List Kiosk schedules
-        try {
-            let res = await getKisokScheduleService(kioskId);
-            setListKioskShedule(res.data.data)
-            console.log(res.data.data[0])
-        } catch (e) {
-            toast.error(e.response.data.message ?? "Data empty!");
-            console.error(e);
-        }
+        getKisokSchedule(kioskId);
     }
     useEffect(() => {
         initialize();
@@ -116,13 +118,7 @@ const KioskSchedulingPage = () => {
                     try {
                         let res = await deleteKisokScheduleService(id);
                         toast.success('Delete success');
-                        try {
-                            let res = await getKisokScheduleService(currentKioskId);
-                            setListKioskShedule(res.data.data)
-                            console.log(res.data.data[0])
-                        } catch (e) {
-                            console.error(e);
-                        }
+                        getKisokSchedule(currentKioskId);
                     } catch (e) {
                         toast.error(e.response.data.message ?? "Delete failed!");
                         console.error(e);
@@ -136,23 +132,16 @@ const KioskSchedulingPage = () => {
         setLoading(true);
         let scheduleId = form.getFieldValue('schedule');
         let templateId = form.getFieldValue('template');
-        let kioskId = currentKioskId;
         try {
             let data = {
-                kioskId,
+                id: updateKioskSchedule.id,
                 scheduleId,
                 templateId
             }
             let res = await updateKisokScheduleService(data);
             toast.success('Update success!');
-            try {
-                let res = await getKisokScheduleService(currentKioskId);
-                setListKioskShedule(res.data.data)
-                console.log(res.data.data[0])
-            } catch (e) {
-                console.error(e);
-            }
-            setCreateVisible(false)
+            getKisokSchedule(currentKioskId);
+            setUpdateVisible(false)
         } catch (e) {
             toast.error(e.response.data.message ?? "Update failed!");
             console.error(e.message)
@@ -176,7 +165,7 @@ const KioskSchedulingPage = () => {
                     </Col>
                 </Row> : null
             }
-            {listKioskSchedule ?
+            {listKioskSchedule && listKioskSchedule.length != 0 ?
                 <Collapse defaultActiveKey={[listKioskSchedule[0].id]} onChange={onChange}>
                     {listKioskSchedule.map((s) => (
                         <>
@@ -207,9 +196,15 @@ const KioskSchedulingPage = () => {
                             </Panel>
                         </>
                     ))}
+                </Collapse> :
+                <>
+                    <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                        <Col>
+                            <Empty />
+                        </Col>
+                    </Row>
+                </>
 
-
-                </Collapse> : null
             }
             {
                 updateKioskSchedule ?
