@@ -56,3 +56,6 @@ export const MY_APPLICATION_LABEL = 'My Application'
 
 export const KIOSK_SCHEDULING_HREF = ''
 export const KIOSK_SCHEDULING_LABEL = 'Scheduling Kiosk Activities'
+
+export const TEMPLATE_EDITING_HREF = ''
+export const TEMPLATE_EDITING_LABEL = 'Editing Template'

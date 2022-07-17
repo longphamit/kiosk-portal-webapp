@@ -12,6 +12,8 @@ import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
 import { async } from "@firebase/util";
+import { TEMPLATE_CREATE_LABEL, TEMPLATE_EDITING_HREF, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
@@ -388,7 +390,20 @@ const EditTemplatePage = () => {
         }
 
     }
+    const breadCumbData = [
+        {
+            href: TEMPLATE_MANAGER_HREF,
+            label: TEMPLATE_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: TEMPLATE_EDITING_HREF,
+            label: TEMPLATE_CREATE_LABEL,
+            icon: null
+        }
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         <div id="account-info-panel">
             <Row>
                 <Col span={20}>

@@ -25,9 +25,7 @@ import { useNavigate } from "react-router-dom";
 import {
   SearchOutlined,
   PlusOutlined,
-  EyeFilled,
   EditFilled,
-  ArrowUpOutlined,
   DeleteFilled
 
 } from "@ant-design/icons";
