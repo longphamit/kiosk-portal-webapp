@@ -26,8 +26,6 @@ const firebaseConfig = {
   measurementId: "G-D7H3G6RXGL",
 };
 
-// phần firebaseConfig tương tự như ở trên nhé
-
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage(function (payload) {
