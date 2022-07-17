@@ -1,4 +1,4 @@
-import CustomRowItem from "./CustomRowItem";
+import CustomRowItem from "../../../../components/general/CustomRowItem";
 
 const ScheduleKioskDetail = ({
     currentSchdule,
