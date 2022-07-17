@@ -1,4 +1,4 @@
-import { Layout, Menu, Breadcrumb, Row,Col, Dropdown, Popover, Button, Badge, Avatar } from "antd";
+import { Layout, Menu, Breadcrumb, Row, Col, Dropdown, Popover, Button, Badge, Avatar } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
@@ -48,7 +48,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
 
   const { children } = props;
   const { t } = useTranslation();
-  
+
   let navigate = useNavigate();
   const logout = async () => {
     await signOutService();
@@ -59,30 +59,30 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const onNavigate = (url: string) => {
     navigate(url);
   };
-  
+
 
   return (
     <Layout>
       <Header className="header">
         <Row>
           <Col span={10}>
-              <div className="logo" />
-              <h2
-                style={{ fontWeight: "bold", color: "#fff" }}
-                onClick={() => {
-                  onNavigate(HOME_PAGE_PATH);
-                }}
-              >
-                TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
-              </h2>
+            <div className="logo" />
+            <h2
+              style={{ fontWeight: "bold", color: "#fff" }}
+              onClick={() => {
+                onNavigate(HOME_PAGE_PATH);
+              }}
+            >
+              TIKA Management - {localStorage.getItem(USER_FRIST_NAME)}
+            </h2>
           </Col>
-          <Col span={10}/>
+          <Col span={13} />
 
-          <Col span={4}>
-                <NotificationView/>
+          <Col span={1}  >
+            <NotificationView />
           </Col>
         </Row>
-        
+
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">

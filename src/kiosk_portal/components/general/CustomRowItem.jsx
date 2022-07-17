@@ -18,7 +18,7 @@ const CustomRowItem = ({
 
         <Row>
             <Col span={labelCol} offset={offsetLabelCol ?? 0}>
-                <label htmlFor="">
+                <label htmlFor="" style={{fontWeight:'bold'}}>
                     {label}:
                 </label>
             </Col>

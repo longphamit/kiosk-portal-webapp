@@ -287,7 +287,20 @@ const CreateTemplatePage = () => {
         }
 
     }
+    const breadCumbData = [
+        {
+            href: TEMPLATE_MANAGER_HREF,
+            label: TEMPLATE_MANAGER_LABEL,
+            icon: null
+        },
+        {
+            href: TEMPLATE_CREATE_HREF,
+            label: TEMPLATE_CREATE_LABEL,
+            icon: null
+        }
+    ]
     return (<>
+        <CustomBreadCumb props={breadCumbData} />
         <div id="account-info-panel">
             <Row>
                 <Col span={20}>

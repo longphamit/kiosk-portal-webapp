@@ -9,13 +9,17 @@ import {
   Divider,
   Col,
   Row,
+  Modal,
+  notification,
 } from "antd";
 
 import "./notification_styles.css"
-import { getPartyNotificationService } from "../../../kiosk_portal/services/party_notification_service";
-import { BellFilled, NotificationOutlined } from "@ant-design/icons";
+import { getPartyNotificationService, updateStatusNotificationService } from "../../../kiosk_portal/services/party_notification_service";
+import { BellFilled, NotificationOutlined, SmileOutlined } from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
-
+import CustomRowItem from "../../../kiosk_portal/components/general/CustomRowItem";
+const labelCol = 4;
+const wrapperCol = 20
 const ContainerHeight = 450;
 const NotificationView = () => {
   const [data, setData] = useState([]);
@@ -24,7 +28,8 @@ const NotificationView = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [unseen, setUnseen] = useState(0);
-
+  const [detailNotiModalVisible, setDetailNotiModalVisible] = useState();
+  const [currentNoti, setCurrentNoti] = useState();
   useEffect(() => {
     fetchData();
   }, []);
@@ -36,26 +41,50 @@ const NotificationView = () => {
       setUnseen(res.data.metadata.unseenNoti);
       setPage(page + 1);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
   const onScroll = async (e) => {
-    console.log(e.currentTarget)
-    console.log("scrollHeight " + e.currentTarget.scrollHeight);
-    console.log("scrollTop " + Math.ceil(e.currentTarget.scrollTop));
     if (
       e.currentTarget.scrollHeight - Math.ceil(e.currentTarget.scrollTop) ===
       ContainerHeight
     ) {
       setLoading(true);
-      console.log("hahaha");
       await fetchData();
     }
   };
+  const readTheNotification = async (id) => {
+    try {
+      let res = await updateStatusNotificationService(JSON.stringify(id));
+      const newState = data.map(obj => {
+        if (obj.id === id) {
+          return { ...obj, status: 'seen' };
+        }
+        return obj;
+      });
+      setData(newState);
+      setUnseen(unseen - 1);
 
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  const readAndClose = async () => {
+    if (currentNoti.status === 'unseen') {
+      readTheNotification(currentNoti.id);
+      setDetailNotiModalVisible(false)
+    }
+  }
+  const openDetailNotiModal = (item) => {
+    setDetailNotiModalVisible(true);
+    setCurrentNoti(item)
+  }
+  const closeDetailNotiModal = () => {
+    setDetailNotiModalVisible(false);
+  }
   return (
     <>
       <Badge count={unseen}>
@@ -63,7 +92,7 @@ const NotificationView = () => {
           placement="bottom"
           title={"Notifications"}
           content={
-            <div style={{ overflow: "auto", padding: 8 }}>
+            <div style={{ overflow: "auto", width: 230 }}>
               <VirtualList
                 data={data}
                 itemHeight={15}
@@ -77,15 +106,18 @@ const NotificationView = () => {
                       <List.Item key={item.id}>
                         <Row>
                           <Col>
-                            <div
-                              style={{
-                                padding: 5,
-                                width: 250,
-                              }}
-                            >
-                              <div style={{fontWeight:"bold"}}>{item.notiTitle}</div>
-                              <div style={{textOverflow:"ellipsis",width:200,overflow: "hidden"}}>zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz</div>
+
+                            <div style={{ fontWeight: "bold" }}>
+                              <label htmlFor="" onClick={() => { openDetailNotiModal(item) }}>{item.notiTitle}</label>
+
+                              {item.status === "unseen" ?
+                                <Badge color="#108ee9" style={{ float: 'right' }} onClick={() => readTheNotification(item.id)} />
+                                : null}
                             </div>
+                            <div style={{ textOverflow: "ellipsis", width: 200, overflow: "hidden" }} onClick={() => { openDetailNotiModal(item) }}>
+                              {item.notiContent}
+                            </div>
+
                           </Col>
                           <Col></Col>
                         </Row>
@@ -101,9 +133,23 @@ const NotificationView = () => {
           }
           trigger="click"
         >
-          <Avatar shape="circle" style={{background:"#fff"}} icon={<BellFilled style={{color:"#000"}} />} />
+          <Avatar shape="circle" style={{ background: "#fff" }} icon={<BellFilled style={{ color: "#000" }} />} />
         </Popover>
       </Badge>
+      {currentNoti ?
+        <>
+          <Modal
+            title="Notification Details"
+            visible={detailNotiModalVisible}
+            onOk={() => readAndClose()}
+            onCancel={() => closeDetailNotiModal()}
+          >
+            <CustomRowItem contentType='input' label='Time' content={currentNoti.notiCreateDate} labelCol={labelCol} wrapperCol={wrapperCol} />
+            <CustomRowItem contentType='input' label='Title' content={currentNoti.notiTitle} labelCol={labelCol} wrapperCol={wrapperCol} />
+            <CustomRowItem contentType='input' label='Content' content={currentNoti.notiContent} labelCol={labelCol} wrapperCol={wrapperCol} />
+          </Modal>
+        </> : <></>
+      }
     </>
   );
 };
