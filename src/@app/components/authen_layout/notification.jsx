@@ -12,7 +12,7 @@ import {
   Modal,
   notification,
 } from "antd";
-
+import moment from "moment";
 import "./notification_styles.css"
 import { getPartyNotificationService, updateStatusNotificationService } from "../../../kiosk_portal/services/party_notification_service";
 import { BellFilled, NotificationOutlined, SmileOutlined } from "@ant-design/icons";
@@ -75,8 +75,8 @@ const NotificationView = () => {
   const readAndClose = async () => {
     if (currentNoti.status === 'unseen') {
       readTheNotification(currentNoti.id);
-      setDetailNotiModalVisible(false)
     }
+    setDetailNotiModalVisible(false)
   }
   const openDetailNotiModal = (item) => {
     setDetailNotiModalVisible(true);
@@ -84,6 +84,12 @@ const NotificationView = () => {
   }
   const closeDetailNotiModal = () => {
     setDetailNotiModalVisible(false);
+  }
+  const getSting = (str) => {
+    if (str.length > 20) {
+      return str.substr(0, 20) + '...';
+    }
+    return str;
   }
   return (
     <>
@@ -106,18 +112,19 @@ const NotificationView = () => {
                       <List.Item key={item.id}>
                         <Row>
                           <Col>
+                            <Row>
+                              <Col style={{ width: 200 }} onClick={() => { openDetailNotiModal(item) }}>
 
-                            <div style={{ fontWeight: "bold" }}>
-                              <label htmlFor="" onClick={() => { openDetailNotiModal(item) }}>{item.notiTitle}</label>
-
-                              {item.status === "unseen" ?
-                                <Badge color="#108ee9" style={{ float: 'right' }} onClick={() => readTheNotification(item.id)} />
-                                : null}
-                            </div>
-                            <div style={{ textOverflow: "ellipsis", width: 200, overflow: "hidden" }} onClick={() => { openDetailNotiModal(item) }}>
-                              {item.notiContent}
-                            </div>
-
+                                <label style={{ fontWeight: "bold" }} htmlFor="">{getSting(item.notiTitle)}</label>
+                                <br />
+                                {getSting(item.notiContent)}
+                              </Col>
+                              <Col style={{ width: 30, padding: 10 }} >
+                                {item.status === "unseen" ?
+                                  <Badge color="#108ee9" style={{ float: 'right' }} onClick={() => readTheNotification(item.id)} />
+                                  : null}
+                              </Col>
+                            </Row>
                           </Col>
                           <Col></Col>
                         </Row>
@@ -144,7 +151,7 @@ const NotificationView = () => {
             onOk={() => readAndClose()}
             onCancel={() => closeDetailNotiModal()}
           >
-            <CustomRowItem contentType='input' label='Time' content={currentNoti.notiCreateDate} labelCol={labelCol} wrapperCol={wrapperCol} />
+            <CustomRowItem contentType='input' label='Time' content={moment(currentNoti.notiCreateDate).format("DD/MM/YYYY hh:mm")} labelCol={labelCol} wrapperCol={wrapperCol} />
             <CustomRowItem contentType='input' label='Title' content={currentNoti.notiTitle} labelCol={labelCol} wrapperCol={wrapperCol} />
             <CustomRowItem contentType='input' label='Content' content={currentNoti.notiContent} labelCol={labelCol} wrapperCol={wrapperCol} />
           </Modal>
