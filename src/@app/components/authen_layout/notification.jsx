@@ -28,7 +28,7 @@ const NotificationView = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [unseen, setUnseen] = useState(0);
-  const [detailNotiModalVisible, setDetailNotiModalVisible] = useState();
+  const [detailNotiModalVisible, setDetailNotiModalVisible] = useState(false);
   const [currentNoti, setCurrentNoti] = useState();
   useEffect(() => {
     fetchData();
@@ -72,14 +72,16 @@ const NotificationView = () => {
       console.error(e)
     }
   }
-  const readAndClose = async () => {
-    if (currentNoti.status === 'unseen') {
-      readTheNotification(currentNoti.id);
+  const readNotification = async (item) => {
+    if (item.status === 'unseen') {
+      readTheNotification(item.id);
     }
-    setDetailNotiModalVisible(false)
   }
   const openDetailNotiModal = (item) => {
-    setDetailNotiModalVisible(true);
+    setDetailNotiModalVisible(!detailNotiModalVisible);
+    if (!detailNotiModalVisible) {
+      readNotification(item)
+    }
     setCurrentNoti(item)
   }
   const closeDetailNotiModal = () => {
@@ -148,7 +150,7 @@ const NotificationView = () => {
           <Modal
             title="Notification Details"
             visible={detailNotiModalVisible}
-            onOk={() => readAndClose()}
+            footer={[]}
             onCancel={() => closeDetailNotiModal()}
           >
             <CustomRowItem contentType='input' label='Time' content={moment(currentNoti.notiCreateDate).format("DD/MM/YYYY hh:mm")} labelCol={labelCol} wrapperCol={wrapperCol} />
