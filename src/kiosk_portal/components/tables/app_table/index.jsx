@@ -22,6 +22,7 @@ import {
   EditFilled,
   ArrowUpOutlined,
   DownloadOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -40,6 +41,7 @@ import {
   createApplicationService,
   getListApplicationService,
   sendReqPublishApplicationService,
+  stopApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
 import {
@@ -101,9 +103,8 @@ const ApplicationTable = () => {
       );
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
-      console.log(res.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -146,87 +147,33 @@ const ApplicationTable = () => {
       toast.success("Update Application Success");
       handleCancelEditApplication();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
-  // const onFinishAdvancedSearch = async (values) => {
-  //   console.log(values);
-  //   const search = {
-  //     firstName: values.firstName??"",
-  //     lastName: values.lastName??"",
-  //     phoneNumber: values.phoneNumber??"",
-  //     email: values.email??"",
-  //     address: values.address??"",
-  //     status: values.status??"",
-  //     size: numApplicationInPage,
-  //     page: 1,
-  //   };
-  //   try {
-  //     const res = await searchAccountService(search)
-  //     setTotalApplication(res.data.metadata.total);
-  //     setListApplication(res.data.data);
-  //     setIsSearch(true);
-  //     setQuerySearch(search);
-  //     handleCloseModalAdvancedSearch();
-  //   } catch (error) {
-  //     console.log(error);
-  //     setTotalApplication(0);
-  //     setListApplication([]);
-  //   }
-  // };
-  const buildPartyParamSearch = (value) => {
-    let firstName = "";
-    let lastName = "";
-    let phoneNumber = "";
-    let email = "";
-    let address = "";
-    let status = "";
-    switch (applicationSearchType) {
-      case "FirstName":
-        firstName = value;
-        break;
-      case "LastName":
-        lastName = value;
-        break;
-      case "PhoneNumber":
-        phoneNumber = value;
-        break;
-      case "Email":
-        email = value;
-        break;
-      case "Address":
-        address = value;
-        break;
-      case "Status":
-        status = value;
-        break;
-    }
-    return {
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: phoneNumber,
-      email: email,
-      address: address,
-      status: status,
-    };
+  const handleStopApplication = async (record) => {
+    Modal.confirm({
+      title: "Are you sure to remove this application ?",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            const id = {
+              serviceApplicationId: record.id,
+            };
+            await stopApplicationService(id).then(() => {
+              console.log("abc");
+              getListApplicationFunction(currentPage, numApplicationInPage);
+              toast.success("Stop application success");
+            });
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
   };
-  // const onFinishSearch = async (values) => {
-  //   const search = buildPartyParamSearch(values.searchString);
-  //   search["size"] = numApplicationInPage;
-  //   search["page"] = 1
-  //   try {
-  //     const res = await searchAccountService(search)
-  //     setTotalApplication(res.data.metadata.total);
-  //     setListApplication(res.data.data);
-  //     setIsSearch(true);
-  //     setQuerySearch(search);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setTotalApplication(0);
-  //     setListApplication([]);
-  //   }
-  // };
 
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
@@ -247,7 +194,6 @@ const ApplicationTable = () => {
       logo: formatResult[1],
       appCategoryId: values.appCategoryId,
     };
-    console.log(newApplication);
     try {
       await createApplicationService(newApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
@@ -255,7 +201,7 @@ const ApplicationTable = () => {
       toast.success("Create Application Success");
       form.resetFields();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -291,7 +237,7 @@ const ApplicationTable = () => {
               toast.success("Send request publish success");
             });
           } catch (error) {
-            console.log(error);
+            toast.error(error.response.data.message);
           }
         }
       },
@@ -377,6 +323,35 @@ const ApplicationTable = () => {
           >
             <EyeFilled /> Detail
           </Button>
+          {role === ROLE_ADMIN ? (
+            record.status === "available" ? (
+              <Button
+                type="primary"
+                danger
+                shape="default"
+                onClick={() => {
+                  handleStopApplication(record);
+                }}
+              >
+                <DeleteOutlined />
+                Stop Application
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                danger
+                shape="default"
+                onClick={() => {
+                  handleStopApplication(record);
+                }}
+                disabled
+              >
+                <DeleteOutlined />
+                Stop Application
+              </Button>
+            )
+          ) : null}
+
           {role ? (
             role === ROLE_SERVICE_PROVIDER ? (
               <>
@@ -419,7 +394,7 @@ const ApplicationTable = () => {
             ) : null
           ) : null}
           {role ? (
-            role == ROLE_LOCATION_OWNER ? (
+            role === ROLE_LOCATION_OWNER ? (
               <Button className="success-button">
                 <DownloadOutlined /> Install
               </Button>
@@ -429,17 +404,6 @@ const ApplicationTable = () => {
       ),
     },
   ];
-
-  const config = {
-    rules: [
-      {
-        type: "object",
-        required: true,
-        message: t("reqdob"),
-      },
-    ],
-  };
-
   return (
     <>
       <Row style={{ padding: 10 }}>
