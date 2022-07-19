@@ -34,3 +34,9 @@ export const updateApplicationService = async (data: any) => {
   const response = await request.put(`${HOST}/v1/serviceApplications`, data);
   return response.data;
 };
+
+export const stopApplicationService = async (data: any) => {
+  console.log(data)
+  const response = await request.patch(`${HOST}/v1/serviceApplications/status`, data);
+  return response.data;
+};
