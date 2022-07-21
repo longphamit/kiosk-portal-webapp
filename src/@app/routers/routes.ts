@@ -190,7 +190,7 @@ const routes: Route[] = [
   },
   {
     component: ApplicationDetailPage,
-    path: "/app-detail/:appId",
+    path: "/app-detail/:id",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,

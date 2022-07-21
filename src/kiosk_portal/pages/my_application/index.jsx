@@ -108,7 +108,7 @@ const MyApplicationPage = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.serviceApplicationId}`);
+              navigator(`/app-detail/${record.serviceApplicationId}&&installed`);
             }}
           >
             <EyeFilled /> Detail
