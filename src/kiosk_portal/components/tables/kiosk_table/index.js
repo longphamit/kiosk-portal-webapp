@@ -54,15 +54,6 @@ const KioskTable = ({ partyId }) => {
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
   const role = localStorageGetReduxState().auth.role;
-  const onConfirmChangeStatus = async (kioskId) => {
-    try {
-      await changeStatusKioskService(kioskId);
-      await getListKiosk(partyId, kioskPage, kioskPageSize);
-      toast.success("Change status kiosk success");
-    } catch (e) {
-      console.log(e);
-    }
-  };
   const kioskColumnAdmin = [
     {
       title: "No",
@@ -93,24 +84,7 @@ const KioskTable = ({ partyId }) => {
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
         ),
-    },
-    {
-      title: t("action"),
-      key: "action",
-      align: "center",
-      render: (text, record, dataIndex) => (
-        <Space size="middle">
-          <Button
-            className="success-button"
-            onClick={() => {
-              downloadTxtFile(partyId + "-" + record.name, record.id);
-            }}
-          >
-            <ArrowDownOutlined /> Key
-          </Button>
-        </Space>
-      ),
-    },
+    }
   ];
   const kioskColumnLocationOwner = [
     {
@@ -149,30 +123,8 @@ const KioskTable = ({ partyId }) => {
           <Button className="infor-button" shape="default" onClick={() => {}}>
             Detail
           </Button>
-          <Popconfirm
-            title="Are you sure, you want to change status this kiosk?"
-            onConfirm={() => onConfirmChangeStatus(record.id)}
-            onVisibleChange={() => console.log("visible change")}
-          >
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => { }}
-            >
-              {t("change-status")}
-            </Button>
-          </Popconfirm>
           <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
             Scheduling
-          </Button>
-          <Button
-            className="success-button"
-            onClick={() => {
-              downloadTxtFile(partyId + "-" + record.name, record.id);
-            }}
-          >
-            <ArrowDownOutlined /> Key
           </Button>
         </Space>
       ),
