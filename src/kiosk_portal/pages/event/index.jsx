@@ -35,6 +35,7 @@ import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { STATUS_COMING_SOON, STATUS_END, STATUS_ON_GOING } from "../../constants/event_constants";
 import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { checkDateTime, toStringDateTimePicker } from "./checkdatetime";
 const EventManagerPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);
@@ -205,45 +206,16 @@ const EventManagerPage = () => {
         form.resetFields();
     };
 
-    const toStringDateTimePicker = (date, time) => {
-        return moment(date).format('YYYY-MM-DD[T]') + moment(time).format('HH:mm:ss.sss[Z]');
-    }
-
     const onFinishCreateEvent = async (values) => {
         try {
             setIsLoading(true);
-            //Start to check date time of event
-            let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
-            const d = new Date();
-            let hour = d.getHours();
-            let minute = d.getMinutes();
-            if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
-                toast.error("Date start is over");
-                setIsLoading(true);
+            //Check date time of event
+            let msg = checkDateTime(values.dateStart, values.timeStart, values.timeEnd, values.dateEnd);
+            if (!msg || msg.length !== 0) {
+                toast.error(msg);
+                setIsLoading(false);
                 return;
             }
-            if (parseInt(moment(values.timeStart).format('H')) < hour) { //Compare on hour
-                toast.error("Time start must be late from now");
-                setIsLoading(true);
-                return;
-            } else if (parseInt(moment(values.timeStart).format('H')) == hour) {
-                // Compare on minute
-                if (moment(values.timeStart).format('m') < minute || moment(values.timeStart).format('m') == minute) {
-                    toast.error("Time start must be late from now");
-                    setIsLoading(true);
-                    return;
-                }
-            }
-
-            let start = toStringDateTimePicker(values.dateStart, values.timeStart);
-            let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
-            if (start > end) { // Check ending time
-                toast.error("Please recheck date and time ending");
-                setIsLoading(true);
-                return;
-            }
-            //End to check date time of event
-
             let thumbnail = (await getBase64(values.thumbnail.file.originFileObj)).split(",")[1];
 
             let listImage = [];
@@ -256,8 +228,8 @@ const EventManagerPage = () => {
                 "name": values.name,
                 "description": values.description,
                 "thumbnail": thumbnail,
-                "timeStart": start,
-                "timeEnd": end,
+                "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
+                "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
                 "ward": getName(wardOptions, values.ward),
                 "district": getName(districtOptions, values.district),
                 "city": getName(proviceOptions, values.provice),
