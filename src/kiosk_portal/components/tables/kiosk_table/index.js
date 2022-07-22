@@ -84,8 +84,27 @@ const KioskTable = ({ partyId }) => {
         ) : (
           <Tag color={"red"}>{t("deactivate")}</Tag>
         ),
-    }
+    },
+    {
+      title: t("action"),
+      align: "center",
+      key: "action",
+      render: (text, record, dataIndex) => (
+        <Space size="middle">
+          <Button className="infor-button" shape="default" onClick={() => {changeStatus(record)}}>
+            Change Status
+          </Button>
+        </Space>
+      ),
+    },
   ];
+
+  const changeStatus=async (values)=>{
+    await changeStatusKioskService(values.id);
+    await getListKiosk(partyId, kioskPage, kioskPageSize);
+  }
+
+
   const kioskColumnLocationOwner = [
     {
       title: "No",
