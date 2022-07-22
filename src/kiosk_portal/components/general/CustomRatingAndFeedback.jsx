@@ -12,7 +12,7 @@ const CustomRatingAndFeedback = ({ feedback }) => {
                 <div style={{ marginBottom: 10 }}>
                     <label htmlFor="" style={{ color: 'blue', fontWeight: 'bold' }}>{feedback.partyEmail}</label>
                     <label style={{ color: 'grey', marginLeft: 20, marginRight: 5 }}>{moment(feedback.createDate).format('DD/MM/YYYY HH:mm')}</label>
-                    <Rate disabled defaultValue={feedback.rating} />
+                    <Rate disabled value={feedback.rating} />
                 </div>
                 <p>{feedback.content}</p>
             </Col>
