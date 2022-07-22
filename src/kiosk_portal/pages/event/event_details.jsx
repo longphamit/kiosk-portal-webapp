@@ -35,6 +35,7 @@ import { ACCEPT_IMAGE } from '../../constants/accept_file';
 import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
 import CustomBreadCumb from '../../components/breadcumb/breadcumb';
 import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
+import { checkDateTime, toStringDateTimePicker } from './checkdatetime';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -162,34 +163,10 @@ export const EventDetailsPage = () => {
     const onClickSubmit = async (values) => {
         setIsLoadingBasicInfo(true);
         //Start to check date time of event
-        let strDateResultFromNow = moment(moment(values.dateStart).format('YYYY-MM-DD')).fromNow();
-        const d = new Date();
-        let hour = d.getHours();
-        let minute = d.getMinutes();
-        if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
-            toast.error("Date start is over");
-            setIsLoadingBasicInfo(true);
-            return;
-        }
-
-        if (parseInt(moment(values.timeStart).format('H')) < hour) { //Compare on hour
-            toast.error("Time start must be late from now");
-            setIsLoadingBasicInfo(true);
-            return;
-        } else if (parseInt(moment(values.timeStart).format('H')) == hour) {
-            // Compare on minute
-            if (moment(values.timeStart).format('m') < minute || moment(values.timeStart).format('m') == minute) {
-                toast.error("Time start must be late from now");
-                setIsLoadingBasicInfo(true);
-                return;
-            }
-        }
-
-        let start = toStringDateTimePicker(values.dateStart, values.timeStart);
-        let end = toStringDateTimePicker(values.dateEnd, values.timeEnd);
-        if (start > end) { // Check ending time
-            toast.error("Please recheck date and time ending");
-            setIsLoadingBasicInfo(true);
+        let msg = checkDateTime(values.dateStart, values.timeStart, values.timeEnd, values.dateEnd);
+        if (!!msg || msg.length !== 0) {
+            toast.error(msg);
+            setIsLoadingBasicInfo(false);
             return;
         }
         //End to check date time of event
@@ -206,7 +183,7 @@ export const EventDetailsPage = () => {
                 base64Thumnail = (await getBase64(thumbnail[0].originFileObj)).split(",")[1]
             } catch (e) {
                 console.error(e);
-                setIsLoadingBasicInfo(true);
+                setIsLoadingBasicInfo(false);
                 return;
             }
         }
@@ -247,9 +224,6 @@ export const EventDetailsPage = () => {
         return [date.getFullYear(), mnth, day].join("-");
     }
 
-    const toStringDateTimePicker = (date, time) => {
-        return formatDatePicker(date) + time._d.toISOString().slice(10,);
-    }
     const checkThumbnail = (thumbnail) => {
         try {
             if (thumbnail.length == 0) {
