@@ -77,7 +77,7 @@ const ModalCreateLocation = ({
       );
       let newLocation = {
         name: values.name,
-        description: values.description,
+        description: description,
         hotLine: values.hotline,
         listImage: listImage,
       };
@@ -164,6 +164,7 @@ const ModalCreateLocation = ({
           <Form.Item
             name="description"
             label="Description"
+            required
             rules={[
               {
 

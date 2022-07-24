@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { Button, Col, Form, Input, Row, Upload, Card, Spin } from "antd";
+import { Button, Col, Form, Input, Row, Upload, Card, Spin, Skeleton } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
@@ -199,6 +199,7 @@ const DetailLocationPage = () => {
                 <Form.Item
                   name="description"
                   label="Description"
+                  required
                   rules={[
                     {
 
@@ -278,7 +279,10 @@ const DetailLocationPage = () => {
             </Card>
           </Col>
         </Row>
-      ) : null}
+      ) : <>
+      <Skeleton />
+      <Skeleton />
+      </>}
     </>
   );
 };
