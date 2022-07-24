@@ -19,14 +19,36 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
-import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { createLocationService } from "../../services/kiosk_location_service";
+import { Editor } from 'primereact/editor';
 
+export const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 4 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 18 },
+  },
+};
+export const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 10,
+    },
+  },
+};
 const ModalCreateLocation = ({
   modalToIndex,
   isCreateModalVisible,
@@ -36,7 +58,7 @@ const ModalCreateLocation = ({
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-
+  const [description, setDescription] = useState()
   useEffect(async () => {
     form.resetFields();
   }, []);
@@ -81,6 +103,7 @@ const ModalCreateLocation = ({
         visible={isCreateModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
+        width={1000}
       >
         <Form
           {...formItemLayout}
@@ -90,6 +113,7 @@ const ModalCreateLocation = ({
           scrollToFirstError
         >
           <Form.Item
+
             name="name"
             label={t("name")}
             rules={[
@@ -100,18 +124,6 @@ const ModalCreateLocation = ({
             ]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                message: "Please input your description!",
-              },
-            ]}
-          >
-            <TextArea rows={4} />
           </Form.Item>
           <Form.Item
             name="hotline"
@@ -131,11 +143,11 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="listImage"
-            label="List Image"
+            label="List Image Carousel"
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: "Please choose images to show on carousel!",
               },
             ]}
           >
@@ -149,6 +161,25 @@ const ModalCreateLocation = ({
               <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
             </Upload>
           </Form.Item>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              {
+
+                message: "Please input location description!",
+                validator: (_, value) => {
+                  if(!description){
+                    return Promise.reject('');
+                  }
+                  return Promise.resolve();
+                }
+              },
+            ]}
+            value={description}
+          >
+            <Editor style={{ height: '320px' }} onTextChange={(e) => { setDescription(e.htmlValue) }} />
+          </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             {isLoading ? (
               <Spin />
@@ -159,6 +190,7 @@ const ModalCreateLocation = ({
             )}
           </Form.Item>
         </Form>
+
       </Modal>
     </>
   );

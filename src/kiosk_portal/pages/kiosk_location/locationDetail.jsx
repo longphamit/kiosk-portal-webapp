@@ -8,6 +8,7 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
+import { Editor } from 'primereact/editor';
 import {
   KIOSK_LOCATION_DETAIL_HREF,
   KIOSK_LOCATION_DETAIL_LABEL,
@@ -31,7 +32,7 @@ const DetailLocationPage = () => {
   const [listRemoveImg, setListRemoveImg] = useState([]);
   const [isLoadingBasicInfor, setIsLoadingBasicInfor] = useState(false);
   const [isLoadingListImg, setIsLoadingListImg] = useState(false);
-
+  const [description, setDescription] = useState()
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
@@ -91,7 +92,7 @@ const DetailLocationPage = () => {
       const updateLocation = {
         id: currentItem.id,
         name: values.name,
-        description: values.description,
+        description: description,
         hotLine: values.hotline,
       };
       await updateLocationBasicService(updateLocation).then(() => {
@@ -178,18 +179,7 @@ const DetailLocationPage = () => {
                 >
                   <Input />
                 </Form.Item>
-                <Form.Item
-                  name="description"
-                  label="Description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input description!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={4} />
-                </Form.Item>
+                
                 <Form.Item
                   name="hotline"
                   label="HotLine"
@@ -205,6 +195,25 @@ const DetailLocationPage = () => {
                   ]}
                 >
                   <Input />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  label="Description"
+                  rules={[
+                    {
+
+                      message: "Please input location description!",
+                      validator: (_, value) => {
+                        if (!description) {
+                          return Promise.reject('');
+                        }
+                        return Promise.resolve();
+                      }
+                    },
+                  ]}
+                  value={description}
+                >
+                  <Editor style={{ height: '320px' }} onTextChange={(e) => { setDescription(e.htmlValue) }} />
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                   {isLoadingBasicInfor ? (
