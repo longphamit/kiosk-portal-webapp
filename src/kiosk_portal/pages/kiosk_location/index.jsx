@@ -45,23 +45,12 @@ const KioskLocationPage = () => {
       render: (text) => <p>{text}</p>,
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text, record, dataIndex) =>
-        record.status === "activate" ? (
-          <Tag color={"green"}>Activate</Tag>
-        ) : (
-          <Tag color={"red"}>Deactivate</Tag>
-        ),
-    },
-    {
       title: "Action",
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
-            className="warn-button"
+            className="infor-button"
             shape="default"
             onClick={() => {
               onNavigate({
@@ -71,16 +60,6 @@ const KioskLocationPage = () => {
             }}
           >
             <EyeFilled /> Details
-          </Button>
-          <Button
-            type="primary"
-            shape="default"
-            name={record}
-            onClick={() => {
-              toast.error("chưa có api");
-            }}
-          >
-            <PoweroffOutlined /> Change Status
           </Button>
         </Space>
       ),

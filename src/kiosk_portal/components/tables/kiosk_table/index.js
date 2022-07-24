@@ -136,12 +136,6 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="warn-button" shape="default" onClick={() => { }}>
-            {t("edit")}
-          </Button>
-          <Button className="infor-button" shape="default" onClick={() => {}}>
-            Detail
-          </Button>
           <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
             Scheduling
           </Button>

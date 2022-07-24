@@ -378,15 +378,7 @@ const ScheduleManagerPage = () => {
           >
             <EditFilled /> {t("edit")}
           </Button>
-          <Button
-            className="warn-button"
-            shape="default"
-            onClick={() => {
-              toast.error("Chưa làm");
-            }}
-          >
-            <PlusOutlined /> Template
-          </Button>
+
           {record.roleName === "Admin" ? (
             <Button
               shape="default"
@@ -433,7 +425,7 @@ const ScheduleManagerPage = () => {
   ]
   return (
     <>
-    <CustomBreadCumb props={breadCumbData} />
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
