@@ -23,3 +23,5 @@ export const HOME_PAGE_PATH = '/homepage'
 export const APPLICATION_MARKET_PATH = "/application-market"
 
 export const MY_APPLICATION_PATH ="/my-application"
+
+export const KIOSK_LOCATION_MANAGER_PATH = "/kiosk-location"
