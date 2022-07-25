@@ -63,5 +63,5 @@ export const TEMPLATE_EDITING_LABEL = 'Editing Template'
 export const KIOSK_LOCATION_MANAGER_HREF = KIOSK_LOCATION_MANAGER_PATH
 export const KIOSK_LOCATION_MANAGER_LABEL = 'Kiosk Location Manager'
 
-export const KIOSK_LOCATION_DETAIL_HREF = ''
+export const KIOSK_LOCATION_DETAIL_HREF = '/'
 export const KIOSK_LOCATION_DETAIL_LABEL = 'Kiosk Location Detail'

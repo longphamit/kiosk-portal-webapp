@@ -1,25 +1,15 @@
-import { Button, Col, Modal, Pagination, Row, Space, Table, Tag } from "antd";
-import {
-  EditFilled,
-  EyeFilled,
-  PlusOutlined,
-  PoweroffOutlined,
-} from "@ant-design/icons";
+import { Button, Col, Pagination, Row, Space, Table, Tag } from "antd";
+import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getListAppCategoryService } from "../../services/app_category_service";
-// import FormCreateCategory from "./formCreate";
-// import ModalUpdateAppCategory from "./modalUpdateAppCategory";
 import {
-  APP_CATEGORY_MANAGER_HREF,
-  APP_CATEGORY_MANAGER_LABEL,
   KIOSK_LOCATION_MANAGER_HREF,
   KIOSK_LOCATION_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { getListKioskLocationService } from "../../services/kiosk_location_service";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import ModalCreateLocation from "./modalCreateLocation";
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
 const KioskLocationPage = () => {
   const [kioskLocationList, setKioskLocationList] = useState([]);
@@ -78,6 +68,10 @@ const KioskLocationPage = () => {
   };
 
   useEffect(async () => {
+    localStorage.setItem(
+      PREVIOUS_PATH,
+      JSON.stringify({ data: breadCumbData })
+    );
     getKioskLocationList(kioskLocationPage, pageSize);
   }, []);
   const breadCumbData = [
