@@ -1,5 +1,15 @@
 import { toast } from "react-toastify";
-import { Button, Col, Form, Input, Row, Upload, Card, Spin, Skeleton } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  Upload,
+  Card,
+  Spin,
+  Skeleton,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
@@ -8,12 +18,10 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
-import { Editor } from 'primereact/editor';
+import { Editor } from "primereact/editor";
 import {
   KIOSK_LOCATION_DETAIL_HREF,
   KIOSK_LOCATION_DETAIL_LABEL,
-  KIOSK_LOCATION_MANAGER_HREF,
-  KIOSK_LOCATION_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import {
@@ -21,18 +29,18 @@ import {
   updateLocationBasicService,
   updateLocationListImgService,
 } from "../../services/kiosk_location_service";
+import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
 const DetailLocationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [formBasic] = Form.useForm();
   const [formListImg] = Form.useForm();
-  const { TextArea } = Input;
   const [currentItem, setCurrentItem] = useState();
   const [fileListImage, setFileListImage] = useState();
   const [listRemoveImg, setListRemoveImg] = useState([]);
   const [isLoadingBasicInfor, setIsLoadingBasicInfor] = useState(false);
   const [isLoadingListImg, setIsLoadingListImg] = useState(false);
-  const [description, setDescription] = useState()
+  const [description, setDescription] = useState();
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
@@ -69,18 +77,19 @@ const DetailLocationPage = () => {
     formBasic.resetFields();
     formListImg.resetFields();
   };
-  const breadCumbData = [
-    {
-      href: KIOSK_LOCATION_MANAGER_HREF,
-      label: KIOSK_LOCATION_MANAGER_LABEL,
-      icon: null,
-    },
-    {
-      href: KIOSK_LOCATION_DETAIL_HREF,
-      label: KIOSK_LOCATION_DETAIL_LABEL,
-      icon: null,
-    },
-  ];
+
+  const getApplicationPage = () => {
+    const previousBreadCumb = JSON.parse(
+      localStorage.getItem(PREVIOUS_PATH)
+    ).data;
+    previousBreadCumb.push(breadCumbData);
+    return previousBreadCumb;
+  };
+  const breadCumbData = {
+    href: KIOSK_LOCATION_DETAIL_HREF,
+    label: KIOSK_LOCATION_DETAIL_LABEL,
+    icon: null,
+  };
   useEffect(async () => {
     resetField();
     await getInitValue();
@@ -150,7 +159,7 @@ const DetailLocationPage = () => {
   };
   return (
     <>
-      <CustomBreadCumb props={breadCumbData} />
+      <CustomBreadCumb props={getApplicationPage()} />
       {currentItem ? (
         <Row style={{ padding: 10 }}>
           <Col span={14}>
@@ -179,7 +188,7 @@ const DetailLocationPage = () => {
                 >
                   <Input />
                 </Form.Item>
-                
+
                 <Form.Item
                   name="hotline"
                   label="HotLine"
@@ -202,19 +211,23 @@ const DetailLocationPage = () => {
                   required
                   rules={[
                     {
-
                       message: "Please input location description!",
                       validator: (_, value) => {
                         if (!description) {
-                          return Promise.reject('');
+                          return Promise.reject("");
                         }
                         return Promise.resolve();
-                      }
+                      },
                     },
                   ]}
                   value={description}
                 >
-                  <Editor style={{ height: '320px' }} onTextChange={(e) => { setDescription(e.htmlValue) }} />
+                  <Editor
+                    style={{ height: "320px" }}
+                    onTextChange={(e) => {
+                      setDescription(e.htmlValue);
+                    }}
+                  />
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
                   {isLoadingBasicInfor ? (
@@ -279,10 +292,12 @@ const DetailLocationPage = () => {
             </Card>
           </Col>
         </Row>
-      ) : <>
-      <Skeleton />
-      <Skeleton />
-      </>}
+      ) : (
+        <>
+          <Skeleton />
+          <Skeleton />
+        </>
+      )}
     </>
   );
 };

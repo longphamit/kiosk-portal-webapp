@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Button,
   Col,
   Descriptions,
@@ -7,18 +6,18 @@ import {
   Image,
   Modal,
   Popconfirm,
-  Rate,
   Row,
-  Spin,
   Tabs,
   Tag,
 } from "antd";
-import moment from 'moment';
 import { useEffect, useState } from "react";
 import Iframe from "react-iframe";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ROLE_ADMIN, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import {
+  ROLE_ADMIN,
+  ROLE_SERVICE_PROVIDER,
+} from "../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { getApplicationServiceById } from "../../services/application_service";
 import {
@@ -26,7 +25,10 @@ import {
   getInprogressAppPublishRequestByAppIdService,
 } from "../../services/app_publish_request_service";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-import { APP_DETAILS_HREF, APP_DETAILS_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  APP_DETAILS_HREF,
+  APP_DETAILS_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import FormDenyAppPublishRequest from "./formDenyPublishRequest";
 import "./styles.css";
 import { PREVIOUS_PATH } from "../../../@app/constants/key";
@@ -48,9 +50,9 @@ const ApplicationDetailPage = () => {
     useState(false);
   const role = localStorageGetReduxState().auth.role;
   const getAppById = async () => {
-    let tempId = '';
-    if (id.includes('installed')) {
-      tempId = id.replaceAll('&&installed', '')
+    let tempId = "";
+    if (id.includes("installed")) {
+      tempId = id.replaceAll("&&installed", "");
       setInstalled(true);
     } else {
       tempId = id;
@@ -58,7 +60,7 @@ const ApplicationDetailPage = () => {
     setAppId(tempId);
     const res = await getApplicationServiceById(tempId);
     setApp(res.data);
-    setMyFeedback(res.data.myFeedback)
+    setMyFeedback(res.data.myFeedback);
     setListFeedback(res.data.listFeedback);
   };
   const getInprogressAppPublishRequestByAppId = async () => {
@@ -68,7 +70,6 @@ const ApplicationDetailPage = () => {
         console.log(res.data);
         setInprogressPublish(res.data);
       }
-
     } catch (e) {
       setInprogressPublish(null);
       console.error(e);
@@ -95,16 +96,17 @@ const ApplicationDetailPage = () => {
     toast.success("Approve publish app success");
   };
   const getApplicationPage = () => {
-    const previousBreadCumb = JSON.parse(localStorage.getItem(PREVIOUS_PATH)).data;
-    previousBreadCumb.push(breadCumbData)
+    const previousBreadCumb = JSON.parse(
+      localStorage.getItem(PREVIOUS_PATH)
+    ).data;
+    previousBreadCumb.push(breadCumbData);
     return previousBreadCumb;
-  }
-  const breadCumbData =
-  {
+  };
+  const breadCumbData = {
     href: APP_DETAILS_HREF,
     label: APP_DETAILS_LABEL,
-    icon: null
-  }
+    icon: null,
+  };
 
   return (
     <>
@@ -113,7 +115,7 @@ const ApplicationDetailPage = () => {
         <>
           <div id="account-info-panel">
             <Col span={24}>
-              <Descriptions title="App Info" size='middle'>
+              <Descriptions title="App Info" size="middle">
                 <Descriptions.Item
                   label="Name"
                   labelStyle={{ fontWeight: "bold" }}
@@ -158,7 +160,7 @@ const ApplicationDetailPage = () => {
                   <Image
                     size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
                     src={app.logo}
-                    sizes='small'
+                    sizes="small"
                     width={40}
                     height={40}
                   />
@@ -176,7 +178,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             approveAppPublishRequest();
                           }}
-                          onCancel={() => { }}
+                          onCancel={() => {}}
                           okText="Yes"
                           cancelText="No"
                         >
@@ -192,7 +194,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             setDenyAppPublishModalVisible(true);
                           }}
-                          onCancel={() => { }}
+                          onCancel={() => {}}
                           okText="Yes"
                           cancelText="No"
                         >
@@ -210,7 +212,7 @@ const ApplicationDetailPage = () => {
               ) : null}
             </Col>
           </div>
-          <Tabs defaultActiveKey="1" >
+          <Tabs defaultActiveKey="1">
             <TabPane tab="App Preview" key="1">
               <Row>
                 <Col span={24}>
@@ -228,22 +230,19 @@ const ApplicationDetailPage = () => {
             </TabPane>
             <TabPane tab="Feedbacks" key="2">
               <div id="feedback">
-                {listFeedback.length != 0 ?
+                {listFeedback.length != 0 ? (
                   <>
                     <Row span={24}>
                       <Col span={12}>
                         <h2>All Feedbacks</h2>
                         {listFeedback.map((e) => {
-                          return (
-                            <CustomRatingAndFeedback feedback={e} />
-
-                          )
+                          return <CustomRatingAndFeedback feedback={e} />;
                         })}
                       </Col>
-                      {isInstalled === true ?
+                      {isInstalled === true ? (
                         <Col span={12}>
                           <h2>My Feedback</h2>
-                          {myFeedback ?
+                          {myFeedback ? (
                             <>
                               <CustomRatingAndFeedback feedback={myFeedback} />
                               <Button
@@ -252,45 +251,70 @@ const ApplicationDetailPage = () => {
                               >
                                 Update Feedback
                               </Button>
-                            </> : <>
+                            </>
+                          ) : (
+                            <>
                               <Empty
                                 image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                 imageStyle={{
                                   height: 60,
                                 }}
                                 style={{ float: "left" }}
-                                description={
-                                  <span>
-                                    You are not feedback
-                                  </span>
-                                }
+                                description={<span>You are not feedback</span>}
                               >
-                                <Button type="primary" onClick={() => setCreateModalVisible(true)}>Feedback Now</Button>
+                                <Button
+                                  type="primary"
+                                  onClick={() => setCreateModalVisible(true)}
+                                >
+                                  Feedback Now
+                                </Button>
                               </Empty>
                             </>
-                          }
-                        </Col> : null}
+                          )}
+                        </Col>
+                      ) : null}
                     </Row>
-
                   </>
-                  :
+                ) : (
                   <Empty>
-                    <Button type="primary" onClick={() => setCreateModalVisible(true)}>Feedback Now</Button>
+                    <Button
+                      type="primary"
+                      onClick={() => setCreateModalVisible(true)}
+                    >
+                      Feedback Now
+                    </Button>
                   </Empty>
-                }
+                )}
               </div>
             </TabPane>
           </Tabs>
         </>
       ) : null}
-      {appId ?
+      {appId ? (
         <>
-          <CreateFeedbackModal setMyFeedback={setMyFeedback} setListFeedback={setListFeedback} appId={appId} handleCancelModal={() => { setCreateModalVisible(false) }} isModalVisible={createModalVisible} />
-        </> : null}
-      {myFeedback ?
+          <CreateFeedbackModal
+            setMyFeedback={setMyFeedback}
+            setListFeedback={setListFeedback}
+            appId={appId}
+            handleCancelModal={() => {
+              setCreateModalVisible(false);
+            }}
+            isModalVisible={createModalVisible}
+          />
+        </>
+      ) : null}
+      {myFeedback ? (
         <>
-          <UpdateFeedbackModal setMyFeedback={setMyFeedback} setListFeedback={setListFeedback} appId={appId} feedbackModel={myFeedback} handleCancelModal={() => setUpdateModalVisible(false)} isModalVisible={updateModalVisible} />
-        </> : null}
+          <UpdateFeedbackModal
+            setMyFeedback={setMyFeedback}
+            setListFeedback={setListFeedback}
+            appId={appId}
+            feedbackModel={myFeedback}
+            handleCancelModal={() => setUpdateModalVisible(false)}
+            isModalVisible={updateModalVisible}
+          />
+        </>
+      ) : null}
 
       {inprogressPublish ? (
         <Modal
