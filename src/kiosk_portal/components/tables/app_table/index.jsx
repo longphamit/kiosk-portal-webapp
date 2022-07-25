@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
   Upload,
@@ -55,6 +56,7 @@ import {
   ROLE_LOCATION_OWNER,
   ROLE_SERVICE_PROVIDER,
 } from "../../../../@app/constants/role";
+import { Editor } from "primereact/editor";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -70,6 +72,7 @@ const ApplicationTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
   const [listCategories, setListCategories] = useState([]);
+  const [description, setDescription] = useState();
   const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
     useState(false);
   const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
@@ -78,6 +81,7 @@ const ApplicationTable = () => {
     useState(false);
   const [applicationSearchType, setApplicationSearchType] =
     useState("FirstName");
+  const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
   const getListApplicationFunction = async (
     currentPageToGetList,
@@ -115,32 +119,31 @@ const ApplicationTable = () => {
   }, []);
 
   const onFinishUpdateApplication = async (values) => {
-    let updateApplication = [];
-    if (typeof values.logo === "object") {
-      let formatResult = [];
-      const result = await getBase64(values.logo.file.originFileObj);
-      formatResult = result.split(",");
-      updateApplication = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: formatResult[1],
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    } else {
-      updateApplication = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: values.logo,
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    }
+    setIsLoading(true);
     try {
+      let updateApplication = [];
+      if (typeof values.logo === "object") {
+        let formatResult = [];
+        const result = await getBase64(values.logo.file.originFileObj);
+        formatResult = result.split(",");
+        updateApplication = {
+          id: values.id,
+          name: values.name,
+          description: description,
+          logo: formatResult[1],
+          link: values.link,
+          appCategoryId: values.appCategoryId,
+        };
+      } else {
+        updateApplication = {
+          id: values.id,
+          name: values.name,
+          description: description,
+          logo: null,
+          link: values.link,
+          appCategoryId: values.appCategoryId,
+        };
+      }
       await updateApplicationService(updateApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
       setIsCreateApplicationModalVisible(false);
@@ -148,6 +151,8 @@ const ApplicationTable = () => {
       handleCancelEditApplication();
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -184,17 +189,18 @@ const ApplicationTable = () => {
   };
 
   const onFinishCreateApplication = async (values) => {
-    let formatResult = [];
-    const result = await getBase64(values.logo.file.originFileObj);
-    formatResult = result.split(",");
-    const newApplication = {
-      name: values.name,
-      description: values.description,
-      link: values.link,
-      logo: formatResult[1],
-      appCategoryId: values.appCategoryId,
-    };
+    setIsLoading(true);
     try {
+      let formatResult = [];
+      const result = await getBase64(values.logo.file.originFileObj);
+      formatResult = result.split(",");
+      const newApplication = {
+        name: values.name,
+        description: description,
+        link: values.link,
+        logo: formatResult[1],
+        appCategoryId: values.appCategoryId,
+      };
       await createApplicationService(newApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
       setIsCreateApplicationModalVisible(false);
@@ -202,6 +208,8 @@ const ApplicationTable = () => {
       form.resetFields();
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -360,6 +368,7 @@ const ApplicationTable = () => {
                   shape="default"
                   onClick={() => {
                     setCurrentItem(record);
+                    setDescription(record.description);
                     showModalEditApplication();
                   }}
                 >
@@ -502,9 +511,13 @@ const ApplicationTable = () => {
         visible={isCreateApplicationModalVisible}
         onCancel={handleCancelCreateApplication}
         footer={null}
+        width={1000}
       >
         <Form
           {...formItemLayout}
+          style={{
+            marginRight: 80,
+          }}
           form={form}
           name="register"
           onFinish={onFinishCreateApplication}
@@ -525,14 +538,26 @@ const ApplicationTable = () => {
           <Form.Item
             name="description"
             label="Description"
+            required
             rules={[
               {
-                required: true,
                 message: "Please input application description!",
+                validator: (_, value) => {
+                  if (!description) {
+                    return Promise.reject("");
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
+            value={description}
           >
-            <TextArea />
+            <Editor
+              style={{ height: "320px" }}
+              onTextChange={(e) => {
+                setDescription(e.htmlValue);
+              }}
+            />
           </Form.Item>
           <Form.Item
             name="link"
@@ -584,13 +609,16 @@ const ApplicationTable = () => {
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Create Application
-            </Button>
+            {isLoading ? (
+              <Spin />
+            ) : (
+              <Button type="primary" htmlType="submit">
+                Create Application
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Modal>
-
       <Modal
         title="Advanced Search"
         visible={isAdvancedSearchModalVisible}
@@ -652,8 +680,12 @@ const ApplicationTable = () => {
           visible={isEditApplicationModalVisible}
           onCancel={handleCancelEditApplication}
           footer={null}
+          width={1000}
         >
           <Form
+            style={{
+              marginRight: 80,
+            }}
             key={currentItem.id}
             {...formItemLayout}
             form={form}
@@ -691,14 +723,26 @@ const ApplicationTable = () => {
             <Form.Item
               name="description"
               label="Description"
+              required
               rules={[
                 {
-                  required: true,
                   message: "Please input application description!",
+                  validator: (_, value) => {
+                    if (!description) {
+                      return Promise.reject("");
+                    }
+                    return Promise.resolve();
+                  },
                 },
               ]}
+              value={description}
             >
-              <Input />
+              <Editor
+                style={{ height: "320px" }}
+                onTextChange={(e) => {
+                  setDescription(e.htmlValue);
+                }}
+              />
             </Form.Item>
             <Form.Item
               name="link"
@@ -760,9 +804,13 @@ const ApplicationTable = () => {
             </Form.Item>
 
             <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Update Application
-              </Button>
+              {isLoading ? (
+                <Spin />
+              ) : (
+                <Button type="primary" htmlType="submit">
+                  Update Application
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </Modal>

@@ -25,7 +25,7 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { createLocationService } from "../../services/kiosk_location_service";
-import { Editor } from 'primereact/editor';
+import { Editor } from "primereact/editor";
 
 export const formItemLayout = {
   labelCol: {
@@ -58,7 +58,7 @@ const ModalCreateLocation = ({
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const [description, setDescription] = useState()
+  const [description, setDescription] = useState();
   useEffect(async () => {
     form.resetFields();
   }, []);
@@ -113,7 +113,6 @@ const ModalCreateLocation = ({
           scrollToFirstError
         >
           <Form.Item
-
             name="name"
             label={t("name")}
             rules={[
@@ -167,19 +166,23 @@ const ModalCreateLocation = ({
             required
             rules={[
               {
-
                 message: "Please input location description!",
                 validator: (_, value) => {
-                  if(!description){
-                    return Promise.reject('');
+                  if (!description) {
+                    return Promise.reject("");
                   }
                   return Promise.resolve();
-                }
+                },
               },
             ]}
             value={description}
           >
-            <Editor style={{ height: '320px' }} onTextChange={(e) => { setDescription(e.htmlValue) }} />
+            <Editor
+              style={{ height: "320px" }}
+              onTextChange={(e) => {
+                setDescription(e.htmlValue);
+              }}
+            />
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             {isLoading ? (
@@ -191,7 +194,6 @@ const ModalCreateLocation = ({
             )}
           </Form.Item>
         </Form>
-
       </Modal>
     </>
   );
