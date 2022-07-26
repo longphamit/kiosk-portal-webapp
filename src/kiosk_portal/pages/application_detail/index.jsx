@@ -49,6 +49,7 @@ const ApplicationDetailPage = () => {
   const [isDenyAppPublishModalVisible, setDenyAppPublishModalVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
+  console.log(role)
   const getAppById = async () => {
     let tempId = "";
     if (id.includes("installed")) {
@@ -66,7 +67,7 @@ const ApplicationDetailPage = () => {
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
       if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
-        const res = await getInprogressAppPublishRequestByAppIdService(appId);
+        const res = await getInprogressAppPublishRequestByAppIdService(id);
         console.log(res.data);
         setInprogressPublish(res.data);
       }
@@ -76,8 +77,9 @@ const ApplicationDetailPage = () => {
     }
   };
   useEffect(() => {
-    getAppById();
     getInprogressAppPublishRequestByAppId();
+    getAppById();
+    
   }, []);
   const approveAppPublishRequest = async () => {
     try {
@@ -150,17 +152,12 @@ const ApplicationDetailPage = () => {
                     <Tag color="red">{app.status}</Tag>
                   )}
                 </Descriptions.Item>
-                <Descriptions.Item
-                  label="Description"
-                  labelStyle={{ fontWeight: "bold" }}
-                >
-                  {app.description}
-                </Descriptions.Item>
+
                 <Descriptions.Item>
                   <Image
                     size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
                     src={app.logo}
-                    sizes="small"
+                    sizes="large"
                     width={40}
                     height={40}
                   />
@@ -168,7 +165,7 @@ const ApplicationDetailPage = () => {
               </Descriptions>
             </Col>
             <Col>
-              {role === ROLE_ADMIN ? (
+              {role ? role === ROLE_ADMIN ? (
                 <>
                   <Row>
                     {inprogressPublish ? (
@@ -178,7 +175,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             approveAppPublishRequest();
                           }}
-                          onCancel={() => {}}
+                          onCancel={() => { }}
                           okText="Yes"
                           cancelText="No"
                         >
@@ -194,7 +191,7 @@ const ApplicationDetailPage = () => {
                           onConfirm={() => {
                             setDenyAppPublishModalVisible(true);
                           }}
-                          onCancel={() => {}}
+                          onCancel={() => { }}
                           okText="Yes"
                           cancelText="No"
                         >
@@ -209,9 +206,10 @@ const ApplicationDetailPage = () => {
                     ) : null}
                   </Row>
                 </>
-              ) : null}
+              ) : null : null}
             </Col>
           </div>
+          <div dangerouslySetInnerHTML={{ __html: app.description }} />
           <Tabs defaultActiveKey="1">
             <TabPane tab="App Preview" key="1">
               <Row>
