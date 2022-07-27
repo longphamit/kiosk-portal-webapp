@@ -15,6 +15,7 @@ import ApplicationMarketPage from "../../kiosk_portal/pages/application_market";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import EventManagerPage from "../../kiosk_portal/pages/event";
+import { EventCreatingPage } from "../../kiosk_portal/pages/event/event_create";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
@@ -281,13 +282,13 @@ const routes: Route[] = [
     roles: [ROLE_LOCATION_OWNER]
   },
   {
-    component: KioskLocationPage,
-    path: "/kiosk-location",
+    component: EventCreatingPage,
+    path: '/create-event',
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER]
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
   },
   {
     component: DetailLocationPage,
