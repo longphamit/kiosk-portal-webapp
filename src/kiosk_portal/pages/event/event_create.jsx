@@ -6,132 +6,62 @@ import {
     DatePicker,
     TimePicker,
     Upload,
-    Row,
-    Col,
-    Modal,
-    Card,
     Spin
 } from 'antd';
 
-import moment from 'moment';
 import { Option } from "antd/lib/mentions";
 import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { createEventService, getEventByIdService, updateEventService, updateListImage, updateListImageService } from '../../services/event_service';
+import { useNavigate } from "react-router-dom";
+import { createEventService } from '../../services/event_service';
 import { beforeUpload } from "../../../@app/utils/image_util";
-import { getListDistrictService, getListWardService } from "../../services/location_services";
-import { getListProvinceService } from '../../services/map_service';
 import { toast } from 'react-toastify';
 import { getBase64 } from '../../../@app/utils/file_util';
 
-
 import "./styles.css"
-import { TYPE_LOCAL, TYPE_SERVER } from '../../../@app/constants/key';
-import { localStorageGetReduxState } from '../../../@app/services/localstorage_service';
-import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from '../../../@app/constants/role';
 import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
-import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
+import { EVENT_CREATING_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
 import CustomBreadCumb from '../../components/breadcumb/breadcumb';
 import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
 import { checkDateTime, toStringDateTimePicker } from './checkdatetime';
+import { Editor } from 'primereact/editor';
+import { EVENT_CREATING_PATH, EVENT_MANAGER_PATH } from '../../constants/path_constants';
+import { getCities, getDistricts, getWards } from './location_utils';
 const { TextArea } = Input;
-const CITY_TYPE = "CITY";
-const WARD_TYPE = "WARD";
-const DISTRICT_TYPE = "DISTRICT";
+
 export const EventCreatingPage = () => {
-    const [isDisbale, setDisable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [currentEvent, setCurrentEvent] = useState();
     const [districtOptions, setDistrictOptions] = useState([]);
     const [wardOptions, setWardOptions] = useState([]);
     const [proviceOptions, setProviceOptions] = useState([]);
     const [form] = Form.useForm();
-    const [formUploadImages] = Form.useForm();
-    const [fileListImage, setFileListImage] = useState();
+    const [description, setDescription] = useState('');
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
-        getDistricts(selectedOptions);
+        setDistrictOptions(await getDistricts(selectedOptions));
+        console.log(districtOptions)
     };
-    const getDistricts = async (selectedCity) => {
-        try {
-            let res = await getListDistrictService(selectedCity);
-            setDistrictOptions(res.data);
-            return;
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    const getWards = async (selectedDistrict) => {
-        try {
-            let res = await getListWardService(selectedDistrict);
-            setWardOptions(res.data);
-        } catch (err) {
-            console.error(err);
-        }
-    }
     const onDistrictChange = async (value) => {
         form.setFieldsValue({ ward: undefined });
-        getWards(value);
+        setWardOptions(await getWards(value));
     };
-    const onNavigate = (url) => {
-        navigate(url);
-    };
+
     const getInitValue = async () => {
-        let id = searchParams.get("id");
-        if (id == null) {
-            onNavigate("/././unauth");
-            return;
-        }
         try {
-            let res = await getEventByIdService(id);
-
-            ((res.data.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER) ||
-                (res.data.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN)) ?
-                setDisable(false) : setDisable(true)
-
-            console.log(isDisbale)
-            setCurrentEvent(res.data);
-            const resProvinces = await getListProvinceService();
-            setProviceOptions(resProvinces.data);
-            //set up init list district
-            let codeProvince = resProvinces.data.find(
-                (element) => element.name === res.data.city
-            ).code;
-            const resDistrict = await getListDistrictService(codeProvince);
-            setDistrictOptions(resDistrict.data);
-            //set up init list ward
-            let codeDistrict = resDistrict.data.find(
-                (element) => element.name === res.data.district
-            ).code;
-            const resWard = await getListWardService(codeDistrict);
-            setWardOptions(resWard.data);
-
-            let list = [];
-            await Promise.all(res.data.listImage.map((img, index) => {
-                list.push({
-                    uid: img.id,
-                    name: "image" + (parseInt(index) + 1),
-                    status: "done",
-                    url: img.link,
-                });
-            }));
-            setFileListImage(list);
-
+            const cities = await getCities();
+            setProviceOptions(cities);
         } catch (error) {
             console.error(error)
-            setCurrentEvent({});
+            setProviceOptions([]);
         }
-
     };
     const onFinishCreateEvent = async (values) => {
         try {
             setIsLoading(true);
             //Check date time of event
             let msg = checkDateTime(values.dateStart, values.timeStart, values.timeEnd, values.dateEnd);
-            if (!msg || msg.length !== 0) {
+            if (msg.length !== 0) {
                 toast.error(msg);
                 setIsLoading(false);
                 return;
@@ -146,7 +76,7 @@ export const EventCreatingPage = () => {
                 }));
             let data = {
                 "name": values.name,
-                "description": values.description,
+                "description": description ?? '',
                 "thumbnail": thumbnail,
                 "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
                 "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
@@ -157,7 +87,8 @@ export const EventCreatingPage = () => {
                 "listImage": listImage
             };
             let res = await createEventService(data);
-            toast.success('Create successful');
+            toast.success(res.message);
+            navigate(EVENT_MANAGER_PATH)
         } catch (error) {
             toast.error('Create failed!')
             console.error(error);
@@ -165,36 +96,17 @@ export const EventCreatingPage = () => {
             setIsLoading(false)
         }
     };
-    let navigate = useNavigate();
-    useEffect(async () => {
-        //getInitValue();
-    }, []);
-    const getDefaultName = (type) => {
-        switch (type) {
-            case CITY_TYPE:
-                return currentEvent.city;
-            case DISTRICT_TYPE:
-                return currentEvent.district;
-            case WARD_TYPE:
-                return currentEvent.ward;
-        }
-    }
-    const getName = (list, code, type) => {
-        // initial ward and district
-        if (list.length === 0) {
-            return getDefaultName(type);
-        }
-        // initial city value is a name, not a code
-        if (isNaN(parseInt(code))) {
-            return getDefaultName(type);
-        }
+    const getName = (list, code) => {
         for (let obj of list) {
-            if (obj.code === code) {
+            if (obj.code == code) {
                 return obj.name
             }
         }
-
     }
+    let navigate = useNavigate();
+    useEffect(async () => {
+        getInitValue();
+    }, []);
 
     const breadCumbData = [
         {
@@ -203,8 +115,8 @@ export const EventCreatingPage = () => {
             icon: null
         },
         {
-            href: EVENT_DETAILS_HREF,
-            label: EVENT_DETAILS_LABEL,
+            href: EVENT_CREATING_PATH,
+            label: EVENT_CREATING_LABEL,
             icon: null
         }
     ]
@@ -358,12 +270,7 @@ export const EventCreatingPage = () => {
             >
                 <TextArea />
             </Form.Item>
-            <Form.Item
-                name="description"
-                label='Description'
-            >
-                <TextArea />
-            </Form.Item>
+
             <Form.Item
                 name="thumbnail"
                 label="thumbnail"
@@ -398,11 +305,21 @@ export const EventCreatingPage = () => {
                     action={FILE_UPLOAD_URL}
                     listType="picture"
                     maxCount={5}
+                    multiple
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                 >
                     <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
                 </Upload>
+            </Form.Item>
+            <Form.Item
+                name="description"
+                label='Description'
+            >
+                <Editor
+                    onTextChange={(e) => setDescription(e.htmlValue)}
+                    style={{ height: "300px" }}
+                />
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
                 {isLoading === false ?

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import {
   ACCOUNT_MANAGER_PATH, APPLICATION_MARKET_PATH, APP_CATEGORY_MANAGER_PATH,
-  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
+  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
   KIOSK_MANAGER_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH
 } from "../../kiosk_portal/constants/path_constants";
@@ -282,13 +282,13 @@ const routes: Route[] = [
     roles: [ROLE_LOCATION_OWNER]
   },
   {
-    component: EventCreatingPage,
-    path: '/event/create',
+    component: KioskLocationPage,
+    path: "/kiosk-location",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   },
   {
     component: DetailLocationPage,
@@ -297,8 +297,17 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   },
+  {
+    component: EventCreatingPage,
+    path: EVENT_CREATING_PATH,
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  }
 ];
 
 export default routes;

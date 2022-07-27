@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Col,
-    DatePicker,
     Form,
     Input,
     Modal,
@@ -10,32 +9,23 @@ import {
     Row,
     Select,
     Space,
-    Spin,
     Table,
     Tag,
-    TimePicker,
-    Upload
 } from "antd";
-import { DeleteFilled, EyeFilled, PlusOutlined, SearchOutlined, UploadOutlined } from "@ant-design/icons";
+import { DeleteFilled, EyeFilled, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
-import { createEventService, deleteEventService, getListEventService, searchEventService } from "../../services/event_service";
-import TextArea from "antd/lib/input/TextArea";
-import { getListDistrictService, getListProviceService, getListWardService } from "../../services/location_services";
-import { getBase64 } from "../../../@app/utils/file_util";
-import { beforeUpload } from "../../../@app/utils/image_util";
+import { deleteEventService, getListEventService, searchEventService } from "../../services/event_service";
 import { useNavigate } from "react-router-dom";
 import "./styles.css"
 import { TYPE_SERVER } from "../../../@app/constants/key";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
-import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
-import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { STATUS_COMING_SOON, STATUS_END, STATUS_ON_GOING } from "../../constants/event_constants";
 import { EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-import { checkDateTime, toStringDateTimePicker } from "./checkdatetime";
+import { EVENT_CREATING_PATH } from "../../constants/path_constants";
 const EventManagerPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);
@@ -46,7 +36,7 @@ const EventManagerPage = () => {
     const [numEventInPage, setNumEventInPage] = useState(10);
     const [listEvent, setListEvent] = useState([]);
     useState(false);
-    const [form, searchForm] = Form.useForm();
+    const [searchForm] = Form.useForm();
     let navigate = useNavigate();
 
     const onNavigate = (url) => {
@@ -421,7 +411,7 @@ const EventManagerPage = () => {
                     <Button
                         className="success-button"
                         size={"large"}
-                        onClick={() => { navigate('/event/create') }}
+                        onClick={() => { navigate(EVENT_CREATING_PATH) }}
                     >
                         <PlusOutlined /> Event
                     </Button>
