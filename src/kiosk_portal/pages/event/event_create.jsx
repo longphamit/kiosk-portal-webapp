@@ -167,7 +167,7 @@ export const EventCreatingPage = () => {
     };
     let navigate = useNavigate();
     useEffect(async () => {
-        getInitValue();
+        //getInitValue();
     }, []);
     const getDefaultName = (type) => {
         switch (type) {
@@ -219,7 +219,11 @@ export const EventCreatingPage = () => {
             initialValues={{
                 hiddenField: 'hiddenImg'
             }}
+            labelCol={{ span: 2 }}
+            wrapperCol={{ span: 20 }}
+
         >
+
             <Form.Item
                 name="name"
                 label='Name'
@@ -232,64 +236,70 @@ export const EventCreatingPage = () => {
             >
                 <Input />
             </Form.Item>
-
-            <Form.Item name="dateStart" label='Date start'
-                rules={[
-                    {
-                        required: true,
-                        message: 'Please input the start date'
-                    },
-                ]}>
-
-
-                <DatePicker
-                    placeholder="Select date"
-                    format="DD/MM/YYYY"
-                    allowClear={false}
-                    style={{
-                        height: "auto"
-                    }}
-                />
+            <Form.Item label="Time start" rules={[{ required: true, message: '' }]} style={{ marginBottom: 0 }}>
+                <Form.Item name="dateStart"
+                    style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the start date'
+                        },
+                    ]}>
+                    <DatePicker
+                        placeholder="Select date"
+                        format="DD/MM/YYYY"
+                        allowClear={false}
+                        style={{
+                            height: "auto",
+                            width: '100%'
+                        }}
+                    />
+                </Form.Item>
+                <Form.Item name="timeStart"
+                    style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the event start time'
+                        },
+                    ]}>
+                    <TimePicker allowClear={false} format='HH:mm' style={{ width: '100%' }} />
+                </Form.Item>
+            </Form.Item>
+            <Form.Item label="Time end" rules={[{ required: true, message: '' }]} style={{ marginBottom: 0 }}>
+                <Form.Item name="dateEnd"
+                    style={{ display: 'inline-block', width: 'calc(50% - 8px)' }}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the end date'
+                        },
+                    ]}>
+                    <DatePicker
+                        placeholder="Select date"
+                        format="DD/MM/YYYY"
+                        allowClear={false}
+                        style={{
+                            height: "auto",
+                            width: '100%',
+                        }}
+                    />
+                </Form.Item>
+                <Form.Item name="timeEnd"
+                    style={{ display: 'inline-block', width: 'calc(50% - 8px)', margin: '0px 0px 5px 15px' }}
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input the event end time'
+                        },
+                    ]}>
+                    <TimePicker allowClear={false} format='HH:mm' style={{ width: '100%' }} />
+                </Form.Item>
             </Form.Item>
 
-            <Form.Item name="timeStart" label='Time start'
-                rules={[
-                    {
-                        required: true,
-                        message: 'Please input the event start time'
-                    },
-                ]}>
-                <TimePicker allowClear={false} format='HH:mm' />
-            </Form.Item>
 
 
 
-            <Form.Item name="dateEnd" label='Date end'
-                rules={[
-                    {
-                        required: true,
-                        message: 'Please input the end date'
-                    },
-                ]}>
-                <DatePicker
-                    placeholder="Select date"
-                    format="DD/MM/YYYY"
-                    allowClear={false}
-                    style={{
-                        height: "auto",
-                        width: "auto",
-                    }}
-                />
-            </Form.Item>
-            <Form.Item name="timeEnd" label='Time end'
-                rules={[
-                    {
-                        required: true,
-                        message: 'Please input the event end time'
-                    },
-                ]}>
-                <TimePicker allowClear={false} format='HH:mm' />
-            </Form.Item>
             <Form.Item
                 name="provice"
                 label='Provice'

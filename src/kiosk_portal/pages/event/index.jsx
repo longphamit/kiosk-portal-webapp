@@ -421,7 +421,7 @@ const EventManagerPage = () => {
                     <Button
                         className="success-button"
                         size={"large"}
-                        onClick={() => { navigate('/create-event') }}
+                        onClick={() => { navigate('/event/create') }}
                     >
                         <PlusOutlined /> Event
                     </Button>

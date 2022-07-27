@@ -283,7 +283,7 @@ const routes: Route[] = [
   },
   {
     component: EventCreatingPage,
-    path: '/create-event',
+    path: '/event/create',
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
