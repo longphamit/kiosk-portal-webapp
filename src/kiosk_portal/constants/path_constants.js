@@ -8,6 +8,8 @@ export const APP_MANAGER_PATH = '/application-page'
 
 export const EVENT_MANAGER_PATH = '/event-manager'
 
+export const EVENT_CREATING_PATH = '/event/create'
+
 export const KIOSK_MANAGER_PATH = '/kiosk'
 
 export const POI_MANAGER_PATH = '/poi-page'

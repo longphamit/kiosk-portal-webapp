@@ -8,7 +8,6 @@ import {
     Upload,
     Row,
     Col,
-    Modal,
     Card,
     Spin
 } from 'antd';
@@ -18,10 +17,9 @@ import { Option } from "antd/lib/mentions";
 import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getEventByIdService, updateEventService, updateListImage, updateListImageService } from '../../services/event_service';
+import { getEventByIdService, updateEventService, updateListImageService } from '../../services/event_service';
 import { beforeUpload } from "../../../@app/utils/image_util";
 import { getListDistrictService, getListWardService } from "../../services/location_services";
-import { getListProvinceService } from '../../services/map_service';
 import { toast } from 'react-toastify';
 import { getBase64 } from '../../../@app/utils/file_util';
 
@@ -34,13 +32,17 @@ import { FILE_UPLOAD_URL } from '../../../@app/utils/api_links';
 import { ACCEPT_IMAGE } from '../../constants/accept_file';
 import { EVENT_DETAILS_HREF, EVENT_DETAILS_LABEL, EVENT_MANAGER_HREF, EVENT_MANAGER_LABEL } from '../../components/breadcumb/breadcumb_constant';
 import CustomBreadCumb from '../../components/breadcumb/breadcumb';
-import { formItemLayout, tailFormItemLayout } from '../../layouts/form_layout';
+import { formItemLayout } from '../../layouts/form_layout';
 import { checkDateTime, toStringDateTimePicker } from './checkdatetime';
+import { getDistricts, getWards } from './location_utils';
+import { getListProvinceService } from '../../services/map_service';
+import { Editor } from 'primereact/editor';
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
 const DISTRICT_TYPE = "DISTRICT";
 export const EventDetailsPage = () => {
+    const [description, setDescription] = useState('');
     const [isDisbale, setDisable] = useState(false);
     const [isLoadingListImage, setIsLoadingListImage] = useState(false);
     const [isLoadingBasicInfo, setIsLoadingBasicInfo] = useState(false);
@@ -55,28 +57,11 @@ export const EventDetailsPage = () => {
     const [fileListImage, setFileListImage] = useState();
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
-        getDistricts(selectedOptions);
+        setDistrictOptions(await getDistricts(selectedOptions));
     };
-    const getDistricts = async (selectedCity) => {
-        try {
-            let res = await getListDistrictService(selectedCity);
-            setDistrictOptions(res.data);
-            return;
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    const getWards = async (selectedDistrict) => {
-        try {
-            let res = await getListWardService(selectedDistrict);
-            setWardOptions(res.data);
-        } catch (err) {
-            console.error(err);
-        }
-    }
     const onDistrictChange = async (value) => {
         form.setFieldsValue({ ward: undefined });
-        getWards(value);
+        setWardOptions(await getWards(value));
     };
     const onNavigate = (url) => {
         navigate(url);
@@ -94,8 +79,8 @@ export const EventDetailsPage = () => {
                 (res.data.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN)) ?
                 setDisable(false) : setDisable(true)
 
-            console.log(isDisbale)
             setCurrentEvent(res.data);
+            setDescription(res.data.description)
             const resProvinces = await getListProvinceService();
             setProviceOptions(resProvinces.data);
             //set up init list district
@@ -190,7 +175,7 @@ export const EventDetailsPage = () => {
         let data = {
             "id": currentEvent.id,
             "name": values.name,
-            "description": values.description,
+            "description": description,
             "timeStart": toStringDateTimePicker(values.dateStart, values.timeStart),
             "timeEnd": toStringDateTimePicker(values.dateEnd, values.timeEnd),
             "ward": getName(wardOptions, values.ward, WARD_TYPE),
@@ -498,7 +483,11 @@ export const EventDetailsPage = () => {
                         name="description"
                         label='Description'
                     >
-                        <TextArea />
+                        <Editor
+                            value={currentEvent.description}
+                            onTextChange={(e) => setDescription(e.htmlValue)}
+                            style={{ height: "250px" }}
+                        />
                     </Form.Item>
 
                     <Form.Item
