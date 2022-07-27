@@ -255,7 +255,7 @@ const TemplateManagerPage = () => {
           </Button>
           {isDeleteLoading == false ?
             <Button
-              type="primary"
+              className="danger-button"
               shape="default"
               name={record}
               onClick={() => {

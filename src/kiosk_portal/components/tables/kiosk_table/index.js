@@ -10,6 +10,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
 } from "antd";
@@ -22,6 +23,7 @@ import {
   createKioskService,
   getListKioskService,
   changeStatusKioskService,
+  updateKioskService,
 } from "../../../services/kiosk_service";
 import {
   formItemLayout,
@@ -33,6 +35,11 @@ import {
 } from "../../../../@app/services/localstorage_service";
 import { ROLE_ADMIN } from "../../../../@app/constants/role";
 import { useNavigate } from "react-router-dom";
+import ModalAddLocation from "../../../pages/kiosk/modalAddLocation";
+import { getListKioskLocationService } from "../../../services/kiosk_location_service";
+import { async } from "@firebase/util";
+import { PREVIOUS_PATH } from "../../../../@app/constants/key";
+import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../../breadcumb/breadcumb_constant";
 
 const searchTypeKiosk = [
   {
@@ -53,16 +60,18 @@ const KioskTable = ({ partyId }) => {
     useState(false);
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
+  const [isModalAddLocationVisible,setIsModalAddLocationVisible]=useState(false);
   const role = localStorageGetReduxState().auth.role;
-  const onConfirmChangeStatus = async (kioskId) => {
-    try {
-      await changeStatusKioskService(kioskId);
-      await getListKiosk(partyId, kioskPage, kioskPageSize);
-      toast.success("Change status kiosk success");
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const [isLoading,setIsLoading]=useState(false)
+
+  const [listLocation,setListLocation]=useState([]);
+  const breadCumbData = [
+    {
+        href: KIOSK_MANAGER_HREF,
+        label: KIOSK_MANAGER_LABEL,
+        icon: null
+    },
+]
   const kioskColumnAdmin = [
     {
       title: "No",
@@ -94,24 +103,40 @@ const KioskTable = ({ partyId }) => {
           <Tag color={"red"}>{t("deactivate")}</Tag>
         ),
     },
-    {
-      title: t("action"),
-      key: "action",
-      align: "center",
-      render: (text, record, dataIndex) => (
-        <Space size="middle">
-          <Button
-            className="success-button"
-            onClick={() => {
-              downloadTxtFile(partyId + "-" + record.name, record.id);
-            }}
-          >
-            <ArrowDownOutlined /> Key
-          </Button>
-        </Space>
-      ),
-    },
   ];
+
+  const changeStatus=async (values)=>{
+    
+    Modal.confirm({
+      title: "Are you sure to change status this kiosk",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          setIsLoading(true)
+          try {
+            await changeStatusKioskService(values.id);
+            await getListKiosk(partyId, kioskPage, kioskPageSize);
+          } catch (error) {
+            console.log(error);
+          }finally{
+            setIsLoading(false)
+          }
+        }
+      },
+    });
+
+
+
+
+  }
+  let navigate = useNavigate();
+  const onNavigate = (url) => {
+    navigate(url);
+  };
+
+
+
   const kioskColumnLocationOwner = [
     {
       title: "No",
@@ -123,6 +148,24 @@ const KioskTable = ({ partyId }) => {
       dataIndex: "name",
       key: "name",
       render: (text) => <a>{text}</a>,
+    },
+    {
+      title: "Kiosk Location ID",
+      dataIndex: "kioskLocationId",
+      key: "kioskLocationId",
+      render: (text, record, dataIndex) => (text?(
+        <Tag color={"green"} onClick={()=>{
+          localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }))
+
+          onNavigate({
+            pathname: "/./location",
+            search: "?id=" + record.kioskLocationId,
+          })
+        }
+          }>{text}</Tag>
+      ) : (
+        <Tag color={"red"}>Null</Tag>
+      ))
     },
 
     {
@@ -143,38 +186,37 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="warn-button" shape="default" onClick={() => { }}>
-            {t("edit")}
-          </Button>
-          <Button className="infor-button" shape="default" onClick={() => {}}>
-            Detail
-          </Button>
-          <Popconfirm
-            title="Are you sure, you want to change status this kiosk?"
-            onConfirm={() => onConfirmChangeStatus(record.id)}
-            onVisibleChange={() => console.log("visible change")}
-          >
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => { }}
-            >
-              {t("change-status")}
-            </Button>
-          </Popconfirm>
           <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
             Scheduling
           </Button>
-          <Button
-            className="success-button"
-            onClick={() => {
-              downloadTxtFile(partyId + "-" + record.name, record.id);
-            }}
-          >
-            <ArrowDownOutlined /> Key
+          {
+            record.kioskLocationId?
+            <Button type="primary" onClick={() => {
+              setCurrentKiosk(record)
+              showModal("addLocation")
+              
+            }} >
+              Update Location
+            </Button>
+            :
+            <Button type="primary" onClick={() => {
+              setCurrentKiosk(record)
+              showModal("addLocation")
+              }} >
+              Add Location
+            </Button>
+          }
+          {
+            isLoading?<Spin/>:<Button className="infor-button" shape="default" onClick={() => {changeStatus(record)}}>
+            Change Status
           </Button>
+          }
+          
+          
+          
+        
         </Space>
+        
       ),
     },
   ];
@@ -219,11 +261,38 @@ const KioskTable = ({ partyId }) => {
     </Form.Item>
   );
 
+  const handleCancelModal = () =>{
+    setIsModalAddLocationVisible(false);
+  }
+
+  const showModal =async (type) => {
+    if (type === "addLocation") {
+      setIsModalAddLocationVisible(true);
+      const res =await getListKioskLocationService("",1,-1);
+      setListLocation(res.data.data)
+    } 
+  };
+
+  const onFinishModal= (type) => {
+    if(type ==="addLocation"){
+      getListKiosk(partyId, kioskPage, kioskPageSize);
+      setIsModalAddLocationVisible(false)
+    }
+  }
+    
   useEffect(() => {
+    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
     getListKiosk(partyId, kioskPage, kioskPageSize);
   }, []);
   return (
     <>
+      <ModalAddLocation
+        isModalAddLocationVisible={isModalAddLocationVisible}
+        handleCancelModal={handleCancelModal}
+        listLocation={listLocation}
+        currentKiosk={currentKiosk}
+        onFinishModal={onFinishModal}
+      />
       <div>
         <Row style={{ padding: 10 }}>
           <Col span={15}>

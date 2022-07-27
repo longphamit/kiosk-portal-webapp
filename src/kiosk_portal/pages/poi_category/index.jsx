@@ -122,7 +122,7 @@ const PoiCategory = () => {
           >
             <EditFilled /> UPDATE
           </Button>
-          <Button
+          {/* <Button
             type="primary"
             shape="default"
             name={record}
@@ -131,7 +131,7 @@ const PoiCategory = () => {
             }}
           >
             <PoweroffOutlined /> {t("change-status")}
-          </Button>
+          </Button> */}
         </Space>
       ),
     },

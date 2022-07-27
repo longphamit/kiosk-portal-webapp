@@ -20,6 +20,8 @@ import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import KioskSchedulingPage from "../../kiosk_portal/pages/kiosk/schedule";
 import KioskDetailPage from "../../kiosk_portal/pages/kiosk_detail";
+import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
+import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
@@ -190,7 +192,7 @@ const routes: Route[] = [
   },
   {
     component: ApplicationDetailPage,
-    path: "/app-detail/:appId",
+    path: "/app-detail/:id",
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -277,7 +279,25 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_LOCATION_OWNER]
-  }
+  },
+  {
+    component: KioskLocationPage,
+    path: "/kiosk-location",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: DetailLocationPage,
+    path: "/location",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ ROLE_LOCATION_OWNER]
+  },
 ];
 
 export default routes;

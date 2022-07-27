@@ -2,7 +2,6 @@ import {
   Button,
   Checkbox,
   Col,
-  DatePicker,
   Form,
   Input,
   Modal,
@@ -18,12 +17,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { localStorageGetUserIdService } from "../../../@app/services/localstorage_service";
-import {
-  changeStatusAccountService,
-  searchAccountService,
-  updateAccountService,
-} from "../../services/account_service";
+import { searchAccountService } from "../../services/account_service";
 import {
   createScheduleService,
   getListScheduleService,
@@ -32,21 +26,18 @@ import {
 import {
   SearchOutlined,
   PlusOutlined,
-  EyeFilled,
   EditFilled,
-  ArrowUpOutlined,
-  DeleteFilled,
   PoweroffOutlined,
 } from "@ant-design/icons";
 import {
-  convertDate,
-  formatDatePicker,
   formatTimePicker,
-  getDate,
   splitTimeString,
 } from "../../../@app/utils/date_util";
 import { getListTemplateService } from "../../services/template_service";
-import { SCHEDULE_MANAGER_HREF, SCHEDULE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  SCHEDULE_MANAGER_HREF,
+  SCHEDULE_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const ScheduleManagerPage = () => {
@@ -378,15 +369,7 @@ const ScheduleManagerPage = () => {
           >
             <EditFilled /> {t("edit")}
           </Button>
-          <Button
-            className="warn-button"
-            shape="default"
-            onClick={() => {
-              toast.error("Chưa làm");
-            }}
-          >
-            <PlusOutlined /> Template
-          </Button>
+
           {record.roleName === "Admin" ? (
             <Button
               shape="default"
@@ -428,12 +411,12 @@ const ScheduleManagerPage = () => {
     {
       href: SCHEDULE_MANAGER_HREF,
       label: SCHEDULE_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
-    <CustomBreadCumb props={breadCumbData} />
+      <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
           <Form
@@ -537,7 +520,7 @@ const ScheduleManagerPage = () => {
               },
             ]}
           >
-            <TimePicker allowClear={false} format="HH:mm" />
+            <TimePicker allowClear={false} format="HH" />
           </Form.Item>
           <Form.Item
             name="timeEnd"
@@ -549,7 +532,7 @@ const ScheduleManagerPage = () => {
               },
             ]}
           >
-            <TimePicker allowClear={false} format="HH:mm" />
+            <TimePicker allowClear={false} format="HH" />
           </Form.Item>
           <Form.Item name="dayOfWeek" label={t("dayofweek")}>
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
@@ -632,7 +615,7 @@ const ScheduleManagerPage = () => {
                 },
               ]}
             >
-              <TimePicker allowClear={false} format="HH:mm" />
+              <TimePicker allowClear={false} format="HH" />
             </Form.Item>
             <Form.Item
               name="timeEnd"
@@ -644,7 +627,7 @@ const ScheduleManagerPage = () => {
                 },
               ]}
             >
-              <TimePicker allowClear={false} format="HH:mm" />
+              <TimePicker allowClear={false} format="HH" />
             </Form.Item>
             <Form.Item name="dayOfWeek" label={t("dayofweek")}>
               <Checkbox.Group style={{ width: "100%" }} onChange={{}}>

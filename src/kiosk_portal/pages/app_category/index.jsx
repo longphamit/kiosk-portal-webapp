@@ -44,9 +44,9 @@ const AppCategoryPage = () => {
           >
             <EditFilled /> UPDATE
           </Button>
-          <Button type="primary" shape="default" name={record} onClick={{}}>
+          {/* <Button type="primary" shape="default" name={record} onClick={{}}>
             <PoweroffOutlined /> Change Status
-          </Button>
+          </Button> */}
         </Space>
       ),
     },

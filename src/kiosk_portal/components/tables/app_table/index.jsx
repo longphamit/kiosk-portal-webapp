@@ -11,6 +11,7 @@ import {
   Row,
   Select,
   Space,
+  Spin,
   Table,
   Tag,
   Upload,
@@ -22,6 +23,7 @@ import {
   EditFilled,
   ArrowUpOutlined,
   DownloadOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -40,6 +42,7 @@ import {
   createApplicationService,
   getListApplicationService,
   sendReqPublishApplicationService,
+  stopApplicationService,
   updateApplicationService,
 } from "../../../services/application_service";
 import {
@@ -53,6 +56,7 @@ import {
   ROLE_LOCATION_OWNER,
   ROLE_SERVICE_PROVIDER,
 } from "../../../../@app/constants/role";
+import { Editor } from "primereact/editor";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -68,6 +72,7 @@ const ApplicationTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
   const [listCategories, setListCategories] = useState([]);
+  const [description, setDescription] = useState();
   const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
     useState(false);
   const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
@@ -76,6 +81,7 @@ const ApplicationTable = () => {
     useState(false);
   const [applicationSearchType, setApplicationSearchType] =
     useState("FirstName");
+  const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
   const getListApplicationFunction = async (
     currentPageToGetList,
@@ -101,9 +107,8 @@ const ApplicationTable = () => {
       );
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
-      console.log(res.data.data);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -114,119 +119,66 @@ const ApplicationTable = () => {
   }, []);
 
   const onFinishUpdateApplication = async (values) => {
-    let updateApplication = [];
-    if (typeof values.logo === "object") {
-      let formatResult = [];
-      const result = await getBase64(values.logo.file.originFileObj);
-      formatResult = result.split(",");
-      updateApplication = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: formatResult[1],
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    } else {
-      updateApplication = {
-        id: values.id,
-        name: values.name,
-        description: values.description,
-        logo: values.logo,
-        link: values.link,
-        partyId: values.partyId,
-        appCategoryId: values.appCategoryId,
-      };
-    }
+    setIsLoading(true);
     try {
+      let updateApplication = [];
+      if (typeof values.logo === "object") {
+        let formatResult = [];
+        const result = await getBase64(values.logo.file.originFileObj);
+        formatResult = result.split(",");
+        updateApplication = {
+          id: values.id,
+          name: values.name,
+          description: description,
+          logo: formatResult[1],
+          link: values.link,
+          appCategoryId: values.appCategoryId,
+        };
+      } else {
+        updateApplication = {
+          id: values.id,
+          name: values.name,
+          description: description,
+          logo: null,
+          link: values.link,
+          appCategoryId: values.appCategoryId,
+        };
+      }
       await updateApplicationService(updateApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
       setIsCreateApplicationModalVisible(false);
       toast.success("Update Application Success");
       handleCancelEditApplication();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // const onFinishAdvancedSearch = async (values) => {
-  //   console.log(values);
-  //   const search = {
-  //     firstName: values.firstName??"",
-  //     lastName: values.lastName??"",
-  //     phoneNumber: values.phoneNumber??"",
-  //     email: values.email??"",
-  //     address: values.address??"",
-  //     status: values.status??"",
-  //     size: numApplicationInPage,
-  //     page: 1,
-  //   };
-  //   try {
-  //     const res = await searchAccountService(search)
-  //     setTotalApplication(res.data.metadata.total);
-  //     setListApplication(res.data.data);
-  //     setIsSearch(true);
-  //     setQuerySearch(search);
-  //     handleCloseModalAdvancedSearch();
-  //   } catch (error) {
-  //     console.log(error);
-  //     setTotalApplication(0);
-  //     setListApplication([]);
-  //   }
-  // };
-  const buildPartyParamSearch = (value) => {
-    let firstName = "";
-    let lastName = "";
-    let phoneNumber = "";
-    let email = "";
-    let address = "";
-    let status = "";
-    switch (applicationSearchType) {
-      case "FirstName":
-        firstName = value;
-        break;
-      case "LastName":
-        lastName = value;
-        break;
-      case "PhoneNumber":
-        phoneNumber = value;
-        break;
-      case "Email":
-        email = value;
-        break;
-      case "Address":
-        address = value;
-        break;
-      case "Status":
-        status = value;
-        break;
-    }
-    return {
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: phoneNumber,
-      email: email,
-      address: address,
-      status: status,
-    };
+  const handleStopApplication = async (record) => {
+    Modal.confirm({
+      title: "Are you sure to remove this application ?",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            const id = {
+              serviceApplicationId: record.id,
+            };
+            await stopApplicationService(id).then(() => {
+              console.log("abc");
+              getListApplicationFunction(currentPage, numApplicationInPage);
+              toast.success("Stop application success");
+            });
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
   };
-  // const onFinishSearch = async (values) => {
-  //   const search = buildPartyParamSearch(values.searchString);
-  //   search["size"] = numApplicationInPage;
-  //   search["page"] = 1
-  //   try {
-  //     const res = await searchAccountService(search)
-  //     setTotalApplication(res.data.metadata.total);
-  //     setListApplication(res.data.data);
-  //     setIsSearch(true);
-  //     setQuerySearch(search);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setTotalApplication(0);
-  //     setListApplication([]);
-  //   }
-  // };
 
   const showModalEditApplication = () => {
     setIsEditApplicationModalVisible(true);
@@ -237,25 +189,27 @@ const ApplicationTable = () => {
   };
 
   const onFinishCreateApplication = async (values) => {
-    let formatResult = [];
-    const result = await getBase64(values.logo.file.originFileObj);
-    formatResult = result.split(",");
-    const newApplication = {
-      name: values.name,
-      description: values.description,
-      link: values.link,
-      logo: formatResult[1],
-      appCategoryId: values.appCategoryId,
-    };
-    console.log(newApplication);
+    setIsLoading(true);
     try {
+      let formatResult = [];
+      const result = await getBase64(values.logo.file.originFileObj);
+      formatResult = result.split(",");
+      const newApplication = {
+        name: values.name,
+        description: description,
+        link: values.link,
+        logo: formatResult[1],
+        appCategoryId: values.appCategoryId,
+      };
       await createApplicationService(newApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
       setIsCreateApplicationModalVisible(false);
       toast.success("Create Application Success");
       form.resetFields();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -291,7 +245,7 @@ const ApplicationTable = () => {
               toast.success("Send request publish success");
             });
           } catch (error) {
-            console.log(error);
+            toast.error(error.response.data.message);
           }
         }
       },
@@ -377,6 +331,35 @@ const ApplicationTable = () => {
           >
             <EyeFilled /> Detail
           </Button>
+          {role === ROLE_ADMIN ? (
+            record.status === "available" ? (
+              <Button
+                type="primary"
+                danger
+                shape="default"
+                onClick={() => {
+                  handleStopApplication(record);
+                }}
+              >
+                <DeleteOutlined />
+                Stop Application
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                danger
+                shape="default"
+                onClick={() => {
+                  handleStopApplication(record);
+                }}
+                disabled
+              >
+                <DeleteOutlined />
+                Stop Application
+              </Button>
+            )
+          ) : null}
+
           {role ? (
             role === ROLE_SERVICE_PROVIDER ? (
               <>
@@ -385,6 +368,7 @@ const ApplicationTable = () => {
                   shape="default"
                   onClick={() => {
                     setCurrentItem(record);
+                    setDescription(record.description);
                     showModalEditApplication();
                   }}
                 >
@@ -419,7 +403,7 @@ const ApplicationTable = () => {
             ) : null
           ) : null}
           {role ? (
-            role == ROLE_LOCATION_OWNER ? (
+            role === ROLE_LOCATION_OWNER ? (
               <Button className="success-button">
                 <DownloadOutlined /> Install
               </Button>
@@ -429,17 +413,6 @@ const ApplicationTable = () => {
       ),
     },
   ];
-
-  const config = {
-    rules: [
-      {
-        type: "object",
-        required: true,
-        message: t("reqdob"),
-      },
-    ],
-  };
-
   return (
     <>
       <Row style={{ padding: 10 }}>
@@ -538,9 +511,13 @@ const ApplicationTable = () => {
         visible={isCreateApplicationModalVisible}
         onCancel={handleCancelCreateApplication}
         footer={null}
+        width={1000}
       >
         <Form
           {...formItemLayout}
+          style={{
+            marginRight: 80,
+          }}
           form={form}
           name="register"
           onFinish={onFinishCreateApplication}
@@ -561,14 +538,26 @@ const ApplicationTable = () => {
           <Form.Item
             name="description"
             label="Description"
+            required
             rules={[
               {
-                required: true,
                 message: "Please input application description!",
+                validator: (_, value) => {
+                  if (!description) {
+                    return Promise.reject("");
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
+            value={description}
           >
-            <TextArea />
+            <Editor
+              style={{ height: "320px" }}
+              onTextChange={(e) => {
+                setDescription(e.htmlValue);
+              }}
+            />
           </Form.Item>
           <Form.Item
             name="link"
@@ -620,13 +609,16 @@ const ApplicationTable = () => {
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Create Application
-            </Button>
+            {isLoading ? (
+              <Spin />
+            ) : (
+              <Button type="primary" htmlType="submit">
+                Create Application
+              </Button>
+            )}
           </Form.Item>
         </Form>
       </Modal>
-
       <Modal
         title="Advanced Search"
         visible={isAdvancedSearchModalVisible}
@@ -688,8 +680,12 @@ const ApplicationTable = () => {
           visible={isEditApplicationModalVisible}
           onCancel={handleCancelEditApplication}
           footer={null}
+          width={1000}
         >
           <Form
+            style={{
+              marginRight: 80,
+            }}
             key={currentItem.id}
             {...formItemLayout}
             form={form}
@@ -727,14 +723,26 @@ const ApplicationTable = () => {
             <Form.Item
               name="description"
               label="Description"
+              required
               rules={[
                 {
-                  required: true,
                   message: "Please input application description!",
+                  validator: (_, value) => {
+                    if (!description) {
+                      return Promise.reject("");
+                    }
+                    return Promise.resolve();
+                  },
                 },
               ]}
+              value={description}
             >
-              <Input />
+              <Editor
+                style={{ height: "320px" }}
+                onTextChange={(e) => {
+                  setDescription(e.htmlValue);
+                }}
+              />
             </Form.Item>
             <Form.Item
               name="link"
@@ -796,9 +804,13 @@ const ApplicationTable = () => {
             </Form.Item>
 
             <Form.Item {...tailFormItemLayout}>
-              <Button type="primary" htmlType="submit">
-                Update Application
-              </Button>
+              {isLoading ? (
+                <Spin />
+              ) : (
+                <Button type="primary" htmlType="submit">
+                  Update Application
+                </Button>
+              )}
             </Form.Item>
           </Form>
         </Modal>

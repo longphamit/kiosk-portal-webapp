@@ -19,3 +19,8 @@ export const changeStatusKioskService = async (id: string) => {
   const response = await request.patch(`${HOST}/v1/kiosks/status?id=${id}`,null);
   return response.data;
 };
+
+export const updateKioskService = async (data: any) => {
+  const response = await request.put(`${HOST}/v1/kiosks`, data);
+  return response.data;
+};

@@ -1,4 +1,4 @@
-import { Button, Modal, Pagination, Space, Table } from "antd";
+import { Button, Modal, Pagination, Space, Table, Tag } from "antd";
 import { EyeFilled, DownloadOutlined, CloseCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -29,6 +29,7 @@ const MyApplicationPage = () => {
         numInPage,
         currentPageToGetList
       );
+      console.log(res)
       setTotalMyApplication(res.data.metadata.total);
       setListMyApplication(res.data.data);
     } catch (error) {
@@ -94,9 +95,14 @@ const MyApplicationPage = () => {
 
     {
       title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text, record, dataIndex) => <p>{text}</p>,
+      dataIndex: "serviceApplicationStatus",
+      key: "serviceApplicationStatus",
+      render: (text, record, dataIndex) =>
+        record.serviceApplicationStatus === "available" ? (
+          <Tag color={"green"}>Available</Tag>
+        ) : (
+          <Tag color={"red"}>UnAvailable</Tag>
+        ),
     },
 
     {
@@ -108,7 +114,7 @@ const MyApplicationPage = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.serviceApplicationId}`);
+              navigator(`/app-detail/${record.serviceApplicationId}&&installed`);
             }}
           >
             <EyeFilled /> Detail

@@ -166,15 +166,28 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
-                <Menu.Item
+                              <SubMenu key="subKiosk" icon={<LaptopOutlined />} title="Kiosk">
+                              <Menu.Item
                   icon={<BlockOutlined />}
-                  key="6"
+                  key="Kiosk"
                   onClick={() => {
                     onNavigate("/kiosk");
                   }}
                 >
                   Kiosk
                 </Menu.Item>
+                  <Menu.Item
+                    key="kiosk_location"
+                    icon={<ToolOutlined />}
+                    onClick={() => {
+                      onNavigate("/kiosk-location");
+                    }}
+                  >
+                    Location
+                  </Menu.Item>
+
+                </SubMenu>
+
                 <Menu.Item
                   icon={<BlockOutlined />}
                   key="7"

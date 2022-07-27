@@ -8,7 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { getListApplicationService } from "../../services/application_service";
 import { installApplicationService } from "../../services/party_service_application";
 import { toast } from "react-toastify";
-import { APPLICATION_MARKET_HREF, APPLICATION_MARKET_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  APPLICATION_MARKET_HREF,
+  APPLICATION_MARKET_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
@@ -70,7 +73,10 @@ const ApplicationMarketPage = () => {
 
   useEffect(async () => {
     getListApplicationFunction(currentPage, numApplicationInPage);
-    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+    localStorage.setItem(
+      PREVIOUS_PATH,
+      JSON.stringify({ data: breadCumbData })
+    );
   }, []);
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -118,7 +124,8 @@ const ApplicationMarketPage = () => {
           >
             <EyeFilled /> Detail
           </Button>
-          {record.partyServiceApplication && record.partyServiceApplication.status == 'installed' ? (
+          {record.partyServiceApplication &&
+          record.partyServiceApplication.status == "installed" ? (
             <Button
               className="success-button"
               onClick={() => {
@@ -148,9 +155,9 @@ const ApplicationMarketPage = () => {
     {
       href: APPLICATION_MARKET_HREF,
       label: APPLICATION_MARKET_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
