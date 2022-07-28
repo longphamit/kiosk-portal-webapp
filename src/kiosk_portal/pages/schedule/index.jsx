@@ -279,22 +279,6 @@ const ScheduleManagerPage = () => {
   const handleCloseModalAdvancedSearchSchedule = () => {
     setIsAdvancedSearchModalVisible(false);
   };
-  const handleChangeStatusSchedule = async (record) => {
-    Modal.confirm({
-      title: t("confirmChangeStatusAccount"),
-      okText: t("yes"),
-      cancelText: t("no"),
-      onOk: async () => {
-        {
-          try {
-            toast.error("Chưa làm");
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      },
-    });
-  };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
@@ -369,30 +353,6 @@ const ScheduleManagerPage = () => {
           >
             <EditFilled /> {t("edit")}
           </Button>
-
-          {record.roleName === "Admin" ? (
-            <Button
-              shape="default"
-              name={record}
-              disabled="false"
-              onClick={() => {
-                handleChangeStatusSchedule(record);
-              }}
-            >
-              <PoweroffOutlined /> {t("change-status")}
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleChangeStatusSchedule(record);
-              }}
-            >
-              <PoweroffOutlined /> {t("change-status")}
-            </Button>
-          )}
         </Space>
       ),
     },
