@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import { Form, Input, Button, Spin } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import "./styles.css";
 import { toast } from "react-toastify";
 import { ValidateMessages } from "rc-field-form/lib/interface";
@@ -18,7 +18,7 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
@@ -42,8 +42,7 @@ const LoginPage: React.FC = () => {
         setLoading(false);
         if (response.error?.message === "Request failed with status code 404") {
           toast.error("Wrong Username or password");
-        } else if(response.error?.message === "Request failed with status code 403")
-        {return}
+        } else if (response.error?.message === "Request failed with status code 403") { return }
         else {
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
@@ -74,7 +73,11 @@ const LoginPage: React.FC = () => {
         setLoading(false);
       });
   };
-
+  useEffect(() => {
+    let isSignined = localStorage.getItem("ACCESS_TOKEN") !== null;
+    if (isSignined)
+      navigate('/homepage')
+  }, []);
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
