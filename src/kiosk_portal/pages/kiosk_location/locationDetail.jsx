@@ -53,7 +53,6 @@ const DetailLocationPage = () => {
     }
     try {
       let res = await getLocationByIdService(id);
-      console.log(res);
       setCurrentItem(res.data);
       let list = [];
       await Promise.all(
@@ -294,7 +293,6 @@ const DetailLocationPage = () => {
         </Row>
       ) : (
         <>
-          <Skeleton />
           <Skeleton />
         </>
       )}

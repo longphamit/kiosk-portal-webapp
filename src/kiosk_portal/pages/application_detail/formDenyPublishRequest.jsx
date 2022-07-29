@@ -1,10 +1,5 @@
-import { Button, Form, Input, Modal, Upload } from "antd";
+import { Button, Form, Input } from "antd";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import { UploadOutlined } from "@ant-design/icons";
-import { beforeUpload } from "../../../@app/utils/image_util";
-import { getBase64 } from "../../../@app/utils/file_util";
-import { createCategoriesService } from "../../services/categories_service";
-import { toast } from "react-toastify";
 import { denyAppPublishRequestService } from "../../services/app_publish_request_service";
 
 const FormDenyAppPublishRequest = ({ onSuccess,requestId }) => {
@@ -15,7 +10,7 @@ const FormDenyAppPublishRequest = ({ onSuccess,requestId }) => {
             form.resetFields();
             onSuccess()
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

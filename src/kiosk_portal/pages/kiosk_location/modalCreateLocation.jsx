@@ -1,19 +1,9 @@
-import { formatTimePicker } from "../../../@app/utils/date_util";
-import {
-  getListDistrictService,
-  getListWardService,
-} from "../../services/map_service";
 import { toast } from "react-toastify";
 import {
   Button,
-  Checkbox,
-  Col,
   Form,
   Input,
-  Row,
   Modal,
-  Select,
-  TimePicker,
   Upload,
   Spin,
 } from "antd";

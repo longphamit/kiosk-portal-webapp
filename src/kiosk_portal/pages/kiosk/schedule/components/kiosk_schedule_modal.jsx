@@ -1,4 +1,4 @@
-import { Button, Col, Form, Modal, Row, Select } from "antd"
+import { Button, Col, Form, Modal, Row, Select, Skeleton } from "antd"
 import { Option } from "antd/lib/mentions"
 import { useEffect, useState } from "react"
 import { getScheduleByIdService } from "../../../../services/schedule_service"
@@ -16,9 +16,9 @@ const KioskScheduleModal = ({
     listSchedule,
     listTemplate,
     currTemplate,
-    currSchdule
+    currSchedule
 }) => {
-    const [currentSchdule, setCurrentSchedule] = useState();
+    const [currentSchedule, setCurrentSchedule] = useState();
     const [currentTemplate, setCurrentTemplate] = useState();
     const handleScheduleChange = async (value) => {
         let sheduleId = value;
@@ -41,17 +41,17 @@ const KioskScheduleModal = ({
         }
     }
     useEffect(() => {
-        setCurrentSchedule(currSchdule);
+        setCurrentSchedule(currSchedule);
         setCurrentTemplate(currTemplate);
     }, []);
     return (<>
-        {currentSchdule && currTemplate ?
+        {currentSchedule && currTemplate ?
             <Form
                 labelCol={{ span: 5 }}
                 wrapperCol={{ span: 16 }}
                 form={form}
                 initialValues={{
-                    schedule: currentSchdule.id,
+                    schedule: currentSchedule.id,
                     template: currentTemplate.id
                 }}
             >
@@ -65,37 +65,39 @@ const KioskScheduleModal = ({
                         <Button className='success-button' key="2" onClick={() => onSubmit()}>{type}</Button>,
                     ]}
                 >
-                    <Row>
-                        <Col span={11}>
-                            <Form.Item label="Schedule" name="schedule">
-                                <Select name="selectSchedule" onChange={handleScheduleChange}>
-                                    {listSchedule.length !== 0 ?
-                                        listSchedule.map((schedule) => (
-                                            <Option key={schedule.id} value={schedule.id}>
-                                                {schedule.name}
-                                            </Option>
-                                        ))
-                                        : null}
-                                </Select>
-                            </Form.Item>
-                            <ScheduleKioskDetail currentSchdule={currentSchdule} labelCol={7} offsetWrapperCol={1} wapperCol={14} />
-                        </Col>
-                        <Col span={12} offset={1}>
-                            <Form.Item label="Template" name="template">
-                                <Select name="selectTemplate" onChange={handleTemplateChange}>
-                                    {listTemplate.length !== 0 ?
-                                        listTemplate.map((template) => (
-                                            <Option key={template.id} value={template.id}>
-                                                {template.name}
-                                            </Option>
-                                        ))
-                                        : null}
-                                </Select>
-                            </Form.Item>
-                            <TemplateKioskDetail currentTemplate={currentTemplate} labelCol={12} wapperCol={12} />
-                        </Col>
-                    </Row>
-
+                    {currSchedule && currTemplate ?
+                        <Row>
+                            <Col span={11}>
+                                <Form.Item label="Schedule" name="schedule">
+                                    <Select name="selectSchedule" onChange={handleScheduleChange}>
+                                        {listSchedule.length !== 0 ?
+                                            listSchedule.map((schedule) => (
+                                                <Option key={schedule.id} value={schedule.id}>
+                                                    {schedule.name}
+                                                </Option>
+                                            ))
+                                            : null}
+                                    </Select>
+                                </Form.Item>
+                                <ScheduleKioskDetail currentSchedule={currentSchedule} labelCol={7} offsetWrapperCol={1} wapperCol={14} />
+                            </Col>
+                            <Col span={12} offset={1}>
+                                <Form.Item label="Template" name="template">
+                                    <Select name="selectTemplate" onChange={handleTemplateChange}>
+                                        {listTemplate.length !== 0 ?
+                                            listTemplate.map((template) => (
+                                                <Option key={template.id} value={template.id}>
+                                                    {template.name}
+                                                </Option>
+                                            ))
+                                            : null}
+                                    </Select>
+                                </Form.Item>
+                                <TemplateKioskDetail currentTemplate={currentTemplate} labelCol={12} wapperCol={12} />
+                            </Col>
+                        </Row>
+                        : <Skeleton />
+                    }
                 </Modal>
             </Form>
             : null}

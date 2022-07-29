@@ -6,8 +6,6 @@ import {
   TEMPLATE_MANAGER_PATH
 } from "../../kiosk_portal/constants/path_constants";
 import AccountManagerPage from "../../kiosk_portal/pages/account";
-
-
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import ApplicationPage from "../../kiosk_portal/pages/application";
 import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
@@ -20,7 +18,6 @@ import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import KioskSchedulingPage from "../../kiosk_portal/pages/kiosk/schedule";
-import KioskDetailPage from "../../kiosk_portal/pages/kiosk_detail";
 import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
 import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";
@@ -34,14 +31,11 @@ import EditTemplatePage from "../../kiosk_portal/pages/template/edit-template";
 import AuthenLayout from "../components/authen_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
-
-
 import ForgotPassPage from "../pages/forgot_pass/forgot_pass";
 import LoginPage from "../pages/login/login_page";
 import RegistPage from "../pages/regist/regist_page";
 import ResetPassPage from "../pages/reset_pass/reset_pass";
 import UnAuthPage from "../pages/un_auth";
-
 
 interface Route {
   component: React.FC;

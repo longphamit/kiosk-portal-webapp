@@ -70,7 +70,7 @@ const TemplateManagerPage = () => {
       setCurrentPage(1);
       setTotalTemplate(0);
       setListTemplate([]);
-      console.log(error);
+      console.error(error);
     }
   };
   const checkEmptyObj = (obj) => {

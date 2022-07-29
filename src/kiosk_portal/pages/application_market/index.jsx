@@ -1,9 +1,8 @@
-import { Button, Modal, Pagination, Space, Spin, Table } from "antd";
+import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Spin, Table } from "antd";
 import { EyeFilled, DownloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { useNavigate } from "react-router-dom";
 import { getListApplicationService } from "../../services/application_service";
 import { installApplicationService } from "../../services/party_service_application";
@@ -18,8 +17,7 @@ import { PREVIOUS_PATH } from "../../../@app/constants/key";
 const ApplicationMarketPage = () => {
   const navigator = useNavigate();
   const { t } = useTranslation();
-  const role = localStorageGetReduxState().auth.role;
-  const [listApplication, setListApplication] = useState([]);
+  const [listApplication, setListApplication] = useState();
   const [totalApplication, setTotalApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,6 +40,7 @@ const ApplicationMarketPage = () => {
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
+      setListApplication([])
       toast.error(error.response.data.message);
     }
   };
@@ -125,7 +124,7 @@ const ApplicationMarketPage = () => {
             <EyeFilled /> Detail
           </Button>
           {record.partyServiceApplication &&
-          record.partyServiceApplication.status == "installed" ? (
+            record.partyServiceApplication.status == "installed" ? (
             <Button
               className="success-button"
               onClick={() => {
@@ -161,17 +160,29 @@ const ApplicationMarketPage = () => {
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
-      <Table
-        columns={columns}
-        dataSource={listApplication}
-        pagination={false}
-      />
-      <Pagination
-        defaultCurrent={1}
-        total={totalApplication}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {listApplication ?
+        listApplication.length === 0 ?
+          <>
+            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </> :
+          <>
+            <Table
+              columns={columns}
+              dataSource={listApplication}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={totalApplication}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </>
+        : <Skeleton />}
     </>
   );
 };

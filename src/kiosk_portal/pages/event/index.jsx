@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import {
     Button,
     Col,
+    Empty,
     Form,
     Input,
     Modal,
     Pagination,
     Row,
     Select,
+    Skeleton,
     Space,
     Table,
     Tag,
@@ -61,7 +63,7 @@ const EventManagerPage = () => {
                 toast.error("Cannot get events")
             }
             resetPage();
-            console.log(error);
+            console.error(error);
         }
     };
 
@@ -167,7 +169,6 @@ const EventManagerPage = () => {
         let creatorName = '';
         let creatorEmail = '';
         let type = ''
-        console.log(selectedSearchType)
         switch (selectedSearchType) {
             case 'Name':
                 name = value;
@@ -227,7 +228,7 @@ const EventManagerPage = () => {
         } catch (e) {
             toast("Cannot found!")
             resetPage()
-            console.log(e)
+            console.error(e)
         }
     };
     const resetPage = () => {
@@ -417,13 +418,26 @@ const EventManagerPage = () => {
                     </Button>
                 </Col>
             </Row>
-            <Table columns={columns} dataSource={listEvent} pagination={false} />
-            <Pagination
-                defaultCurrent={1}
-                total={totalEvent}
-                pageSize={numEventInPage}
-                onChange={handleChangeNumberOfPaging}
-            />
+            {listEvent ?
+                listEvent.length === 0 ?
+                    <>
+                        <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                            <Col>
+                                <Empty />
+                            </Col>
+                        </Row>
+                    </> :
+                    <>
+                        <Table columns={columns} dataSource={listEvent} pagination={false} />
+                        <Pagination
+                            defaultCurrent={1}
+                            total={totalEvent}
+                            pageSize={numEventInPage}
+                            onChange={handleChangeNumberOfPaging}
+                        />
+                    </>
+                : <Skeleton />
+            }
         </>
     );
 };

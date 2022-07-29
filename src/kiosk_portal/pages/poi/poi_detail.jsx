@@ -12,11 +12,11 @@ import {
   Form,
   Input,
   Row,
-  Modal,
   Select,
   TimePicker,
   Upload,
   Card,
+  Skeleton,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
@@ -33,7 +33,6 @@ import {
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
-import { async } from "@firebase/util";
 import { POI_DETAILS_HREF, POI_DETAILS_LABEL, POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
@@ -177,7 +176,6 @@ const DetailPoiPage = () => {
       } else {
         dOW = values.dayOfWeek;
       }
-      console.log(dOW);
 
       if (check) {
         let valueLogo = "";
@@ -240,7 +238,6 @@ const DetailPoiPage = () => {
           thumbnailId: currentItem.thumbnail.id,
           thumbnail: valueLogo,
         };
-        console.log(updatePoi);
         await updatePoiBasicService(updatePoi).then(() => {
           toast.success("Update Poi Success");
         });
@@ -286,7 +283,6 @@ const DetailPoiPage = () => {
   const onChangeListImage = (file) => {
     if (file.file.status === "removed") {
       if (file.file.url.includes("https://firebasestorage.googleapis.com")) {
-        console.log("abc");
         setListRemoveImg((prevArray) => [...prevArray, file.file.uid]);
       }
     }
@@ -571,7 +567,7 @@ const DetailPoiPage = () => {
             </Card>
           </Col>
         </Row>
-      ) : null}
+      ) : <Skeleton />}
     </>
   );
 };

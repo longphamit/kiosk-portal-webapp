@@ -4,12 +4,14 @@ import {
   Checkbox,
   Col,
   DatePicker,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
@@ -64,7 +66,7 @@ const ApplicationTable = () => {
   const { TextArea } = Input;
   const { t } = useTranslation();
   const role = localStorageGetReduxState().auth.role;
-  const [listApplication, setListApplication] = useState([]);
+  const [listApplication, setListApplication] = useState();
   const [totalApplication, setTotalApplication] = useState(0);
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
@@ -108,6 +110,7 @@ const ApplicationTable = () => {
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
+      setListApplication([])
       toast.error(error.response.data.message);
     }
   };
@@ -168,7 +171,6 @@ const ApplicationTable = () => {
               serviceApplicationId: record.id,
             };
             await stopApplicationService(id).then(() => {
-              console.log("abc");
               getListApplicationFunction(currentPage, numApplicationInPage);
               toast.success("Stop application success");
             });
@@ -495,17 +497,29 @@ const ApplicationTable = () => {
           ) : null
         ) : null}
       </Row>
-      <Table
-        columns={columns}
-        dataSource={listApplication}
-        pagination={false}
-      />
-      <Pagination
-        defaultCurrent={1}
-        total={totalApplication}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {listApplication ?
+        listApplication.length === 0 ?
+          <>
+            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </> :
+          <>
+            <Table
+              columns={columns}
+              dataSource={listApplication}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={totalApplication}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </> : <Skeleton />
+      }
       <Modal
         title="Create Application"
         visible={isCreateApplicationModalVisible}
@@ -797,8 +811,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                   : null}
               </Select>
             </Form.Item>

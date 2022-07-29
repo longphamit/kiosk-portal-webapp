@@ -141,7 +141,6 @@ const ModalCreatePoi = ({
           thumbnail: thumbnail[1],
           listImage: listImage,
         };
-        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
           toast.success("Create Poi Success");
@@ -152,7 +151,7 @@ const ModalCreatePoi = ({
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

@@ -40,7 +40,6 @@ export const EventCreatingPage = () => {
     const loadDistrict = async (selectedOptions) => {
         form.setFieldsValue({ district: undefined, ward: undefined });
         setDistrictOptions(await getDistricts(selectedOptions));
-        console.log(districtOptions)
     };
     const onDistrictChange = async (value) => {
         form.setFieldsValue({ ward: undefined });
@@ -98,7 +97,7 @@ export const EventCreatingPage = () => {
     };
     const getName = (list, code) => {
         for (let obj of list) {
-            if (obj.code == code) {
+            if (obj.code === code) {
                 return obj.name
             }
         }

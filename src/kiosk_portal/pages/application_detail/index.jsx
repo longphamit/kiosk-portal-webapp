@@ -7,6 +7,7 @@ import {
   Modal,
   Popconfirm,
   Row,
+  Skeleton,
   Tabs,
   Tag,
 } from "antd";
@@ -44,12 +45,11 @@ const ApplicationDetailPage = () => {
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [inprogressPublish, setInprogressPublish] = useState();
-  const [listFeedback, setListFeedback] = useState([]);
+  const [listFeedback, setListFeedback] = useState();
   const [myFeedback, setMyFeedback] = useState();
   const [isDenyAppPublishModalVisible, setDenyAppPublishModalVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
-  console.log(role)
   const getAppById = async () => {
     let tempId = "";
     if (id.includes("installed")) {
@@ -59,16 +59,21 @@ const ApplicationDetailPage = () => {
       tempId = id;
     }
     setAppId(tempId);
-    const res = await getApplicationServiceById(tempId);
-    setApp(res.data);
-    setMyFeedback(res.data.myFeedback);
-    setListFeedback(res.data.listFeedback);
+    try {
+      const res = await getApplicationServiceById(tempId);
+      setApp(res.data);
+      setMyFeedback(res.data.myFeedback);
+      setListFeedback(res.data.listFeedback);
+    } catch (e) {
+      console.error(e);
+      setMyFeedback({})
+      setListFeedback([])
+    }
   };
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
       if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
         const res = await getInprogressAppPublishRequestByAppIdService(id);
-        console.log(res.data);
         setInprogressPublish(res.data);
       }
     } catch (e) {
@@ -79,7 +84,7 @@ const ApplicationDetailPage = () => {
   useEffect(() => {
     getInprogressAppPublishRequestByAppId();
     getAppById();
-    
+
   }, []);
   const approveAppPublishRequest = async () => {
     try {
@@ -113,7 +118,7 @@ const ApplicationDetailPage = () => {
   return (
     <>
       <CustomBreadCumb props={getApplicationPage()} />
-      {app ? (
+      {app ?
         <>
           <div id="account-info-panel">
             <Col span={24}>
@@ -228,66 +233,70 @@ const ApplicationDetailPage = () => {
             </TabPane>
             <TabPane tab="Feedbacks" key="2">
               <div id="feedback">
-                {listFeedback.length != 0 ? (
-                  <>
-                    <Row span={24}>
-                      <Col span={12}>
-                        <h2>All Feedbacks</h2>
-                        {listFeedback.map((e) => {
-                          return <CustomRatingAndFeedback feedback={e} />;
-                        })}
-                      </Col>
-                      {isInstalled === true ? (
+
+                {listFeedback ?
+                  listFeedback.length !== 0 ? (
+                    <>
+                      <Row span={24}>
                         <Col span={12}>
-                          <h2>My Feedback</h2>
-                          {myFeedback ? (
-                            <>
-                              <CustomRatingAndFeedback feedback={myFeedback} />
-                              <Button
-                                style={{ marginLeft: 80 }}
-                                onClick={() => setUpdateModalVisible(true)}
-                              >
-                                Update Feedback
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Empty
-                                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                imageStyle={{
-                                  height: 60,
-                                }}
-                                style={{ float: "left" }}
-                                description={<span>You are not feedback</span>}
-                              >
-                                <Button
-                                  type="primary"
-                                  onClick={() => setCreateModalVisible(true)}
-                                >
-                                  Feedback Now
-                                </Button>
-                              </Empty>
-                            </>
-                          )}
+                          <h2>All Feedbacks</h2>
+                          {listFeedback.map((e) => {
+                            return <CustomRatingAndFeedback feedback={e} />;
+                          })}
                         </Col>
-                      ) : null}
-                    </Row>
-                  </>
-                ) : (
-                  <Empty>
-                    <Button
-                      type="primary"
-                      onClick={() => setCreateModalVisible(true)}
-                    >
-                      Feedback Now
-                    </Button>
-                  </Empty>
-                )}
+                        {isInstalled === true ? (
+                          <Col span={12}>
+                            <h2>My Feedback</h2>
+                            {myFeedback ? (
+                              <>
+                                <CustomRatingAndFeedback feedback={myFeedback} />
+                                <Button
+                                  style={{ marginLeft: 80 }}
+                                  onClick={() => setUpdateModalVisible(true)}
+                                >
+                                  Update Feedback
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Empty
+                                  image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                  imageStyle={{
+                                    height: 60,
+                                  }}
+                                  style={{ float: "left" }}
+                                  description={<span>You are not feedback</span>}
+                                >
+                                  <Button
+                                    type="primary"
+                                    onClick={() => setCreateModalVisible(true)}
+                                  >
+                                    Feedback Now
+                                  </Button>
+                                </Empty>
+                              </>
+                            )}
+                          </Col>
+                        ) : null}
+                      </Row>
+                    </>
+                  ) : (
+                    <Empty>
+                      <Button
+                        type="primary"
+                        onClick={() => setCreateModalVisible(true)}
+                      >
+                        Feedback Now
+                      </Button>
+                    </Empty>
+                  ) : <Skeleton />
+                }
               </div>
             </TabPane>
           </Tabs>
         </>
-      ) : null}
+        : <Skeleton />
+      }
       {appId ? (
         <>
           <CreateFeedbackModal

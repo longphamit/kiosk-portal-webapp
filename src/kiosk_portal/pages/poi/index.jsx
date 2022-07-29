@@ -1,11 +1,10 @@
-import { Button, Col, Form, Input, Pagination, Row, Space, Table } from "antd";
+import { Button, Col, Empty, Form, Input, Pagination, Row, Skeleton, Space, Table } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListPoiService } from "../../services/poi_service";
 import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
-import DetailPoiPage from "./";
 import { SearchOutlined, PlusOutlined, EyeFilled } from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +14,7 @@ import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const PoiPage = () => {
   const { t } = useTranslation();
-  const [listUnit, setListUnit] = useState([]);
+  const [listUnit, setListUnit] = useState();
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,7 +53,8 @@ const PoiPage = () => {
       setTotalUnit(res.data.metadata.total);
       setListUnit(res.data.data);
     } catch (error) {
-      console.log(error);
+      setListUnit([]);
+      console.error(error);
     }
   };
   const breadCumbData = [
@@ -256,15 +256,24 @@ const PoiPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listUnit} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalUnit}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-        current={currentPage}
-      />
-
+      {listUnit ?
+        listUnit.length === 0 ?
+          <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Col>
+              <Empty />
+            </Col>
+          </Row> :
+          <>
+            <Table columns={columns} dataSource={listUnit} pagination={false} />
+            <Pagination
+              defaultCurrent={1}
+              total={totalUnit}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+              current={currentPage}
+            />
+          </> : <Skeleton />
+      }
       <ModalCreatePoi
         modalToIndex={onFinishModal}
         listProvinces={listProvinces}
