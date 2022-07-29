@@ -11,10 +11,10 @@ import { Option } from "antd/lib/mentions";
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
-import { async } from "@firebase/util";
 import { TEMPLATE_CREATE_LABEL, TEMPLATE_EDITING_HREF, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
+const MAXIUM_ELEMENTS_PER_ROW = 5;
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
 const SELECTED_TYPE_EVENT = "event";
@@ -450,9 +450,9 @@ const EditTemplatePage = () => {
                                 if (!destination) {
                                     return;
                                 }
-                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 5) {
+                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === MAXIUM_ELEMENTS_PER_ROW) {
                                     if (source.droppableId !== destination.droppableId) {
-                                        toast.warn('Maxium only 5');
+                                        toast.warn('Maxium only ' + MAXIUM_ELEMENTS_PER_ROW);
                                         return;
                                     }
                                 }
@@ -476,7 +476,7 @@ const EditTemplatePage = () => {
                                             <div style={{ fontSize: 20, paddingTop: 10 }}>
                                                 <Row>
                                                     <Col span={6} offset={9} justify="center" align="middle">
-                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium 5)'}
+                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium ' + MAXIUM_ELEMENTS_PER_ROW + ')'}
                                                     </Col>
                                                     {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
                                                         <Col span={1} offset={8} justify="left" align="end">

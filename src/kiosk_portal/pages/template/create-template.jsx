@@ -1,5 +1,5 @@
 import { Button, Col, Input, Modal, Row, Select, Skeleton, Spin } from "antd";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TextArea from "antd/lib/input/TextArea";
 import { DragDropContext } from "react-beautiful-dnd";
 import "./styles.css"
@@ -13,8 +13,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createAppCategoryPosition, createEventPosition, getTemplateById } from "../../services/template_service";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { TEMPLATE_CREATE_HREF, TEMPLATE_CREATE_LABEL, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
-import { async } from "@firebase/util";
 
+const MAXIUM_ELEMENTS_PER_ROW = 5;
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
 const SELECTED_TYPE_EVENT = "event";
@@ -341,9 +341,9 @@ const CreateTemplatePage = () => {
                                 if (!destination) {
                                     return;
                                 }
-                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 2) {
+                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === MAXIUM_ELEMENTS_PER_ROW) {
                                     if (source.droppableId !== destination.droppableId) {
-                                        toast.warn('Maxium only 5');
+                                        toast.warn('Maxium only ' + MAXIUM_ELEMENTS_PER_ROW);
                                         return;
                                     }
                                 }
@@ -367,7 +367,7 @@ const CreateTemplatePage = () => {
                                             <div style={{ fontSize: 20, paddingTop: 10 }}>
                                                 <Row>
                                                     <Col span={6} offset={9} justify="center" align="middle">
-                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium 5)'}
+                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium ' + MAXIUM_ELEMENTS_PER_ROW + ')'}
                                                     </Col>
                                                     {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
                                                         <Col span={6} offset={3} justify="left" align="end">
