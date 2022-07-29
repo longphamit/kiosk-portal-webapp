@@ -23,8 +23,6 @@ import { beforeUpload } from "../../../@app/utils/image_util";
 import { getListDistrictService, getListWardService } from "../../services/location_services";
 import { toast } from 'react-toastify';
 import { getBase64 } from '../../../@app/utils/file_util';
-
-
 import "./styles.css"
 import { TYPE_LOCAL, TYPE_SERVER } from '../../../@app/constants/key';
 import { localStorageGetReduxState } from '../../../@app/services/localstorage_service';
@@ -69,15 +67,15 @@ export const EventDetailsPage = () => {
     };
     const getInitValue = async () => {
         let id = searchParams.get("id");
-        if (id == null) {
+        if (id === null) {
             onNavigate("/././unauth");
             return;
         }
         try {
             let res = await getEventByIdService(id);
 
-            ((res.data.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER) ||
-                (res.data.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN)) ?
+            ((res.data.type === TYPE_LOCAL && localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) ||
+                (res.data.type === TYPE_SERVER && localStorageGetReduxState().auth.role === ROLE_ADMIN)) ?
                 setDisable(false) : setDisable(true)
 
             setCurrentEvent(res.data);
@@ -184,18 +182,13 @@ export const EventDetailsPage = () => {
             "city": getName(proviceOptions, values.city, CITY_TYPE),
             "address": values.address,
             "image": base64Thumnail,
-            "imageId": base64Thumnail == '' ? null : currentEvent.thumbnail.id,
+            "imageId": base64Thumnail === '' ? null : currentEvent.thumbnail.id,
         };
         try {
             let res = await updateEventService(data);
-            if (res.code == 200) {
-                toast.success('Update Success');
-            } else if (res.code == 400) {
-                toast.success(res.message);
-            }
-
+            toast.success('Update Success');
         } catch (e) {
-            if (e.response.code == 400) {
+            if (e.response.code === 400) {
                 toast.error(e.response.data.message + '. Please edit date and time');
             }
             console.error(e);
@@ -203,16 +196,10 @@ export const EventDetailsPage = () => {
             setIsLoadingBasicInfo(false);
         }
     }
-    const formatDatePicker = (str) => {
-        var date = new Date(str),
-            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-            day = ("0" + date.getDate()).slice(-2);
-        return [date.getFullYear(), mnth, day].join("-");
-    }
 
     const checkThumbnail = (thumbnail) => {
         try {
-            if (thumbnail.length == 0) {
+            if (thumbnail.length === 0) {
                 return false;  // Not have any image
             }
             if (thumbnail.file.originFileObj === undefined) {
@@ -278,7 +265,7 @@ export const EventDetailsPage = () => {
             toast.success("Update success");
             setUpdateListImage(false);
         } catch (e) {
-            console.log(e)
+            console.error(e)
         } finally {
             setIsLoadingListImage(false);
         }
@@ -297,7 +284,7 @@ export const EventDetailsPage = () => {
     ]
     return (<>
         <CustomBreadCumb props={breadCumbData} />
-        {currentEvent ?
+        {currentEvent && description ?
             <>
                 <Card title="Basic Information">
                     <Form
@@ -516,8 +503,8 @@ export const EventDetailsPage = () => {
                                 <Button icon={<UploadOutlined />}>Upload</Button>
                             </Upload>
                         </Form.Item>
-                        {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
-                            || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
+                        {currentEvent.type === TYPE_SERVER && localStorageGetReduxState().auth.role === ROLE_ADMIN
+                            || currentEvent.type === TYPE_LOCAL && localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER ?
                             <Row justify="center" align="middle">
                                 <Col>
                                     <Form.Item>
@@ -530,6 +517,7 @@ export const EventDetailsPage = () => {
                         }
                     </Form>
                 </Card>
+
                 <Card title="List Image">
                     <Form
                         {...formItemLayout}
@@ -570,8 +558,8 @@ export const EventDetailsPage = () => {
                                 </Upload>
                             ) : null}
                         </Form.Item>
-                        {currentEvent.type == TYPE_SERVER && localStorageGetReduxState().auth.role == ROLE_ADMIN
-                            || currentEvent.type == TYPE_LOCAL && localStorageGetReduxState().auth.role == ROLE_LOCATION_OWNER ?
+                        {currentEvent.type === TYPE_SERVER && localStorageGetReduxState().auth.role === ROLE_ADMIN
+                            || currentEvent.type === TYPE_LOCAL && localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER ?
                             <Row justify="center" align="middle">
                                 <Col>
                                     <Form.Item>
@@ -587,7 +575,8 @@ export const EventDetailsPage = () => {
                         }
                     </Form>
                 </Card>
-            </> : <Skeleton />
+            </>
+            : <Skeleton />
         }
     </>);
 }

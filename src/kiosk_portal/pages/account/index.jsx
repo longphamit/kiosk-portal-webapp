@@ -1,16 +1,16 @@
 import {
   AutoComplete,
-  Breadcrumb,
   Button,
-  Checkbox,
   Col,
   DatePicker,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
@@ -22,8 +22,6 @@ import {
   EyeFilled,
   EditFilled,
   PoweroffOutlined,
-  ArrowUpOutlined,
-  HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -46,16 +44,15 @@ import {
 } from "../../services/account_service";
 import "./styles.css"
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-
 import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const AccountManagerPage = () => {
-  const [isListAccountLoading, setListAccountLoading] = useState();
+  const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
   const [isUpdateAccountLoading, setUpdateAccountLoading] = useState();
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listAccount, setListAccount] = useState([]);
+  const [listAccount, setListAccount] = useState();
   const [totalAccount, setTotalAccount] = useState(0);
   const [numAccountInPage, setNumAccountInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
@@ -86,7 +83,8 @@ const AccountManagerPage = () => {
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
     } catch (error) {
-      console.log(error);
+      setListAccount([])
+      console.error(error);
     } finally {
       setListAccountLoading(false);
     }
@@ -115,14 +113,13 @@ const AccountManagerPage = () => {
       toast.success(t("toastsuccesseditaccount"));
       handleCancelEditAccount();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setUpdateAccountLoading(false);
     }
   };
 
   const onFinishAdvancedSearch = async (values) => {
-    console.log(values);
     const search = {
       firstName: values.firstName ?? "",
       lastName: values.lastName ?? "",
@@ -142,7 +139,7 @@ const AccountManagerPage = () => {
       setQuerySearch(search);
       handleCloseModalAdvancedSearch();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalAccount(0);
       setListAccount([]);
     }
@@ -200,7 +197,7 @@ const AccountManagerPage = () => {
       setIsSearch(true);
       setQuerySearch(search);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalAccount(0);
       setListAccount([]);
     }
@@ -229,7 +226,7 @@ const AccountManagerPage = () => {
       setIsCreateAccountModalVisible(false);
       toast.success(t("toastsuccesscreateaccount"));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setCreateAccountLoading(false);
     }
@@ -263,7 +260,7 @@ const AccountManagerPage = () => {
               toast.success(t("toastsuccesschangestatus"));
             });
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }
       },
@@ -515,21 +512,25 @@ const AccountManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      {isListAccountLoading ? (
-        <Row span={24}>
-          <Spin className="center"/>
-        </Row>
-      ) : (
-        <Table columns={columns} dataSource={listAccount} pagination={false} />
-      )}
-
-      <Pagination
-        defaultCurrent={1}
-        total={totalAccount}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
-
+      {listAccount && !isListAccountLoading ?
+        listAccount.lenght === 0 ?
+          <>
+            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </> :
+          <>
+            <Table columns={columns} dataSource={listAccount} pagination={false} />
+            <Pagination
+              defaultCurrent={1}
+              total={totalAccount}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </> : <Skeleton />
+      }
       <Modal
         title={t("createaccount")}
         visible={isCreateAccountModalVisible}

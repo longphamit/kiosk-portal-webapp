@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Upload } from "antd";
+import { Button, Form, Input, Upload } from "antd";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { UploadOutlined } from "@ant-design/icons";
 import { beforeUpload } from "../../../@app/utils/image_util";
@@ -22,7 +22,7 @@ const FormCreateCategory = ({ visible }) => {
       visible(false);
       form.resetFields();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

@@ -1,5 +1,4 @@
-import { UserOutlined } from "@ant-design/icons";
-import { Col, Collapse, Descriptions, Row, Tag } from "antd";
+import { Col, Collapse, Descriptions, Skeleton, Tag } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -17,8 +16,13 @@ const AccountDetailPage = () => {
   const { t } = useTranslation();
   const [accountDetail, setAccountDetail] = useState()
   const getAccountDetailById = async () => {
-    const res = await getAccountByIdService(partyId)
-    setAccountDetail(res.data)
+    try {
+      const res = await getAccountByIdService(partyId)
+      setAccountDetail(res.data)
+    } catch (e) {
+      console.error(e);
+      setAccountDetail({});
+    }
   }
   const breadCumbData = [
     {
@@ -76,31 +80,32 @@ const AccountDetailPage = () => {
                 </Descriptions>
               </Col>
             </div>
-          </> : null
-      }
-      {
-        accountDetail ? accountDetail.roleName === ROLE_LOCATION_OWNER ?
-          (<><Collapse defaultActiveKey={["1"]}>
-            <Panel
-              header="Kiosks"
-              key="1"
-              style={{ color: "#ffff" }}
-            >
-              <KioskTable partyId={partyId} />
-            </Panel>
-          </Collapse></>)
 
-          : accountDetail.roleName === ROLE_SERVICE_PROVIDER ?
-            (<><Collapse defaultActiveKey={["1"]}>
-              <Panel
-                header="Applications"
-                key="1"
-                style={{ color: "#ffff" }}
-              >
-                <ApplicationTable partyId={partyId} />
-              </Panel>
-            </Collapse></>)
-            : null : null
+            {
+              accountDetail.roleName === ROLE_LOCATION_OWNER ?
+                (<><Collapse defaultActiveKey={["1"]}>
+                  <Panel
+                    header="Kiosks"
+                    key="1"
+                    style={{ color: "#ffff" }}
+                  >
+                    <KioskTable partyId={partyId} />
+                  </Panel>
+                </Collapse></>)
+
+                : accountDetail.roleName === ROLE_SERVICE_PROVIDER ?
+                  (<><Collapse defaultActiveKey={["1"]}>
+                    <Panel
+                      header="Applications"
+                      key="1"
+                      style={{ color: "#ffff" }}
+                    >
+                      <ApplicationTable partyId={partyId} />
+                    </Panel>
+                  </Collapse></>)
+                  : null
+            }
+          </> : <Skeleton />
       }
     </>)
 }

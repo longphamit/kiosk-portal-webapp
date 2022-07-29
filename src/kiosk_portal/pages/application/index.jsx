@@ -2,8 +2,7 @@
 import ApplicationTable from "../../components/tables/app_table";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { APP_MANAGER_HREF, APP_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
-import { useEffect, useState } from "react";
-import { APP_MANAGER_PATH } from "../../constants/path_constants";
+import { useEffect } from "react";
 import { PREVIOUS_PATH } from "../../../@app/constants/key";
 const ApplicationPage = () => {
   const breadCumbData = [

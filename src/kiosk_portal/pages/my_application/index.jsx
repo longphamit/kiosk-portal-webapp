@@ -1,14 +1,12 @@
-import { Button, Modal, Pagination, Space, Table, Tag } from "antd";
-import { EyeFilled, DownloadOutlined, CloseCircleOutlined, CloseCircleFilled } from "@ant-design/icons";
+import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Table, Tag } from "antd";
+import { EyeFilled, CloseCircleFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MY_APPLICATION_HREF, MY_APPLICATION_LABEL } from "../../components/breadcumb/breadcumb_constant";
-import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { useNavigate } from "react-router-dom";
 import {
   changeStatusMyAppService,
   getListMyAppService,
-  installApplicationService,
 } from "../../services/party_service_application";
 import { toast } from "react-toastify";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
@@ -29,11 +27,10 @@ const MyApplicationPage = () => {
         numInPage,
         currentPageToGetList
       );
-      console.log(res)
       setTotalMyApplication(res.data.metadata.total);
       setListMyApplication(res.data.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -49,7 +46,6 @@ const MyApplicationPage = () => {
             await getListMyAppFunction(currentPage, numApplicationInPage);
             toast.success("Uninstall successful");
           } catch (error) {
-            console.log(error)
             toast.error(error.response.data.message);
           }
         }
@@ -143,17 +139,30 @@ const MyApplicationPage = () => {
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
-      <Table
-        columns={columns}
-        dataSource={listMyApplication}
-        pagination={false}
-      />
-      <Pagination
-        defaultCurrent={1}
-        total={totalMyApplication}
-        pageSize={numApplicationInPage}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {listMyApplication ?
+        listMyApplication.length === 0 ?
+          <>
+            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </> :
+          <>
+            <Table
+              columns={columns}
+              dataSource={listMyApplication}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={totalMyApplication}
+              pageSize={numApplicationInPage}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </>
+        : <Skeleton />
+      }
     </>
 
   );

@@ -1,4 +1,5 @@
 
+import { Skeleton } from "antd";
 import { useEffect, useState } from "react";
 import { getListInstallAppService } from "../../../../services/party_service_application";
 import { getEventPositionService } from "../../../../services/template_service";
@@ -38,7 +39,7 @@ const TemplateKioskDetail = ({
             {currentTemplate ?
                 (<>
                     <a href={"../edit-template?id=" + currentTemplate.id} target="_blank">View details the template</a>
-                </>) : (<></>)
+                </>) : (<Skeleton />)
             }
         </>);
 }
