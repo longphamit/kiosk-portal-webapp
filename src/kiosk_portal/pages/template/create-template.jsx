@@ -14,7 +14,6 @@ import { createAppCategoryPosition, createEventPosition, getTemplateById } from 
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { TEMPLATE_CREATE_HREF, TEMPLATE_CREATE_LABEL, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 
-const MAXIUM_ELEMENTS_PER_ROW = 5;
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
 const SELECTED_TYPE_EVENT = "event";
@@ -111,6 +110,9 @@ const CreateTemplatePage = () => {
         return data;
     }
     function onClickAddNewRow() {
+        if (haveEmptyRow()) {
+            toast.warn("Dont leave a empty row, it will be deleted when you save")
+        }
         let rowName = generateRowName();
         if (selectedType == SELECTED_TYPE_CATEGORY) {
             setCategoryComponents(prevState => {
@@ -341,12 +343,6 @@ const CreateTemplatePage = () => {
                                 if (!destination) {
                                     return;
                                 }
-                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === MAXIUM_ELEMENTS_PER_ROW) {
-                                    if (source.droppableId !== destination.droppableId) {
-                                        toast.warn('Maxium only ' + MAXIUM_ELEMENTS_PER_ROW);
-                                        return;
-                                    }
-                                }
                                 const reorder = reorderComponent(
                                     categoryComponents,
                                     source,
@@ -367,7 +363,7 @@ const CreateTemplatePage = () => {
                                             <div style={{ fontSize: 20, paddingTop: 10 }}>
                                                 <Row>
                                                     <Col span={6} offset={9} justify="center" align="middle">
-                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium ' + MAXIUM_ELEMENTS_PER_ROW + ')'}
+                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Minimum 1)'}
                                                     </Col>
                                                     {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
                                                         <Col span={6} offset={3} justify="left" align="end">
