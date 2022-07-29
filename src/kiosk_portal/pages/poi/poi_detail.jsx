@@ -17,6 +17,7 @@ import {
   Upload,
   Card,
   Skeleton,
+  Spin,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";

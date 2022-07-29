@@ -36,7 +36,7 @@ const EventManagerPage = () => {
     const [isSearch, setIsSearch] = useState(false);
     const [selectedSearchType, setSelectedSearchType] = useState('Name');
     const [numEventInPage, setNumEventInPage] = useState(10);
-    const [listEvent, setListEvent] = useState([]);
+    const [listEvent, setListEvent] = useState();
     useState(false);
     const [searchForm] = Form.useForm();
     let navigate = useNavigate();
@@ -59,6 +59,7 @@ const EventManagerPage = () => {
             setListEvent(res.data.data);
             return;
         } catch (error) {
+            setListEvent([])
             if (error.response.code === 400) {
                 toast.error("Cannot get events")
             }
