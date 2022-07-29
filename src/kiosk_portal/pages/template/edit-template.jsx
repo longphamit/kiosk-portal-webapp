@@ -1,4 +1,4 @@
-import { Button, Col, Input, Modal, Row, Select, Spin } from "antd";
+import { Button, Col, Input, Modal, Row, Select, Skeleton, Spin } from "antd";
 import { useState, useEffect } from "react";
 import TextArea from "antd/lib/input/TextArea";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -27,9 +27,9 @@ const EditTemplatePage = () => {
     const [isChanging, setChanging] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedType, setSelectedType] = useState(SELECTED_TYPE_CATEGORY);
-    const [categoryComponents, setCategoryComponents] = useState({});
-    const [eventComponents, setEventComponents] = useState({});
-    const [currentTemplate, setCurrentTemplate] = useState({});
+    const [categoryComponents, setCategoryComponents] = useState();
+    const [eventComponents, setEventComponents] = useState();
+    const [currentTemplate, setCurrentTemplate] = useState();
     let navigate = useNavigate();
     const getAllAppCategories = async () => {
         try {
@@ -146,6 +146,7 @@ const EditTemplatePage = () => {
             data[`${ROOT_ROW_EVENT}`] = allEvents;
             setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
+            setEventComponents({})
             console.error(e);
         }
     }
@@ -176,6 +177,7 @@ const EditTemplatePage = () => {
             data[`${ROOT_ROW_CATEGORY}`] = allCategories;
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
+            setCategoryComponents({})
             console.error(e);
         }
     }
@@ -344,6 +346,7 @@ const EditTemplatePage = () => {
                 console.error(e);
                 toast.error('Save failed!');
             } finally {
+                setChanging(false)
                 setLoading(false);
                 return;
             }
@@ -376,7 +379,6 @@ const EditTemplatePage = () => {
         }
         try {
             let res = await updateEventPosition(request);
-            setChanging(false)
             if (res.code === 200) {
                 toast.success("Save event components succesfully")
                 return;
@@ -385,6 +387,7 @@ const EditTemplatePage = () => {
             console.error(e);
             toast.error('Save failed!');
         } finally {
+            setChanging(false);
             setLoading(false);
             return;
         }
@@ -404,177 +407,183 @@ const EditTemplatePage = () => {
     ]
     return (<>
         <CustomBreadCumb props={breadCumbData} />
-        <div id="account-info-panel">
-            <Row>
-                <Col span={20}>
-                    <Row className="info-row">
-                        <Col span={2} className="info-title">
-                            Name:
-                        </Col>
-                        <Col span={12}>
-                            <Input value={currentTemplate.name} contentEditable={false} />
-                        </Col>
+        {eventComponents && categoryComponents && currentTemplate && !isLoading ?
+            <>
+                <div id="account-info-panel">
+                    <Row>
+                        <Col span={20}>
+                            <Row className="info-row">
+                                <Col span={2} className="info-title">
+                                    Name:
+                                </Col>
+                                <Col span={12}>
+                                    <Input value={currentTemplate.name} contentEditable={false} />
+                                </Col>
 
-                    </Row><Row>
-                        <Col span={2} className="info-title">
-                            Description:
-                        </Col>
-                        <Col span={12}>
-                            <TextArea rows='1' value={currentTemplate.description} contentEditable={false} />
+                            </Row><Row>
+                                <Col span={2} className="info-title">
+                                    Description:
+                                </Col>
+                                <Col span={12}>
+                                    <TextArea rows='1' value={currentTemplate.description} contentEditable={false} />
+                                </Col>
+                            </Row>
                         </Col>
                     </Row>
-                </Col>
-            </Row>
-        </div >
-        <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
-            <Row>
-                <Col span={8} >
-                    <Select defaultValue={SELECTED_TYPE_CATEGORY} style={{ width: 200, fontSize: 20 }} onChange={onSelectedTypeChange}>
-                        <Option value={SELECTED_TYPE_CATEGORY} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_CATEGORY}</Option>
-                        <Option value={SELECTED_TYPE_EVENT} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_EVENT}</Option>
-                    </Select>
-                </Col>
-            </Row>
-        </div>
-        <div id="arrangement-space">
-            {selectedType === SELECTED_TYPE_CATEGORY ? <>
-                {categoryComponents.length != 0 ? <>
-                    <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
-                        // // dropped outside the list
-                        if (!destination) {
-                            return;
-                        }
-                        if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 5) {
-                            if (source.droppableId !== destination.droppableId) {
-                                toast.warn('Maxium only 5');
-                                return;
-                            }
-                        }
-                        const reorder = reorderComponent(
-                            categoryComponents,
-                            source,
-                            destination
-                        );
-                        setChanging(true)
-                        setCategoryComponents(
-                            reorder
-                        );
+                </div >
+                <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
+                    <Row>
+                        <Col span={8} >
+                            <Select defaultValue={selectedType} style={{ width: 200, fontSize: 20 }} onChange={onSelectedTypeChange}>
+                                <Option value={SELECTED_TYPE_CATEGORY} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_CATEGORY}</Option>
+                                <Option value={SELECTED_TYPE_EVENT} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_EVENT}</Option>
+                            </Select>
+                        </Col>
+                    </Row>
+                </div>
 
-                        if (haveEmptyRowWithParam(reorder) && source.droppableId !== destination.droppableId) {
-                            toast.warn("Dont leave a empty row, it will be deleted when you save")
-                        }
-                    }}>
-                        <div>
-                            {Object.entries(categoryComponents).map((e, i) => (
-                                <div >
-                                    <div style={{ fontSize: 20, paddingTop: 10 }}>
-                                        <Row>
-                                            <Col span={6} offset={9} justify="center" align="middle">
-                                                {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium 5)'}
-                                            </Col>
-                                            {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
-                                                <Col span={6} offset={3} justify="left" align="end">
-                                                    <DeleteOutlined style={{ fontSize: 20, color: 'red' }} onClick={() => deleteRow(e[0])} />
-                                                </Col>
-                                                :
-                                                <></>
-                                            }
-                                        </Row>
-                                    </div>
-                                    <ComponentList
-                                        internalScroll
-                                        key={e[0]}
-                                        listId={e[0]}
-                                        listType="CARD"
-                                        components={e[1]}
-                                    />
+                <div id="arrangement-space">
+                    {selectedType === SELECTED_TYPE_CATEGORY ? <>
+                        {categoryComponents.length != 0 ? <>
+                            <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
+                                // // dropped outside the list
+                                if (!destination) {
+                                    return;
+                                }
+                                if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 5) {
+                                    if (source.droppableId !== destination.droppableId) {
+                                        toast.warn('Maxium only 5');
+                                        return;
+                                    }
+                                }
+                                const reorder = reorderComponent(
+                                    categoryComponents,
+                                    source,
+                                    destination
+                                );
+                                setChanging(true)
+                                setCategoryComponents(
+                                    reorder
+                                );
+
+                                if (haveEmptyRowWithParam(reorder) && source.droppableId !== destination.droppableId) {
+                                    toast.warn("Dont leave a empty row, it will be deleted when you save")
+                                }
+                            }}>
+                                <div>
+                                    {Object.entries(categoryComponents).map((e, i) => (
+                                        <div >
+                                            <div style={{ fontSize: 20, paddingTop: 10 }}>
+                                                <Row>
+                                                    <Col span={6} offset={9} justify="center" align="middle">
+                                                        {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium 5)'}
+                                                    </Col>
+                                                    {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
+                                                        <Col span={1} offset={8} justify="left" align="end">
+                                                            <div style={{ float: 'right', position: 'relative' }}>
+                                                                <DeleteOutlined style={{ fontSize: 20, color: 'red', marginRight: 5 }} onClick={() => deleteRow(e[0])} />
+                                                            </div>
+                                                        </Col>
+                                                        :
+                                                        <></>
+                                                    }
+                                                </Row>
+                                            </div>
+                                            <ComponentList
+                                                internalScroll
+                                                key={e[0]}
+                                                listId={e[0]}
+                                                listType="CARD"
+                                                components={e[1]}
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </DragDropContext>
-                </> :
-                    <>
-                        <h3>You're not install any service application!</h3>
+                            </DragDropContext>
+                        </> :
+                            <>
+                                <h3>You're not install any service application!</h3>
+                            </>}
+                    </> : <>{eventComponents.length != 0 ?
+                        <>
+                            <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
+                                // // dropped outside the list
+                                if (!destination) {
+                                    return;
+                                }
+
+                                setEventComponents(
+                                    reorderComponent(
+                                        eventComponents,
+                                        source,
+                                        destination
+                                    )
+                                );
+                                setChanging(true)
+                                if (haveEmptyRow() && source.droppableId !== destination.droppableId) {
+                                    toast.warn("Dont leave a empty row, it will be deleted when you save")
+                                }
+                            }}>
+                                <div>
+                                    {Object.entries(eventComponents).map((e, i) => (
+                                        <div >
+                                            <div style={{ fontSize: 20, paddingTop: 10 }}>
+                                                <Row>
+                                                    <Col span={6} offset={9} justify="center" align="middle">
+                                                        {i == 0 ? 'Available' : 'Row ' + i}
+                                                    </Col>
+                                                    {e[0] !== ROOT_ROW_EVENT && e[0] !== FIRST_ROW_EVENT ?
+                                                        <Col span={6} offset={3} justify="left" align="end">
+                                                            <DeleteOutlined style={{ fontSize: 20, color: 'red' }} onClick={() => deleteRow(e[0])} />
+                                                        </Col>
+                                                        :
+                                                        <></>
+                                                    }
+                                                </Row>
+                                            </div>
+                                            <ComponentList
+                                                internalScroll
+                                                key={e[0]}
+                                                listId={e[0]}
+                                                listType="CARD"
+                                                components={e[1]}
+                                                event={e}
+                                            />
+
+                                        </div>
+                                    ))}
+                                </div>
+                            </DragDropContext>
+                        </> :
+                        <>
+                            <h3>Don't have any event to show!</h3>
+                        </>}
                     </>}
-            </> : <>{eventComponents.length != 0 ?
-                <>
-                    <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
-                        // // dropped outside the list
-                        if (!destination) {
-                            return;
-                        }
-
-                        setEventComponents(
-                            reorderComponent(
-                                eventComponents,
-                                source,
-                                destination
-                            )
-                        );
-                        setChanging(true)
-                        if (haveEmptyRow() && source.droppableId !== destination.droppableId) {
-                            toast.warn("Dont leave a empty row, it will be deleted when you save")
-                        }
-                    }}>
-                        <div>
-                            {Object.entries(eventComponents).map((e, i) => (
-                                <div >
-                                    <div style={{ fontSize: 20, paddingTop: 10 }}>
-                                        <Row>
-                                            <Col span={6} offset={9} justify="center" align="middle">
-                                                {i == 0 ? 'Available' : 'Row ' + i}
-                                            </Col>
-                                            {e[0] !== ROOT_ROW_EVENT && e[0] !== FIRST_ROW_EVENT ?
-                                                <Col span={6} offset={3} justify="left" align="end">
-                                                    <DeleteOutlined style={{ fontSize: 20, color: 'red' }} onClick={() => deleteRow(e[0])} />
-                                                </Col>
-                                                :
-                                                <></>
-                                            }
-                                        </Row>
-                                    </div>
-                                    <ComponentList
-                                        internalScroll
-                                        key={e[0]}
-                                        listId={e[0]}
-                                        listType="CARD"
-                                        components={e[1]}
-                                        event={e}
-                                    />
-
-                                </div>
-                            ))}
-                        </div>
-                    </DragDropContext>
-                </> :
-                <>
-                    <h3>Don't have any event to show!</h3>
-                </>}
-            </>}
 
 
-        </div>
+                </div>
 
-        {(selectedType === SELECTED_TYPE_CATEGORY && categoryComponents.length != 0) || (selectedType === SELECTED_TYPE_EVENT && eventComponents.length != 0) ?
+                {(selectedType === SELECTED_TYPE_CATEGORY && categoryComponents.length != 0) || (selectedType === SELECTED_TYPE_EVENT && eventComponents.length != 0) ?
 
-            <div style={{ marginTop: 40 }}>
-                <Row justify="center" align="middle">
-                    <Col>
+                    <div style={{ marginTop: 40 }}>
+                        <Row justify="center" align="middle">
+                            <Col>
 
-                        <Button type="" shape="round" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { onClickAddNewRow() }}>
-                            <PlusOutlined style={{ fontSize: 32 }} />
-                        </Button>
-                    </Col>
-                </Row>
-                <Row justify="center" align="middle" style={{ marginTop: 40 }}>
-                    <Col>
-                        {isLoading === false ?
-                            <Button type="primary" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { save() }}>Save</Button>
-                            : <Spin />}
-                    </Col>
-                </Row>
-            </div> : null
-        }
+                                <Button type="" shape="round" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { onClickAddNewRow() }}>
+                                    <PlusOutlined style={{ fontSize: 32 }} />
+                                </Button>
+                            </Col>
+                        </Row>
+                        <Row justify="center" align="middle" style={{ marginTop: 40 }}>
+                            <Col>
+                                {isLoading === false ?
+                                    <Button type="primary" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { save() }}>Save</Button>
+                                    : <Spin />}
+                            </Col>
+                        </Row>
+                    </div> : null
+                }
+            </> : <Skeleton />}
     </>)
 }
 export default EditTemplatePage;
