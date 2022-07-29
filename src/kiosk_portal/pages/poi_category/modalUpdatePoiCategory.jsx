@@ -24,7 +24,6 @@ const ModalUpdatePoiCategory = ({
 
   const onFinishUpdatePoi = async (values) => {
     try {
-      console.log(values);
       if (isHasPicture) {
         let valueLogo = "";
         if (typeof values.logo === "undefined") {
@@ -41,7 +40,6 @@ const ModalUpdatePoiCategory = ({
           name: values.name,
           logo: valueLogo,
         };
-        console.log(updateItem);
         await updatePoiCategoryService(updateItem).then(() => {
           modalToIndex("update");
           toast.success("Update Poi Category Success");
@@ -51,7 +49,7 @@ const ModalUpdatePoiCategory = ({
         toast.error("Please choose logo");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const handleCancelPoiInModal = () => {

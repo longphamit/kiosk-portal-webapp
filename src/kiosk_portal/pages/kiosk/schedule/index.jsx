@@ -1,11 +1,10 @@
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Select, Spin } from 'antd';
-import { Option } from 'antd/lib/mentions';
+import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Skeleton } from 'antd';
 import CustomBreadCumb from '../../../components/breadcumb/breadcumb';
 import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL, KIOSK_SCHEDULING_HREF, KIOSK_SCHEDULING_LABEL } from '../../../components/breadcumb/breadcumb_constant';
-import { getListScheduleWithoutParamService, getScheduleByIdService } from '../../../services/schedule_service';
-import { getListTemplateWithoutParamService, getTemplateById } from '../../../services/template_service';
+import { getListScheduleWithoutParamService } from '../../../services/schedule_service';
+import { getListTemplateWithoutParamService } from '../../../services/template_service';
 import ScheduleKioskDetail from './components/shedule_detail_area';
 import TemplateKioskDetail from './components/temple_detail_area';
 import { useEffect, useState } from 'react';
@@ -27,7 +26,6 @@ const KioskSchedulingPage = () => {
     const [currentKioskId, setKioskId] = useState()
     const [form] = Form.useForm();
     const onChange = (key) => {
-        console.log(key);
     };
     const breadCumbData = [
         {
@@ -57,7 +55,6 @@ const KioskSchedulingPage = () => {
             try {
                 let res = await getKisokScheduleService(currentKioskId);
                 setListKioskShedule(res.data.data)
-                console.log(res.data.data[0])
             } catch (e) {
                 console.error(e);
             }
@@ -165,46 +162,50 @@ const KioskSchedulingPage = () => {
                     </Col>
                 </Row> : null
             }
-            {listKioskSchedule && listKioskSchedule.length != 0 ?
-                <Collapse defaultActiveKey={[listKioskSchedule[0].id]} onChange={onChange}>
-                    {listKioskSchedule.map((s) => (
-                        <>
-                            <Panel header={s.schedule.name + ' - ' + s.template.name} key={s.id}>
-                                <Row>
-                                    <Col span={11}>
-                                        <Card title="Schedule Infomation" bordered={false} >
-                                            <ScheduleKioskDetail currentSchdule={s.schedule} labelCol={6} wapperCol={18} />
-                                        </Card>
-
-                                    </Col>
-                                    <Col span={12} offset={1}>
-                                        <Card title="Template Infomation" bordered={false} >
-                                            <TemplateKioskDetail currentTemplate={s.template} labelCol={12} wapperCol={12} />
-                                        </Card>
-
-                                    </Col>
-                                </Row>
-                                <Row >
-                                    <Col>
-                                        <Button danger type="primary" style={{ marginRight: 20 }} onClick={() => deleteKioskSchedule(s.id)}>Delete</Button>
-                                        <Button onClick={() => {
-                                            setUpdateVisible(true);
-                                            setUpdateKioskSchedule(s);
-                                        }} >Update</Button>
-                                    </Col>
-                                </Row>
-                            </Panel>
-                        </>
-                    ))}
-                </Collapse> :
+            {listKioskSchedule ?
                 <>
-                    <Row justify='center' align='center' style={{ marginTop: 250 }}>
-                        <Col>
-                            <Empty />
-                        </Col>
-                    </Row>
-                </>
+                    {listKioskSchedule.length != 0 ?
+                        <Collapse defaultActiveKey={[listKioskSchedule[0].id]} onChange={onChange}>
+                            {listKioskSchedule.map((s) => (
+                                <>
+                                    <Panel header={s.schedule.name + ' - ' + s.template.name} key={s.id}>
+                                        <Row>
+                                            <Col span={11}>
+                                                <Card title="Schedule Infomation" bordered={false} >
+                                                    <ScheduleKioskDetail currentSchedule={s.schedule} labelCol={6} wapperCol={18} />
+                                                </Card>
 
+                                            </Col>
+                                            <Col span={12} offset={1}>
+                                                <Card title="Template Infomation" bordered={false} >
+                                                    <TemplateKioskDetail currentTemplate={s.template} labelCol={12} wapperCol={12} />
+                                                </Card>
+
+                                            </Col>
+                                        </Row>
+                                        <Row >
+                                            <Col>
+                                                <Button danger type="primary" style={{ marginRight: 20 }} onClick={() => deleteKioskSchedule(s.id)}>Delete</Button>
+                                                <Button onClick={() => {
+                                                    setUpdateVisible(true);
+                                                    setUpdateKioskSchedule(s);
+                                                }} >Update</Button>
+                                            </Col>
+                                        </Row>
+                                    </Panel>
+                                </>
+                            ))}
+                        </Collapse> :
+                        <>
+                            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                                <Col>
+                                    <Empty />
+                                </Col>
+                            </Row>
+                        </>
+                    }
+                </>
+                : <Skeleton />
             }
             {
                 updateKioskSchedule ?
@@ -234,7 +235,7 @@ const KioskSchedulingPage = () => {
                     listSchedule={listSchedule}
                     listTemplate={listTemplate}
                     currTemplate={currentTemplate}
-                    currSchdule={currentSchdule}
+                    currSchedule={currentSchdule}
                 />
 
                 : null}

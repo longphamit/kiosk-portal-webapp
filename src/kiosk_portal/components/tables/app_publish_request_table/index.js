@@ -2,12 +2,14 @@ import {
   Button,
   Col,
   Descriptions,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
@@ -43,7 +45,7 @@ const AppPublishRequestTable = ({ partyId }) => {
   const [appPublishRequestPage, setAppPublishRequestPage] = useState(1);
   const [appPublishRequestTotal, setAppPublishRequestTotal] = useState(0);
   const [appPublishRequestPageSize, setAppPublishRequestPageSize] = useState(5);
-  const [listAppPublishRequest, setListListAppPublishRequest] = useState([]);
+  const [listAppPublishRequest, setListListAppPublishRequest] = useState();
   const [appPublishRequestSelected, setAppPublishRequestSelected] = useState();
   const [appPublishRequestSearchType, setAppPublishRequestSearchType] =
     useState("CreatorEmail");
@@ -96,7 +98,7 @@ const AppPublishRequestTable = ({ partyId }) => {
     {
       title: t("action"),
       key: "action",
-      
+
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -105,7 +107,7 @@ const AppPublishRequestTable = ({ partyId }) => {
               navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
-            <EyeFilled/> Detail
+            <EyeFilled /> Detail
           </Button>
           {record.status === PUBLISH_DENIED ? (
             <Button
@@ -154,13 +156,17 @@ const AppPublishRequestTable = ({ partyId }) => {
     appPublishRequestPage,
     appPublishRequestPageSize
   ) => {
-    const res = await getListAppPublishRequestService(
-      appPublishRequestPage,
-      appPublishRequestPageSize
-    );
-    console.log(res);
-    setAppPublishRequestTotal(res.data.metadata.total);
-    setListListAppPublishRequest(res.data.data);
+    try {
+      const res = await getListAppPublishRequestService(
+        appPublishRequestPage,
+        appPublishRequestPageSize
+      );
+      setAppPublishRequestTotal(res.data.metadata.total);
+      setListListAppPublishRequest(res.data.data);
+    } catch (e) {
+      console.error(e);
+      setListListAppPublishRequest([])
+    }
   };
   const handlePaginationAppPublishRequest = async (page, pageSize) => {
     setAppPublishRequestPage(page);
@@ -239,7 +245,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                       type="primary"
                       size={"large"}
                     >
-                     <SearchOutlined/>
+                      <SearchOutlined />
                     </Button>
                   </Form.Item>
                 </Col>
@@ -248,19 +254,31 @@ const AppPublishRequestTable = ({ partyId }) => {
           </Col>
           <Col span={5} />
         </Row>
-        <Col span={24}>
-          <Table
-            columns={AdminApplicationPublishRequestColumn}
-            dataSource={listAppPublishRequest}
-            pagination={false}
-          />
-        </Col>
-        <Pagination
-          defaultCurrent={appPublishRequestPage}
-          total={appPublishRequestTotal}
-          pageSize={appPublishRequestPageSize}
-          onChange={handlePaginationAppPublishRequest}
-        />
+        {listAppPublishRequest ?
+          listAppPublishRequest.length === 0 ?
+            <>
+              <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                <Col>
+                  <Empty />
+                </Col>
+              </Row>
+            </> :
+            <>
+              <Col span={24}>
+                <Table
+                  columns={AdminApplicationPublishRequestColumn}
+                  dataSource={listAppPublishRequest}
+                  pagination={false}
+                />
+              </Col>
+              <Pagination
+                defaultCurrent={appPublishRequestPage}
+                total={appPublishRequestTotal}
+                pageSize={appPublishRequestPageSize}
+                onChange={handlePaginationAppPublishRequest}
+              />
+            </> : <Skeleton />
+        }
       </div>
       {appPublishRequestSelected ? (
         <Modal

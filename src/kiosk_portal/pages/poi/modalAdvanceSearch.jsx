@@ -1,9 +1,7 @@
-import { formatTimePicker } from "../../../@app/utils/date_util";
 import {
   getListDistrictService,
   getListWardService,
 } from "../../services/map_service";
-import { toast } from "react-toastify";
 import {
   Button,
   Checkbox,
@@ -13,15 +11,10 @@ import {
   Row,
   Modal,
   Select,
-  TimePicker,
-  Upload,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { UploadOutlined } from "@ant-design/icons";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
-import { beforeUpload } from "../../../@app/utils/image_util";
-import { getBase64 } from "../../../@app/utils/file_util";
 
 const ModalAdvanceSearch = ({
   onSearchModal,
@@ -140,7 +133,7 @@ const ModalAdvanceSearch = ({
       modalToIndex("search", searchPoi);
       form.resetFields();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const handleCancelPoiInModal = () => {

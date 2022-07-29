@@ -2,12 +2,14 @@ import {
   Button,
   Checkbox,
   Col,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
@@ -43,7 +45,7 @@ import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const ScheduleManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listSchedule, setListSchedule] = useState([]);
+  const [listSchedule, setListSchedule] = useState();
   const [totalSchedule, setTotalSchedule] = useState(0);
   const [numScheduleInPage, setNumScheduleInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
@@ -65,10 +67,8 @@ const ScheduleManagerPage = () => {
       let name = querySearch !== "" ? querySearch : "";
       const res = await getListTemplateService(1, 100000000, "");
       setListTemplate(res.data.data);
-      console.log(res.data.data);
-      console.log(listTemplate);
     } catch (error) {
-      console.log(error);
+      console.eror(error);
     }
   };
 
@@ -88,16 +88,15 @@ const ScheduleManagerPage = () => {
           }
         );
       }
-      return;
     } catch (error) {
-      console.log(error);
+      setListSchedule([]);
+      console.eror(error);
     }
   };
 
   useEffect(() => {
     getListScheduleFunction(currentPage, numScheduleInPage);
     getListTemplateFunction();
-    console.log(listTemplate);
   }, []);
 
   const formItemLayout = {
@@ -123,7 +122,7 @@ const ScheduleManagerPage = () => {
       },
     },
   };
-  const onFinishEditAccount = async (values) => {
+  const onFinishEditShedule = async (values) => {
     const invalidMsg = [];
     var check = true;
     let dOW = "";
@@ -146,7 +145,6 @@ const ScheduleManagerPage = () => {
           dayOfWeek: dOW,
           status: currentItem.status,
         };
-        console.log(updateSchedule);
         await updateScheduleService(updateSchedule).then(() => {
           getListScheduleFunction(currentPage, numScheduleInPage);
           setIsEditScheduleModalVisible(false);
@@ -157,7 +155,7 @@ const ScheduleManagerPage = () => {
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
   const onFinishAdvancedSearch = async (values) => {
@@ -178,7 +176,7 @@ const ScheduleManagerPage = () => {
         setQuerySearch(search);
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalSchedule(0);
       setListSchedule([]);
     }
@@ -223,7 +221,7 @@ const ScheduleManagerPage = () => {
         setQuerySearch(search);
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalSchedule(0);
       setListSchedule([]);
     }
@@ -260,7 +258,7 @@ const ScheduleManagerPage = () => {
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -278,6 +276,22 @@ const ScheduleManagerPage = () => {
   };
   const handleCloseModalAdvancedSearchSchedule = () => {
     setIsAdvancedSearchModalVisible(false);
+  };
+  const handleChangeStatusSchedule = async (record) => {
+    Modal.confirm({
+      title: t("confirmChangeStatusAccount"),
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            toast.error("Chưa làm");
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      },
+    });
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -437,14 +451,23 @@ const ScheduleManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listSchedule} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalSchedule}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
-
+      {listSchedule ?
+        listSchedule.length === 0 ?
+          <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Col>
+              <Empty />
+            </Col>
+          </Row> :
+          <>
+            <Table columns={columns} dataSource={listSchedule} pagination={false} />
+            <Pagination
+              defaultCurrent={1}
+              total={totalSchedule}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </> : <Skeleton />
+      }
       <Modal
         title={t("createschedule")}
         visible={isCreateScheduleModalVisible}
@@ -541,7 +564,7 @@ const ScheduleManagerPage = () => {
             {...formItemLayout}
             form={form}
             name="edit"
-            onFinish={onFinishEditAccount}
+            onFinish={onFinishEditShedule}
             scrollToFirstError
             initialValues={{
               name: currentItem.name,

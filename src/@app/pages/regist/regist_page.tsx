@@ -44,7 +44,7 @@ const RegistPage: React.FC = () => {
         navigate("/signin");
       })
       .catch((error: any) => {
-        console.log(error.response);
+        console.error(error.response);
         toast(error.response.data.message);
       }).finally(() => {
         setIsLoading(false)

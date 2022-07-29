@@ -209,7 +209,7 @@ export const ComponentList: React.FC<Props> = ({ listId, listType, components })
                 </Row>
                 <Row>
                     <Image.PreviewGroup>
-                        {currentEvent?.listImage.length == 0 ? <>No more image display</> :
+                        {currentEvent?.listImage.length === 0 ? <>No more image display</> :
                             currentEvent?.listImage.map((object, i) => <Image width={234} src={object} style={{ paddingRight: 17 }} alt="" />)}
                     </Image.PreviewGroup>
 

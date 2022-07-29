@@ -7,6 +7,7 @@ import {
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
@@ -36,7 +37,7 @@ const TemplateManagerPage = () => {
   const [isEditLoading, setEditLoading] = useState(false);
   const [isCreateLoading, setCreateLoading] = useState(false);
   const [isDeleteLoading, setDeleteLoading] = useState(false);
-  const [listTemplate, setListTemplate] = useState([]);
+  const [listTemplate, setListTemplate] = useState();
   const [totalTemplate, setTotalTemplate] = useState(0);
   const [numTemplateInPage, setNumTemplateInPage] = useState(10);
   const [querySearch, setQuerySearch] = useState({});
@@ -70,7 +71,7 @@ const TemplateManagerPage = () => {
       setCurrentPage(1);
       setTotalTemplate(0);
       setListTemplate([]);
-      console.log(error);
+      console.error(error);
     }
   };
   const checkEmptyObj = (obj) => {
@@ -146,6 +147,7 @@ const TemplateManagerPage = () => {
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
     } catch (e) {
+      setListTemplate([])
       toast("Cannot found!");
     }
   };
@@ -345,14 +347,17 @@ const TemplateManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listTemplate} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalTemplate}
-        pageSize={numTemplateInPage}
-        onChange={handleChangeNumberOfPaging}
-      />
-
+      {listTemplate ?
+        <>
+          <Table columns={columns} dataSource={listTemplate} pagination={false} />
+          <Pagination
+            defaultCurrent={1}
+            total={totalTemplate}
+            pageSize={numTemplateInPage}
+            onChange={handleChangeNumberOfPaging}
+          />
+        </> : <Skeleton />
+      }
       <Modal
         title="Create template"
         visible={isCreateTemplateModalVisible}

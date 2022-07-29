@@ -1,5 +1,5 @@
-import { EditFilled, PlusOutlined, PoweroffOutlined } from "@ant-design/icons";
-import { Pagination, Space, Table, Button, Row, Col, Modal } from "antd";
+import { EditFilled, PlusOutlined } from "@ant-design/icons";
+import { Pagination, Space, Table, Button, Row, Col, Modal, Skeleton, Empty } from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
@@ -10,7 +10,7 @@ import ModalUpdatePoiCategory from "./modalUpdatePoiCategory";
 
 const PoiCategory = () => {
   const { t } = useTranslation();
-  const [listUnit, setListUnit] = useState([]);
+  const [listUnit, setListUnit] = useState();
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,13 +60,12 @@ const PoiCategory = () => {
       onOk: async () => {
         {
           try {
-            console.log(record);
             // await changeStatusAccountService(record.id, null).then(() => {
             //   getListAccountFunction(currentPage, numAccountInPage);
             //   toast.success(t("toastsuccesschangestatus"));
             // });
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }
       },
@@ -87,7 +86,8 @@ const PoiCategory = () => {
       setTotalUnit(res.data.metadata.total);
       setListUnit(res.data.data);
     } catch (error) {
-      console.log(error);
+      setListUnit([])
+      console.error(error);
     }
   };
 
@@ -116,7 +116,6 @@ const PoiCategory = () => {
             shape="default"
             onClick={() => {
               setCurrentUnit(record);
-              console.log(currentUnit);
               showModal("update");
             }}
           >
@@ -158,13 +157,26 @@ const PoiCategory = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listUnit} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalUnit}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {listUnit ?
+        listUnit.length === 0 ?
+          <>
+            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </> :
+          <>
+            <Table columns={columns} dataSource={listUnit} pagination={false} />
+            <Pagination
+              defaultCurrent={1}
+              total={totalUnit}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </> :
+        <Skeleton />
+      }
       <ModalCreatePoiCategory
         modalToIndex={onFinishModal}
         isCreateModalVisible={isCreateModalVisible}

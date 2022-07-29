@@ -22,7 +22,6 @@ export const getListLocalEventService = async (page: any, size: any) => {
     return response.data;
 };
 export const searchEventService = async (data: any) => {
-    console.log(data)
     const response = await request.get(
         `${HOST}/v1/events?Name=${data.name}&Street=${data.street}&Ward=${data.ward}` +
         `&District=${data.district}&City=${data.city}&CreatorName=${data.creatorName}&CreatorEmail=${data.creatorEmail}` +
@@ -57,7 +56,7 @@ export const updateListImageService = async (data: any) => {
     return response.data;
 }
 
-export const updateThumbnailService = async (data:any) =>{
+export const updateThumbnailService = async (data: any) => {
     const response = await request.patch(`${HOST}/v1/events/image`, data);
     return response.data
 }
