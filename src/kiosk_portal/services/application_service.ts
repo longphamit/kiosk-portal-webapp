@@ -7,12 +7,7 @@ export const getListApplicationService = async (Name:any,PartyName:any,PartyEmai
   );
   return response.data;
 };
-export const getListApplicationServiceByCategory = async (categoryName: any) => {
-  const response = await request.get(
-    `${HOST}/v1/serviceApplications?page=1&AppCategoryName=${categoryName}&status=installed`
-  );
-  return response.data;
-};
+
 export const getApplicationServiceById = async (id:string) => {
   const response = await request.get(
     `${HOST}/v1/serviceApplications/${id}`
