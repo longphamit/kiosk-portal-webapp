@@ -61,13 +61,14 @@ const ApplicationDetailPage = () => {
     setAppId(tempId);
     try {
       const res = await getApplicationServiceById(tempId);
+      console.log(res);
       setApp(res.data);
       setMyFeedback(res.data.myFeedback);
       setListFeedback(res.data.listFeedback);
     } catch (e) {
       console.error(e);
-      setMyFeedback({})
-      setListFeedback([])
+      setMyFeedback({});
+      setListFeedback([]);
     }
   };
   const getInprogressAppPublishRequestByAppId = async () => {
@@ -84,7 +85,6 @@ const ApplicationDetailPage = () => {
   useEffect(() => {
     getInprogressAppPublishRequestByAppId();
     getAppById();
-
   }, []);
   const approveAppPublishRequest = async () => {
     try {
@@ -118,7 +118,7 @@ const ApplicationDetailPage = () => {
   return (
     <>
       <CustomBreadCumb props={getApplicationPage()} />
-      {app ?
+      {app ? (
         <>
           <div id="account-info-panel">
             <Col span={24}>
@@ -134,6 +134,12 @@ const ApplicationDetailPage = () => {
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.appCategoryName}
+                </Descriptions.Item>
+                <Descriptions.Item
+                  label="Num Of Install"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
+                  {app.userInstalled}
                 </Descriptions.Item>
                 <Descriptions.Item
                   label="Party"
@@ -170,48 +176,50 @@ const ApplicationDetailPage = () => {
               </Descriptions>
             </Col>
             <Col>
-              {role ? role === ROLE_ADMIN ? (
-                <>
-                  <Row>
-                    {inprogressPublish ? (
-                      <>
-                        <Popconfirm
-                          title="Are you sure to approve this app?"
-                          onConfirm={() => {
-                            approveAppPublishRequest();
-                          }}
-                          onCancel={() => { }}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button
-                            className="success-button"
-                            style={{ margin: 10 }}
+              {role ? (
+                role === ROLE_ADMIN ? (
+                  <>
+                    <Row>
+                      {inprogressPublish ? (
+                        <>
+                          <Popconfirm
+                            title="Are you sure to approve this app?"
+                            onConfirm={() => {
+                              approveAppPublishRequest();
+                            }}
+                            onCancel={() => {}}
+                            okText="Yes"
+                            cancelText="No"
                           >
-                            Approve Publish
-                          </Button>
-                        </Popconfirm>
-                        <Popconfirm
-                          title="Are you sure to deny this app?"
-                          onConfirm={() => {
-                            setDenyAppPublishModalVisible(true);
-                          }}
-                          onCancel={() => { }}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button
-                            className="danger-button"
-                            style={{ margin: 10 }}
+                            <Button
+                              className="success-button"
+                              style={{ margin: 10 }}
+                            >
+                              Approve Publish
+                            </Button>
+                          </Popconfirm>
+                          <Popconfirm
+                            title="Are you sure to deny this app?"
+                            onConfirm={() => {
+                              setDenyAppPublishModalVisible(true);
+                            }}
+                            onCancel={() => {}}
+                            okText="Yes"
+                            cancelText="No"
                           >
-                            Deny Publish
-                          </Button>
-                        </Popconfirm>
-                      </>
-                    ) : null}
-                  </Row>
-                </>
-              ) : null : null}
+                            <Button
+                              className="danger-button"
+                              style={{ margin: 10 }}
+                            >
+                              Deny Publish
+                            </Button>
+                          </Popconfirm>
+                        </>
+                      ) : null}
+                    </Row>
+                  </>
+                ) : null
+              ) : null}
             </Col>
           </div>
           <div dangerouslySetInnerHTML={{ __html: app.description }} />
@@ -233,8 +241,7 @@ const ApplicationDetailPage = () => {
             </TabPane>
             <TabPane tab="Feedbacks" key="2">
               <div id="feedback">
-
-                {listFeedback ?
+                {listFeedback ? (
                   listFeedback.length !== 0 ? (
                     <>
                       <Row span={24}>
@@ -249,7 +256,9 @@ const ApplicationDetailPage = () => {
                             <h2>My Feedback</h2>
                             {myFeedback ? (
                               <>
-                                <CustomRatingAndFeedback feedback={myFeedback} />
+                                <CustomRatingAndFeedback
+                                  feedback={myFeedback}
+                                />
                                 <Button
                                   style={{ marginLeft: 80 }}
                                   onClick={() => setUpdateModalVisible(true)}
@@ -265,7 +274,9 @@ const ApplicationDetailPage = () => {
                                     height: 60,
                                   }}
                                   style={{ float: "left" }}
-                                  description={<span>You are not feedback</span>}
+                                  description={
+                                    <span>You are not feedback</span>
+                                  }
                                 >
                                   <Button
                                     type="primary"
@@ -289,14 +300,17 @@ const ApplicationDetailPage = () => {
                         Feedback Now
                       </Button>
                     </Empty>
-                  ) : <Skeleton />
-                }
+                  )
+                ) : (
+                  <Skeleton />
+                )}
               </div>
             </TabPane>
           </Tabs>
         </>
-        : <Skeleton />
-      }
+      ) : (
+        <Skeleton />
+      )}
       {appId ? (
         <>
           <CreateFeedbackModal

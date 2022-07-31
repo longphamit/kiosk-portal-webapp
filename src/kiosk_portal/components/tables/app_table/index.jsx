@@ -107,10 +107,11 @@ const ApplicationTable = () => {
         numInPage,
         currentPageToGetList
       );
+      console.log(res.data.data);
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
-      setListApplication([])
+      setListApplication([]);
       toast.error(error.response.data.message);
     }
   };
@@ -306,9 +307,9 @@ const ApplicationTable = () => {
     },
 
     {
-      title: "Category",
-      dataIndex: "appCategoryName",
-      key: "appCategoryName",
+      title: "Num Of Install",
+      dataIndex: "userInstalled",
+      key: "userInstalled",
       render: (text) => <p>{text}</p>,
     },
 
@@ -497,15 +498,16 @@ const ApplicationTable = () => {
           ) : null
         ) : null}
       </Row>
-      {listApplication ?
-        listApplication.length === 0 ?
+      {listApplication ? (
+        listApplication.length === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
             <Table
               columns={columns}
@@ -518,8 +520,11 @@ const ApplicationTable = () => {
               pageSize={5}
               onChange={handleChangeNumberOfPaging}
             />
-          </> : <Skeleton />
-      }
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
       <Modal
         title="Create Application"
         visible={isCreateApplicationModalVisible}
@@ -811,8 +816,8 @@ const ApplicationTable = () => {
               <Select placeholder="Select your categories">
                 {listCategories
                   ? listCategories.map((item) => {
-                    return <Option value={item.id}>{item.name}</Option>;
-                  })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                   : null}
               </Select>
             </Form.Item>

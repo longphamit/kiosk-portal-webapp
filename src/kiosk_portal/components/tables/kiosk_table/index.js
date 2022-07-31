@@ -151,9 +151,9 @@ const KioskTable = ({ partyId }) => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Kiosk Location ID",
-      dataIndex: "kioskLocationId",
-      key: "kioskLocationId",
+      title: "Kiosk Location Name",
+      dataIndex: "kioskLocationName",
+      key: "kioskLocationName",
       render: (text, record, dataIndex) => (text ? (
         <Tag color={"green"} onClick={() => {
           localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }))
@@ -289,6 +289,7 @@ const KioskTable = ({ partyId }) => {
   useEffect(() => {
     localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
     getListKiosk(partyId, kioskPage, kioskPageSize);
+
   }, []);
   return (
     <>
