@@ -7,6 +7,7 @@ import {
   Modal,
   Pagination,
   Popconfirm,
+  Rate,
   Row,
   Select,
   Skeleton,
@@ -107,7 +108,6 @@ const KioskTable = ({ partyId }) => {
   ];
 
   const changeStatus = async (values) => {
-
     Modal.confirm({
       title: "Are you sure to change status this kiosk",
       okText: t("yes"),
@@ -168,7 +168,12 @@ const KioskTable = ({ partyId }) => {
         <Tag color={"red"}>Null</Tag>
       ))
     },
-
+    {
+      title: "Rating ",
+      dataIndex: "Rating",
+      key: "Rating",
+      render: (text, record, dataIndex) => <><Rate disabled defaultValue={record} /><p style={{display:"inline"} }> /{record.numberOfRating} turns</p></> ,
+    },
     {
       title: t("status"),
       dataIndex: "status",
@@ -233,6 +238,7 @@ const KioskTable = ({ partyId }) => {
         kioskPage,
         kioskPageSize
       );
+      console.log(data.data)
       setListKiosk(data.data);
       setKioskPage(data.metadata.page);
       setKioskTotal(data.metadata.total);
