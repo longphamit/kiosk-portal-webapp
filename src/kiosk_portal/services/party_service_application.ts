@@ -23,7 +23,7 @@ export const changeStatusMyAppService = async (serviceApplication: any) => {
 
 export const getApplicationsByCategoryIdService = async (categoryId: any) => {
   const response = await request.get(
-    `${HOST}/v1/my-app?AppCategoryId=${categoryId}&Status=uninstalled&page=1`
+    `${HOST}/v1/my-app?AppCategoryId=${categoryId}&Status=installed&page=1`
   );
   return response.data;
 };
