@@ -166,7 +166,7 @@ const TemplateManagerPage = () => {
     try {
       let res = await createTemplateService(data);
       handleCancelCreateTemplate();
-      onNavigate({ pathname: '/./create-template', search: '?id=' + res.data.id });
+      onNavigate({ pathname: '/./edit-template', search: '?id=' + res.data.id });
     } catch (e) {
       console.error(e)
       toast("Create failed");
@@ -191,16 +191,11 @@ const TemplateManagerPage = () => {
       cancelText: "No",
       onOk: async () => {
         {
-          setDeleteLoading(true);
-          try {
-            await deleteTemplateService(record.id);
+          return new Promise((resolve, reject) => {
+            resolve(deleteTemplateService(record.id));
             getListTemplateFunction(currentPage, numTemplateInPage);
             toast("Delete successful");
-          } catch (e) {
-            toast("Delete failed");
-          } finally {
-            setDeleteLoading(false);
-          }
+          }).catch(() => toast("Delete failed"))
         }
       },
     });
@@ -255,18 +250,16 @@ const TemplateManagerPage = () => {
           >
             <EditFilled /> Edit
           </Button>
-          {isDeleteLoading == false ?
-            <Button
-              className="danger-button"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleDeleteTemplate(record);
-              }}
-            >
-              <DeleteFilled /> Delete
-            </Button> : <Spin />
-          }
+          <Button
+            className="danger-button"
+            shape="default"
+            name={record}
+            onClick={() => {
+              handleDeleteTemplate(record);
+            }}
+          >
+            <DeleteFilled /> Delete
+          </Button>
         </Space>
       ),
     },

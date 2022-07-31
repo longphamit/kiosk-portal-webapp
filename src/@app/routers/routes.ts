@@ -26,7 +26,6 @@ import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
-import CreateTemplatePage from "../../kiosk_portal/pages/template/create-template";
 import EditTemplatePage from "../../kiosk_portal/pages/template/edit-template";
 import AuthenLayout from "../components/authen_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
@@ -193,15 +192,6 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER]
-  },
-  {
-    component: CreateTemplatePage,
-    path: "/create-template",
-    isLayout: true,
-    layout: AuthenLayout,
-    authen: true,
-    breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER]
   },
   {
     component: EditTemplatePage,
