@@ -73,15 +73,31 @@ const KioskSchedulingPage = () => {
                 setListSchedule(res.data.data);
                 setCurrentSchedule(res.data.data[0]);
             }
-        ).catch((e) => console.error());
+        ).catch((e) => {
+            console.error(e);
+            setListSchedule([]);
+            setCurrentSchedule({});
+        });
     }
     const getListTemplateAvailable = async () => {
         await getListTemplateWithoutParamService('').then(
             (res) => {
-                setListTemplate(res.data.data);
-                setCurrentTemplate(res.data.data[0]);
+                let tempList = []
+                Promise.all(
+                    res.data.data.map((e) => {
+                        if (e.status !== 'incomplete') {
+                            tempList.push(e);
+                        }
+                    })
+                );
+                setListTemplate(tempList);
+                setCurrentTemplate(tempList[0]);
             }
-        ).catch((e) => console.error());;
+        ).catch((e) => {
+            console.error(e);
+            setListTemplate([]);
+            setCurrentTemplate({});
+        });
     }
     const getKisokSchedule = async (id) => {
         try {
@@ -178,7 +194,7 @@ const KioskSchedulingPage = () => {
                                             </Col>
                                             <Col span={12} offset={1}>
                                                 <Card title="Template Infomation" bordered={false} >
-                                                    <TemplateKioskDetail currentTemplate={s.template} labelCol={12} wapperCol={12} />
+                                                    <TemplateKioskDetail currentTemplate={s.template} labelCol={6} wapperCol={18} />
                                                 </Card>
 
                                             </Col>
@@ -208,37 +224,40 @@ const KioskSchedulingPage = () => {
                 : <Skeleton />
             }
             {
-                updateKioskSchedule ?
+                listKioskSchedule && listTemplate && updateKioskSchedule ?
                     <>
+
                         <KioskScheduleModal
-                            type={"Update"}
-                            modalTitle={"Update Kiosk Schedule"}
-                            visible={updateVisible}
-                            setVisible={setUpdateVisible}
-                            onSubmit={onUpdateKioskSchedule}
+                            type={"Create"}
+                            modalTitle={"Create New Kiosk Schedule"}
+                            visible={createVisible}
+                            setVisible={setCreateVisible}
+                            onSubmit={onCreateKioskScheduke}
                             form={form}
                             listSchedule={listSchedule}
                             listTemplate={listTemplate}
-                            currTemplate={updateKioskSchedule.template}
-                            currSchdule={updateKioskSchedule.schedule}
+                            currTemplate={currentTemplate}
+                            currSchedule={currentSchdule}
                         />
-                    </> : null
+                    </>
+                    : null
             }
-            {currentSchdule && currentTemplate ?
-                <KioskScheduleModal
-                    type={"Create"}
-                    modalTitle={"Create New Kiosk Schedule"}
-                    visible={createVisible}
-                    setVisible={setCreateVisible}
-                    onSubmit={onCreateKioskScheduke}
-                    form={form}
-                    listSchedule={listSchedule}
-                    listTemplate={listTemplate}
-                    currTemplate={currentTemplate}
-                    currSchedule={currentSchdule}
-                />
-
-                : null}
+            {
+                currentSchdule && currentTemplate ?
+                    <KioskScheduleModal
+                        type={"Create"}
+                        modalTitle={"Create New Kiosk Schedule"}
+                        visible={createVisible}
+                        setVisible={setCreateVisible}
+                        onSubmit={onCreateKioskScheduke}
+                        form={form}
+                        listSchedule={listSchedule}
+                        listTemplate={listTemplate}
+                        currTemplate={currentTemplate}
+                        currSchedule={currentSchdule}
+                    />
+                    : null
+            }
         </>)
 }
 export default KioskSchedulingPage;
