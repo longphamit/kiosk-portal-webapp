@@ -561,7 +561,7 @@ const DetailPoiPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose application logo!",
+                        message: "Please choose poi logo!",
                       },
                     ]}
                   >
@@ -594,7 +594,9 @@ const DetailPoiPage = () => {
             </Card>
           </Col>
         </Row>
-      ) : <Skeleton />}
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };
