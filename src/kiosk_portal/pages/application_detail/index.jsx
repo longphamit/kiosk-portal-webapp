@@ -163,6 +163,16 @@ const ApplicationDetailPage = () => {
                     <Tag color="red">{app.status}</Tag>
                   )}
                 </Descriptions.Item>
+                <Descriptions.Item
+                  label="Is Affiliate"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
+                  {app.isAffiliate === true ? (
+                    <Tag color="green">True</Tag>
+                  ) : (
+                    <Tag color="red">False</Tag>
+                  )}
+                </Descriptions.Item>
 
                 <Descriptions.Item>
                   <Image

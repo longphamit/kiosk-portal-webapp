@@ -197,12 +197,17 @@ const ApplicationTable = () => {
       let formatResult = [];
       const result = await getBase64(values.logo.file.originFileObj);
       formatResult = result.split(",");
+      let isCheck = false;
+      if (values?.isAffiliate[0]) {
+        isCheck = true;
+      }
       const newApplication = {
         name: values.name,
         description: description,
         link: values.link,
         logo: formatResult[1],
         appCategoryId: values.appCategoryId,
+        isAffiliate: isCheck,
       };
       await createApplicationService(newApplication);
       getListApplicationFunction(currentPage, numApplicationInPage);
@@ -305,14 +310,23 @@ const ApplicationTable = () => {
       key: "link",
       render: (text) => <p href={text}>{text}</p>,
     },
-
     {
       title: "Num Of Install",
       dataIndex: "userInstalled",
       key: "userInstalled",
       render: (text) => <p>{text}</p>,
     },
-
+    {
+      title: "isAffiliate",
+      dataIndex: "isAffiliate",
+      key: "isAffiliate",
+      render: (text, record, dataIndex) =>
+        record.isAffiliate === true ? (
+          <Tag color="green">True</Tag>
+        ) : (
+          <Tag color="red">False</Tag>
+        ),
+    },
     {
       title: t("status"),
       dataIndex: "status",
@@ -485,7 +499,7 @@ const ApplicationTable = () => {
         </Col>
         <Col span={5} />
         {role ? (
-          role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN ? (
+          role === ROLE_SERVICE_PROVIDER ? (
             <Col span={4}>
               <Button
                 className="success-button"
@@ -625,6 +639,15 @@ const ApplicationTable = () => {
                 return <Option value={item.id}>{item.name}</Option>;
               })}
             </Select>
+          </Form.Item>
+          <Form.Item name="isAffiliate" label="isAffiliate">
+            <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
+              <Row>
+                <Col span={8}>
+                  <Checkbox value="isAffiliate"></Checkbox>
+                </Col>
+              </Row>
+            </Checkbox.Group>
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
