@@ -270,6 +270,12 @@ const EventManagerPage = () => {
     }
     const columns = [
         {
+            title: "Image",
+            render: (text, record, dataIndex) => (
+                <img src={record.thumbnail.link} width={50} height={50} />
+            ),
+        },
+        {
             title: 'Name',
             dataIndex: "name",
             key: "name",

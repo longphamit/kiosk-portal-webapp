@@ -228,11 +228,11 @@ const KioskSchedulingPage = () => {
                     <>
 
                         <KioskScheduleModal
-                            type={"Create"}
-                            modalTitle={"Create New Kiosk Schedule"}
-                            visible={createVisible}
-                            setVisible={setCreateVisible}
-                            onSubmit={onCreateKioskScheduke}
+                            type={"Update"}
+                            modalTitle={"Update Kiosk Schedule"}
+                            visible={updateVisible}
+                            setVisible={setUpdateVisible}
+                            onSubmit={onUpdateKioskSchedule}
                             form={form}
                             listSchedule={listSchedule}
                             listTemplate={listTemplate}
@@ -240,7 +240,7 @@ const KioskSchedulingPage = () => {
                             currSchedule={currentSchdule}
                         />
                     </>
-                    : null
+                    : <Skeleton />
             }
             {
                 currentSchdule && currentTemplate ?
