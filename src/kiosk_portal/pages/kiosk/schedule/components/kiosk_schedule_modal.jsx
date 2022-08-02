@@ -43,7 +43,6 @@ const KioskScheduleModal = ({
     useEffect(() => {
         setCurrentSchedule(currSchedule);
         setCurrentTemplate(currTemplate);
-        console.log('visible ' + visible)
     }, []);
     return (<>
         {currentSchedule && currTemplate ?
