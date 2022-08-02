@@ -259,7 +259,7 @@ const EditTemplatePage = () => {
         }
         let request = buildPositionsModelRequest(
             selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents,
-            currentTemplate.id);
+            currentTemplate.id, selectedType);
         try {
             let res;
             if (currentTemplate.status === 'incomplete') {

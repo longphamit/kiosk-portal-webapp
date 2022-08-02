@@ -65,7 +65,7 @@ export const checkEmptyRow = (obj, root) => {
 }
 export const getIndexOfEmptyRow = (obj, root) => {
     let i = -1;
-    Object.entries(obj).map(([k, v],index) => {
+    Object.entries(obj).map(([k, v], index) => {
         if (k !== root && v.length == 0) {
             i = index;
             return;
@@ -73,83 +73,93 @@ export const getIndexOfEmptyRow = (obj, root) => {
     });
     return i;
 }
-    export const removeItemFromList = (id, list) => {
-        const removeIndex = []
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].id === id) {
-                removeIndex.push(i);
-            }
+export const removeItemFromList = (id, list) => {
+    const removeIndex = []
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].id === id) {
+            removeIndex.push(i);
         }
-        for (let index of removeIndex) {
-            list.splice(index, 1)
-        }
-        return list
     }
+    for (let index of removeIndex) {
+        list.splice(index, 1)
+    }
+    return list
+}
 
-    export const isColumnExisted = (rowIndex, componentsObj) => {
-        if (componentsObj['row' + `${rowIndex}`] === undefined) {
-            return false;
-        }
-        return true;
+export const isColumnExisted = (rowIndex, componentsObj) => {
+    if (componentsObj['row' + `${rowIndex}`] === undefined) {
+        return false;
     }
+    return true;
+}
 
-    export const getComponentFromList = (id, list) => {
-        for (let component of list) {
-            if (component.id == id) {
-                return component;
-            }
+export const getComponentFromList = (id, list) => {
+    for (let component of list) {
+        if (component.id == id) {
+            return component;
         }
-        return {};
     }
-    export const reorderKeysOfObject = (component) => {
-        return Object.keys(component).sort().reduce(
-            (obj, key) => {
-                obj[key] = component[key];
-                return obj;
-            },
-            {}
-        );
+    return {};
+}
+export const reorderKeysOfObject = (component) => {
+    return Object.keys(component).sort().reduce(
+        (obj, key) => {
+            obj[key] = component[key];
+            return obj;
+        },
+        {}
+    );
+}
+export const createEventModel = (event) => {
+    let imgs = [];
+    if (event.listImage !== undefined && event.listImage.length != 0)
+        event.listImage.map(img => imgs.push(img.link));
+    let data = {
+        id: event.id,
+        name: event.name,
+        thumbnail: event.thumbnail.link,
+        description: event.description,
+        time: moment(event.timeStart).format('DD/MM/YYYY HH:mm') + " - "
+            + moment(event.timeEnd).format('DD/MM/YYYY HH:mm'),
+        address: event.address + ' - ' + event.ward + ', ' + event.district + ', ' + event.city,
+        type: event.type,
+        status: event.status,
+        listImage: imgs,
     }
-    export const createEventModel = (event) => {
-        let imgs = [];
-        if (event.listImage !== undefined && event.listImage.length != 0)
-            event.listImage.map(img => imgs.push(img.link));
-        let data = {
-            id: event.id,
-            name: event.name,
-            thumbnail: event.thumbnail.link,
-            description: event.description,
-            time: moment(event.timeStart).format('DD/MM/YYYY HH:mm') + " - "
-                + moment(event.timeEnd).format('DD/MM/YYYY HH:mm'),
-            address: event.address + ' - ' + event.ward + ', ' + event.district + ', ' + event.city,
-            type: event.type,
-            status: event.status,
-            listImage: imgs,
-        }
-        return data;
-    }
-    export const buildPositionsModelRequest = (components, templateId) => {
-        let listPosition = [];
-        let rowIndex = 0;
-        Object.entries(components).map((element, index) => {
-            if (index != 0 && element[1].length != 0) {
-                let component = element[1];
-                for (let i = 0; i < component.length; i++) {
-                    let position = {
+    return data;
+}
+export const buildPositionsModelRequest = (components, templateId, type) => {
+    let listPosition = [];
+    let rowIndex = 0;
+    Object.entries(components).map((element, index) => {
+        if (index != 0 && element[1].length != 0) {
+            let component = element[1];
+            for (let i = 0; i < component.length; i++) {
+                let position;
+                if (type === 'event') {
+                    position = {
+                        eventId: component[i].id,
+                        rowIndex: rowIndex,
+                        columnIndex: i
+                    };
+                }
+                else {
+                    position = {
                         appCategoryId: component[i].id,
                         rowIndex: rowIndex,
                         columnIndex: i
                     };
-                    listPosition.push(position);
                 }
-                rowIndex++;
+                listPosition.push(position);
             }
-
-        });
-        let request = {
-            templateId: templateId,
-            listPosition: listPosition
+            rowIndex++;
         }
-        return request;
+
+    });
+    let request = {
+        templateId: templateId,
+        listPosition: listPosition
     }
+    return request;
+}
 

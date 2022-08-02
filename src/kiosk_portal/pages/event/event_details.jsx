@@ -284,7 +284,7 @@ export const EventDetailsPage = () => {
     ]
     return (<>
         <CustomBreadCumb props={breadCumbData} />
-        {currentEvent && description ?
+        {currentEvent ?
             <>
                 <Card title="Basic Information">
                     <Form

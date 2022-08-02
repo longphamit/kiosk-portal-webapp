@@ -1,6 +1,7 @@
 
 import { Skeleton } from "antd";
 import { useEffect, useState } from "react";
+import CustomRowItem from "../../../../components/general/CustomRowItem";
 import { getListInstallAppService } from "../../../../services/party_service_application";
 import { getEventPositionService } from "../../../../services/template_service";
 
@@ -38,6 +39,7 @@ const TemplateKioskDetail = ({
         <>
             {currentTemplate ?
                 (<>
+                    <CustomRowItem label="Name" content={currentTemplate.name} contentType="input" wapperCol={wapperCol} labelCol={labelCol} />
                     <a href={"../edit-template?id=" + currentTemplate.id} target="_blank">View details the template</a>
                 </>) : (<Skeleton />)
             }
