@@ -317,7 +317,7 @@ const ApplicationTable = () => {
       render: (text) => <p>{text}</p>,
     },
     {
-      title: "isAffiliate",
+      title: "Is Affiliate",
       dataIndex: "isAffiliate",
       key: "isAffiliate",
       render: (text, record, dataIndex) =>
@@ -331,7 +331,12 @@ const ApplicationTable = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text, record, dataIndex) => <p>{text}</p>,
+      render: (text, record, dataIndex) =>
+        record.status === "available" ? (
+          <Tag color="green">Available</Tag>
+        ) : (
+          <Tag color="red">Un Available</Tag>
+        ),
     },
 
     {
@@ -640,7 +645,7 @@ const ApplicationTable = () => {
               })}
             </Select>
           </Form.Item>
-          <Form.Item name="isAffiliate" label="isAffiliate">
+          <Form.Item name="isAffiliate" label="Is Affiliate">
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
               <Row>
                 <Col span={8}>
