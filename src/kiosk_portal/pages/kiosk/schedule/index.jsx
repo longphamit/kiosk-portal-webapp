@@ -236,11 +236,11 @@ const KioskSchedulingPage = () => {
                             form={form}
                             listSchedule={listSchedule}
                             listTemplate={listTemplate}
-                            currTemplate={currentTemplate}
-                            currSchedule={currentSchdule}
+                            currTemplate={updateKioskSchedule.template}
+                            currSchedule={updateKioskSchedule.schedule}
                         />
                     </>
-                    : <Skeleton />
+                    : null
             }
             {
                 currentSchdule && currentTemplate ?
