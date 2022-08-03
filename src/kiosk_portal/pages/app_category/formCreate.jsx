@@ -83,7 +83,7 @@ const FormCreateCategory = ({ visible }) => {
               message: "Please input Commission Percentage!",
             },
             {
-              pattern: "^[0-9]$|^[1-9][0-9]$|^(100)$",
+              pattern: "^([0-9]*[.])?[0-9]$|^([1-9][0-9]*[.])?[0-9]$|^(100)$",
               message: "Please input number >0 and <100",
             },
           ]}
