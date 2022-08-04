@@ -10,7 +10,6 @@ export const EventDetailsModal = ({
     currentEvent
 }) => {
     const [previewImages, setPreviewImages] = useState();
-    console.log(currentEvent)
     useEffect(() => {
         setPreviewImages(prepareGallery(currentEvent));
     }, []);
