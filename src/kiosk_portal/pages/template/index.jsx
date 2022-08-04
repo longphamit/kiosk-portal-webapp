@@ -238,6 +238,7 @@ const TemplateManagerPage = () => {
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button

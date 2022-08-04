@@ -16,7 +16,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, SyncOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -41,7 +41,10 @@ import ModalAddLocation from "../../../pages/kiosk/modalAddLocation";
 import { getListKioskLocationService } from "../../../services/kiosk_location_service";
 import { async } from "@firebase/util";
 import { PREVIOUS_PATH } from "../../../../@app/constants/key";
-import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../../breadcumb/breadcumb_constant";
+import {
+  KIOSK_MANAGER_HREF,
+  KIOSK_MANAGER_LABEL,
+} from "../../breadcumb/breadcumb_constant";
 
 const searchTypeKiosk = [
   {
@@ -62,18 +65,19 @@ const KioskTable = ({ partyId }) => {
     useState(false);
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
-  const [isModalAddLocationVisible, setIsModalAddLocationVisible] = useState(false);
+  const [isModalAddLocationVisible, setIsModalAddLocationVisible] =
+    useState(false);
   const role = localStorageGetReduxState().auth.role;
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const [listLocation, setListLocation] = useState([]);
   const breadCumbData = [
     {
       href: KIOSK_MANAGER_HREF,
       label: KIOSK_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   const kioskColumnAdmin = [
     {
       title: "No",
@@ -114,29 +118,23 @@ const KioskTable = ({ partyId }) => {
       cancelText: t("no"),
       onOk: async () => {
         {
-          setIsLoading(true)
+          setIsLoading(true);
           try {
             await changeStatusKioskService(values.id);
             await getListKiosk(partyId, kioskPage, kioskPageSize);
           } catch (error) {
             console.error(error);
           } finally {
-            setIsLoading(false)
+            setIsLoading(false);
           }
         }
       },
     });
-
-
-
-
-  }
+  };
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
   };
-
-
 
   const kioskColumnLocationOwner = [
     {
@@ -154,25 +152,40 @@ const KioskTable = ({ partyId }) => {
       title: "Kiosk Location Name",
       dataIndex: "kioskLocationName",
       key: "kioskLocationName",
-      render: (text, record, dataIndex) => (text ? (
-        <Tag color={"green"} onClick={() => {
-          localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }))
+      render: (text, record, dataIndex) =>
+        text ? (
+          <Tag
+            color={"green"}
+            onClick={() => {
+              localStorage.setItem(
+                PREVIOUS_PATH,
+                JSON.stringify({ data: breadCumbData })
+              );
 
-          onNavigate({
-            pathname: "/./location",
-            search: "?id=" + record.kioskLocationId,
-          })
-        }
-        }>{text}</Tag>
-      ) : (
-        <Tag color={"red"}>Null</Tag>
-      ))
+              onNavigate({
+                pathname: "/./location",
+                search: "?id=" + record.kioskLocationId,
+              });
+            }}
+          >
+            {text}
+          </Tag>
+        ) : (
+          <Tag color={"red"}>Null</Tag>
+        ),
     },
     {
       title: "Rating ",
       dataIndex: "averageRating",
       key: "averageRating",
-      render: (text, record, dataIndex) => <><p style={{display:"inline", fontWeight:500,fontSize:30} }>{parseFloat(record.averageRating).toFixed(1)}/5.0</p> /{record.numberOfRating} turns</> ,
+      render: (text, record, dataIndex) => (
+        <>
+          <p style={{ display: "inline", fontWeight: 500, fontSize: 30 }}>
+            {parseFloat(record.averageRating).toFixed(1)}/5.0
+          </p>{" "}
+          /{record.numberOfRating} turns
+        </>
+      ),
     },
     {
       title: t("status"),
@@ -192,43 +205,60 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
+          <Button
+            className="primary"
+            onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}
+          >
             Scheduling
           </Button>
-          {
-            record.kioskLocationId ?
-              <Button type="primary" onClick={() => {
-                setCurrentKiosk(record)
-                showModal("addLocation")
-
-              }} >
-                Update Location
-              </Button>
-              :
-              <Button type="primary" onClick={() => {
-                setCurrentKiosk(record)
-                showModal("addLocation")
-              }} >
-                Add Location
-              </Button>
-          }
-          {
-            isLoading ? <Spin /> :(
-              record.status==="activate"?
-            <Button className="infor-button" shape="default" onClick={() => { changeStatus(record) }}>
-              Change Status
-            </Button>:<Button className="infor-button" shape="default" onClick={() => { changeStatus(record) }} disabled>
+          {record.kioskLocationId ? (
+            <Button
+              type="primary"
+              onClick={() => {
+                setCurrentKiosk(record);
+                showModal("addLocation");
+              }}
+            >
+              Update Location
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                setCurrentKiosk(record);
+                showModal("addLocation");
+              }}
+            >
+              Add Location
+            </Button>
+          )}
+          {isLoading ? (
+            <Spin />
+          ) : record.status === "activate" ? (
+            <Button
+              className="infor-button"
+              shape="default"
+              onClick={() => {
+                changeStatus(record);
+              }}
+            >
+              <SyncOutlined />
               Change Status
             </Button>
-            )
-             
-          }
-
-
-
-
+          ) : (
+            <Button
+              className="infor-button"
+              shape="default"
+              onClick={() => {
+                changeStatus(record);
+              }}
+              disabled
+            >
+              <SyncOutlined />
+              Change Status
+            </Button>
+          )}
         </Space>
-
       ),
     },
   ];
@@ -244,7 +274,7 @@ const KioskTable = ({ partyId }) => {
         kioskPage,
         kioskPageSize
       );
-      console.log(data.data)
+      console.log(data.data);
       setListKiosk(data.data);
       setKioskPage(data.metadata.page);
       setKioskTotal(data.metadata.total);
@@ -268,7 +298,7 @@ const KioskTable = ({ partyId }) => {
       console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => { };
+  const onFinishSearchKiosk = () => {};
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
@@ -281,27 +311,29 @@ const KioskTable = ({ partyId }) => {
 
   const handleCancelModal = () => {
     setIsModalAddLocationVisible(false);
-  }
+  };
 
   const showModal = async (type) => {
     if (type === "addLocation") {
       setIsModalAddLocationVisible(true);
       const res = await getListKioskLocationService("", 1, -1);
-      setListLocation(res.data.data)
+      setListLocation(res.data.data);
     }
   };
 
   const onFinishModal = (type) => {
     if (type === "addLocation") {
       getListKiosk(partyId, kioskPage, kioskPageSize);
-      setIsModalAddLocationVisible(false)
+      setIsModalAddLocationVisible(false);
     }
-  }
+  };
 
   useEffect(() => {
-    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+    localStorage.setItem(
+      PREVIOUS_PATH,
+      JSON.stringify({ data: breadCumbData })
+    );
     getListKiosk(partyId, kioskPage, kioskPageSize);
-
   }, []);
   return (
     <>
@@ -367,7 +399,7 @@ const KioskTable = ({ partyId }) => {
             ) : null
           ) : null}
         </Row>
-        {listKiosk ?
+        {listKiosk ? (
           <>
             <Col span={24}>
               {role ? (
@@ -392,8 +424,10 @@ const KioskTable = ({ partyId }) => {
               pageSize={kioskPageSize}
               onChange={handlePaginationKioskTable}
             />
-          </> : <Skeleton />
-        }
+          </>
+        ) : (
+          <Skeleton />
+        )}
       </div>
 
       <Modal

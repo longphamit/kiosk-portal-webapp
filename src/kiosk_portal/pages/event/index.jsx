@@ -328,6 +328,7 @@ const EventManagerPage = () => {
         {
             title: 'Action',
             key: "action",
+            align: "center",
             render: (text, record, dataIndex) => (
                 <Space size="middle">
                     <Button
@@ -435,7 +436,12 @@ const EventManagerPage = () => {
                         </Row>
                     </> :
                     <>
-                        <Table columns={columns} dataSource={listEvent} pagination={false} />
+                        <Table 
+                        rowClassName={(record,index)=>
+                            record.status === STATUS_END? 'tb-row-event-end':
+                            
+                            record.status === STATUS_ON_GOING? 'tb-row-event-ongoing':''}
+                        columns={columns} dataSource={listEvent} pagination={false} />
                         <Pagination
                             defaultCurrent={1}
                             total={totalEvent}

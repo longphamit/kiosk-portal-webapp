@@ -104,6 +104,7 @@ const MyApplicationPage = () => {
     {
       title: t("action"),
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button

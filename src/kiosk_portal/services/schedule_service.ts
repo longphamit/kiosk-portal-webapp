@@ -27,3 +27,7 @@ export const updateScheduleService = async (data: any) => {
   const response = await request.put(`${HOST}/v1/schedules`, data);
   return response.data;
 };
+export const changeScheduleStatusService = async (scheduleId:any) => {
+  const response = await request.patch(`${HOST}/v1/schedules/status?scheduleId=${scheduleId}`,{});
+  return response.data;
+};

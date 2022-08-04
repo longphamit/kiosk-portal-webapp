@@ -20,7 +20,9 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { searchAccountService } from "../../services/account_service";
+import "./styles.css"
 import {
+  changeScheduleStatusService,
   createScheduleService,
   getListScheduleService,
   updateScheduleService,
@@ -30,6 +32,7 @@ import {
   PlusOutlined,
   EditFilled,
   PoweroffOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import {
   formatTimePicker,
@@ -190,7 +193,15 @@ const ScheduleManagerPage = () => {
     setCurrentPage(page);
     await getListScheduleFunction(page, numScheduleInPage);
   };
-
+  const handleChangeStatusSchedule = async (scheduleId) => {
+    try {
+      await changeScheduleStatusService(scheduleId);
+      await getListScheduleFunction(currentPage, numScheduleInPage);
+      toast.success("Change schedule status success")
+    } catch (e) {
+      toast.error("Change schedule status fail")
+    }
+  }
   const types = [
     {
       name: "name",
@@ -235,6 +246,7 @@ const ScheduleManagerPage = () => {
     {
       title: t("action"),
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -246,6 +258,15 @@ const ScheduleManagerPage = () => {
             }}
           >
             <EditFilled /> {t("edit")}
+          </Button>
+          <Button
+            className="infor-button"
+            shape="default"
+            onClick={() => {
+              handleChangeStatusSchedule(record.id)
+            }}
+          >
+            <SyncOutlined /> Change Status
           </Button>
         </Space>
       ),
@@ -331,6 +352,8 @@ const ScheduleManagerPage = () => {
         ) : (
           <>
             <Table
+              rowClassName={(record, index) =>
+                record.status === 'off' ? 'tb-row-schedule-off' : 'tb-row-schedule-on'}
               columns={columns}
               dataSource={listSchedule}
               pagination={false}

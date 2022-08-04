@@ -112,6 +112,7 @@ const ApplicationMarketPage = () => {
     {
       title: t("action"),
       key: "action",
+      
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
