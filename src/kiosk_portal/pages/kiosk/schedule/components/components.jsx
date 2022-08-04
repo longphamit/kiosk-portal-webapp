@@ -1,4 +1,4 @@
-import { Button, Form, Select, Spin } from "antd"
+import { Button, Col, Form, Modal, Row, Select, Spin, Tag } from "antd"
 import { Option } from "antd/lib/mentions";
 import { getScheduleByIdService } from "../../../../services/schedule_service";
 import { getTemplateById } from "../../../../services/template_service";
@@ -62,4 +62,20 @@ export const FormItemTemplate = ({ listTemplate, setCurrentTemplate }) => {
             </Select>
         </Form.Item>
     </>
+}
+
+export const HeaderPanelComponent = ({ kioskShedule }) => {
+
+    return <Row style={{ width: '95%' }}>
+        <Col span={2}>
+            {
+                kioskShedule.status === 'activate' ?
+                    <Tag color="blue">Active</Tag> :
+                    <Tag color="grey">Deactive</Tag >
+            }
+        </Col>
+        <Col span={21}>
+            {kioskShedule.schedule.name + ' - ' + kioskShedule.template.name}
+        </Col>
+    </Row>
 }

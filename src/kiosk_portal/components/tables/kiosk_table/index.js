@@ -205,11 +205,8 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button
-            className="primary"
-            onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}
-          >
-            Scheduling
+          <Button className="primary" onClick={() => navigator(`/kiosk/${record.id}`)}>
+            Details
           </Button>
           {record.kioskLocationId ? (
             <Button
@@ -298,7 +295,7 @@ const KioskTable = ({ partyId }) => {
       console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => {};
+  const onFinishSearchKiosk = () => { };
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">

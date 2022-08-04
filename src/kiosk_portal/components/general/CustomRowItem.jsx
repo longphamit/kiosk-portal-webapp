@@ -18,7 +18,7 @@ const CustomRowItem = ({
 
         <Row>
             <Col span={labelCol} offset={offsetLabelCol ?? 0}>
-                <label htmlFor="" style={{fontWeight:'bold'}}>
+                <label htmlFor="" style={{ fontWeight: 'bold' }}>
                     {label}:
                 </label>
             </Col>
@@ -29,7 +29,7 @@ const CustomRowItem = ({
                         contentType === SELECT_CONTENT_TYPE ?
                             <></> :
                             content.map((e) => (
-                                <Tag color={e.color}>
+                                <Tag color={e.color} style={{ margin: 5 }}>
                                     {e.content}
                                 </Tag>
                             ))
