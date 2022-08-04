@@ -28,6 +28,10 @@ export const ComponentList = ({ listId, listType, components }) => {
             setListApp([]);
         }
     }
+    const onCloseEventDetailModal = () => {
+        setEventDetailsModalVisible(false)
+        setCurrentEvent(null);
+    }
     return (
         <>
             <Droppable
@@ -77,7 +81,7 @@ export const ComponentList = ({ listId, listType, components }) => {
             {
                 currentEvent ?
                     <EventDetailsModal
-                        setEventDetailsModalVisible={setEventDetailsModalVisible}
+                        onCloseModal={onCloseEventDetailModal}
                         isEventDetailsModalVisible={isEventDetailsModalVisible}
                         currentEvent={currentEvent}
                     /> : null

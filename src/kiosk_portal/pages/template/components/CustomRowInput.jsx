@@ -1,6 +1,5 @@
 import { Col, Input, Radio, Row, Tag } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { STATUS_COMING_SOON, STATUS_ON_GOING } from "../../../constants/event_constants";
 
 const spanLabelRow = 6;
 const spanValuelRow = 18;

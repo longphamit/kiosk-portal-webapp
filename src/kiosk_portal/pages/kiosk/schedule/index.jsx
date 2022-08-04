@@ -10,7 +10,8 @@ import TemplateKioskDetail from './components/temple_detail_area';
 import { useEffect, useState } from 'react';
 import { createKisokScheduleService, deleteKisokScheduleService, getKisokScheduleService, updateKisokScheduleService } from '../../../services/kiosk_shedule';
 import { toast } from 'react-toastify';
-import KioskScheduleModal from './components/kiosk_schedule_modal';
+import NewKioskScheduleModal from './components/new_kiosk_schedule_modal';
+import UpdateKioskScheduleModal from './components/update_kiosk_schedule_modal';
 
 const KioskSchedulingPage = () => {
     const { Panel } = Collapse;
@@ -19,12 +20,11 @@ const KioskSchedulingPage = () => {
     const [updateVisible, setUpdateVisible] = useState(false);
     const [listSchedule, setListSchedule] = useState();
     const [listTemplate, setListTemplate] = useState();
-    const [currentSchdule, setCurrentSchedule] = useState();
-    const [currentTemplate, setCurrentTemplate] = useState();
     const [listKioskSchedule, setListKioskShedule] = useState();
     const [updateKioskSchedule, setUpdateKioskSchedule] = useState();
     const [currentKioskId, setKioskId] = useState()
-    const [form] = Form.useForm();
+    const [createForm] = Form.useForm();
+    const [updateForm] = Form.useForm();
     const onChange = (key) => {
     };
     const breadCumbData = [
@@ -41,8 +41,8 @@ const KioskSchedulingPage = () => {
     ]
     const onCreateKioskScheduke = async () => {
         setLoading(true);
-        let scheduleId = form.getFieldValue('schedule');
-        let templateId = form.getFieldValue('template');
+        let scheduleId = createForm.getFieldValue('schedule');
+        let templateId = createForm.getFieldValue('template');
         let kioskId = currentKioskId;
         try {
             let data = {
@@ -71,12 +71,10 @@ const KioskSchedulingPage = () => {
         await getListScheduleWithoutParamService().then(
             (res) => {
                 setListSchedule(res.data.data);
-                setCurrentSchedule(res.data.data[0]);
             }
         ).catch((e) => {
             console.error(e);
             setListSchedule([]);
-            setCurrentSchedule({});
         });
     }
     const getListTemplateAvailable = async () => {
@@ -91,12 +89,10 @@ const KioskSchedulingPage = () => {
                     })
                 );
                 setListTemplate(tempList);
-                setCurrentTemplate(tempList[0]);
             }
         ).catch((e) => {
             console.error(e);
             setListTemplate([]);
-            setCurrentTemplate({});
         });
     }
     const getKisokSchedule = async (id) => {
@@ -143,8 +139,8 @@ const KioskSchedulingPage = () => {
     }
     const onUpdateKioskSchedule = async () => {
         setLoading(true);
-        let scheduleId = form.getFieldValue('schedule');
-        let templateId = form.getFieldValue('template');
+        let scheduleId = updateForm.getFieldValue('schedule');
+        let templateId = updateForm.getFieldValue('template');
         try {
             let data = {
                 id: updateKioskSchedule.id,
@@ -160,7 +156,15 @@ const KioskSchedulingPage = () => {
             console.error(e.message)
         } finally {
             setLoading(false);
+            setUpdateKioskSchedule(null)
         }
+    }
+    const onCloseUpdateModal = () => {
+        setUpdateKioskSchedule(null);
+        setUpdateVisible(false);
+    }
+    const onOpenCreateModal = () => {
+        setCreateVisible(true)
     }
     return (
         <>
@@ -171,7 +175,7 @@ const KioskSchedulingPage = () => {
                         <Button
                             className="success-button"
                             size={"large"}
-                            onClick={() => setCreateVisible(true)}
+                            onClick={() => onOpenCreateModal()}
                         >
                             <PlusOutlined /> New Kiosk Schedule
                         </Button>
@@ -203,8 +207,8 @@ const KioskSchedulingPage = () => {
                                             <Col>
                                                 <Button danger type="primary" style={{ marginRight: 20 }} onClick={() => deleteKioskSchedule(s.id)}>Delete</Button>
                                                 <Button onClick={() => {
-                                                    setUpdateVisible(true);
                                                     setUpdateKioskSchedule(s);
+                                                    setUpdateVisible(true);
                                                 }} >Update</Button>
                                             </Col>
                                         </Row>
@@ -226,35 +230,29 @@ const KioskSchedulingPage = () => {
             {
                 listKioskSchedule && listTemplate && updateKioskSchedule ?
                     <>
-
-                        <KioskScheduleModal
-                            type={"Update"}
-                            modalTitle={"Update Kiosk Schedule"}
+                        <UpdateKioskScheduleModal
+                            isLoading={isLoading}
                             visible={updateVisible}
-                            setVisible={setUpdateVisible}
+                            onCancel={onCloseUpdateModal}
                             onSubmit={onUpdateKioskSchedule}
-                            form={form}
+                            form={updateForm}
                             listSchedule={listSchedule}
                             listTemplate={listTemplate}
-                            currTemplate={currentTemplate}
-                            currSchedule={currentSchdule}
+                            currentKioskSchedule={updateKioskSchedule}
                         />
                     </>
-                    : <Skeleton />
+                    : null
             }
             {
-                currentSchdule && currentTemplate ?
-                    <KioskScheduleModal
-                        type={"Create"}
-                        modalTitle={"Create New Kiosk Schedule"}
-                        visible={createVisible}
-                        setVisible={setCreateVisible}
-                        onSubmit={onCreateKioskScheduke}
-                        form={form}
+                listSchedule && listTemplate ?
+                    <NewKioskScheduleModal
+                        isLoading={isLoading}
+                        form={createForm}
                         listSchedule={listSchedule}
                         listTemplate={listTemplate}
-                        currTemplate={currentTemplate}
-                        currSchedule={currentSchdule}
+                        onSubmit={onCreateKioskScheduke}
+                        visible={createVisible}
+                        setVisible={setCreateVisible}
                     />
                     : null
             }

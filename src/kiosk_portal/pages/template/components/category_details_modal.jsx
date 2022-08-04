@@ -1,7 +1,5 @@
 import { Card, Col, Empty, List, Modal, Row, Skeleton } from "antd";
 import Meta from "antd/lib/card/Meta";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 export const CategoryDetailsModal = ({
     isCategoryDetailsModalVisible,
@@ -9,10 +7,6 @@ export const CategoryDetailsModal = ({
     listApp,
     setListApp
 }) => {
-    const navigate = useNavigate();
-    useEffect(() => {
-        console.log(listApp)
-    }, []);
     const gridData = {
         gutter: 16,
         xs: 1,
