@@ -1,10 +1,23 @@
-import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Table } from "antd";
+import {
+  Button,
+  Col,
+  Empty,
+  Modal,
+  Pagination,
+  Row,
+  Skeleton,
+  Space,
+  Table,
+} from "antd";
 import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
 import ModalUpdateAppCategory from "./modalUpdateAppCategory";
-import { APP_CATEGORY_MANAGER_HREF, APP_CATEGORY_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  APP_CATEGORY_MANAGER_HREF,
+  APP_CATEGORY_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const AppCategoryPage = () => {
@@ -28,6 +41,12 @@ const AppCategoryPage = () => {
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "Commission Percentage",
+      dataIndex: "commissionPercentage",
+      key: "commissionPercentage",
+      render: (text) => <p>{text}%</p>,
     },
     {
       title: "Action",
@@ -54,11 +73,12 @@ const AppCategoryPage = () => {
   const getAppCategoryList = async (page, size) => {
     try {
       const res = await getListAppCategoryService(page, size);
+      console.log(res);
       setAppCategoryList(res.data.data);
       setAppCategoryPageTotal(res.data.metadata.total);
     } catch (e) {
       console.error(e);
-      setAppCategoryList([])
+      setAppCategoryList([]);
     }
   };
 
@@ -105,9 +125,9 @@ const AppCategoryPage = () => {
     {
       href: APP_CATEGORY_MANAGER_HREF,
       label: APP_CATEGORY_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -138,15 +158,16 @@ const AppCategoryPage = () => {
           </Button>
         </Col>
       </Row>
-      {appCategoryList ?
-        appCategoryList.length === 0 ?
+      {appCategoryList ? (
+        appCategoryList.length === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
             <Table
               columns={columns}
@@ -159,8 +180,11 @@ const AppCategoryPage = () => {
               pageSize={appCategoryPageSize}
               onChange={handleChangeNumberOfPaging}
             />
-          </> : <Skeleton />
-      }
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };

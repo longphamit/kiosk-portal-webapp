@@ -170,9 +170,9 @@ const KioskTable = ({ partyId }) => {
     },
     {
       title: "Rating ",
-      dataIndex: "Rating",
-      key: "Rating",
-      render: (text, record, dataIndex) => <><Rate disabled defaultValue={record} /><p style={{display:"inline"} }> /{record.numberOfRating} turns</p></> ,
+      dataIndex: "averageRating",
+      key: "averageRating",
+      render: (text, record, dataIndex) => <><p style={{display:"inline", fontWeight:500,fontSize:30} }>{parseFloat(record.averageRating).toFixed(1)}/5.0</p> /{record.numberOfRating} turns</> ,
     },
     {
       title: t("status"),
@@ -213,9 +213,15 @@ const KioskTable = ({ partyId }) => {
               </Button>
           }
           {
-            isLoading ? <Spin /> : <Button className="infor-button" shape="default" onClick={() => { changeStatus(record) }}>
+            isLoading ? <Spin /> :(
+              record.status==="activate"?
+            <Button className="infor-button" shape="default" onClick={() => { changeStatus(record) }}>
+              Change Status
+            </Button>:<Button className="infor-button" shape="default" onClick={() => { changeStatus(record) }} disabled>
               Change Status
             </Button>
+            )
+             
           }
 
 
