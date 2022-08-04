@@ -5,11 +5,12 @@ import { itemTemplate, responsiveOptions, thumbnailTemplate } from "./utils";
 import { RowArea, RowInput, RowTag, RowText } from "./CustomRowInput";
 
 export const EventDetailsModal = ({
-    setEventDetailsModalVisible,
+    onCloseModal,
     isEventDetailsModalVisible,
     currentEvent
 }) => {
     const [previewImages, setPreviewImages] = useState();
+    console.log(currentEvent)
     useEffect(() => {
         setPreviewImages(prepareGallery(currentEvent));
     }, []);
@@ -35,7 +36,7 @@ export const EventDetailsModal = ({
             <Modal
                 title="Event Details"
                 visible={isEventDetailsModalVisible}
-                onCancel={() => setEventDetailsModalVisible(false)}
+                onCancel={() => onCloseModal()}
                 footer={null}
             >
                 {currentEvent ?
@@ -59,7 +60,6 @@ export const EventDetailsModal = ({
                         <RowTag label='Status' value={currentEvent.status} />
                         <p style={{ fontWeight: 'bold', fontSize: 16 }}>Description:</p>
                         {currentEvent.description.charAt(0) === '<' ?
-
                             <div className="embeddedHTML" dangerouslySetInnerHTML={{ __html: currentEvent.description }} />
                             : <div><p>{currentEvent.description}</p></div>
                         }
