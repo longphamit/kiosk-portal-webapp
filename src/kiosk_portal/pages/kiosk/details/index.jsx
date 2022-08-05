@@ -8,10 +8,12 @@ import './styles.css'
 import { getKioskByIdService } from '../../../services/kiosk_service';
 import KioskSchedulingPage from '../schedule';
 import { KioskOrderPage } from '../order';
+import { KioskLocationInformationComponent } from '../kiosk_location';
 export const KioskDetailsPage = () => {
     const { kioskId } = useParams();
     const { TabPane } = Tabs;
     const [kioskInfo, setKisokInfo] = useState();
+
     const breadCumbData = [
         {
             href: KIOSK_MANAGER_HREF,
@@ -64,7 +66,12 @@ export const KioskDetailsPage = () => {
                 <Skeleton />
             }
             <Tabs defaultActiveKey="1" onChange={onChange}>
-                <TabPane tab="Order" key="1">
+                <TabPane tab="Location Info" key="1">
+                    {kioskInfo ?
+                        <KioskLocationInformationComponent kioskLocationId={kioskInfo.kioskLocationId} /> : <Skeleton />
+                    }
+                </TabPane>
+                <TabPane tab="Order" key="3">
                     <KioskOrderPage kioskId={kioskId} />
                 </TabPane>
                 <TabPane tab="Schedule" key="2">
