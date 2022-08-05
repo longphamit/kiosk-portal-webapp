@@ -1,8 +1,6 @@
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Skeleton } from 'antd';
-import CustomBreadCumb from '../../../components/breadcumb/breadcumb';
-import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL, KIOSK_SCHEDULING_HREF, KIOSK_SCHEDULING_LABEL } from '../../../components/breadcumb/breadcumb_constant';
 import { getListScheduleWithoutParamService } from '../../../services/schedule_service';
 import { getListTemplateWithoutParamService } from '../../../services/template_service';
 import ScheduleKioskDetail from './components/shedule_detail_area';

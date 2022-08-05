@@ -1,4 +1,4 @@
-import { Button, Col, Form, Modal, Row, Select, Spin, Tag } from "antd"
+import { Button, Col, Form,  Row, Select, Spin, Tag } from "antd"
 import { Option } from "antd/lib/mentions";
 import { getScheduleByIdService } from "../../../../services/schedule_service";
 import { getTemplateById } from "../../../../services/template_service";
