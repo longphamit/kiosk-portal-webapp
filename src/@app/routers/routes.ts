@@ -291,7 +291,7 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
   }
 ];
 
