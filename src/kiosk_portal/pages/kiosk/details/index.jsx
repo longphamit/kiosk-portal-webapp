@@ -53,7 +53,7 @@ export const KioskDetailsPage = () => {
                                 {
                                     kioskInfo.status === 'deactive' ?
                                         <Tag color={'red'}>Deactive</Tag> :
-                                        <Tag color={'blue'}>Active</Tag>
+                                        <Tag color={'green'}>Active</Tag>
                                 }
                             </Descriptions.Item>
                             <Descriptions.Item label="Rating Average" labelStyle={{ fontWeight: "bold" }}>{kioskInfo.averageRating}</Descriptions.Item>

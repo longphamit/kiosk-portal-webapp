@@ -16,7 +16,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { ArrowDownOutlined, SyncOutlined } from "@ant-design/icons";
+import { ArrowDownOutlined, EditFilled, EyeFilled, SyncOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -205,18 +205,18 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="primary" onClick={() => navigator(`/kiosk/${record.id}`)}>
-            Details
+          <Button className="infor-button" onClick={() => navigator(`/kiosk/${record.id}`)}>
+            <EyeFilled/>Details
           </Button>
           {record.kioskLocationId ? (
             <Button
-              type="primary"
+              className="warn-button"
               onClick={() => {
                 setCurrentKiosk(record);
                 showModal("addLocation");
               }}
             >
-              Update Location
+             <EditFilled/> Update Location
             </Button>
           ) : (
             <Button
@@ -233,7 +233,7 @@ const KioskTable = ({ partyId }) => {
             <Spin />
           ) : record.status === "activate" ? (
             <Button
-              className="infor-button"
+              className="change-status-button"
               shape="default"
               onClick={() => {
                 changeStatus(record);

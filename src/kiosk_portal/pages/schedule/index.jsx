@@ -260,7 +260,7 @@ const ScheduleManagerPage = () => {
             <EditFilled /> {t("edit")}
           </Button>
           <Button
-            className="infor-button"
+            className="change-status-button"
             shape="default"
             onClick={() => {
               handleChangeStatusSchedule(record.id)

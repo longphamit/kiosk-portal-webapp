@@ -1,5 +1,5 @@
 
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Skeleton } from 'antd';
 import { getListScheduleWithoutParamService } from '../../../services/schedule_service';
 import { getListTemplateWithoutParamService } from '../../../services/template_service';
@@ -159,7 +159,9 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         }
     }
     const genExtra = (id) => (
-        <Button onClick={(event) => { event.stopPropagation(); changeStatusKioskSchedule(id) }}> Change Status</Button>
+        <Button className="change-status-button" onClick={(event) => { event.stopPropagation(); changeStatusKioskSchedule(id) }}>
+            <SyncOutlined /> Change Status
+        </Button>
     );
     const changeStatusKioskSchedule = async (id) => {
         Modal.confirm({
@@ -175,7 +177,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         <>
             {currentKioskId ?
                 <Row style={{ paddingBottom: 15 }}>
-                    <Col justify="right" align="right" span={3} offset={21}>
+                    <Col justify="right" align="right" span={3} offset={17}>
                         <Button
                             className="success-button"
                             size={"large"}
