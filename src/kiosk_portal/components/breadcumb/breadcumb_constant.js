@@ -67,3 +67,6 @@ export const KIOSK_LOCATION_MANAGER_LABEL = 'Kiosk Location Manager'
 
 export const KIOSK_LOCATION_DETAIL_HREF = '/'
 export const KIOSK_LOCATION_DETAIL_LABEL = 'Kiosk Location Detail'
+
+export const KIOSK_DETAILS_HREF = ''
+export const KIOSK_DETAILS_LABEL = 'Kiosk Details'

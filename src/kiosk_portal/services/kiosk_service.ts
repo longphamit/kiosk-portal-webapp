@@ -12,11 +12,11 @@ export const getListKioskService = async (
   return response.data;
 };
 export const createKioskService = async (data: any) => {
-    const response = await request.post(`${HOST}/v1/kiosks`, data);
-    return response.data;
+  const response = await request.post(`${HOST}/v1/kiosks`, data);
+  return response.data;
 };
 export const changeStatusKioskService = async (id: string) => {
-  const response = await request.patch(`${HOST}/v1/kiosks/status?id=${id}`,null);
+  const response = await request.patch(`${HOST}/v1/kiosks/status?id=${id}`, null);
   return response.data;
 };
 
@@ -24,3 +24,8 @@ export const updateKioskService = async (data: any) => {
   const response = await request.put(`${HOST}/v1/kiosks`, data);
   return response.data;
 };
+
+export const getKioskByIdService = async (id: any) => {
+  const response = await request.get(`${HOST}/v1/kiosks/${id}`);
+  return response.data;
+}

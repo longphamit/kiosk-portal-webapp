@@ -17,6 +17,7 @@ import { EventCreatingPage } from "../../kiosk_portal/pages/event/event_create";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
+import { KioskDetailsPage } from "../../kiosk_portal/pages/kiosk/details";
 import KioskSchedulingPage from "../../kiosk_portal/pages/kiosk/schedule";
 import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
 import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
@@ -257,15 +258,6 @@ const routes: Route[] = [
     roles: [ROLE_LOCATION_OWNER]
   },
   {
-    component: KioskSchedulingPage,
-    path: "/kiosk-scheduling/:kioskId",
-    isLayout: true,
-    layout: AuthenLayout,
-    authen: true,
-    breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER]
-  },
-  {
     component: KioskLocationPage,
     path: "/kiosk-location",
     isLayout: true,
@@ -291,6 +283,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  },
+  {
+    component: KioskDetailsPage,
+    path: "/kiosk/:kioskId",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
   }
 ];
 

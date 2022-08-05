@@ -1,19 +1,18 @@
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Card, Col, Collapse, Empty, Form, Modal, Row, Skeleton } from 'antd';
-import CustomBreadCumb from '../../../components/breadcumb/breadcumb';
-import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL, KIOSK_SCHEDULING_HREF, KIOSK_SCHEDULING_LABEL } from '../../../components/breadcumb/breadcumb_constant';
 import { getListScheduleWithoutParamService } from '../../../services/schedule_service';
 import { getListTemplateWithoutParamService } from '../../../services/template_service';
 import ScheduleKioskDetail from './components/shedule_detail_area';
 import TemplateKioskDetail from './components/temple_detail_area';
 import { useEffect, useState } from 'react';
-import { createKisokScheduleService, deleteKisokScheduleService, getKisokScheduleService, updateKisokScheduleService } from '../../../services/kiosk_shedule';
+import { createKisokScheduleService, deleteKisokScheduleService, getKisokScheduleService, updateKioskScheduleStatuService, updateKisokScheduleService } from '../../../services/kiosk_shedule';
 import { toast } from 'react-toastify';
 import NewKioskScheduleModal from './components/new_kiosk_schedule_modal';
 import UpdateKioskScheduleModal from './components/update_kiosk_schedule_modal';
+import { HeaderPanelComponent } from './components/components';
 
-const KioskSchedulingPage = () => {
+const KioskSchedulingPage = ({ currentKioskId }) => {
     const { Panel } = Collapse;
     const [isLoading, setLoading] = useState(false);
     const [createVisible, setCreateVisible] = useState(false);
@@ -22,23 +21,9 @@ const KioskSchedulingPage = () => {
     const [listTemplate, setListTemplate] = useState();
     const [listKioskSchedule, setListKioskShedule] = useState();
     const [updateKioskSchedule, setUpdateKioskSchedule] = useState();
-    const [currentKioskId, setKioskId] = useState()
     const [createForm] = Form.useForm();
     const [updateForm] = Form.useForm();
-    const onChange = (key) => {
-    };
-    const breadCumbData = [
-        {
-            href: KIOSK_MANAGER_HREF,
-            label: KIOSK_MANAGER_LABEL,
-            icon: null
-        },
-        {
-            href: KIOSK_SCHEDULING_HREF,
-            label: KIOSK_SCHEDULING_LABEL,
-            icon: null
-        }
-    ]
+
     const onCreateKioskScheduke = async () => {
         setLoading(true);
         let scheduleId = createForm.getFieldValue('schedule');
@@ -105,12 +90,8 @@ const KioskSchedulingPage = () => {
         }
     }
     const initialize = async () => {
-        //get kiosk Id
-        let pathParts = window.location.pathname.split('/');
-        let kioskId = pathParts[pathParts.length - 1]
-        setKioskId(kioskId);
         // get List Kiosk schedules
-        getKisokSchedule(kioskId);
+        getKisokSchedule(currentKioskId);
     }
     useEffect(() => {
         initialize();
@@ -166,9 +147,32 @@ const KioskSchedulingPage = () => {
     const onOpenCreateModal = () => {
         setCreateVisible(true)
     }
+
+    const onChangeStatusKioskSchedule = async (id) => {
+        try {
+            let res = await updateKioskScheduleStatuService(id);
+            getKisokSchedule(currentKioskId);
+            toast.success('Change status success')
+        } catch (e) {
+            console.error(e);
+            toast.error('Cannot change status')
+        }
+    }
+    const genExtra = (id) => (
+        <Button onClick={(event) => { event.stopPropagation(); changeStatusKioskSchedule(id) }}> Change Status</Button>
+    );
+    const changeStatusKioskSchedule = async (id) => {
+        Modal.confirm({
+            title: 'Are you sure to change status this kiosk schedule ?',
+            okText: 'Yes',
+            cancelText: "No",
+            onOk: async () => {
+                onChangeStatusKioskSchedule(id)
+            },
+        });
+    }
     return (
         <>
-            <CustomBreadCumb props={breadCumbData} />
             {currentKioskId ?
                 <Row style={{ paddingBottom: 15 }}>
                     <Col justify="right" align="right" span={3} offset={21}>
@@ -185,10 +189,14 @@ const KioskSchedulingPage = () => {
             {listKioskSchedule ?
                 <>
                     {listKioskSchedule.length != 0 ?
-                        <Collapse defaultActiveKey={[listKioskSchedule[0].id]} onChange={onChange}>
+                        <Collapse defaultActiveKey={listKioskSchedule[0].id} >
                             {listKioskSchedule.map((s) => (
                                 <>
-                                    <Panel header={s.schedule.name + ' - ' + s.template.name} key={s.id}>
+                                    <Panel
+                                        header={<HeaderPanelComponent kioskShedule={s} />}
+                                        extra={genExtra(s.id)}
+                                        key={s.id}
+                                    >
                                         <Row>
                                             <Col span={11}>
                                                 <Card title="Schedule Infomation" bordered={false} >

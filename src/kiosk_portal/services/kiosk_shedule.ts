@@ -22,3 +22,8 @@ export const updateKisokScheduleService = async (data: any) => {
     const response = await request.put(`${HOST}/v1/kioskScheduleTemplates`, data);
     return response.data;
 };
+
+export const updateKioskScheduleStatuService = async (id: any) => {
+    const response = await request.patch(`${HOST}/v1/kioskScheduleTemplates/status?kioskScheduleTemplateId=${id}`, null);
+    return response.data;
+}
