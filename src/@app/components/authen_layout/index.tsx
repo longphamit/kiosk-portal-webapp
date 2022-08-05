@@ -1,21 +1,17 @@
-import { Layout, Menu, Breadcrumb, Row, Col, Dropdown, Popover, Button, Badge, Avatar } from "antd";
+import { Layout, Menu, Row, Col } from "antd";
 import {
-  UserOutlined,
-  LaptopOutlined,
   HomeFilled,
   LogoutOutlined,
-  KeyOutlined,
   FundOutlined,
   BlockOutlined,
   ArrowUpOutlined,
-  ClockCircleOutlined,
   ToolOutlined,
   MenuOutlined,
-  NotificationOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import { Fragment, ReactNode, useEffect, useState } from "react";
+import {ReactNode} from "react";
 import "./styles.css";
-import { Link, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
@@ -27,20 +23,14 @@ import {
 import {
   localStorageClearService,
   localStorageGetReduxState,
-  localStorageGetUserIdService,
 } from "../../services/localstorage_service";
 
-import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
 import { signOutService } from "../../services/auth_service";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
-import Column from "antd/lib/table/Column";
-import { getPartyNotificationService } from "../../../kiosk_portal/services/party_notification_service";
-import CountTime from "./time";
+
 import TimeView from "./time";
-import { async } from "@firebase/util";
 import NotificationView from "./notification";
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -133,18 +123,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   App Category
                 </Menu.Item>
-                <SubMenu key="sub1" icon={<LaptopOutlined />} title="POI">
                   <Menu.Item
-                    key="4"
+                    key="poi_manager"
                     icon={<ToolOutlined />}
                     onClick={() => {
                       onNavigate("/poi-page");
                     }}
                   >
-                    POI
+                    POI Manager
                   </Menu.Item>
                   <Menu.Item
-                    key="5"
+                    key="poi_category"
                     icon={<ToolOutlined />}
                     onClick={() => {
                       onNavigate("/poi-category");
@@ -152,7 +141,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   >
                     POI Category
                   </Menu.Item>
-                </SubMenu>
+
                 <Menu.Item
                   icon={<FundOutlined />}
                   key="event"
@@ -166,15 +155,14 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
-                              <SubMenu key="subKiosk" icon={<LaptopOutlined />} title="Kiosk">
-                              <Menu.Item
-                  icon={<BlockOutlined />}
-                  key="Kiosk"
+                <Menu.Item
+                  icon={<MenuUnfoldOutlined />}
+                  key="kiosk_manager"
                   onClick={() => {
                     onNavigate("/kiosk");
                   }}
                 >
-                  Kiosk
+                  Kiosk Manager
                 </Menu.Item>
                   <Menu.Item
                     key="kiosk_location"
@@ -183,10 +171,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                       onNavigate("/kiosk-location");
                     }}
                   >
-                    Location
+                    Kiosk Location
                   </Menu.Item>
 
-                </SubMenu>
+
 
                 <Menu.Item
                   icon={<BlockOutlined />}
@@ -268,16 +256,6 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
               </>
             ) : null}
-            {/* <SubMenu
-              key="sub3"
-              icon={<NotificationOutlined />}
-              title="subnav 3"
-            >
-              <Menu.Item key="9">option9</Menu.Item>
-              <Menu.Item key="10">option10</Menu.Item>
-              <Menu.Item key="11">option11</Menu.Item>
-              <Menu.Item key="12">option12</Menu.Item>
-            </SubMenu> */}
             <Menu.Item
               icon={<LogoutOutlined />}
               key="13"
