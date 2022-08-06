@@ -10,7 +10,7 @@ export const getListTemplateService = async (page: any, size: any, name: any, st
 
 export const getListTemplateWithoutParamService = async (status: any) => {
     const response = await request.get(
-        `${HOST}/v1/templates?Npage=1&status=${status}`
+        `${HOST}/v1/templates?page=1&status=${status}`
     );
     return response.data;
 };
