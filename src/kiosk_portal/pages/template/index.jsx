@@ -51,7 +51,7 @@ const TemplateManagerPage = () => {
   let navigate = useNavigate();
   const getListTemplateFunction = async (currentPageToGetList, numInPage) => {
     try {
-      setCurrentPage(1);
+      setCurrentPage(currentPageToGetList);
       if (Object.keys(querySearch).length !== 0 && checkEmptyObj(querySearch)) {
         const res = await getListTemplateService(
           currentPageToGetList,
@@ -191,11 +191,13 @@ const TemplateManagerPage = () => {
       cancelText: "No",
       onOk: async () => {
         {
-          return new Promise((resolve, reject) => {
-            resolve(deleteTemplateService(record.id));
-            getListTemplateFunction(currentPage, numTemplateInPage);
+          try {
+            await deleteTemplateService(record.id);
             toast("Delete successful");
-          }).catch(() => toast("Delete failed"))
+            await getListTemplateFunction(1, numTemplateInPage);
+          } catch (e) {
+            toast.error("Delete failed!")
+          }
         }
       },
     });
