@@ -54,6 +54,7 @@ const DetailLocationPage = () => {
     try {
       let res = await getLocationByIdService(id);
       setCurrentItem(res.data);
+      setDescription(res.data.description)
       let list = [];
       await Promise.all(
         res.data.listImage.map((img, index) => {
@@ -207,18 +208,6 @@ const DetailLocationPage = () => {
                 <Form.Item
                   name="description"
                   label="Description"
-                  required
-                  rules={[
-                    {
-                      message: "Please input location description!",
-                      validator: (_, value) => {
-                        if (!description) {
-                          return Promise.reject("");
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
                   value={description}
                 >
                   <Editor

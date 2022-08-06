@@ -153,18 +153,6 @@ const ModalCreateLocation = ({
           <Form.Item
             name="description"
             label="Description"
-            required
-            rules={[
-              {
-                message: "Please input location description!",
-                validator: (_, value) => {
-                  if (!description) {
-                    return Promise.reject("");
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
             value={description}
           >
             <Editor
