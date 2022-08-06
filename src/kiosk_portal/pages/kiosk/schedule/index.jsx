@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import NewKioskScheduleModal from './components/new_kiosk_schedule_modal';
 import UpdateKioskScheduleModal from './components/update_kiosk_schedule_modal';
 import { HeaderPanelComponent } from './components/components';
+import { SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from '../../../constants/path_constants';
 
 const KioskSchedulingPage = ({ currentKioskId }) => {
     const { Panel } = Collapse;
@@ -63,17 +64,9 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         });
     }
     const getListTemplateAvailable = async () => {
-        await getListTemplateWithoutParamService('').then(
+        await getListTemplateWithoutParamService('complete').then(
             (res) => {
-                let tempList = []
-                Promise.all(
-                    res.data.data.map((e) => {
-                        if (e.status !== 'incomplete') {
-                            tempList.push(e);
-                        }
-                    })
-                );
-                setListTemplate(tempList);
+                setListTemplate(res.data.data);
             }
         ).catch((e) => {
             console.error(e);
@@ -140,14 +133,39 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
             setUpdateKioskSchedule(null)
         }
     }
+    const openWarningDataModal = (name, href) => {
+        Modal.warning({
+            title: <p>The {name} has no data! Please <a href={href} target="_blank">click here </a>to add</p>,
+            okText: "Close",
+        });
+    }
+    const checkEnoughData = () => {
+
+        if (listSchedule.length === 0) {
+            openWarningDataModal('Schedule', SCHEDULE_MANAGER_PATH)
+            return false;
+        }
+        if (listTemplate.length === 0) {
+            openWarningDataModal('Template', TEMPLATE_MANAGER_PATH)
+            return false;
+        }
+        return true;
+    }
     const onCloseUpdateModal = () => {
         setUpdateKioskSchedule(null);
         setUpdateVisible(false);
     }
     const onOpenCreateModal = () => {
-        setCreateVisible(true)
+        if (checkEnoughData()) {
+            setCreateVisible(true)
+        }
     }
-
+    const onOpenUpdateModal = (schedule) => {
+        if (checkEnoughData()) {
+            setUpdateKioskSchedule(schedule);
+            setUpdateVisible(true);
+        }
+    }
     const onChangeStatusKioskSchedule = async (id) => {
         try {
             let res = await updateKioskScheduleStatuService(id);
@@ -217,8 +235,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
                                             <Col>
                                                 <Button danger type="primary" style={{ marginRight: 20 }} onClick={() => deleteKioskSchedule(s.id)}>Delete</Button>
                                                 <Button onClick={() => {
-                                                    setUpdateKioskSchedule(s);
-                                                    setUpdateVisible(true);
+                                                    onOpenUpdateModal(s);
                                                 }} >Update</Button>
                                             </Col>
                                         </Row>

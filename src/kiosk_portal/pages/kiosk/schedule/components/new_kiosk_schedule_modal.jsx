@@ -54,7 +54,7 @@ const NewKioskScheduleModal = ({
                     </Row>
                 </Modal>
             </Form>
-            : <Skeleton />
+            : null
         }
     </>)
 }
