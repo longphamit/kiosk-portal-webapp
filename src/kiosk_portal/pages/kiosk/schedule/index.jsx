@@ -195,7 +195,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         <>
             {currentKioskId ?
                 <Row style={{ paddingBottom: 15 }}>
-                    <Col justify="right" align="right" span={3} offset={17}>
+                    <Col justify="right" align="right" span={2} offset={21}>
                         <Button
                             className="success-button"
                             size={"large"}

@@ -13,7 +13,9 @@ const TemplateKioskDetail = ({
             {currentTemplate ?
                 (<>
                     <CustomRowItem label="Name" content={currentTemplate.name} contentType="input" wapperCol={wapperCol} labelCol={labelCol} />
-                    <a href={"../edit-template?id=" + currentTemplate.id} target="_blank">View details the template</a>
+                    {currentTemplate.status === 'deleted' ? <p style={{ fontStyle: 'italic', color: 'red' }}>*This template has been deleted</p> :
+                        <a href={"../edit-template?id=" + currentTemplate.id} target="_blank">View details the template</a>
+                    }
                 </>) : (<Skeleton />)
             }
         </>);
