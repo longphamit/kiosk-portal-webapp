@@ -8,6 +8,11 @@ import {
   ToolOutlined,
   MenuOutlined,
   MenuUnfoldOutlined,
+  CalendarOutlined,
+  EnvironmentOutlined,
+  NotificationOutlined,
+  TableOutlined,
+  CloudOutlined,
 } from "@ant-design/icons";
 import {ReactNode} from "react";
 import "./styles.css";
@@ -173,11 +178,8 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   >
                     Kiosk Location
                   </Menu.Item>
-
-
-
                 <Menu.Item
-                  icon={<BlockOutlined />}
+                  icon={<CalendarOutlined />}
                   key="7"
                   onClick={() => {
                     onNavigate("/schedule-manager");
@@ -196,7 +198,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
                 <Menu.Item
                   key="9"
-                  icon={<ToolOutlined />}
+                  icon={<EnvironmentOutlined />}
                   onClick={() => {
                     onNavigate("/poi-page");
                   }}
@@ -204,7 +206,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   POI
                 </Menu.Item>
                 <Menu.Item
-                  icon={<FundOutlined />}
+                  icon={<NotificationOutlined />}
                   key="event"
                   onClick={() => {
                     onNavigate("/event-manager");
@@ -213,7 +215,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   Event
                 </Menu.Item>
                 <Menu.Item
-                  icon={<FundOutlined />}
+                  icon={<CloudOutlined />}
                   key="application_market"
                   onClick={() => {
                     onNavigate("/application-market");
