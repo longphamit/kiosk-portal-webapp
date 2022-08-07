@@ -32,6 +32,7 @@ import AuthenLayout from "../components/authen_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
 import ForgotPassPage from "../pages/forgot_pass/forgot_pass";
+import VerifyForgotPassPage from "../pages/forgot_pass/verifyForgotPass.jsx";
 import LoginPage from "../pages/login/login_page";
 import RegistPage from "../pages/regist/regist_page";
 import ResetPassPage from "../pages/reset_pass/reset_pass";
@@ -292,7 +293,15 @@ const routes: Route[] = [
     authen: true,
     breadcrumb: "",
     roles: [ROLE_LOCATION_OWNER]
-  }
+  },
+  {
+    component: VerifyForgotPassPage,
+    path: "/verify-pass",
+    isLayout: false,
+    authen: false,
+    breadcrumb: "",
+    roles: [""]
+  },
 ];
 
 export default routes;
