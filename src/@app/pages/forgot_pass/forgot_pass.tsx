@@ -44,10 +44,20 @@ const ForgotPassPage: React.FC = () => {
             wrapperCol={{ span: 16 }}
             onFinish={onForgotPassword}
           >
-            <Form.Item label="Email" name="email">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input email!",
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
             <Row justify="center" align="middle">
+              <Col span={4} />
               <Col span={8}>
                 <Form.Item>
                   {isLoading ? (
@@ -70,6 +80,7 @@ const ForgotPassPage: React.FC = () => {
                   </Button>
                 </Form.Item>
               </Col>
+              <Col span={4} />
             </Row>
           </Form>
         </Col>
