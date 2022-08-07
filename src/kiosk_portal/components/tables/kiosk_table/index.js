@@ -16,7 +16,12 @@ import {
   Table,
   Tag,
 } from "antd";
-import { ArrowDownOutlined, EditFilled, EyeFilled, SyncOutlined } from "@ant-design/icons";
+import {
+  StopFilled,
+  EditFilled,
+  EyeFilled,
+  SyncOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -104,9 +109,9 @@ const KioskTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+          <Tag color={"green"}>Working</Tag>
         ) : (
-          <Tag color={"red"}>{t("deactivate")}</Tag>
+          <Tag color={"red"}>Stopped</Tag>
         ),
     },
   ];
@@ -122,6 +127,7 @@ const KioskTable = ({ partyId }) => {
           try {
             await changeStatusKioskService(values.id);
             await getListKiosk(partyId, kioskPage, kioskPageSize);
+            toast.success("Stop kiosk success")
           } catch (error) {
             console.error(error);
           } finally {
@@ -194,9 +200,9 @@ const KioskTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color={"green"}>Activate</Tag>
+          <Tag color={"green"}>Working</Tag>
         ) : (
-          <Tag color={"red"}>Deactivate</Tag>
+          <Tag color={"red"}>Stopped</Tag>
         ),
     },
     {
@@ -205,8 +211,12 @@ const KioskTable = ({ partyId }) => {
       key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="infor-button" onClick={() => navigator(`/kiosk/${record.id}`)}>
-            <EyeFilled/>Details
+          <Button
+            className="infor-button"
+            onClick={() => navigator(`/kiosk/${record.id}`)}
+          >
+            <EyeFilled />
+            Details
           </Button>
           {record.kioskLocationId ? (
             <Button
@@ -216,7 +226,7 @@ const KioskTable = ({ partyId }) => {
                 showModal("addLocation");
               }}
             >
-             <EditFilled/> Update Location
+              <EditFilled /> Update Location
             </Button>
           ) : (
             <Button
@@ -233,26 +243,25 @@ const KioskTable = ({ partyId }) => {
             <Spin />
           ) : record.status === "activate" ? (
             <Button
-              className="change-status-button"
+              className="danger-button"
               shape="default"
               onClick={() => {
                 changeStatus(record);
               }}
             >
-              <SyncOutlined />
-              Change Status
+              <StopFilled />
+              Stop
             </Button>
           ) : (
             <Button
-              className="infor-button"
               shape="default"
               onClick={() => {
                 changeStatus(record);
               }}
               disabled
             >
-              <SyncOutlined />
-              Change Status
+              <StopFilled />
+              Stop
             </Button>
           )}
         </Space>
@@ -295,7 +304,7 @@ const KioskTable = ({ partyId }) => {
       console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => { };
+  const onFinishSearchKiosk = () => {};
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
