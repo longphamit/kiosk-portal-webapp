@@ -28,4 +28,9 @@ export const updateKioskService = async (data: any) => {
 export const getKioskByIdService = async (id: any) => {
   const response = await request.get(`${HOST}/v1/kiosks/${id}`);
   return response.data;
-}
+};
+
+export const changeNameKioskService = async (id:any,data:any) => {
+  const response = await request.patch(`${HOST}/v1/kiosks/name?id=${id}`, data);
+  return response.data;
+};

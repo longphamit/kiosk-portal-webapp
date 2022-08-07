@@ -16,12 +16,8 @@ import {
   Table,
   Tag,
 } from "antd";
-import {
-  StopFilled,
-  EditFilled,
-  EyeFilled,
-  SyncOutlined,
-} from "@ant-design/icons";
+import {StopFilled, ArrowDownOutlined, EditFilled, EyeFilled, SwapOutlined, SyncOutlined } from "@ant-design/icons";
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -50,6 +46,7 @@ import {
   KIOSK_MANAGER_HREF,
   KIOSK_MANAGER_LABEL,
 } from "../../breadcumb/breadcumb_constant";
+import ModalChangeNameKiosk from "../../../pages/kiosk/modalChangeNameKiosk";
 
 const searchTypeKiosk = [
   {
@@ -71,6 +68,8 @@ const KioskTable = ({ partyId }) => {
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
   const [isModalAddLocationVisible, setIsModalAddLocationVisible] =
+    useState(false);
+    const [isModalChangeNameKioskVisible, setIsModalChangeNameKioskVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
   const [isLoading, setIsLoading] = useState(false);
@@ -206,9 +205,9 @@ const KioskTable = ({ partyId }) => {
         ),
     },
     {
+      key: "action",
       title: t("action"),
       align: "center",
-      key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -264,6 +263,12 @@ const KioskTable = ({ partyId }) => {
               Stop
             </Button>
           )}
+          <Button className="infor-button"  onClick={() => {
+                setCurrentKiosk(record);
+                showModal("changeNameKiosk");
+              }}>
+          <SwapOutlined />Change Name
+          </Button>
         </Space>
       ),
     },
@@ -280,7 +285,6 @@ const KioskTable = ({ partyId }) => {
         kioskPage,
         kioskPageSize
       );
-      console.log(data.data);
       setListKiosk(data.data);
       setKioskPage(data.metadata.page);
       setKioskTotal(data.metadata.total);
@@ -315,23 +319,35 @@ const KioskTable = ({ partyId }) => {
     </Form.Item>
   );
 
-  const handleCancelModal = () => {
-    setIsModalAddLocationVisible(false);
+  const handleCancelModal = (type) => {
+    console.log(type);
+    if(type==="addLocation"){
+      setIsModalAddLocationVisible(false);
+    } else if (type === "changeNameKiosk"){
+      setIsModalChangeNameKioskVisible(false)
+    }
+    
   };
 
   const showModal = async (type) => {
+    console.log(type)
     if (type === "addLocation") {
       setIsModalAddLocationVisible(true);
       const res = await getListKioskLocationService("", 1, -1);
       setListLocation(res.data.data);
+    } else if (type==="changeNameKiosk" ){
+      setIsModalChangeNameKioskVisible(true)
     }
+
   };
 
   const onFinishModal = (type) => {
     if (type === "addLocation") {
-      getListKiosk(partyId, kioskPage, kioskPageSize);
       setIsModalAddLocationVisible(false);
+    } else if( type === "changeNameKiosk"){
+      setIsModalChangeNameKioskVisible(false);
     }
+    getListKiosk(partyId, kioskPage, kioskPageSize);
   };
 
   useEffect(() => {
@@ -347,6 +363,12 @@ const KioskTable = ({ partyId }) => {
         isModalAddLocationVisible={isModalAddLocationVisible}
         handleCancelModal={handleCancelModal}
         listLocation={listLocation}
+        currentKiosk={currentKiosk}
+        onFinishModal={onFinishModal}
+      />
+      <ModalChangeNameKiosk
+        isModalChangeNameKioskVisible={isModalChangeNameKioskVisible}
+        handleCancelModal={handleCancelModal}
         currentKiosk={currentKiosk}
         onFinishModal={onFinishModal}
       />

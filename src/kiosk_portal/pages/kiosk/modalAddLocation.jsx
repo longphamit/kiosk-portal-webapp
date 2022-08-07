@@ -35,15 +35,16 @@ const ModalAddLocation = ({
       setIsLoading(false);
     }
   };
-  const handleCancelPoiInModal = () => {
-    handleCancelModal();
+  const handleCancelInModal = () => {
+    form.resetFields();
+    handleCancelModal("addLocation");
   };
   return (
     <>
       <Modal
         title="Choose your kiosk"
         visible={isModalAddLocationVisible}
-        onCancel={handleCancelPoiInModal}
+        onCancel={handleCancelInModal}
         footer={null}
       >
         <Form
