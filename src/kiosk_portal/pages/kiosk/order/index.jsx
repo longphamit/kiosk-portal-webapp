@@ -10,6 +10,7 @@ export const KioskOrderPage = ({ kioskId }) => {
             setOrders(res.data);
             return;
         } catch (error) {
+            setOrders([])
             console.error(error);
         }
     };

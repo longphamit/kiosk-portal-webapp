@@ -226,6 +226,7 @@ const AccountManagerPage = () => {
       setIsCreateAccountModalVisible(false);
       toast.success(t("toastsuccesscreateaccount"));
     } catch (error) {
+      toast.error(error.response.data.message ?? 'Cannot create new account! Please try again')
       console.error(error);
     } finally {
       setCreateAccountLoading(false);
@@ -573,7 +574,7 @@ const AccountManagerPage = () => {
             label={t("phonenumber")}
             rules={[
               {
-                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
+                pattern: new RegExp("(84|0[3|5|7|8|9])+([0-9]{8})"),
                 message: t("formatphonenumber"),
               },
               {
