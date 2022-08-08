@@ -29,7 +29,8 @@ const EditTemplatePage = () => {
     const [categoryComponents, setCategoryComponents] = useState();
     const [eventComponents, setEventComponents] = useState();
     const [currentTemplate, setCurrentTemplate] = useState();
-    const [isFirstSaving, setFirstSaving] = useState(true)
+    const [isFirstSavingCategory, setFirstSavingCategory] = useState(true)
+    const [isFirstSavingEvent, setFirstSavingEvent] = useState(true)
     let navigate = useNavigate();
     const getAllAppCategories = async () => {
         try {
@@ -263,13 +264,20 @@ const EditTemplatePage = () => {
             currentTemplate.id, selectedType);
         try {
             let res;
-            if (currentTemplate.status === 'incomplete' && isFirstSaving) {
-                if (selectedType === SELECTED_TYPE_CATEGORY) {
+            if (currentTemplate.status === 'incomplete') {
+                if (selectedType === SELECTED_TYPE_CATEGORY && isFirstSavingCategory) {
                     res = await createAppCategoryPosition(request)
-                } else {
+                    setFirstSavingCategory(false)
+                } else if (selectedType === SELECTED_TYPE_EVENT && isFirstSavingCategory) {
                     res = await createEventPosition(request);
+                    setFirstSavingEvent(false)
+                } else {
+                    if (selectedType === SELECTED_TYPE_CATEGORY) {
+                        res = await updateAppCategoryPosition(request);
+                    } else {
+                        res = await updateEventPosition(request);
+                    }
                 }
-                setFirstSaving(false)
             } else {
                 if (selectedType === SELECTED_TYPE_CATEGORY) {
                     res = await updateAppCategoryPosition(request);
