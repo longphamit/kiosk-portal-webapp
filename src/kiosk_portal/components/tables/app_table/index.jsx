@@ -59,6 +59,7 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../../../@app/constants/role";
 import { Editor } from "primereact/editor";
+import { async } from "@firebase/util";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -85,7 +86,14 @@ const ApplicationTable = () => {
     useState("FirstName");
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
+  const [formAdvanceSearch] = Form.useForm();
   const getListApplicationFunction = async (
+    Name,
+    PartyName,
+    PartyEmail,
+    AppCategoryId,
+    AppCategoryName,
+    Status,
     currentPageToGetList,
     numInPage
   ) => {
@@ -98,12 +106,12 @@ const ApplicationTable = () => {
       //   return;
       // }
       const res = await getListApplicationService(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
+        Name,
+        PartyName,
+        PartyEmail,
+        AppCategoryId,
+        AppCategoryName,
+        Status,
         numInPage,
         currentPageToGetList
       );
@@ -117,7 +125,16 @@ const ApplicationTable = () => {
   };
 
   useEffect(async () => {
-    getListApplicationFunction(currentPage, numApplicationInPage);
+    getListApplicationFunction(
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      currentPage,
+      numApplicationInPage
+    );
     const res = await getAllCategoriesService();
     setListCategories(res.data);
   }, []);
@@ -149,7 +166,16 @@ const ApplicationTable = () => {
         };
       }
       await updateApplicationService(updateApplication);
-      getListApplicationFunction(currentPage, numApplicationInPage);
+      getListApplicationFunction(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        currentPage,
+        numApplicationInPage
+      );
       setIsCreateApplicationModalVisible(false);
       toast.success("Update Application Success");
       handleCancelEditApplication();
@@ -172,7 +198,16 @@ const ApplicationTable = () => {
               serviceApplicationId: record.id,
             };
             await stopApplicationService(id).then(() => {
-              getListApplicationFunction(currentPage, numApplicationInPage);
+              getListApplicationFunction(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                currentPage,
+                numApplicationInPage
+              );
               toast.success("Stop application success");
             });
           } catch (error) {
@@ -210,7 +245,16 @@ const ApplicationTable = () => {
         isAffiliate: isCheck,
       };
       await createApplicationService(newApplication);
-      getListApplicationFunction(currentPage, numApplicationInPage);
+      getListApplicationFunction(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        currentPage,
+        numApplicationInPage
+      );
       setIsCreateApplicationModalVisible(false);
       toast.success("Create Application Success");
       form.resetFields();
@@ -249,7 +293,16 @@ const ApplicationTable = () => {
               serviceApplicationId: record.id,
             };
             await sendReqPublishApplicationService(newReq).then(() => {
-              getListApplicationFunction(currentPage, numApplicationInPage);
+              getListApplicationFunction(
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                currentPage,
+                numApplicationInPage
+              );
               toast.success("Send request publish success");
             });
           } catch (error) {
@@ -262,35 +315,105 @@ const ApplicationTable = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListApplicationFunction(page, numApplicationInPage);
+    await getListApplicationFunction(
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      page,
+      numApplicationInPage
+    );
+  };
+  const onFinishSearch = async (values) => {
+    try {
+      if (values.type === "name") {
+        await getListApplicationFunction(
+          values.searchString,
+          "",
+          "",
+          "",
+          "",
+          "",
+          1,
+          numApplicationInPage
+        );
+      } else if (values.type === "status") {
+        await getListApplicationFunction(
+          "",
+          "",
+          "",
+          "",
+          "",
+          values.searchString,
+          1,
+          numApplicationInPage
+        );
+      } else if (values.type === "partyEmail") {
+        await getListApplicationFunction(
+          "",
+          "",
+          values.searchString,
+          "",
+          "",
+          "",
+          1,
+          numApplicationInPage
+        );
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  const onFinishAdvancedSearch = async (values) => {
+    try {
+      let name = "";
+      let partyEmail = "";
+      let status = values.status;
+      if (typeof values.name === "undefined") {
+        name = "";
+      } else {
+        name = values.name;
+      }
+      if (typeof values.partyEmail === "undefined") {
+        partyEmail = "";
+      } else {
+        partyEmail = values.partyEmail;
+      }
+      await getListApplicationFunction(
+        name,
+        "",
+        partyEmail,
+        "",
+        "",
+        status,
+        1,
+        numApplicationInPage
+      );
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsAdvancedSearchModalVisible(false);
+    }
   };
 
   const types = [
     {
-      name: "FirstName",
-      label: "First Name",
+      name: "name",
+      label: "Name",
     },
     {
-      name: "LastName",
-      label: "Last Name",
-    },
-    {
-      name: "PhoneNumber",
-      label: "Phone",
-    },
-    {
-      name: "Email",
-      label: "Email",
-    },
-    {
-      name: "Address",
-      label: "Address",
-    },
-    {
-      name: "Status",
+      name: "status",
       label: "Status",
     },
+    {
+      name: "partyEmail",
+      label: "Party Email",
+    },
   ];
+
   const columns = [
     {
       title: "Logo",
@@ -442,9 +565,9 @@ const ApplicationTable = () => {
           <Form
             form={form}
             name="search"
-            //   onFinish={onFinishSearch}
+            onFinish={onFinishSearch}
             initialValues={{
-              type: "FirstName",
+              type: "name",
               searchString: "",
             }}
           >
@@ -452,9 +575,10 @@ const ApplicationTable = () => {
               <Col span={4}>
                 <Form.Item name="type" style={{ marginTop: 5 }}>
                   <Select
-                    defaultValue="FirstName"
+                    defaultValue="name"
                     onChange={(e) => {
                       setApplicationSearchType(e);
+                      console.log(e);
                     }}
                   >
                     {types.map((item) => {
@@ -465,19 +589,19 @@ const ApplicationTable = () => {
               </Col>
               <Col span={10}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                  <AutoComplete
-                    style={{ width: "100%" }}
-                    options={[]}
-                    placeholder="Search..."
-                    filterOption={(inputValue, option) =>
-                      option.value
-                        .toUpperCase()
-                        .indexOf(inputValue.toUpperCase()) !== -1
-                    }
-                  />
+                  {applicationSearchType === "status" ? (
+                    <Select defaultValue="">
+                      <Option value="">Get all</Option>
+                      <Option value="available">Available</Option>
+                      <Option value="unavailable">Un Available</Option>
+                    </Select>
+                  ) : (
+                    <Input placeholder="Please input" />
+                  )}
+                  {/* <Input placeholder="Please input" /> */}
                 </Form.Item>
               </Col>
-              <Col span={2}>
+              <Col span={3}>
                 <Form.Item>
                   <Button
                     htmlType="submit"
@@ -674,9 +798,9 @@ const ApplicationTable = () => {
       >
         <Form
           {...formItemLayout}
-          form={form}
+          form={formAdvanceSearch}
           name="advancedSearch"
-          // onFinish={onFinishAdvancedSearch}
+          onFinish={onFinishAdvancedSearch}
           scrollToFirstError
           labelCol={{ span: 7 }}
           wrapperCol={{ span: 14 }}
@@ -689,26 +813,17 @@ const ApplicationTable = () => {
             status: "",
           }}
         >
-          <Form.Item name="firstName" label={t("firstname")}>
+          <Form.Item name="name" label="Name">
             <Input />
           </Form.Item>
-          <Form.Item name="lastName" label={t("lastname")}>
+          <Form.Item name="partyEmail" label="Party Email">
             <Input />
           </Form.Item>
-          <Form.Item name="phoneNumber" label={t("phonenumber")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label={t("email")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="address" label={t("address")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="status" label={t("status")}>
-            <Select initialValues="">
-              <Option value="">All</Option>
-              <Option value="active">{t("active")}</Option>
-              <Option value="deactive">{t("deactive")}</Option>
+          <Form.Item name="status" label="Status">
+            <Select defaultValue="">
+              <Option value="">Get all</Option>
+              <Option value="available">Available</Option>
+              <Option value="unavailable">Un Available</Option>
             </Select>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
