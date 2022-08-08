@@ -25,6 +25,7 @@ import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
+import ProfilePage from "../../kiosk_portal/pages/profile";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
 import EditTemplatePage from "../../kiosk_portal/pages/template/edit-template";
@@ -301,6 +302,15 @@ const routes: Route[] = [
     authen: false,
     breadcrumb: "",
     roles: [""]
+  },
+  {
+    component: ProfilePage,
+    path: "/profile",
+    isLayout: true,
+    authen: true,
+    layout:AuthenLayout,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER]
   },
 ];
 

@@ -13,10 +13,11 @@ import {
   NotificationOutlined,
   TableOutlined,
   CloudOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import {ReactNode} from "react";
+import { ReactNode } from "react";
 import "./styles.css";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
@@ -55,7 +56,6 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
     navigate(url);
   };
 
-
   return (
     <Layout>
       <Header className="header">
@@ -73,11 +73,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
           </Col>
           <Col span={13} />
 
-          <Col span={1}  >
+          <Col span={1}>
             <NotificationView />
           </Col>
         </Row>
-
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
@@ -128,24 +127,24 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   App Category
                 </Menu.Item>
-                  <Menu.Item
-                    key="poi_manager"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/poi-page");
-                    }}
-                  >
-                    POI Manager
-                  </Menu.Item>
-                  <Menu.Item
-                    key="poi_category"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/poi-category");
-                    }}
-                  >
-                    POI Category
-                  </Menu.Item>
+                <Menu.Item
+                  key="poi_manager"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/poi-page");
+                  }}
+                >
+                  POI Manager
+                </Menu.Item>
+                <Menu.Item
+                  key="poi_category"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/poi-category");
+                  }}
+                >
+                  POI Category
+                </Menu.Item>
 
                 <Menu.Item
                   icon={<FundOutlined />}
@@ -169,15 +168,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   Kiosk Manager
                 </Menu.Item>
-                  <Menu.Item
-                    key="kiosk_location"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/kiosk-location");
-                    }}
-                  >
-                    Kiosk Location
-                  </Menu.Item>
+                <Menu.Item
+                  key="kiosk_location"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/kiosk-location");
+                  }}
+                >
+                  Kiosk Location
+                </Menu.Item>
                 <Menu.Item
                   icon={<CalendarOutlined />}
                   key="7"
@@ -257,6 +256,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   App Publish
                 </Menu.Item>
               </>
+            ) : null}
+            {role == ROLE_LOCATION_OWNER || role == ROLE_SERVICE_PROVIDER ? (
+              <Menu.Item
+                icon={<UserOutlined />}
+                key="87"
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              >
+                Profile
+              </Menu.Item>
             ) : null}
             <Menu.Item
               icon={<LogoutOutlined />}
