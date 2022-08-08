@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { getKisokOrderCommissionService } from "../../../services/order_service";
 import { Col, Empty, Row, Skeleton, Table } from "antd";
+import OrderPieChart from "../../../components/charts/order_pie_chart";
 export const KioskOrderPage = ({ kioskId }) => {
     const [orders, setOrders] = useState();
 
     const getListOrderFunction = async () => {
         try {
             const res = await getKisokOrderCommissionService(kioskId)
+            console.log(res.data)
             setOrders(res.data);
             return;
         } catch (error) {
@@ -48,9 +50,11 @@ export const KioskOrderPage = ({ kioskId }) => {
                 </> :
                 <>
                     <Table columns={columns} dataSource={orders} pagination={false} />
+                    <OrderPieChart orders={orders}/>
                 </>
             : <Skeleton />
         }
+        
 
     </>
 }
