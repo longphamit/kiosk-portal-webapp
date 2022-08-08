@@ -1,0 +1,15 @@
+.info-chart-box{
+    margin: 30px;
+    padding: 20px;
+    width: "100%";
+    border-radius: 20px;
+}
+.info-chart-title{
+    font-weight: bold;
+    font-size: 15px;
+    text-align: left;
+}
+.info-chart-value{
+    font-weight: bold;
+    font-size: 15px;
+}
