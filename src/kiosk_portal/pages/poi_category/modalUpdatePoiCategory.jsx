@@ -49,7 +49,7 @@ const ModalUpdatePoiCategory = ({
         toast.error("Please choose logo");
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     }
   };
   const handleCancelPoiInModal = () => {
@@ -67,6 +67,7 @@ const ModalUpdatePoiCategory = ({
     <>
       {currentUnit ? (
         <Modal
+          key={currentUnit.id}
           title="Update Poi Category"
           visible={isUpdateModalVisible}
           onCancel={handleCancelPoiInModal}

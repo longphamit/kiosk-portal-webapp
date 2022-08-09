@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { searchAccountService } from "../../services/account_service";
-import "./styles.css"
+import "./styles.css";
 import {
   changeScheduleStatusService,
   createScheduleService,
@@ -65,14 +65,13 @@ const ScheduleManagerPage = () => {
     try {
       await getListScheduleService(currentPageToGetList, numInPage).then(
         (res) => {
-          console.log(res.data.data);
           setTotalSchedule(res.data.metadata.total);
           setListSchedule(res.data.data);
         }
       );
     } catch (error) {
       setListSchedule([]);
-      console.eror(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -197,11 +196,11 @@ const ScheduleManagerPage = () => {
     try {
       await changeScheduleStatusService(scheduleId);
       await getListScheduleFunction(currentPage, numScheduleInPage);
-      toast.success("Change schedule status success")
+      toast.success("Change schedule status success");
     } catch (e) {
-      toast.error("Change schedule status fail")
+      toast.error("Change schedule status fail");
     }
-  }
+  };
   const types = [
     {
       name: "name",
@@ -263,7 +262,7 @@ const ScheduleManagerPage = () => {
             className="change-status-button"
             shape="default"
             onClick={() => {
-              handleChangeStatusSchedule(record.id)
+              handleChangeStatusSchedule(record.id);
             }}
           >
             <SyncOutlined /> Change Status
@@ -353,7 +352,10 @@ const ScheduleManagerPage = () => {
           <>
             <Table
               rowClassName={(record, index) =>
-                record.status === 'off' ? 'tb-row-schedule-off' : 'tb-row-schedule-on'}
+                record.status === "off"
+                  ? "tb-row-schedule-off"
+                  : "tb-row-schedule-on"
+              }
               columns={columns}
               dataSource={listSchedule}
               pagination={false}
