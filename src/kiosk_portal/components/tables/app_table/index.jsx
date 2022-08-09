@@ -232,9 +232,12 @@ const ApplicationTable = () => {
       let formatResult = [];
       const result = await getBase64(values.logo.file.originFileObj);
       formatResult = result.split(",");
-      let isCheck = false;
-      if (values?.isAffiliate[0]) {
-        isCheck = true;
+      let isCheck = true;
+      if (
+        typeof values.isAffiliate === "undefined" ||
+        values.isAffiliate === false
+      ) {
+        isCheck = false;
       }
       const newApplication = {
         name: values.name,
@@ -244,6 +247,7 @@ const ApplicationTable = () => {
         appCategoryId: values.appCategoryId,
         isAffiliate: isCheck,
       };
+      console.log(newApplication);
       await createApplicationService(newApplication);
       getListApplicationFunction(
         "",
