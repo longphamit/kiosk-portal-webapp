@@ -51,7 +51,7 @@ export const KioskOrderPage = ({ kioskId }) => {
         ) : (
           <>
             <Table columns={columns} dataSource={orders} pagination={false} />
-            <OrderPieChart orders={orders} />
+            {/* <OrderPieChart orders={orders} /> */}
           </>
         )
       ) : (
