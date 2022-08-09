@@ -60,3 +60,8 @@ export const updateThumbnailService = async (data: any) => {
     const response = await request.patch(`${HOST}/v1/events/image`, data);
     return response.data
 }
+
+export const updateBannerEventService = async (data: any) => {
+    const response = await request.patch(`${HOST}/v1/events/banner`, data);
+    return response.data
+}

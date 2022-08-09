@@ -1,8 +1,22 @@
-import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Col,
+  Empty,
+  Modal,
+  Pagination,
+  Row,
+  Skeleton,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import { EyeFilled, CloseCircleFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MY_APPLICATION_HREF, MY_APPLICATION_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  MY_APPLICATION_HREF,
+  MY_APPLICATION_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import { useNavigate } from "react-router-dom";
 import {
   changeStatusMyAppService,
@@ -34,7 +48,7 @@ const MyApplicationPage = () => {
     }
   };
 
-  const onUninstallApplication = (value) => {
+  const onUninstallApplication = (values) => {
     Modal.confirm({
       title: "Confirm Uninstall this application",
       okText: "Yes",
@@ -42,7 +56,7 @@ const MyApplicationPage = () => {
       onOk: async () => {
         {
           try {
-            await changeStatusMyAppService(value.serviceApplicationId);
+            await changeStatusMyAppService(values.serviceApplicationId);
             await getListMyAppFunction(currentPage, numApplicationInPage);
             toast.success("Uninstall successful");
           } catch (error) {
@@ -55,7 +69,10 @@ const MyApplicationPage = () => {
 
   useEffect(async () => {
     getListMyAppFunction(currentPage, numApplicationInPage);
-    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+    localStorage.setItem(
+      PREVIOUS_PATH,
+      JSON.stringify({ data: breadCumbData })
+    );
   }, []);
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -111,21 +128,25 @@ const MyApplicationPage = () => {
             className="infor-button"
             shape="default"
             onClick={() => {
-              navigator(`/app-detail/${record.serviceApplicationId}&&installed`);
+              navigator(
+                `/app-detail/${record.serviceApplicationId}&&installed`
+              );
             }}
           >
             <EyeFilled /> Detail
           </Button>
-          {
-            record.status === "installed" ? <Button
+          {record.status === "installed" ? (
+            <Button
               className="danger-button"
               onClick={() => {
-                onUninstallApplication(record)
+                onUninstallApplication(record);
               }}
             >
               <CloseCircleFilled /> Uninstall
-            </Button> : <></>
-          }
+            </Button>
+          ) : (
+            <></>
+          )}
         </Space>
       ),
     },
@@ -134,21 +155,22 @@ const MyApplicationPage = () => {
     {
       href: MY_APPLICATION_HREF,
       label: MY_APPLICATION_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
-      {listMyApplication ?
-        listMyApplication.length === 0 ?
+      {listMyApplication ? (
+        listMyApplication.length === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
             <Table
               columns={columns}
@@ -162,10 +184,11 @@ const MyApplicationPage = () => {
               onChange={handleChangeNumberOfPaging}
             />
           </>
-        : <Skeleton />
-      }
+        )
+      ) : (
+        <Skeleton />
+      )}
     </>
-
   );
 };
 export default MyApplicationPage;
