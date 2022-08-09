@@ -16,21 +16,25 @@ import {
 } from "antd";
 import {
   SearchOutlined,
-  EyeFilled
+  EyeFilled,
+  StopOutlined
 } from "@ant-design/icons";
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  cancelPublishRequestService,
   getListAppPublishRequestSearchService,
   getListAppPublishRequestService,
 } from "../../../services/app_publish_request_service";
 import {
   PUBLISH_APPROVED,
+  PUBLISH_CANCEL,
   PUBLISH_DENIED,
   PUBLISH_IN_PROGRESS,
 } from "../../../constants/app_publish_request_status_constant";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const searchTypeKiosk = [
   {
@@ -54,6 +58,25 @@ const AppPublishRequestTable = ({ partyId }) => {
     setPublishRequestDetailModalVisible,
   ] = useState();
   const navigator = useNavigate();
+  const onFinishCancel=(record)=>{
+    Modal.confirm({
+      title: "Are you sure to cancel request publish of this application",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            console.log(record)
+            await cancelPublishRequestService(JSON.stringify(record.id))
+            await getListAppPublishRequest(appPublishRequestPage, appPublishRequestPageSize);
+            toast.success("Cancel Success")
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
+  }
   const AdminApplicationPublishRequestColumn = [
     {
       title: "No",
@@ -86,12 +109,15 @@ const AppPublishRequestTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === PUBLISH_APPROVED ? (
-          <Tag color={"green"}>Approved</Tag>
+          <Tag color={"green"}>APPOVED</Tag>
         ) : record.status === PUBLISH_IN_PROGRESS ? (
           <Tag color={"blue"}>IN PROGRESS</Tag>
         ) : record.status === PUBLISH_DENIED ? (
           <Tag color={"red"}>DENIED</Tag>
-        ) : (
+        ) : record.status === PUBLISH_CANCEL?(
+          <Tag color={"grey"}>CANCELED</Tag>
+        ) :
+        (
           <></>
         ),
     },
@@ -109,9 +135,10 @@ const AppPublishRequestTable = ({ partyId }) => {
           >
             <EyeFilled /> Detail
           </Button>
+
           {record.status === PUBLISH_DENIED ? (
             <Button
-              className="infor-button"
+              className="warn-button"
               onClick={() => {
                 setAppPublishRequestSelected(record);
                 setPublishRequestDetailModalVisible(true);
@@ -122,6 +149,19 @@ const AppPublishRequestTable = ({ partyId }) => {
           ) : (
             <></>
           )}
+          {
+            record.status === PUBLISH_IN_PROGRESS?(
+<Button
+            className="danger-button"
+            onClick={() => {
+              onFinishCancel(record);
+            }}
+          >
+            <StopOutlined/> Cancel Request
+          </Button>
+            ):null
+          }
+          
         </Space>
       ),
     },
