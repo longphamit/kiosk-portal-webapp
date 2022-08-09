@@ -173,7 +173,10 @@ const ApplicationDetailPage = () => {
                   )}
                 </Descriptions.Item>
 
-                <Descriptions.Item>
+                <Descriptions.Item
+                  label="Logo"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
                   <Image
                     size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
                     src={app.logo}
@@ -182,6 +185,20 @@ const ApplicationDetailPage = () => {
                     height={40}
                   />
                 </Descriptions.Item>
+                {app.banner ? (
+                  <Descriptions.Item
+                    label="Banner"
+                    labelStyle={{ fontWeight: "bold" }}
+                  >
+                    <Image
+                      size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
+                      src={app.logo}
+                      sizes="large"
+                      width={40}
+                      height={40}
+                    />
+                  </Descriptions.Item>
+                ) : null}
               </Descriptions>
             </Col>
             <Col>

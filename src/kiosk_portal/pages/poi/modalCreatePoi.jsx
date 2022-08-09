@@ -120,6 +120,12 @@ const ModalCreatePoi = ({
         let result = await getBase64(values.thumbnail.file.originFileObj);
         thumbnail = result.split(",");
 
+        let banner = [];
+        if (values.banner?.fileList[0]) {
+          let resultBanner = await getBase64(values.banner.file.originFileObj);
+          banner = resultBanner.split(",");
+        }
+
         let listImage = [];
         await Promise.all(
           values.listImage.fileList.map(async (value) => {
@@ -142,7 +148,9 @@ const ModalCreatePoi = ({
           poicategoryId: values.poicategoryId,
           thumbnail: thumbnail[1],
           listImage: listImage,
+          banner: banner[1],
         };
+        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
           toast.success("Create Poi Success");
@@ -153,7 +161,7 @@ const ModalCreatePoi = ({
         toast.error(errormsg);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
@@ -383,6 +391,17 @@ const ModalCreatePoi = ({
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item name="banner" label="Banner">
+            <Upload
+              action={FILE_UPLOAD_URL}
+              listType="picture"
+              maxCount={1}
+              accept={ACCEPT_IMAGE}
+              beforeUpload={beforeUpload}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>

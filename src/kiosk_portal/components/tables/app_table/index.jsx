@@ -1,6 +1,7 @@
 import {
   AutoComplete,
   Button,
+  Card,
   Checkbox,
   Col,
   DatePicker,
@@ -46,6 +47,7 @@ import {
   sendReqPublishApplicationService,
   stopApplicationService,
   updateApplicationService,
+  updateBannerApplicationService,
 } from "../../../services/application_service";
 import {
   getAllCategoriesService,
@@ -60,6 +62,8 @@ import {
 } from "../../../../@app/constants/role";
 import { Editor } from "primereact/editor";
 import { async } from "@firebase/util";
+import { FILE_UPLOAD_URL } from "../../../../@app/utils/api_links";
+import { ACCEPT_IMAGE } from "../../../constants/accept_file";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -82,11 +86,14 @@ const ApplicationTable = () => {
     useState(false);
   const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
     useState(false);
+  const [isLoadingBanner, setIsLoadingBanner] = useState(false);
   const [applicationSearchType, setApplicationSearchType] =
     useState("FirstName");
   const [isLoading, setIsLoading] = useState(false);
   const [form] = Form.useForm();
+  const [formUploadBanner] = Form.useForm();
   const [formAdvanceSearch] = Form.useForm();
+  const [isCheck, setIsCheck] = useState(true);
   const getListApplicationFunction = async (
     Name,
     PartyName,
@@ -140,8 +147,8 @@ const ApplicationTable = () => {
   }, []);
 
   const onFinishUpdateApplication = async (values) => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       let updateApplication = [];
       if (typeof values.logo === "object") {
         let formatResult = [];
@@ -154,6 +161,7 @@ const ApplicationTable = () => {
           logo: formatResult[1],
           link: values.link,
           appCategoryId: values.appCategoryId,
+          isAffiliate: isCheck,
         };
       } else {
         updateApplication = {
@@ -163,6 +171,7 @@ const ApplicationTable = () => {
           logo: null,
           link: values.link,
           appCategoryId: values.appCategoryId,
+          isAffiliate: isCheck,
         };
       }
       await updateApplicationService(updateApplication);
@@ -239,6 +248,11 @@ const ApplicationTable = () => {
       ) {
         isCheck = false;
       }
+      let banner = [];
+      if (values.banner?.fileList[0]) {
+        let resultBanner = await getBase64(values.banner.file.originFileObj);
+        banner = resultBanner.split(",");
+      }
       const newApplication = {
         name: values.name,
         description: description,
@@ -246,6 +260,7 @@ const ApplicationTable = () => {
         logo: formatResult[1],
         appCategoryId: values.appCategoryId,
         isAffiliate: isCheck,
+        banner: banner[1],
       };
       console.log(newApplication);
       await createApplicationService(newApplication);
@@ -403,6 +418,48 @@ const ApplicationTable = () => {
     }
   };
 
+  const onFinishUpdateBanner = async (values) => {
+    console.log(values.banner);
+    try {
+      setIsLoadingBanner(true);
+      let banner = "";
+      let isChange = true;
+      if (typeof values.banner === "undefined") {
+        isChange = false;
+        toast.error("Your img is not change");
+      } else if (values.banner.fileList.length === 0) {
+        banner = "";
+      } else {
+        banner = (await getBase64(values.banner.file.originFileObj)).split(
+          ","
+        )[1];
+      }
+      if (isChange) {
+        const updateBanner = {
+          serviceApplicationId: currentItem.id,
+          banner: banner,
+        };
+        await updateBannerApplicationService(updateBanner);
+        getListApplicationFunction(
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          currentPage,
+          numApplicationInPage
+        );
+        setIsEditApplicationModalVisible(false);
+        toast.success("Update success");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoadingBanner(false);
+    }
+  };
+
   const types = [
     {
       name: "name",
@@ -512,42 +569,60 @@ const ApplicationTable = () => {
           {role ? (
             role === ROLE_SERVICE_PROVIDER ? (
               <>
-                {console.log(record.status)}
-                <Button
-                  className="warn-button"
-                  shape="default"
-                  onClick={() => {
-                    setCurrentItem(record);
-                    setDescription(record.description);
-                    showModalEditApplication();
-                  }}
-                >
-                  <EditFilled />
-                  Update
-                </Button>
                 {record.status === "unavailable" ? (
-                  <Button
-                    type="primary"
-                    shape="default"
-                    name={record}
-                    onClick={() => {
-                      handleChangeStatusApplication(record);
-                    }}
-                  >
-                    <ArrowUpOutlined /> Publish
-                  </Button>
+                  <>
+                    <Button
+                      className="warn-button"
+                      shape="default"
+                      onClick={() => {
+                        setCurrentItem(record);
+                        setIsCheck(record.isAffiliate);
+                        setDescription(record.description);
+                        showModalEditApplication();
+                      }}
+                    >
+                      <EditFilled />
+                      Update
+                    </Button>
+                    <Button
+                      type="primary"
+                      shape="default"
+                      name={record}
+                      onClick={() => {
+                        handleChangeStatusApplication(record);
+                      }}
+                    >
+                      <ArrowUpOutlined /> Publish
+                    </Button>
+                  </>
                 ) : (
-                  <Button
-                    type="primary"
-                    shape="default"
-                    disabled="false"
-                    name={record}
-                    onClick={() => {
-                      handleChangeStatusApplication(record);
-                    }}
-                  >
-                    <ArrowUpOutlined /> Publish
-                  </Button>
+                  <>
+                    <Button
+                      className="warn-button"
+                      shape="default"
+                      onClick={() => {
+                        setCurrentItem(record);
+                        setIsCheck(record.isAffiliate);
+                        setDescription(record.description);
+                        showModalEditApplication();
+                      }}
+                      disabled
+                    >
+                      <EditFilled />
+                      Update
+                    </Button>
+                    <Button
+                      type="primary"
+                      shape="default"
+                      disabled="false"
+                      name={record}
+                      onClick={() => {
+                        handleChangeStatusApplication(record);
+                      }}
+                    >
+                      <ArrowUpOutlined /> Publish
+                    </Button>
+                  </>
                 )}
               </>
             ) : null
@@ -783,6 +858,17 @@ const ApplicationTable = () => {
               </Row>
             </Checkbox.Group>
           </Form.Item>
+          <Form.Item name="banner" label="Banner">
+            <Upload
+              action={FILE_UPLOAD_URL}
+              listType="picture"
+              maxCount={1}
+              accept={ACCEPT_IMAGE}
+              beforeUpload={beforeUpload}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
             {isLoading ? (
@@ -849,137 +935,217 @@ const ApplicationTable = () => {
           footer={null}
           width={1000}
         >
-          <Form
-            style={{
-              marginRight: 80,
-            }}
-            key={currentItem.id}
-            {...formItemLayout}
-            form={form}
-            name="edit"
-            onFinish={onFinishUpdateApplication}
-            scrollToFirstError
-            initialValues={{
-              id: currentItem.id,
-              name: currentItem.name,
-              description: currentItem.description,
-              logo: currentItem.logo,
-              link: currentItem.link,
-              partyId: localStorageGetUserIdService(),
-              appCategoryId: currentItem.appCategoryId,
-            }}
-          >
-            <Form.Item name="id" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
-            <Form.Item name="partyId" hidden={true}>
-              <Input type="hidden" />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label="Name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input application name!",
-                },
-              ]}
+          <Card title="Basic information">
+            <Form
+              style={{
+                marginRight: 80,
+              }}
+              key={currentItem.id}
+              {...formItemLayout}
+              form={form}
+              name="edit"
+              onFinish={onFinishUpdateApplication}
+              scrollToFirstError
+              initialValues={{
+                id: currentItem.id,
+                name: currentItem.name,
+                description: currentItem.description,
+                logo: currentItem.logo,
+                link: currentItem.link,
+                partyId: localStorageGetUserIdService(),
+                appCategoryId: currentItem.appCategoryId,
+              }}
             >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              required
-              rules={[
-                {
-                  message: "Please input application description!",
-                  validator: (_, value) => {
-                    if (!description) {
-                      return Promise.reject("");
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-              value={description}
-            >
-              <Editor
-                style={{ height: "320px" }}
-                onTextChange={(e) => {
-                  setDescription(e.htmlValue);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="link"
-              label="Link"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input application link!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="logo"
-              label="Logo"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose application logo!",
-                },
-              ]}
-            >
-              <Upload
-                action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                listType="picture"
-                maxCount={1}
-                accept=".png"
-                beforeUpload={beforeUpload}
-                defaultFileList={[
+              <Form.Item name="id" hidden={true}>
+                <Input type="hidden" />
+              </Form.Item>
+              <Form.Item name="partyId" hidden={true}>
+                <Input type="hidden" />
+              </Form.Item>
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[
                   {
-                    uid: "abc",
-                    name: "image.png",
-                    status: "done",
-                    url: currentItem.logo,
+                    required: true,
+                    message: "Please input application name!",
                   },
                 ]}
               >
-                <Button icon={<UploadOutlined />}>Upload</Button>
-              </Upload>
-            </Form.Item>
-            <Form.Item
-              name="appCategoryId"
-              label="Category"
-              rules={[
-                {
-                  required: true,
-                  message: "Please choose application category!",
-                },
-              ]}
-            >
-              <Select placeholder="Select your categories">
-                {listCategories
-                  ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
-                  : null}
-              </Select>
-            </Form.Item>
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="description"
+                label="Description"
+                required
+                rules={[
+                  {
+                    message: "Please input application description!",
+                    validator: (_, value) => {
+                      if (!description) {
+                        return Promise.reject("");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                value={description}
+              >
+                <Editor
+                  style={{ height: "320px" }}
+                  onTextChange={(e) => {
+                    setDescription(e.htmlValue);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="link"
+                label="Link"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input application link!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="logo"
+                label="Logo"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose application logo!",
+                  },
+                ]}
+              >
+                <Upload
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture"
+                  maxCount={1}
+                  accept=".png"
+                  beforeUpload={beforeUpload}
+                  defaultFileList={[
+                    {
+                      uid: "abc",
+                      name: "image.png",
+                      status: "done",
+                      url: currentItem.logo,
+                    },
+                  ]}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                name="appCategoryId"
+                label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please choose application category!",
+                  },
+                ]}
+              >
+                <Select placeholder="Select your categories">
+                  {listCategories
+                    ? listCategories.map((item) => {
+                        return <Option value={item.id}>{item.name}</Option>;
+                      })
+                    : null}
+                </Select>
+              </Form.Item>
+              <Form.Item name="isAffiliate" label="Is Affiliate">
+                {currentItem.isAffiliate ? (
+                  <Checkbox
+                    defaultChecked
+                    value="isAffiliate"
+                    onChange={() => {
+                      if (isCheck) {
+                        setIsCheck(false);
+                      } else {
+                        setIsCheck(true);
+                      }
+                    }}
+                  />
+                ) : (
+                  <Checkbox
+                    defaultChecked={false}
+                    value="isAffiliate"
+                    onChange={() => {
+                      if (isCheck) {
+                        setIsCheck(false);
+                      } else {
+                        setIsCheck(true);
+                      }
+                    }}
+                  />
+                )}
+              </Form.Item>
 
-            <Form.Item {...tailFormItemLayout}>
-              {isLoading ? (
-                <Spin />
-              ) : (
-                <Button type="primary" htmlType="submit">
-                  Update Application
-                </Button>
-              )}
-            </Form.Item>
-          </Form>
+              <Form.Item {...tailFormItemLayout}>
+                {isLoading ? (
+                  <Spin />
+                ) : (
+                  <Button type="primary" htmlType="submit">
+                    Update Application
+                  </Button>
+                )}
+              </Form.Item>
+            </Form>
+          </Card>
+          <Card title="Banner">
+            <Form
+              {...formItemLayout}
+              form={formUploadBanner}
+              name="banner"
+              onFinish={onFinishUpdateBanner}
+              scrollToFirstError
+            >
+              <Form.Item name="banner" label="Banner">
+                {currentItem.banner ? (
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={1}
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                    defaultFileList={[
+                      {
+                        uid: "abc",
+                        name: "thumbnail",
+                        status: "done",
+                        url: currentItem.banner,
+                      },
+                    ]}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                  </Upload>
+                ) : (
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={1}
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                  </Upload>
+                )}
+              </Form.Item>
+
+              <Form.Item {...tailFormItemLayout}>
+                {isLoadingBanner === false ? (
+                  <Button type="primary" htmlType="submit">
+                    Update
+                  </Button>
+                ) : (
+                  <Spin />
+                )}
+              </Form.Item>
+            </Form>
+          </Card>
         </Modal>
       ) : null}
     </>

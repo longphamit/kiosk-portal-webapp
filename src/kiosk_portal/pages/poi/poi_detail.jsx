@@ -28,6 +28,7 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getPoiByIdService,
+  updateBannerPoiService,
   updatePoiBasicService,
   updatePoiListImgService,
 } from "../../services/poi_service";
@@ -49,6 +50,7 @@ const DetailPoiPage = () => {
   const [formBasic] = Form.useForm();
   const [formThumbnail] = Form.useForm();
   const [formListImg] = Form.useForm();
+  const [formUploadBanner] = Form.useForm();
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
@@ -62,6 +64,7 @@ const DetailPoiPage = () => {
   const [listRemoveImg, setListRemoveImg] = useState([]);
   const [isLoadingBasic, setIsLoadingBasic] = useState(false);
   const [isLoadingListImg, setIsLoadingListImg] = useState(false);
+  const [isLoadingBanner, setIsLoadingBanner] = useState(false);
   const { Option } = Select;
 
   let navigate = useNavigate();
@@ -170,6 +173,37 @@ const DetailPoiPage = () => {
         value: resWard.data[0].code,
       },
     });
+  };
+
+  const onFinishUpdateBanner = async (values) => {
+    try {
+      setIsLoadingBanner(true);
+      let banner = "";
+      let isChange = true;
+      if (typeof values.banner === "undefined") {
+        isChange = false;
+        toast.error("Your img is not change");
+      } else if (values.banner.fileList.length === 0) {
+        banner = "";
+      } else {
+        banner = (await getBase64(values.banner.file.originFileObj)).split(
+          ","
+        )[1];
+      }
+      if (isChange) {
+        const updateBanner = {
+          poiId: currentItem.id,
+          banner: banner,
+        };
+        console.log(updateBanner);
+        await updateBannerPoiService(updateBanner);
+        toast.success("Update success");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoadingBanner(false);
+    }
   };
 
   const onFinishUpdatePoi = async (values) => {
@@ -588,6 +622,57 @@ const DetailPoiPage = () => {
                     <Button type="primary" htmlType="submit">
                       Update
                     </Button>
+                  )}
+                </Form.Item>
+              </Form>
+            </Card>
+            <Card title="Banner">
+              <Form
+                {...formItemLayout}
+                form={formUploadBanner}
+                name="banner"
+                onFinish={onFinishUpdateBanner}
+                scrollToFirstError
+              >
+                <Form.Item name="banner" label="Banner">
+                  {currentItem.banner ? (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                      defaultFileList={[
+                        {
+                          uid: "abc",
+                          name: "thumbnail",
+                          status: "done",
+                          url: currentItem.banner,
+                        },
+                      ]}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  ) : (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  )}
+                </Form.Item>
+
+                <Form.Item {...tailFormItemLayout}>
+                  {isLoadingBanner === false ? (
+                    <Button type="primary" htmlType="submit">
+                      Update
+                    </Button>
+                  ) : (
+                    <Spin />
                   )}
                 </Form.Item>
               </Form>
