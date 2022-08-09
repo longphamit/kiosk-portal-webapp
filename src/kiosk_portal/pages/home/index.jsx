@@ -22,6 +22,7 @@ const labelCountKiosk = ["Working", "Stopped"];
 const labelCountEvent = ["UpComming", "End"];
 const lableCountPoi = ["Active", "DeActive"];
 const lableCountApp = ["Install", "UnInstall"];
+const lableCountAppSupportProvider = ["Available", "UnAvailable"];
 const HomePage = () => {
   const [role, setRole] = useState();
   const [countKiosk, setCountKiosk] = useState(initCountValue);
@@ -121,11 +122,7 @@ const HomePage = () => {
                   </div>
                 ) : null}
               </Col>
-            </>
-          ) : null
-        ) : null}
-
-        <Col span={6}>
+              <Col span={6}>
           {countApp ? (
             <div className="count-chart-box">
               <h2>App</h2>
@@ -142,6 +139,29 @@ const HomePage = () => {
             </div>
           ) : null}
         </Col>
+            </>
+          ) :
+          role===ROLE_SERVICE_PROVIDER?
+          <Col span={6}>
+          {countApp ? (
+            <div className="count-chart-box">
+              <h2>App</h2>
+              {countApp.total != 0 ? (
+                <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
+              ) : null}
+              <DashBoardPieChartInfor
+                activeTitle={"Available"}
+                deactiveTitle={"UnAvailable"}
+                total={"Total"}
+                background="#f0de95"
+                count={countApp}
+              />
+            </div>
+          ) : null}
+        </Col>:null
+        ) : null}
+
+       
       </Row>
     </>
   );
