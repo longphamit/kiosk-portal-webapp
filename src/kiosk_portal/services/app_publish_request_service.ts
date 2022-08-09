@@ -44,3 +44,10 @@ export const denyAppPublishRequestService = async (requestId: string,comment:str
   });
   return response.data;
 };
+
+
+
+export const cancelPublishRequestService = async (data:any) =>{
+  const response = await request.patch(`${HOST}/v1/publishRequests/status`, data);
+  return response.data
+}

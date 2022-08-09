@@ -512,6 +512,7 @@ const ApplicationTable = () => {
           {role ? (
             role === ROLE_SERVICE_PROVIDER ? (
               <>
+                {console.log(record.status)}
                 <Button
                   className="warn-button"
                   shape="default"
