@@ -73,7 +73,6 @@ const AppCategoryPage = () => {
   const getAppCategoryList = async (page, size) => {
     try {
       const res = await getListAppCategoryService(page, size);
-      console.log(res);
       setAppCategoryList(res.data.data);
       setAppCategoryPageTotal(res.data.metadata.total);
     } catch (e) {

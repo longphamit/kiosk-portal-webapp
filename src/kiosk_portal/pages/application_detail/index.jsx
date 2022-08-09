@@ -61,7 +61,6 @@ const ApplicationDetailPage = () => {
     setAppId(tempId);
     try {
       const res = await getApplicationServiceById(tempId);
-      console.log(res);
       setApp(res.data);
       setMyFeedback(res.data.myFeedback);
       setListFeedback(res.data.listFeedback);

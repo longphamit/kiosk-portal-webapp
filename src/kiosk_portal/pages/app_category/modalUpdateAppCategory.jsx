@@ -50,7 +50,7 @@ const ModalUpdateAppCategory = ({
         toast.error("Please choose logo");
       }
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     }
   };
   const handleCancelPoiInModal = () => {
@@ -68,6 +68,7 @@ const ModalUpdateAppCategory = ({
     <>
       {currentUnit ? (
         <Modal
+          key={currentUnit.id}
           title="Update Application Category"
           visible={isUpdateModalVisible}
           onCancel={handleCancelPoiInModal}
