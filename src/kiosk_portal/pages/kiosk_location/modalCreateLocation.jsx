@@ -167,7 +167,7 @@ const ModalCreateLocation = ({
               <Spin />
             ) : (
               <Button type="primary" htmlType="submit">
-                Create Poi
+                Create
               </Button>
             )}
           </Form.Item>

@@ -243,7 +243,7 @@ const DetailLocationPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose application logo!",
+                        message: "Please choose images!",
                       },
                     ]}
                   >
