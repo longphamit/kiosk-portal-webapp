@@ -1,14 +1,27 @@
-import { Button, Col, Modal, Pagination, Row, Space, Table } from "antd";
-import { EditFilled, PlusOutlined, PoweroffOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  Empty,
+  Modal,
+  Pagination,
+  Row,
+  Skeleton,
+  Space,
+  Table,
+} from "antd";
+import { EditFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
 import ModalUpdateAppCategory from "./modalUpdateAppCategory";
-import { APP_CATEGORY_MANAGER_HREF, APP_CATEGORY_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  APP_CATEGORY_MANAGER_HREF,
+  APP_CATEGORY_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 
 const AppCategoryPage = () => {
-  const [appCategoryList, setAppCategoryList] = useState([]);
+  const [appCategoryList, setAppCategoryList] = useState();
   const [appCategoryPage, setAppCategoryPage] = useState(1);
   const [appCategoryPageSize, setAppCategoryPageSize] = useState(5);
   const [appCategoryPageTotal, setAppCategoryPageTotal] = useState(0);
@@ -28,6 +41,12 @@ const AppCategoryPage = () => {
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "Commission Percentage",
+      dataIndex: "commissionPercentage",
+      key: "commissionPercentage",
+      render: (text) => <p>{text}%</p>,
     },
     {
       title: "Action",
@@ -52,9 +71,14 @@ const AppCategoryPage = () => {
     },
   ];
   const getAppCategoryList = async (page, size) => {
-    const res = await getListAppCategoryService(page, size);
-    setAppCategoryList(res.data.data);
-    setAppCategoryPageTotal(res.data.metadata.total);
+    try {
+      const res = await getListAppCategoryService(page, size);
+      setAppCategoryList(res.data.data);
+      setAppCategoryPageTotal(res.data.metadata.total);
+    } catch (e) {
+      console.error(e);
+      setAppCategoryList([]);
+    }
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -100,9 +124,9 @@ const AppCategoryPage = () => {
     {
       href: APP_CATEGORY_MANAGER_HREF,
       label: APP_CATEGORY_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -133,17 +157,33 @@ const AppCategoryPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table
-        columns={columns}
-        dataSource={appCategoryList}
-        pagination={false}
-      />
-      <Pagination
-        defaultCurrent={1}
-        total={appCategoryPageTotal}
-        pageSize={appCategoryPageSize}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {appCategoryList ? (
+        appCategoryList.length === 0 ? (
+          <>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <>
+            <Table
+              columns={columns}
+              dataSource={appCategoryList}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={appCategoryPageTotal}
+              pageSize={appCategoryPageSize}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };

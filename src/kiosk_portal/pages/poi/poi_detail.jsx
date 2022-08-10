@@ -12,11 +12,12 @@ import {
   Form,
   Input,
   Row,
-  Modal,
   Select,
   TimePicker,
   Upload,
   Card,
+  Skeleton,
+  Spin,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
@@ -27,6 +28,7 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getPoiByIdService,
+  updateBannerPoiService,
   updatePoiBasicService,
   updatePoiListImgService,
 } from "../../services/poi_service";
@@ -34,17 +36,25 @@ import { getListPoiCategoriesService } from "../../services/poi_category_service
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { async } from "@firebase/util";
-import { POI_DETAILS_HREF, POI_DETAILS_LABEL, POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  POI_DETAILS_HREF,
+  POI_DETAILS_LABEL,
+  POI_MANAGER_HREF,
+  POI_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { Editor } from "primereact/editor";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [formBasic] = Form.useForm();
   const [formThumbnail] = Form.useForm();
   const [formListImg] = Form.useForm();
+  const [formUploadBanner] = Form.useForm();
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
+  const [description, setDescription] = useState("");
   const [listWardsInForm, setListWardsInForm] = useState([]);
   const [currentItem, setCurrentItem] = useState();
   const [listProvinces, setListProvinces] = useState([]);
@@ -52,6 +62,9 @@ const DetailPoiPage = () => {
   const [fileListImage, setFileListImage] = useState();
   const [isHasPicture, setIsHasPicture] = useState(true);
   const [listRemoveImg, setListRemoveImg] = useState([]);
+  const [isLoadingBasic, setIsLoadingBasic] = useState(false);
+  const [isLoadingListImg, setIsLoadingListImg] = useState(false);
+  const [isLoadingBanner, setIsLoadingBanner] = useState(false);
   const { Option } = Select;
 
   let navigate = useNavigate();
@@ -67,6 +80,7 @@ const DetailPoiPage = () => {
     try {
       let res = await getPoiByIdService(id);
       setCurrentItem(res.data);
+      setDescription(res.data.description);
       const resProvinces = await getListProvinceService();
       setListProvinces(resProvinces.data);
       //set up init list district
@@ -83,14 +97,16 @@ const DetailPoiPage = () => {
       setListWardsInForm(resWard.data);
 
       let list = [];
-      await Promise.all(res.data.listImage.map((img, index) => {
-        list.push({
-          uid: img.id,
-          name: "image" + (parseInt(index) + 1),
-          status: "done",
-          url: img.link,
-        });
-      }));
+      await Promise.all(
+        res.data.listImage.map((img, index) => {
+          list.push({
+            uid: img.id,
+            name: "image" + (parseInt(index) + 1),
+            status: "done",
+            url: img.link,
+          });
+        })
+      );
       setFileListImage(list);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -107,14 +123,14 @@ const DetailPoiPage = () => {
     {
       href: POI_MANAGER_HREF,
       label: POI_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
     {
       href: POI_DETAILS_HREF,
       label: POI_DETAILS_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   useEffect(async () => {
     resetField();
     await getInitValue();
@@ -159,11 +175,43 @@ const DetailPoiPage = () => {
     });
   };
 
-  const onFinishUpdatePoi = async (values) => {
-    const invalidMsg = [];
-    var check = true;
-    let dOW = "";
+  const onFinishUpdateBanner = async (values) => {
     try {
+      setIsLoadingBanner(true);
+      let banner = "";
+      let isChange = true;
+      if (typeof values.banner === "undefined") {
+        isChange = false;
+        toast.error("Your img is not change");
+      } else if (values.banner.fileList.length === 0) {
+        banner = "";
+      } else {
+        banner = (await getBase64(values.banner.file.originFileObj)).split(
+          ","
+        )[1];
+      }
+      if (isChange) {
+        const updateBanner = {
+          poiId: currentItem.id,
+          banner: banner,
+        };
+        console.log(updateBanner);
+        await updateBannerPoiService(updateBanner);
+        toast.success("Update success");
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoadingBanner(false);
+    }
+  };
+
+  const onFinishUpdatePoi = async (values) => {
+    try {
+      setIsLoadingBasic(true);
+      const invalidMsg = [];
+      var check = true;
+      let dOW = "";
       if (values.stringOpenTime - values.stringCloseTime > 0) {
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
@@ -177,7 +225,6 @@ const DetailPoiPage = () => {
       } else {
         dOW = values.dayOfWeek;
       }
-      console.log(dOW);
 
       if (check) {
         let valueLogo = "";
@@ -228,7 +275,7 @@ const DetailPoiPage = () => {
         const updatePoi = {
           id: currentItem.id,
           name: values.name,
-          description: values.description,
+          description: description,
           stringOpenTime: formatTimePicker(values.stringOpenTime),
           stringCloseTime: formatTimePicker(values.stringCloseTime),
           dayOfWeek: dOW,
@@ -240,7 +287,6 @@ const DetailPoiPage = () => {
           thumbnailId: currentItem.thumbnail.id,
           thumbnail: valueLogo,
         };
-        console.log(updatePoi);
         await updatePoiBasicService(updatePoi).then(() => {
           toast.success("Update Poi Success");
         });
@@ -250,29 +296,38 @@ const DetailPoiPage = () => {
       }
     } catch (error) {
       toast.error(error.response.data.message);
+    } finally {
+      setIsLoadingBasic(false);
     }
   };
 
   const onFinishUpdateListImage = async (values) => {
-    let listImage = [];
-    let formatImage = [];
-    await Promise.all(
-      values.listImage.fileList.map(async (value) => {
-        if (value?.originFileObj) {
-          let result = await getBase64(value.originFileObj);
-          formatImage = result.split(",");
-          listImage.push(formatImage[1]);
-        }
-      })
-    );
-    const updateListImage = {
-      id: currentItem.id,
-      removeFields: listRemoveImg,
-      addFields: listImage,
-    };
-    await updatePoiListImgService(updateListImage).then(() => {
-      toast.success("Update List Img Poi Success");
-    });
+    try {
+      setIsLoadingListImg(true);
+      let listImage = [];
+      let formatImage = [];
+      await Promise.all(
+        values.listImage.fileList.map(async (value) => {
+          if (value?.originFileObj) {
+            let result = await getBase64(value.originFileObj);
+            formatImage = result.split(",");
+            listImage.push(formatImage[1]);
+          }
+        })
+      );
+      const updateListImage = {
+        id: currentItem.id,
+        removeFields: listRemoveImg,
+        addFields: listImage,
+      };
+      await updatePoiListImgService(updateListImage).then(() => {
+        toast.success("Update List Img Poi Success");
+      });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoadingListImg(false);
+    }
   };
 
   const onChangeThumbnail = (file) => {
@@ -286,7 +341,6 @@ const DetailPoiPage = () => {
   const onChangeListImage = (file) => {
     if (file.file.status === "removed") {
       if (file.file.url.includes("https://firebasestorage.googleapis.com")) {
-        console.log("abc");
         setListRemoveImg((prevArray) => [...prevArray, file.file.uid]);
       }
     }
@@ -337,17 +391,12 @@ const DetailPoiPage = () => {
                 >
                   <Input />
                 </Form.Item>
-                <Form.Item
-                  name="description"
-                  label="Description"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your description!",
-                    },
-                  ]}
-                >
-                  <TextArea rows={4} />
+                <Form.Item name="description" label="Description">
+                  <Editor
+                    value={currentItem.description}
+                    onTextChange={(e) => setDescription(e.htmlValue)}
+                    style={{ height: "250px" }}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="stringOpenTime"
@@ -434,10 +483,10 @@ const DetailPoiPage = () => {
                   <Select name="selectProvince" onChange={handleProvinceChange}>
                     {listProvinces
                       ? listProvinces.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -457,10 +506,10 @@ const DetailPoiPage = () => {
                   >
                     {listDistrictsInForm
                       ? listDistrictsInForm.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -477,10 +526,10 @@ const DetailPoiPage = () => {
                   <Select name="selectWards">
                     {listWardsInForm
                       ? listWardsInForm.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -521,9 +570,13 @@ const DetailPoiPage = () => {
                   </Upload>
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
-                  <Button type="primary" htmlType="submit">
-                    Update
-                  </Button>
+                  {isLoadingBasic ? (
+                    <Spin />
+                  ) : (
+                    <Button type="primary" htmlType="submit">
+                      Update
+                    </Button>
+                  )}
                 </Form.Item>
               </Form>
             </Card>
@@ -542,7 +595,7 @@ const DetailPoiPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose application logo!",
+                        message: "Please choose poi logo!",
                       },
                     ]}
                   >
@@ -563,15 +616,72 @@ const DetailPoiPage = () => {
                   </Form.Item>
                 ) : null}
                 <Form.Item {...tailFormItemLayout}>
-                  <Button type="primary" htmlType="submit">
-                    Update
-                  </Button>
+                  {isLoadingListImg ? (
+                    <Spin />
+                  ) : (
+                    <Button type="primary" htmlType="submit">
+                      Update
+                    </Button>
+                  )}
+                </Form.Item>
+              </Form>
+            </Card>
+            <Card title="Banner">
+              <Form
+                {...formItemLayout}
+                form={formUploadBanner}
+                name="banner"
+                onFinish={onFinishUpdateBanner}
+                scrollToFirstError
+              >
+                <Form.Item name="banner" label="Banner">
+                  {currentItem.banner ? (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                      defaultFileList={[
+                        {
+                          uid: "abc",
+                          name: "thumbnail",
+                          status: "done",
+                          url: currentItem.banner,
+                        },
+                      ]}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  ) : (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  )}
+                </Form.Item>
+
+                <Form.Item {...tailFormItemLayout}>
+                  {isLoadingBanner === false ? (
+                    <Button type="primary" htmlType="submit">
+                      Update
+                    </Button>
+                  ) : (
+                    <Spin />
+                  )}
                 </Form.Item>
               </Form>
             </Card>
           </Col>
         </Row>
-      ) : null}
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };

@@ -7,12 +7,7 @@ export const getListApplicationService = async (Name:any,PartyName:any,PartyEmai
   );
   return response.data;
 };
-export const getListApplicationServiceByCategory = async (categoryName: any) => {
-  const response = await request.get(
-    `${HOST}/v1/serviceApplications?page=1&AppCategoryName=${categoryName}&status=installed`
-  );
-  return response.data;
-};
+
 export const getApplicationServiceById = async (id:string) => {
   const response = await request.get(
     `${HOST}/v1/serviceApplications/${id}`
@@ -36,7 +31,11 @@ export const updateApplicationService = async (data: any) => {
 };
 
 export const stopApplicationService = async (data: any) => {
-  console.log(data)
   const response = await request.patch(`${HOST}/v1/serviceApplications/status`, data);
   return response.data;
 };
+
+export const updateBannerApplicationService = async (data: any) => {
+  const response = await request.patch(`${HOST}/v1/serviceApplications/banner`, data);
+  return response.data
+}

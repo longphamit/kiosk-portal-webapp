@@ -1,5 +1,9 @@
 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { HOME_PAGE_PATH } from "../../kiosk_portal/constants/path_constants";
+import HomePage from "../../kiosk_portal/pages/home";
+import AuthenLayout from "../components/authen_layout";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import NotFoundPage from "../pages/not_found";
 import UnAuthPage from "../pages/un_auth";
 import AppElement from "./app-element";
@@ -28,6 +32,13 @@ const AppRouter: React.FC = () => {
           />
         ))}
         <Route path="*" element={<NotFoundPage/>}/>
+        <Route index element={<AppElement 
+        component={HomePage}
+                isLayout={true}
+                layout={AuthenLayout}
+                authen={true}
+                path={HOME_PAGE_PATH}
+                roles={[ROLE_ADMIN,ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER]} />} />
       </Routes>
     </Router>
   );

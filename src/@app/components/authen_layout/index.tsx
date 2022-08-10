@@ -1,21 +1,23 @@
-import { Layout, Menu, Breadcrumb, Row, Col, Dropdown, Popover, Button, Badge, Avatar } from "antd";
+import { Layout, Menu, Row, Col } from "antd";
 import {
-  UserOutlined,
-  LaptopOutlined,
   HomeFilled,
   LogoutOutlined,
-  KeyOutlined,
   FundOutlined,
   BlockOutlined,
   ArrowUpOutlined,
-  ClockCircleOutlined,
   ToolOutlined,
   MenuOutlined,
+  MenuUnfoldOutlined,
+  CalendarOutlined,
+  EnvironmentOutlined,
   NotificationOutlined,
+  TableOutlined,
+  CloudOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Fragment, ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
 import "./styles.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
@@ -27,20 +29,14 @@ import {
 import {
   localStorageClearService,
   localStorageGetReduxState,
-  localStorageGetUserIdService,
 } from "../../services/localstorage_service";
 
-import routes from "../../routers/routes";
 import { useTranslation } from "react-i18next";
 import { signOutService } from "../../services/auth_service";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
-import Column from "antd/lib/table/Column";
-import { getPartyNotificationService } from "../../../kiosk_portal/services/party_notification_service";
-import CountTime from "./time";
+
 import TimeView from "./time";
-import { async } from "@firebase/util";
 import NotificationView from "./notification";
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -60,7 +56,6 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
     navigate(url);
   };
 
-
   return (
     <Layout>
       <Header className="header">
@@ -78,11 +73,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
           </Col>
           <Col span={13} />
 
-          <Col span={1}  >
+          <Col span={1}>
             <NotificationView />
           </Col>
         </Row>
-
       </Header>
       <Layout>
         <Sider width={200} className="site-layout-background">
@@ -133,26 +127,25 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 >
                   App Category
                 </Menu.Item>
-                <SubMenu key="sub1" icon={<LaptopOutlined />} title="POI">
-                  <Menu.Item
-                    key="4"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/poi-page");
-                    }}
-                  >
-                    POI
-                  </Menu.Item>
-                  <Menu.Item
-                    key="5"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/poi-category");
-                    }}
-                  >
-                    POI Category
-                  </Menu.Item>
-                </SubMenu>
+                <Menu.Item
+                  key="poi_manager"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/poi-page");
+                  }}
+                >
+                  POI Manager
+                </Menu.Item>
+                <Menu.Item
+                  key="poi_category"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/poi-category");
+                  }}
+                >
+                  POI Category
+                </Menu.Item>
+
                 <Menu.Item
                   icon={<FundOutlined />}
                   key="event"
@@ -166,30 +159,26 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             ) : null}
             {role === ROLE_LOCATION_OWNER ? (
               <>
-                              <SubMenu key="subKiosk" icon={<LaptopOutlined />} title="Kiosk">
-                              <Menu.Item
-                  icon={<BlockOutlined />}
-                  key="Kiosk"
+                <Menu.Item
+                  icon={<MenuUnfoldOutlined />}
+                  key="kiosk_manager"
                   onClick={() => {
                     onNavigate("/kiosk");
                   }}
                 >
-                  Kiosk
+                  Kiosk Manager
                 </Menu.Item>
-                  <Menu.Item
-                    key="kiosk_location"
-                    icon={<ToolOutlined />}
-                    onClick={() => {
-                      onNavigate("/kiosk-location");
-                    }}
-                  >
-                    Location
-                  </Menu.Item>
-
-                </SubMenu>
-
                 <Menu.Item
-                  icon={<BlockOutlined />}
+                  key="kiosk_location"
+                  icon={<ToolOutlined />}
+                  onClick={() => {
+                    onNavigate("/kiosk-location");
+                  }}
+                >
+                  Kiosk Location
+                </Menu.Item>
+                <Menu.Item
+                  icon={<CalendarOutlined />}
                   key="7"
                   onClick={() => {
                     onNavigate("/schedule-manager");
@@ -208,7 +197,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
                 <Menu.Item
                   key="9"
-                  icon={<ToolOutlined />}
+                  icon={<EnvironmentOutlined />}
                   onClick={() => {
                     onNavigate("/poi-page");
                   }}
@@ -216,7 +205,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   POI
                 </Menu.Item>
                 <Menu.Item
-                  icon={<FundOutlined />}
+                  icon={<NotificationOutlined />}
                   key="event"
                   onClick={() => {
                     onNavigate("/event-manager");
@@ -225,7 +214,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   Event
                 </Menu.Item>
                 <Menu.Item
-                  icon={<FundOutlined />}
+                  icon={<CloudOutlined />}
                   key="application_market"
                   onClick={() => {
                     onNavigate("/application-market");
@@ -268,16 +257,17 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
               </>
             ) : null}
-            {/* <SubMenu
-              key="sub3"
-              icon={<NotificationOutlined />}
-              title="subnav 3"
-            >
-              <Menu.Item key="9">option9</Menu.Item>
-              <Menu.Item key="10">option10</Menu.Item>
-              <Menu.Item key="11">option11</Menu.Item>
-              <Menu.Item key="12">option12</Menu.Item>
-            </SubMenu> */}
+            {role == ROLE_LOCATION_OWNER || role == ROLE_SERVICE_PROVIDER ? (
+              <Menu.Item
+                icon={<UserOutlined />}
+                key="87"
+                onClick={() => {
+                  navigate("/profile");
+                }}
+              >
+                Profile
+              </Menu.Item>
+            ) : null}
             <Menu.Item
               icon={<LogoutOutlined />}
               key="13"

@@ -7,6 +7,7 @@ import {
   Modal,
   Popconfirm,
   Row,
+  Skeleton,
   Tabs,
   Tag,
 } from "antd";
@@ -44,12 +45,11 @@ const ApplicationDetailPage = () => {
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [inprogressPublish, setInprogressPublish] = useState();
-  const [listFeedback, setListFeedback] = useState([]);
+  const [listFeedback, setListFeedback] = useState();
   const [myFeedback, setMyFeedback] = useState();
   const [isDenyAppPublishModalVisible, setDenyAppPublishModalVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
-  console.log(role)
   const getAppById = async () => {
     let tempId = "";
     if (id.includes("installed")) {
@@ -59,16 +59,21 @@ const ApplicationDetailPage = () => {
       tempId = id;
     }
     setAppId(tempId);
-    const res = await getApplicationServiceById(tempId);
-    setApp(res.data);
-    setMyFeedback(res.data.myFeedback);
-    setListFeedback(res.data.listFeedback);
+    try {
+      const res = await getApplicationServiceById(tempId);
+      setApp(res.data);
+      setMyFeedback(res.data.myFeedback);
+      setListFeedback(res.data.listFeedback);
+    } catch (e) {
+      console.error(e);
+      setMyFeedback({});
+      setListFeedback([]);
+    }
   };
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
       if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
         const res = await getInprogressAppPublishRequestByAppIdService(id);
-        console.log(res.data);
         setInprogressPublish(res.data);
       }
     } catch (e) {
@@ -79,7 +84,6 @@ const ApplicationDetailPage = () => {
   useEffect(() => {
     getInprogressAppPublishRequestByAppId();
     getAppById();
-    
   }, []);
   const approveAppPublishRequest = async () => {
     try {
@@ -87,15 +91,15 @@ const ApplicationDetailPage = () => {
       await getAppById();
       await getInprogressAppPublishRequestByAppId();
       toast.success("Approve publish app success");
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   };
   const onDenySuccess = async () => {
     setDenyAppPublishModalVisible(false);
     await getInprogressAppPublishRequestByAppId();
     await getAppById();
-    toast.success("Approve publish app success");
+    toast.success("Deny publish app success");
   };
   const getApplicationPage = () => {
     const previousBreadCumb = JSON.parse(
@@ -131,6 +135,12 @@ const ApplicationDetailPage = () => {
                   {app.appCategoryName}
                 </Descriptions.Item>
                 <Descriptions.Item
+                  label="Num Of Install"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
+                  {app.userInstalled}
+                </Descriptions.Item>
+                <Descriptions.Item
                   label="Party"
                   labelStyle={{ fontWeight: "bold" }}
                 >
@@ -152,8 +162,21 @@ const ApplicationDetailPage = () => {
                     <Tag color="red">{app.status}</Tag>
                   )}
                 </Descriptions.Item>
+                <Descriptions.Item
+                  label="Is Affiliate"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
+                  {app.isAffiliate === true ? (
+                    <Tag color="green">True</Tag>
+                  ) : (
+                    <Tag color="red">False</Tag>
+                  )}
+                </Descriptions.Item>
 
-                <Descriptions.Item>
+                <Descriptions.Item
+                  label="Logo"
+                  labelStyle={{ fontWeight: "bold" }}
+                >
                   <Image
                     size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
                     src={app.logo}
@@ -162,51 +185,67 @@ const ApplicationDetailPage = () => {
                     height={40}
                   />
                 </Descriptions.Item>
+                {app.banner ? (
+                  <Descriptions.Item
+                    label="Banner"
+                    labelStyle={{ fontWeight: "bold" }}
+                  >
+                    <Image
+                      size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
+                      src={app.logo}
+                      sizes="large"
+                      width={40}
+                      height={40}
+                    />
+                  </Descriptions.Item>
+                ) : null}
               </Descriptions>
             </Col>
             <Col>
-              {role ? role === ROLE_ADMIN ? (
-                <>
-                  <Row>
-                    {inprogressPublish ? (
-                      <>
-                        <Popconfirm
-                          title="Are you sure to approve this app?"
-                          onConfirm={() => {
-                            approveAppPublishRequest();
-                          }}
-                          onCancel={() => { }}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button
-                            className="success-button"
-                            style={{ margin: 10 }}
+              {role ? (
+                role === ROLE_ADMIN ? (
+                  <>
+                    <Row>
+                      {inprogressPublish ? (
+                        <>
+                          <Popconfirm
+                            title="Are you sure to approve this app?"
+                            onConfirm={() => {
+                              approveAppPublishRequest();
+                            }}
+                            onCancel={() => {}}
+                            okText="Yes"
+                            cancelText="No"
                           >
-                            Approve Publish
-                          </Button>
-                        </Popconfirm>
-                        <Popconfirm
-                          title="Are you sure to deny this app?"
-                          onConfirm={() => {
-                            setDenyAppPublishModalVisible(true);
-                          }}
-                          onCancel={() => { }}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <Button
-                            className="danger-button"
-                            style={{ margin: 10 }}
+                            <Button
+                              className="success-button"
+                              style={{ margin: 10 }}
+                            >
+                              Approve Publish
+                            </Button>
+                          </Popconfirm>
+                          <Popconfirm
+                            title="Are you sure to deny this app?"
+                            onConfirm={() => {
+                              setDenyAppPublishModalVisible(true);
+                            }}
+                            onCancel={() => {}}
+                            okText="Yes"
+                            cancelText="No"
                           >
-                            Deny Publish
-                          </Button>
-                        </Popconfirm>
-                      </>
-                    ) : null}
-                  </Row>
-                </>
-              ) : null : null}
+                            <Button
+                              className="danger-button"
+                              style={{ margin: 10 }}
+                            >
+                              Deny Publish
+                            </Button>
+                          </Popconfirm>
+                        </>
+                      ) : null}
+                    </Row>
+                  </>
+                ) : null
+              ) : null}
             </Col>
           </div>
           <div dangerouslySetInnerHTML={{ __html: app.description }} />
@@ -228,66 +267,76 @@ const ApplicationDetailPage = () => {
             </TabPane>
             <TabPane tab="Feedbacks" key="2">
               <div id="feedback">
-                {listFeedback.length != 0 ? (
-                  <>
-                    <Row span={24}>
-                      <Col span={12}>
-                        <h2>All Feedbacks</h2>
-                        {listFeedback.map((e) => {
-                          return <CustomRatingAndFeedback feedback={e} />;
-                        })}
-                      </Col>
-                      {isInstalled === true ? (
+                {listFeedback ? (
+                  listFeedback.length !== 0 ? (
+                    <>
+                      <Row span={24}>
                         <Col span={12}>
-                          <h2>My Feedback</h2>
-                          {myFeedback ? (
-                            <>
-                              <CustomRatingAndFeedback feedback={myFeedback} />
-                              <Button
-                                style={{ marginLeft: 80 }}
-                                onClick={() => setUpdateModalVisible(true)}
-                              >
-                                Update Feedback
-                              </Button>
-                            </>
-                          ) : (
-                            <>
-                              <Empty
-                                image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                imageStyle={{
-                                  height: 60,
-                                }}
-                                style={{ float: "left" }}
-                                description={<span>You are not feedback</span>}
-                              >
-                                <Button
-                                  type="primary"
-                                  onClick={() => setCreateModalVisible(true)}
-                                >
-                                  Feedback Now
-                                </Button>
-                              </Empty>
-                            </>
-                          )}
+                          <h2>All Feedbacks</h2>
+                          {listFeedback.map((e) => {
+                            return <CustomRatingAndFeedback feedback={e} />;
+                          })}
                         </Col>
-                      ) : null}
-                    </Row>
-                  </>
+                        {isInstalled === true ? (
+                          <Col span={12}>
+                            <h2>My Feedback</h2>
+                            {myFeedback ? (
+                              <>
+                                <CustomRatingAndFeedback
+                                  feedback={myFeedback}
+                                />
+                                <Button
+                                  style={{ marginLeft: 80 }}
+                                  onClick={() => setUpdateModalVisible(true)}
+                                >
+                                  Update Feedback
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <Empty
+                                  image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                  imageStyle={{
+                                    height: 60,
+                                  }}
+                                  style={{ float: "left" }}
+                                  description={
+                                    <span>You are not feedback</span>
+                                  }
+                                >
+                                  <Button
+                                    type="primary"
+                                    onClick={() => setCreateModalVisible(true)}
+                                  >
+                                    Feedback Now
+                                  </Button>
+                                </Empty>
+                              </>
+                            )}
+                          </Col>
+                        ) : null}
+                      </Row>
+                    </>
+                  ) : (
+                    <Empty>
+                      <Button
+                        type="primary"
+                        onClick={() => setCreateModalVisible(true)}
+                      >
+                        Feedback Now
+                      </Button>
+                    </Empty>
+                  )
                 ) : (
-                  <Empty>
-                    <Button
-                      type="primary"
-                      onClick={() => setCreateModalVisible(true)}
-                    >
-                      Feedback Now
-                    </Button>
-                  </Empty>
+                  <Skeleton />
                 )}
               </div>
             </TabPane>
           </Tabs>
         </>
-      ) : null}
+      ) : (
+        <Skeleton />
+      )}
       {appId ? (
         <>
           <CreateFeedbackModal

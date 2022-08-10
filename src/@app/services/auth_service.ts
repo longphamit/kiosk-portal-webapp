@@ -27,6 +27,11 @@ export const signUpService=async(firstName:string,lastName:string,gender:string,
     return response.data;
 };
 export const forgotPasswordService=async(email:string)=>{
-    const response=await request.post(`${HOST}/user/forgot-password`,email);
+    const response=await request.get(`${HOST}/v1/parties/forgetPassword?email=${email}`);
+    return response.data;
+};
+
+export const resetPasswordService=async(partyId:string,verifyCode:string)=>{
+    const response=await request.get(`${HOST}/v1/parties/resetPassword?partyId=${partyId}&verifyCode=${verifyCode}`);
     return response.data;
 };

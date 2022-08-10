@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { Route, useNavigate, Navigate } from "react-router-dom";
+import { HOME_PAGE_PATH } from "../../kiosk_portal/constants/path_constants";
 import { ACCESS_TOKEN } from "../constants/key";
 import {
   ROLE_ADMIN,
@@ -15,7 +16,7 @@ interface Props {
   isLayout: boolean;
   authen: boolean;
   path: string;
-  roles:string[]
+  roles: string[];
 }
 const AppElement: React.FC<Props> = (props) => {
   const {
@@ -24,26 +25,29 @@ const AppElement: React.FC<Props> = (props) => {
     isLayout = false,
     authen,
     path,
-    roles
+    roles,
   } = props;
+  console.log(path);
   const access_token = localStorage.getItem(ACCESS_TOKEN);
   sessionStorage.setItem("PATH", path);
-  console.log(access_token)
+  console.log(access_token);
   if (!access_token && authen) {
+    if (path === HOME_PAGE_PATH) {
+      return <LoginPage />;
+    }
     return <UnAuthPage />;
   }
-  console.log(access_token&&authen)
-  if(access_token&&authen){
-    console.log(path)
+  console.log(access_token && authen);
+  if (access_token && authen) {
+    console.log(path);
     // return <Navigate to="/admin-home"/>
     const role = localStorageGetReduxState().auth.role;
-    console.log("role app-element: "+role);
-    if(roles){
-      if(!roles.includes(role)){
+    console.log("role app-element: " + role);
+    if (roles) {
+      if (!roles.includes(role)) {
         return <UnAuthPage />;
       }
     }
-    
   }
   return isLayout && Layout ? (
     <Layout>

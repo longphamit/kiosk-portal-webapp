@@ -24,6 +24,7 @@ axios.interceptors.response.use(
         cancelAxios.cancel("----stop all request---");
         toast.error("Your session is expired! Please login again");
         setTimeout(() => {
+          localStorage.clear()
           window.location.href = "/signin";
         }, 3000);
         controller.abort();

@@ -1,6 +1,5 @@
 import { Button, Form, Modal, Select, Spin } from "antd";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { updateKioskService } from "../../services/kiosk_service";
 import {
   formItemLayout,
@@ -20,7 +19,6 @@ const ModalAddLocation = ({
 
   const onFinishChooseLocation = async (values) => {
     setIsLoading(true);
-    console.log(currentKiosk);
     try {
       const updateObj = {
         id: currentKiosk.id,
@@ -32,20 +30,21 @@ const ModalAddLocation = ({
       await updateKioskService(updateObj);
       onFinishModal("addLocation");
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
-  const handleCancelPoiInModal = () => {
-    handleCancelModal();
+  const handleCancelInModal = () => {
+    form.resetFields();
+    handleCancelModal("addLocation");
   };
   return (
     <>
       <Modal
         title="Choose your kiosk"
         visible={isModalAddLocationVisible}
-        onCancel={handleCancelPoiInModal}
+        onCancel={handleCancelInModal}
         footer={null}
       >
         <Form

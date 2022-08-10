@@ -1,17 +1,23 @@
 import { Button, Col, Form, Input, Row, Spin } from "antd";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PRIMARY_COLOR } from "../../constants/colors";
 import { forgotPasswordService } from "../../services/auth_service";
 
 const ForgotPassPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const navigator = useNavigate();
+  let navigate = useNavigate();
   const onForgotPassword = async (values: any) => {
     setIsLoading(true);
     forgotPasswordService(values.email)
       .then((response) => {
         toast.success(response.message);
-        toast.success("Please check your email");
+        toast.success(
+          "Request to reset password successful. Please check your email"
+        );
+        navigate("/signin");
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -32,28 +38,51 @@ const ForgotPassPage: React.FC = () => {
           <h2 style={{ textAlign: "center", fontWeight: "bold" }}>
             Forgot Password
           </h2>
-          
+
           <Form
             labelCol={{ span: 5 }}
             wrapperCol={{ span: 16 }}
             onFinish={onForgotPassword}
           >
-            <Form.Item label="Email" name="email">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input email!",
+                },
+              ]}
+            >
               <Input />
             </Form.Item>
             <Row justify="center" align="middle">
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Send email verify
-                </Button>
-              </Form.Item>
+              <Col span={4} />
+              <Col span={8}>
+                <Form.Item>
+                  {isLoading ? (
+                    <Spin />
+                  ) : (
+                    <Button type="primary" htmlType="submit">
+                      Send email verify
+                    </Button>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    onClick={() => navigator(`/signin/`)}
+                  >
+                    Back to sign in page
+                  </Button>
+                </Form.Item>
+              </Col>
+              <Col span={4} />
             </Row>
           </Form>
-          {isLoading ? (
-            <Row justify="center" align="middle">
-              <Spin style={{marginBottom:20}} />
-            </Row>
-          ) : null}
         </Col>
         <Col span={8} />
       </Row>

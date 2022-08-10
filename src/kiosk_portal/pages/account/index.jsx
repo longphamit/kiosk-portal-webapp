@@ -1,16 +1,16 @@
 import {
   AutoComplete,
-  Breadcrumb,
   Button,
-  Checkbox,
   Col,
   DatePicker,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
@@ -22,8 +22,6 @@ import {
   EyeFilled,
   EditFilled,
   PoweroffOutlined,
-  ArrowUpOutlined,
-  HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -44,18 +42,20 @@ import {
   searchAccountService,
   updateAccountService,
 } from "../../services/account_service";
-import "./styles.css"
+import "./styles.css";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-
-import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  ACCOUNT_MANAGER_HREF,
+  ACCOUNT_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const AccountManagerPage = () => {
-  const [isListAccountLoading, setListAccountLoading] = useState();
+  const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
   const [isUpdateAccountLoading, setUpdateAccountLoading] = useState();
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listAccount, setListAccount] = useState([]);
+  const [listAccount, setListAccount] = useState();
   const [totalAccount, setTotalAccount] = useState(0);
   const [numAccountInPage, setNumAccountInPage] = useState(5);
   const [isSearch, setIsSearch] = useState(false);
@@ -86,7 +86,8 @@ const AccountManagerPage = () => {
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
     } catch (error) {
-      console.log(error);
+      setListAccount([]);
+      console.error(error);
     } finally {
       setListAccountLoading(false);
     }
@@ -112,17 +113,16 @@ const AccountManagerPage = () => {
       await updateAccountService(updateAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
-      toast.success(t("toastsuccesseditaccount"));
+      toast.success("Edit account success");
       handleCancelEditAccount();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setUpdateAccountLoading(false);
     }
   };
 
   const onFinishAdvancedSearch = async (values) => {
-    console.log(values);
     const search = {
       firstName: values.firstName ?? "",
       lastName: values.lastName ?? "",
@@ -142,7 +142,7 @@ const AccountManagerPage = () => {
       setQuerySearch(search);
       handleCloseModalAdvancedSearch();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalAccount(0);
       setListAccount([]);
     }
@@ -200,7 +200,7 @@ const AccountManagerPage = () => {
       setIsSearch(true);
       setQuerySearch(search);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setTotalAccount(0);
       setListAccount([]);
     }
@@ -227,9 +227,13 @@ const AccountManagerPage = () => {
       await createAccountService(newAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
-      toast.success(t("toastsuccesscreateaccount"));
+      toast.success("Create account success");
     } catch (error) {
-      console.log(error);
+      toast.error(
+        error.response.data.message ??
+          "Cannot create new account! Please try again"
+      );
+      console.error(error);
     } finally {
       setCreateAccountLoading(false);
     }
@@ -260,10 +264,10 @@ const AccountManagerPage = () => {
           try {
             await changeStatusAccountService(record.id, null).then(() => {
               getListAccountFunction(currentPage, numAccountInPage);
-              toast.success(t("toastsuccesschangestatus"));
+              toast.success("Change status account success");
             });
           } catch (error) {
-            console.log(error);
+            console.error(error);
           }
         }
       },
@@ -420,9 +424,9 @@ const AccountManagerPage = () => {
     {
       href: ACCOUNT_MANAGER_HREF,
       label: ACCOUNT_MANAGER_LABEL,
-      icon: <UserOutlined />
+      icon: <UserOutlined />,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -515,21 +519,33 @@ const AccountManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      {isListAccountLoading ? (
-        <Row span={24}>
-          <Spin className="center"/>
-        </Row>
+      {listAccount && !isListAccountLoading ? (
+        listAccount.lenght === 0 ? (
+          <>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
+              <Col>
+                <Empty />
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <>
+            <Table
+              columns={columns}
+              dataSource={listAccount}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={totalAccount}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </>
+        )
       ) : (
-        <Table columns={columns} dataSource={listAccount} pagination={false} />
+        <Skeleton />
       )}
-
-      <Pagination
-        defaultCurrent={1}
-        total={totalAccount}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
-
       <Modal
         title={t("createaccount")}
         visible={isCreateAccountModalVisible}
@@ -572,7 +588,7 @@ const AccountManagerPage = () => {
             label={t("phonenumber")}
             rules={[
               {
-                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
+                pattern: new RegExp("(84|0[3|5|7|8|9])+([0-9]{8})"),
                 message: t("formatphonenumber"),
               },
               {
@@ -631,8 +647,8 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                  return <Option value={item.id}>{item.name}</Option>;
-                })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                 : null}
             </Select>
           </Form.Item>

@@ -1,19 +1,9 @@
-import { formatTimePicker } from "../../../@app/utils/date_util";
-import {
-  getListDistrictService,
-  getListWardService,
-} from "../../services/map_service";
 import { toast } from "react-toastify";
 import {
   Button,
-  Checkbox,
-  Col,
   Form,
   Input,
-  Row,
   Modal,
-  Select,
-  TimePicker,
   Upload,
   Spin,
 } from "antd";
@@ -163,18 +153,6 @@ const ModalCreateLocation = ({
           <Form.Item
             name="description"
             label="Description"
-            required
-            rules={[
-              {
-                message: "Please input location description!",
-                validator: (_, value) => {
-                  if (!description) {
-                    return Promise.reject("");
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
             value={description}
           >
             <Editor
@@ -189,7 +167,7 @@ const ModalCreateLocation = ({
               <Spin />
             ) : (
               <Button type="primary" htmlType="submit">
-                Create Poi
+                Create
               </Button>
             )}
           </Form.Item>

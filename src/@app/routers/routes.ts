@@ -1,13 +1,11 @@
 import { ReactNode } from "react";
 import {
   ACCOUNT_MANAGER_PATH, APPLICATION_MARKET_PATH, APP_CATEGORY_MANAGER_PATH,
-  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
+  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
   KIOSK_MANAGER_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH
 } from "../../kiosk_portal/constants/path_constants";
 import AccountManagerPage from "../../kiosk_portal/pages/account";
-
-
 import AccountDetailPage from "../../kiosk_portal/pages/account_detail";
 import ApplicationPage from "../../kiosk_portal/pages/application";
 import ApplicationDetailPage from "../../kiosk_portal/pages/application_detail";
@@ -15,32 +13,31 @@ import ApplicationMarketPage from "../../kiosk_portal/pages/application_market";
 import AppCategoryPage from "../../kiosk_portal/pages/app_category";
 import ServiceApplicationPublishRequestPage from "../../kiosk_portal/pages/app_publish_request";
 import EventManagerPage from "../../kiosk_portal/pages/event";
+import { EventCreatingPage } from "../../kiosk_portal/pages/event/event_create";
 import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
+import { KioskDetailsPage } from "../../kiosk_portal/pages/kiosk/details";
 import KioskSchedulingPage from "../../kiosk_portal/pages/kiosk/schedule";
-import KioskDetailPage from "../../kiosk_portal/pages/kiosk_detail";
 import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
 import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
+import ProfilePage from "../../kiosk_portal/pages/profile";
 import ScheduleManagerPage from "../../kiosk_portal/pages/schedule";
 import TemplateManagerPage from "../../kiosk_portal/pages/template";
-import CreateTemplatePage from "../../kiosk_portal/pages/template/create-template";
 import EditTemplatePage from "../../kiosk_portal/pages/template/edit-template";
 import AuthenLayout from "../components/authen_layout";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../constants/role";
 import ConfirmAccountPage from "../pages/confirm_account/confirm_account";
-
-
 import ForgotPassPage from "../pages/forgot_pass/forgot_pass";
+import VerifyForgotPassPage from "../pages/forgot_pass/verifyForgotPass.jsx";
 import LoginPage from "../pages/login/login_page";
 import RegistPage from "../pages/regist/regist_page";
 import ResetPassPage from "../pages/reset_pass/reset_pass";
 import UnAuthPage from "../pages/un_auth";
-
 
 interface Route {
   component: React.FC;
@@ -200,15 +197,6 @@ const routes: Route[] = [
     roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER]
   },
   {
-    component: CreateTemplatePage,
-    path: "/create-template",
-    isLayout: true,
-    layout: AuthenLayout,
-    authen: true,
-    breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER]
-  },
-  {
     component: EditTemplatePage,
     path: "/edit-template",
     isLayout: true,
@@ -272,15 +260,6 @@ const routes: Route[] = [
     roles: [ROLE_LOCATION_OWNER]
   },
   {
-    component: KioskSchedulingPage,
-    path: "/kiosk-scheduling/:kioskId",
-    isLayout: true,
-    layout: AuthenLayout,
-    authen: true,
-    breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER]
-  },
-  {
     component: KioskLocationPage,
     path: "/kiosk-location",
     isLayout: true,
@@ -296,7 +275,42 @@ const routes: Route[] = [
     layout: AuthenLayout,
     authen: true,
     breadcrumb: "",
-    roles: [ ROLE_LOCATION_OWNER]
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: EventCreatingPage,
+    path: EVENT_CREATING_PATH,
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_ADMIN, ROLE_LOCATION_OWNER]
+  },
+  {
+    component: KioskDetailsPage,
+    path: "/kiosk/:kioskId",
+    isLayout: true,
+    layout: AuthenLayout,
+    authen: true,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER]
+  },
+  {
+    component: VerifyForgotPassPage,
+    path: "/verify-pass",
+    isLayout: false,
+    authen: false,
+    breadcrumb: "",
+    roles: [""]
+  },
+  {
+    component: ProfilePage,
+    path: "/profile",
+    isLayout: true,
+    authen: true,
+    layout:AuthenLayout,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER]
   },
 ];
 

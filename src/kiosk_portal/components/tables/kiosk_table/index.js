@@ -7,14 +7,17 @@ import {
   Modal,
   Pagination,
   Popconfirm,
+  Rate,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
   Tag,
 } from "antd";
-import { ArrowDownOutlined } from "@ant-design/icons";
+import {StopFilled, ArrowDownOutlined, EditFilled, EyeFilled, SwapOutlined, SyncOutlined } from "@ant-design/icons";
+
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -39,7 +42,11 @@ import ModalAddLocation from "../../../pages/kiosk/modalAddLocation";
 import { getListKioskLocationService } from "../../../services/kiosk_location_service";
 import { async } from "@firebase/util";
 import { PREVIOUS_PATH } from "../../../../@app/constants/key";
-import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../../breadcumb/breadcumb_constant";
+import {
+  KIOSK_MANAGER_HREF,
+  KIOSK_MANAGER_LABEL,
+} from "../../breadcumb/breadcumb_constant";
+import ModalChangeNameKiosk from "../../../pages/kiosk/modalChangeNameKiosk";
 
 const searchTypeKiosk = [
   {
@@ -50,7 +57,7 @@ const searchTypeKiosk = [
 const { Option } = Select;
 const KioskTable = ({ partyId }) => {
   const navigator = useNavigate();
-  const [listKiosk, setListKiosk] = useState([]);
+  const [listKiosk, setListKiosk] = useState();
   const [kioskTotal, setKioskTotal] = useState(0);
   const [kioskPage, setKioskPage] = useState(0);
   const [kioskPageSize, setKioskPageSize] = useState(5);
@@ -60,18 +67,21 @@ const KioskTable = ({ partyId }) => {
     useState(false);
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
-  const [isModalAddLocationVisible,setIsModalAddLocationVisible]=useState(false);
+  const [isModalAddLocationVisible, setIsModalAddLocationVisible] =
+    useState(false);
+    const [isModalChangeNameKioskVisible, setIsModalChangeNameKioskVisible] =
+    useState(false);
   const role = localStorageGetReduxState().auth.role;
-  const [isLoading,setIsLoading]=useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [listLocation,setListLocation]=useState([]);
+  const [listLocation, setListLocation] = useState([]);
   const breadCumbData = [
     {
-        href: KIOSK_MANAGER_HREF,
-        label: KIOSK_MANAGER_LABEL,
-        icon: null
+      href: KIOSK_MANAGER_HREF,
+      label: KIOSK_MANAGER_LABEL,
+      icon: null,
     },
-]
+  ];
   const kioskColumnAdmin = [
     {
       title: "No",
@@ -98,44 +108,38 @@ const KioskTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+          <Tag color={"green"}>Working</Tag>
         ) : (
-          <Tag color={"red"}>{t("deactivate")}</Tag>
+          <Tag color={"red"}>Stopped</Tag>
         ),
     },
   ];
 
-  const changeStatus=async (values)=>{
-    
+  const changeStatus = async (values) => {
     Modal.confirm({
       title: "Are you sure to change status this kiosk",
       okText: t("yes"),
       cancelText: t("no"),
       onOk: async () => {
         {
-          setIsLoading(true)
+          setIsLoading(true);
           try {
             await changeStatusKioskService(values.id);
             await getListKiosk(partyId, kioskPage, kioskPageSize);
+            toast.success("Stop kiosk success")
           } catch (error) {
-            console.log(error);
-          }finally{
-            setIsLoading(false)
+            console.error(error);
+          } finally {
+            setIsLoading(false);
           }
         }
       },
     });
-
-
-
-
-  }
+  };
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
   };
-
-
 
   const kioskColumnLocationOwner = [
     {
@@ -150,24 +154,44 @@ const KioskTable = ({ partyId }) => {
       render: (text) => <a>{text}</a>,
     },
     {
-      title: "Kiosk Location ID",
-      dataIndex: "kioskLocationId",
-      key: "kioskLocationId",
-      render: (text, record, dataIndex) => (text?(
-        <Tag color={"green"} onClick={()=>{
-          localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }))
+      title: "Kiosk Location Name",
+      dataIndex: "kioskLocationName",
+      key: "kioskLocationName",
+      render: (text, record, dataIndex) =>
+        text ? (
+          <Tag
+            color={"green"}
+            onClick={() => {
+              localStorage.setItem(
+                PREVIOUS_PATH,
+                JSON.stringify({ data: breadCumbData })
+              );
 
-          onNavigate({
-            pathname: "/./location",
-            search: "?id=" + record.kioskLocationId,
-          })
-        }
-          }>{text}</Tag>
-      ) : (
-        <Tag color={"red"}>Null</Tag>
-      ))
+              onNavigate({
+                pathname: "/./location",
+                search: "?id=" + record.kioskLocationId,
+              });
+            }}
+          >
+            {text}
+          </Tag>
+        ) : (
+          <Tag color={"red"}>Null</Tag>
+        ),
     },
-
+    {
+      title: "Rating ",
+      dataIndex: "averageRating",
+      key: "averageRating",
+      render: (text, record, dataIndex) => (
+        <>
+          <p style={{ display: "inline", fontWeight: 500, fontSize: 30 }}>
+            {parseFloat(record.averageRating).toFixed(1)}/5.0
+          </p>{" "}
+          /{record.numberOfRating} turns
+        </>
+      ),
+    },
     {
       title: t("status"),
       dataIndex: "status",
@@ -175,48 +199,77 @@ const KioskTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color={"green"}>Activate</Tag>
+          <Tag color={"green"}>Working</Tag>
         ) : (
-          <Tag color={"red"}>Deactivate</Tag>
+          <Tag color={"red"}>Stopped</Tag>
         ),
     },
     {
+      key: "action",
       title: t("action"),
       align: "center",
-      key: "action",
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button className="primary" onClick={() => navigator(`/kiosk-scheduling/${record.id}`)}>
-            Scheduling
+          <Button
+            className="infor-button"
+            onClick={() => navigator(`/kiosk/${record.id}`)}
+          >
+            <EyeFilled />
+            Details
           </Button>
-          {
-            record.kioskLocationId?
-            <Button type="primary" onClick={() => {
-              setCurrentKiosk(record)
-              showModal("addLocation")
-              
-            }} >
-              Update Location
+          {record.kioskLocationId ? (
+            <Button
+              className="warn-button"
+              onClick={() => {
+                setCurrentKiosk(record);
+                showModal("addLocation");
+              }}
+            >
+              <EditFilled /> Update Location
             </Button>
-            :
-            <Button type="primary" onClick={() => {
-              setCurrentKiosk(record)
-              showModal("addLocation")
-              }} >
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => {
+                setCurrentKiosk(record);
+                showModal("addLocation");
+              }}
+            >
               Add Location
             </Button>
-          }
-          {
-            isLoading?<Spin/>:<Button className="infor-button" shape="default" onClick={() => {changeStatus(record)}}>
-            Change Status
+          )}
+          {isLoading ? (
+            <Spin />
+          ) : record.status === "activate" ? (
+            <Button
+              className="danger-button"
+              shape="default"
+              onClick={() => {
+                changeStatus(record);
+              }}
+            >
+              <StopFilled />
+              Stop
+            </Button>
+          ) : (
+            <Button
+              shape="default"
+              onClick={() => {
+                changeStatus(record);
+              }}
+              disabled
+            >
+              <StopFilled />
+              Stop
+            </Button>
+          )}
+          <Button className="infor-button"  onClick={() => {
+                setCurrentKiosk(record);
+                showModal("changeNameKiosk");
+              }}>
+          <SwapOutlined />Change Name
           </Button>
-          }
-          
-          
-          
-        
         </Space>
-        
       ),
     },
   ];
@@ -226,15 +279,20 @@ const KioskTable = ({ partyId }) => {
     await getListKiosk(partyId, page, kioskPageSize);
   };
   const getListKiosk = async (partyId, kioskPage, kioskPageSize) => {
-    const { data } = await getListKioskService(
-      partyId,
-      kioskPage,
-      kioskPageSize
-    );
-    setListKiosk(data.data);
-    setKioskPage(data.metadata.page);
-    setKioskTotal(data.metadata.total);
-    setKioskPageSize(data.metadata.size);
+    try {
+      const { data } = await getListKioskService(
+        partyId,
+        kioskPage,
+        kioskPageSize
+      );
+      setListKiosk(data.data);
+      setKioskPage(data.metadata.page);
+      setKioskTotal(data.metadata.total);
+      setKioskPageSize(data.metadata.size);
+    } catch (e) {
+      console.error(e);
+      setListKiosk([]);
+    }
   };
   const onCreateKiosk = async (values) => {
     try {
@@ -247,10 +305,10 @@ const KioskTable = ({ partyId }) => {
       setIsCreateKioskModalVisible(false);
       createKioskForm.resetFields();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => { };
+  const onFinishSearchKiosk = () => {};
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
@@ -261,27 +319,42 @@ const KioskTable = ({ partyId }) => {
     </Form.Item>
   );
 
-  const handleCancelModal = () =>{
-    setIsModalAddLocationVisible(false);
-  }
-
-  const showModal =async (type) => {
-    if (type === "addLocation") {
-      setIsModalAddLocationVisible(true);
-      const res =await getListKioskLocationService("",1,-1);
-      setListLocation(res.data.data)
-    } 
+  const handleCancelModal = (type) => {
+    console.log(type);
+    if(type==="addLocation"){
+      setIsModalAddLocationVisible(false);
+    } else if (type === "changeNameKiosk"){
+      setIsModalChangeNameKioskVisible(false)
+    }
+    
   };
 
-  const onFinishModal= (type) => {
-    if(type ==="addLocation"){
-      getListKiosk(partyId, kioskPage, kioskPageSize);
-      setIsModalAddLocationVisible(false)
+  const showModal = async (type) => {
+    console.log(type)
+    if (type === "addLocation") {
+      setIsModalAddLocationVisible(true);
+      const res = await getListKioskLocationService("", 1, -1);
+      setListLocation(res.data.data);
+    } else if (type==="changeNameKiosk" ){
+      setIsModalChangeNameKioskVisible(true)
     }
-  }
-    
+
+  };
+
+  const onFinishModal = (type) => {
+    if (type === "addLocation") {
+      setIsModalAddLocationVisible(false);
+    } else if( type === "changeNameKiosk"){
+      setIsModalChangeNameKioskVisible(false);
+    }
+    getListKiosk(partyId, kioskPage, kioskPageSize);
+  };
+
   useEffect(() => {
-    localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+    localStorage.setItem(
+      PREVIOUS_PATH,
+      JSON.stringify({ data: breadCumbData })
+    );
     getListKiosk(partyId, kioskPage, kioskPageSize);
   }, []);
   return (
@@ -290,6 +363,12 @@ const KioskTable = ({ partyId }) => {
         isModalAddLocationVisible={isModalAddLocationVisible}
         handleCancelModal={handleCancelModal}
         listLocation={listLocation}
+        currentKiosk={currentKiosk}
+        onFinishModal={onFinishModal}
+      />
+      <ModalChangeNameKiosk
+        isModalChangeNameKioskVisible={isModalChangeNameKioskVisible}
+        handleCancelModal={handleCancelModal}
         currentKiosk={currentKiosk}
         onFinishModal={onFinishModal}
       />
@@ -348,29 +427,35 @@ const KioskTable = ({ partyId }) => {
             ) : null
           ) : null}
         </Row>
-        <Col span={24}>
-          {role ? (
-            role === ROLE_ADMIN ? (
-              <Table
-                columns={kioskColumnAdmin}
-                dataSource={listKiosk}
-                pagination={false}
-              />
-            ) : (
-              <Table
-                columns={kioskColumnLocationOwner}
-                dataSource={listKiosk}
-                pagination={false}
-              />
-            )
-          ) : null}
-        </Col>
-        <Pagination
-          defaultCurrent={kioskPage}
-          total={kioskTotal}
-          pageSize={kioskPageSize}
-          onChange={handlePaginationKioskTable}
-        />
+        {listKiosk ? (
+          <>
+            <Col span={24}>
+              {role ? (
+                role === ROLE_ADMIN ? (
+                  <Table
+                    columns={kioskColumnAdmin}
+                    dataSource={listKiosk}
+                    pagination={false}
+                  />
+                ) : (
+                  <Table
+                    columns={kioskColumnLocationOwner}
+                    dataSource={listKiosk}
+                    pagination={false}
+                  />
+                )
+              ) : null}
+            </Col>
+            <Pagination
+              defaultCurrent={kioskPage}
+              total={kioskTotal}
+              pageSize={kioskPageSize}
+              onChange={handlePaginationKioskTable}
+            />
+          </>
+        ) : (
+          <Skeleton />
+        )}
       </div>
 
       <Modal

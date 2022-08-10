@@ -40,7 +40,6 @@ const ModalUpdateAppCategory = ({
           name: values.name,
           logo: valueLogo,
         };
-        console.log(updateItem);
 
         await updateAppCategoryService(updateItem).then(() => {
           modalToIndex("update");
@@ -51,7 +50,7 @@ const ModalUpdateAppCategory = ({
         toast.error("Please choose logo");
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
   const handleCancelPoiInModal = () => {
@@ -69,6 +68,7 @@ const ModalUpdateAppCategory = ({
     <>
       {currentUnit ? (
         <Modal
+          key={currentUnit.id}
           title="Update Application Category"
           visible={isUpdateModalVisible}
           onCancel={handleCancelPoiInModal}

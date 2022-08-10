@@ -26,6 +26,7 @@ import { beforeUpload } from "../../../@app/utils/image_util";
 import { getBase64 } from "../../../@app/utils/file_util";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
+import { Editor } from "primereact/editor";
 
 const ModalCreatePoi = ({
   modalToIndex,
@@ -40,6 +41,7 @@ const ModalCreatePoi = ({
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [listWardsInForm, setListWardsInForm] = useState([]);
   const { Option } = Select;
+  const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(async () => {
@@ -118,6 +120,12 @@ const ModalCreatePoi = ({
         let result = await getBase64(values.thumbnail.file.originFileObj);
         thumbnail = result.split(",");
 
+        let banner = [];
+        if (values.banner?.fileList[0]) {
+          let resultBanner = await getBase64(values.banner.file.originFileObj);
+          banner = resultBanner.split(",");
+        }
+
         let listImage = [];
         await Promise.all(
           values.listImage.fileList.map(async (value) => {
@@ -129,7 +137,7 @@ const ModalCreatePoi = ({
         );
         let newPoi = {
           name: values.name,
-          description: values.description,
+          description: description ?? "",
           stringOpenTime: formatTimePicker(values.stringOpenTime),
           stringCloseTime: formatTimePicker(values.stringCloseTime),
           dayOfWeek: values.dayOfWeek.join("-"),
@@ -140,6 +148,7 @@ const ModalCreatePoi = ({
           poicategoryId: values.poicategoryId,
           thumbnail: thumbnail[1],
           listImage: listImage,
+          banner: banner[1],
         };
         console.log(newPoi);
         await createPoiService(newPoi).then(() => {
@@ -152,7 +161,7 @@ const ModalCreatePoi = ({
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }
@@ -168,10 +177,12 @@ const ModalCreatePoi = ({
         visible={isCreatePoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
+        width={1000}
       >
         <Form
           {...formItemLayout}
           form={form}
+          style={{ marginRight: 80 }}
           name="registerPoi"
           onFinish={onFinishCreatePoi}
           scrollToFirstError
@@ -188,17 +199,11 @@ const ModalCreatePoi = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              {
-                required: true,
-                message: "Please input your description!",
-              },
-            ]}
-          >
-            <TextArea rows={4} />
+          <Form.Item name="description" label="Description">
+            <Editor
+              onTextChange={(e) => setDescription(e.htmlValue)}
+              style={{ height: "300px" }}
+            />
           </Form.Item>
           <Form.Item
             name="stringOpenTime"
@@ -386,6 +391,17 @@ const ModalCreatePoi = ({
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item name="banner" label="Banner">
+            <Upload
+              action={FILE_UPLOAD_URL}
+              listType="picture"
+              maxCount={1}
+              accept={ACCEPT_IMAGE}
+              beforeUpload={beforeUpload}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>

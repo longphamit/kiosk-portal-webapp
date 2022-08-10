@@ -1,12 +1,17 @@
 import { Col, Row } from "antd";
 import { Form, Input, Button, Spin } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import "./styles.css";
 import { toast } from "react-toastify";
 import { ValidateMessages } from "rc-field-form/lib/interface";
 import { PRIMARY_COLOR } from "../../constants/colors";
 
-import { ACCESS_TOKEN, USER_EMAIL, USER_FRIST_NAME, USER_ID } from "../../constants/key";
+import {
+  ACCESS_TOKEN,
+  USER_EMAIL,
+  USER_FRIST_NAME,
+  USER_ID,
+} from "../../constants/key";
 import useDispatch from "../../hooks/use_dispatch";
 import { loginAction } from "../../redux/actions/login_action";
 
@@ -18,7 +23,7 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
@@ -42,9 +47,11 @@ const LoginPage: React.FC = () => {
         setLoading(false);
         if (response.error?.message === "Request failed with status code 404") {
           toast.error("Wrong Username or password");
-        } else if(response.error?.message === "Request failed with status code 403")
-        {return}
-        else {
+        } else if (
+          response.error?.message === "Request failed with status code 403"
+        ) {
+          return;
+        } else {
           localStorage.setItem(ACCESS_TOKEN, response.payload.data.token);
           localStorage.setItem(USER_ID, response.payload.data.id);
           localStorage.setItem(USER_EMAIL, response.payload.data.email);
@@ -68,31 +75,40 @@ const LoginPage: React.FC = () => {
         }
       })
       .catch((error: any) => {
-        console.log(error);
+        console.error(error);
       })
       .finally(() => {
         setLoading(false);
       });
   };
-
+  useEffect(() => {
+    let isSignined = localStorage.getItem("ACCESS_TOKEN") !== null;
+    if (isSignined) navigate("/homepage");
+  }, []);
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
   return (
     <div>
       <Row
-        justify="center"
         align="middle"
-        style={{ minHeight: "100vh", backgroundColor: PRIMARY_COLOR }}
+        style={{ minHeight: "100vh", backgroundColor: "#fff" }}
       >
-        <Col span={8} />
+        <Col span={12}>
+          <div>
+            <img
+              width="100%"
+              src={require("../../../assets/user_kiosk_3.png")}
+            />
+          </div>
+        </Col>
+
         <Col span={8} className="login-form">
           <h2 style={{ textAlign: "center", fontWeight: "bold", padding: 15 }}>
             {t("signin")}
           </h2>
           <Form
             validateMessages={validateMessages}
-            className="login-form"
             name="basic"
             labelCol={{ span: 5 }}
             wrapperCol={{ span: 16 }}
@@ -146,7 +162,6 @@ const LoginPage: React.FC = () => {
             </Row>
           </Form>
         </Col>
-        <Col span={8} />
       </Row>
     </div>
   );

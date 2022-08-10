@@ -1,4 +1,4 @@
-import { Button, Col, Pagination, Row, Space, Table, Tag } from "antd";
+import { Button, Col, Empty, Pagination, Row, Skeleton, Space, Table, Tag } from "antd";
 import { EyeFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
@@ -12,7 +12,7 @@ import ModalCreateLocation from "./modalCreateLocation";
 import { PREVIOUS_PATH } from "../../../@app/constants/key";
 
 const KioskLocationPage = () => {
-  const [kioskLocationList, setKioskLocationList] = useState([]);
+  const [kioskLocationList, setKioskLocationList] = useState();
   const [kioskLocationPage, setKioskLocationPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [kioskLocationPageTotal, setKioskLocationPageTotal] = useState(0);
@@ -56,10 +56,14 @@ const KioskLocationPage = () => {
     },
   ];
   const getKioskLocationList = async (page, size) => {
-    const res = await getListKioskLocationService("", page, size);
-    console.log(res.data.data);
-    setKioskLocationList(res.data.data);
-    setKioskLocationPageTotal(res.data.metadata.total);
+    try {
+      const res = await getListKioskLocationService("", page, size);
+      setKioskLocationList(res.data.data);
+      setKioskLocationPageTotal(res.data.metadata.total);
+    } catch (e) {
+      console.error(e);
+      setKioskLocationList([]);
+    }
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -119,17 +123,27 @@ const KioskLocationPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table
-        columns={columns}
-        dataSource={kioskLocationList}
-        pagination={false}
-      />
-      <Pagination
-        defaultCurrent={1}
-        total={kioskLocationPageTotal}
-        pageSize={pageSize}
-        onChange={handleChangeNumberOfPaging}
-      />
+      {kioskLocationList ?
+        kioskLocationList.length === 0 ?
+          <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Col>
+              <Empty />
+            </Col>
+          </Row> :
+          <>
+            <Table
+              columns={columns}
+              dataSource={kioskLocationList}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={kioskLocationPageTotal}
+              pageSize={pageSize}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </> : <Skeleton />
+      }
     </>
   );
 };

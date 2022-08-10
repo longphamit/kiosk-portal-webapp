@@ -7,6 +7,7 @@ import {
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Spin,
   Table,
@@ -36,7 +37,7 @@ const TemplateManagerPage = () => {
   const [isEditLoading, setEditLoading] = useState(false);
   const [isCreateLoading, setCreateLoading] = useState(false);
   const [isDeleteLoading, setDeleteLoading] = useState(false);
-  const [listTemplate, setListTemplate] = useState([]);
+  const [listTemplate, setListTemplate] = useState();
   const [totalTemplate, setTotalTemplate] = useState(0);
   const [numTemplateInPage, setNumTemplateInPage] = useState(10);
   const [querySearch, setQuerySearch] = useState({});
@@ -50,7 +51,7 @@ const TemplateManagerPage = () => {
   let navigate = useNavigate();
   const getListTemplateFunction = async (currentPageToGetList, numInPage) => {
     try {
-      setCurrentPage(1);
+      setCurrentPage(currentPageToGetList);
       if (Object.keys(querySearch).length !== 0 && checkEmptyObj(querySearch)) {
         const res = await getListTemplateService(
           currentPageToGetList,
@@ -70,7 +71,7 @@ const TemplateManagerPage = () => {
       setCurrentPage(1);
       setTotalTemplate(0);
       setListTemplate([]);
-      console.log(error);
+      console.error(error);
     }
   };
   const checkEmptyObj = (obj) => {
@@ -146,6 +147,7 @@ const TemplateManagerPage = () => {
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
     } catch (e) {
+      setListTemplate([])
       toast("Cannot found!");
     }
   };
@@ -164,7 +166,7 @@ const TemplateManagerPage = () => {
     try {
       let res = await createTemplateService(data);
       handleCancelCreateTemplate();
-      onNavigate({ pathname: '/./create-template', search: '?id=' + res.data.id });
+      onNavigate({ pathname: '/./edit-template', search: '?id=' + res.data.id });
     } catch (e) {
       console.error(e)
       toast("Create failed");
@@ -189,15 +191,12 @@ const TemplateManagerPage = () => {
       cancelText: "No",
       onOk: async () => {
         {
-          setDeleteLoading(true);
           try {
             await deleteTemplateService(record.id);
-            getListTemplateFunction(currentPage, numTemplateInPage);
             toast("Delete successful");
+            await getListTemplateFunction(1, numTemplateInPage);
           } catch (e) {
-            toast("Delete failed");
-          } finally {
-            setDeleteLoading(false);
+            toast.error("Delete failed!")
           }
         }
       },
@@ -241,6 +240,7 @@ const TemplateManagerPage = () => {
     {
       title: "Action",
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -253,18 +253,16 @@ const TemplateManagerPage = () => {
           >
             <EditFilled /> Edit
           </Button>
-          {isDeleteLoading == false ?
-            <Button
-              className="danger-button"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleDeleteTemplate(record);
-              }}
-            >
-              <DeleteFilled /> Delete
-            </Button> : <Spin />
-          }
+          <Button
+            className="danger-button"
+            shape="default"
+            name={record}
+            onClick={() => {
+              handleDeleteTemplate(record);
+            }}
+          >
+            <DeleteFilled /> Delete
+          </Button>
         </Space>
       ),
     },
@@ -345,14 +343,17 @@ const TemplateManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listTemplate} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalTemplate}
-        pageSize={numTemplateInPage}
-        onChange={handleChangeNumberOfPaging}
-      />
-
+      {listTemplate ?
+        <>
+          <Table columns={columns} dataSource={listTemplate} pagination={false} />
+          <Pagination
+            defaultCurrent={1}
+            total={totalTemplate}
+            pageSize={numTemplateInPage}
+            onChange={handleChangeNumberOfPaging}
+          />
+        </> : <Skeleton />
+      }
       <Modal
         title="Create template"
         visible={isCreateTemplateModalVisible}

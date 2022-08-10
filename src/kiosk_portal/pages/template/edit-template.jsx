@@ -1,20 +1,18 @@
-import { Button, Col, Input, Modal, Row, Select, Spin } from "antd";
+import { Col, Modal, Row, Select, Skeleton } from "antd";
 import { useState, useEffect } from "react";
-import TextArea from "antd/lib/input/TextArea";
-import { DragDropContext } from "react-beautiful-dnd";
 import "./styles.css"
-import { reorderComponent } from "./reorder";
-import { ComponentList } from "./component-list";
 import { toast } from "react-toastify";
 import { getListAvailableCategoriesService, getListAvailableEventsService } from "../../services/categories_service";
 import { Option } from "antd/lib/mentions";
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
-import { async } from "@firebase/util";
+import { createAppCategoryPosition, createEventPosition, getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
 import { TEMPLATE_CREATE_LABEL, TEMPLATE_EDITING_HREF, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-
+import { buildPositionsModelRequest, checkEmptyRow, createEventModel, getComponentFromList, getIndexOfEmptyRow, isColumnExisted, removeItemFromList, reorderKeysOfObject } from "./components/utils";
+import { CustomDragDropContext } from "./components/custom_drag_drop_context";
+import { TemplateBasicInfo } from "./components/template_basic_info";
+import { SaveButtonComponent } from "./components/save_button_component";
+import { AddRowComponent } from "./components/add_row_button_component";
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
 const SELECTED_TYPE_EVENT = "event";
@@ -22,19 +20,26 @@ const ROOT_ROW_CATEGORY = "categoryavailable";
 const ROOT_ROW_EVENT = "eventavailable";
 const FIRST_ROW_EVENT = "eventrow1"
 const FIRST_ROW_CATEGORY = "categoryrow1"
+const WARN_DO_NOT_LEAVE_EMPTY_ROW = 'Dont leave an empty row!'
 const EditTemplatePage = () => {
     const [isLoading, setLoading] = useState(false);
     const [isChanging, setChanging] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedType, setSelectedType] = useState(SELECTED_TYPE_CATEGORY);
-    const [categoryComponents, setCategoryComponents] = useState({});
-    const [eventComponents, setEventComponents] = useState({});
-    const [currentTemplate, setCurrentTemplate] = useState({});
+    const [categoryComponents, setCategoryComponents] = useState();
+    const [eventComponents, setEventComponents] = useState();
+    const [currentTemplate, setCurrentTemplate] = useState();
+    const [isFirstSavingCategory, setFirstSavingCategory] = useState(true)
+    const [isFirstSavingEvent, setFirstSavingEvent] = useState(true)
     let navigate = useNavigate();
     const getAllAppCategories = async () => {
         try {
             let res = await getListAvailableCategoriesService();
-            let categories = res.data.map(category => ({ id: category.id, image: category.logo, name: category.name }));
+            let categories = res.data.map(category => ({
+                id: category.id,
+                image: category.logo,
+                name: category.name
+            }));
             return categories;
         } catch (e) {
             return [];
@@ -48,6 +53,7 @@ const EditTemplatePage = () => {
             let res = await getListAvailableEventsService();
             let events = [];
             for (const data of res.data) {
+                if (data.status === 'end') continue;
                 let eventModel = createEventModel(data);
                 let event = {
                     id: data.id,
@@ -76,41 +82,7 @@ const EditTemplatePage = () => {
             }
         }
     }
-    const removeComponentIfExisted = (id, list) => {
-        const removeIndex = []
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].id === id) {
-                removeIndex.push(i);
-            }
-        }
-        for (let index of removeIndex) {
-            list.splice(index, 1)
-        }
-        return list
-    }
-    const isColumnExisted = (rowIndex, componentsObj) => {
-        if (componentsObj['row' + `${rowIndex}`] === undefined) {
-            return false;
-        }
-        return true;
-    }
-    const getComponentFromList = (id, list) => {
-        for (let component of list) {
-            if (component.id == id) {
-                return component;
-            }
-        }
-        return {};
-    }
-    const reorderKeysOfObject = (component) => {
-        return Object.keys(component).sort().reduce(
-            (obj, key) => {
-                obj[key] = component[key];
-                return obj;
-            },
-            {}
-        );
-    }
+
     const getEventPositions = async () => {
         try {
             let allEvents = await getAllEvents();
@@ -124,7 +96,7 @@ const EditTemplatePage = () => {
                         for (let component of p.components) {
                             let event = getComponentFromList(component.eventId, allEvents);
                             if (!(event && Object.keys(event).length === 0 && Object.getPrototypeOf(event) === Object.prototype)) {
-                                allEvents = removeComponentIfExisted(component.eventId, allEvents); // set available row
+                                allEvents = removeItemFromList(component.eventId, allEvents); // set available row
                                 let eventTemp = {
                                     id: component.eventId,
                                     name: component.eventName,
@@ -146,6 +118,7 @@ const EditTemplatePage = () => {
             data[`${ROOT_ROW_EVENT}`] = allEvents;
             setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
+            setEventComponents({})
             console.error(e);
         }
     }
@@ -161,7 +134,7 @@ const EditTemplatePage = () => {
                         let dataTemp = []
                         for (let component of p.components) {
                             let appCategory = getComponentFromList(component.appCategoryId, allCategories);
-                            allCategories = removeComponentIfExisted(component.appCategoryId, allCategories); // set available row
+                            allCategories = removeItemFromList(component.appCategoryId, allCategories); // set available row
                             dataTemp[component.columnIndex] = { id: appCategory.id, image: appCategory.image, name: appCategory.name }
                         }
                         let rowIndex = p.rowIndex;
@@ -176,6 +149,7 @@ const EditTemplatePage = () => {
             data[`${ROOT_ROW_CATEGORY}`] = allCategories;
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
+            setCategoryComponents({})
             console.error(e);
         }
     }
@@ -194,24 +168,11 @@ const EditTemplatePage = () => {
         });
         return defaultName + (parseInt(index) + 1);
     }
-    const createEventModel = (event) => {
-        let imgs = [];
-        if (event.listImage !== undefined && event.listImage.length != 0)
-            event.listImage.map(img => imgs.push(img.link));
-        let data = {
-            id: event.id,
-            name: event.name,
-            thumbnail: event.thumbnail.link,
-            description: event.description,
-            time: "string",
-            address: event.address + ' - ' + event.ward + ', ' + event.district + ', ' + event.city,
-            type: event.type,
-            status: event.status,
-            listImage: imgs,
-        }
-        return data;
-    }
+
     function onClickAddNewRow() {
+        if (haveEmptyRow()) {
+            toast.warn(WARN_DO_NOT_LEAVE_EMPTY_ROW)
+        }
         let rowName = generateRowName();
         if (selectedType == SELECTED_TYPE_CATEGORY) {
             setCategoryComponents(prevState => {
@@ -220,10 +181,10 @@ const EditTemplatePage = () => {
             setChanging(true);
             return;
         }
-        setChanging(true)
         setEventComponents(prevState => {
             return { ...prevState, [`${rowName}`]: [] };
         });
+        setChanging(true)
     }
     const onSelectedTypeChange = (value) => {
         if (isChanging) {
@@ -271,125 +232,72 @@ const EditTemplatePage = () => {
     }
     const haveEmptyRow = () => {
         if (selectedType === SELECTED_TYPE_CATEGORY) {
-            Object.entries(categoryComponents).map(([k, v]) => {
-                if (k !== ROOT_ROW_CATEGORY && v.length == 0) {
-                    return true;
-                }
-            });
+            return checkEmptyRow(categoryComponents, ROOT_ROW_CATEGORY)
         }
-        Object.entries(eventComponents).map(([k, v]) => {
-            if (k !== ROOT_ROW_EVENT && v.length == 0) {
-                return true;
-            }
-        });
-        return false;
+        return checkEmptyRow(eventComponents, ROOT_ROW_EVENT)
+
     }
-    const haveEmptyRowWithParam = (categoryComponents) => {
-        let result = false;
+    const haveEmptyRowWithParam = (components) => {
         if (selectedType === SELECTED_TYPE_CATEGORY) {
-            Object.entries(categoryComponents).map(([k, v]) => {
-                if (k !== ROOT_ROW_CATEGORY && v.length == 0) {
-                    result = true;
-                    return;
-                }
-            });
-            return result;
+            return checkEmptyRow(components, ROOT_ROW_CATEGORY)
         }
-        Object.entries(eventComponents).map(([k, v]) => {
-            if (k !== ROOT_ROW_EVENT && v.length == 0) {
-                result = true;
-                return;
-            }
-        });
-        return result;
+        return checkEmptyRow(components, ROOT_ROW_EVENT);
     }
 
     const save = async () => {
         setLoading(true);
-        if (selectedType === SELECTED_TYPE_CATEGORY) {
-            let listPosition = [];
-            let rowIndex = 0;
-            Object.entries(categoryComponents).map((element, index) => {
-                if (index != 0 && element[1].length != 0) {
-                    let component = element[1];
-                    for (let i = 0; i < component.length; i++) {
-                        let position = {
-                            appCategoryId: component[i].id,
-                            rowIndex: rowIndex,
-                            columnIndex: i
-                        };
-                        listPosition.push(position);
-                    }
-                    rowIndex++;
-                }
-
-            });
-            // Not arrange any components to the template
-            // if (listPosition.length == 0) {
-            //     toast.warn('Nothing added to the template');
-            //     setLoading(false);
-            //     return;
-            // }
-            let request = {
-                templateId: currentTemplate.id,
-                listPosition: listPosition
+        if (checkEmptyRow) {
+            let rowIndex;
+            if (selectedType === SELECTED_TYPE_CATEGORY) {
+                rowIndex = getIndexOfEmptyRow(categoryComponents, ROOT_ROW_CATEGORY)
+            } else {
+                rowIndex = getIndexOfEmptyRow(eventComponents, ROOT_ROW_EVENT)
             }
-            try {
-                let res = await updateAppCategoryPosition(request);
-                if (res.code === 200) {
-                    toast.success("Save category components succesfully")
-                    return;
-                }
-            } catch (e) {
-                console.error(e);
-                toast.error('Save failed!');
-            } finally {
+            if (rowIndex !== -1) {
+                toast.error(`The row ${rowIndex} is empty!\nPlease remove all empty rows before you save!`)
                 setLoading(false);
                 return;
             }
         }
-        let listPosition = [];
-        let rowIndex = 0;
-        Object.entries(eventComponents).map((element, index) => {
-            if (index != 0 && element[1].length != 0) {
-                let component = element[1];
-                for (let i = 0; i < component.length; i++) {
-                    let position = {
-                        eventId: component[i].id,
-                        rowIndex: rowIndex,
-                        columnIndex: i
-                    };
-                    listPosition.push(position);
-                }
-                rowIndex++;
-            }
-        });
-        // Not arrange any components to the template
-        // if (listPosition.length == 0) {
-        //     toast.warn('Nothing added to the template');
-        //     setLoading(false);
-        //     return;
-        // }
-        let request = {
-            templateId: currentTemplate.id,
-            listPosition: listPosition
-        }
+        let request = buildPositionsModelRequest(
+            selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents,
+            currentTemplate.id, selectedType);
         try {
-            let res = await updateEventPosition(request);
-            setChanging(false)
-            if (res.code === 200) {
-                toast.success("Save event components succesfully")
-                return;
+            let res;
+            if (currentTemplate.status === 'incomplete') {
+                if (selectedType === SELECTED_TYPE_CATEGORY && isFirstSavingCategory) {
+                    res = await createAppCategoryPosition(request)
+                    setFirstSavingCategory(false)
+                } else if (selectedType === SELECTED_TYPE_EVENT && isFirstSavingCategory) {
+                    res = await createEventPosition(request);
+                    setFirstSavingEvent(false)
+                } else {
+                    if (selectedType === SELECTED_TYPE_CATEGORY) {
+                        res = await updateAppCategoryPosition(request);
+                    } else {
+                        res = await updateEventPosition(request);
+                    }
+                }
+            } else {
+                if (selectedType === SELECTED_TYPE_CATEGORY) {
+                    res = await updateAppCategoryPosition(request);
+                } else {
+                    res = await updateEventPosition(request);
+                }
             }
+            toast.success(selectedType === SELECTED_TYPE_CATEGORY ?
+                "Save category components succesfully" :
+                "Save event components succesfully");
         } catch (e) {
             console.error(e);
             toast.error('Save failed!');
         } finally {
+            setChanging(false)
             setLoading(false);
-            return;
         }
-
     }
+
+
     const breadCumbData = [
         {
             href: TEMPLATE_MANAGER_HREF,
@@ -404,177 +312,66 @@ const EditTemplatePage = () => {
     ]
     return (<>
         <CustomBreadCumb props={breadCumbData} />
-        <div id="account-info-panel">
-            <Row>
-                <Col span={20}>
-                    <Row className="info-row">
-                        <Col span={2} className="info-title">
-                            Name:
-                        </Col>
-                        <Col span={12}>
-                            <Input value={currentTemplate.name} contentEditable={false} />
-                        </Col>
-
-                    </Row><Row>
-                        <Col span={2} className="info-title">
-                            Description:
-                        </Col>
-                        <Col span={12}>
-                            <TextArea rows='1' value={currentTemplate.description} contentEditable={false} />
+        {eventComponents && categoryComponents && currentTemplate && !isLoading ?
+            <>
+                <TemplateBasicInfo currentTemplate={currentTemplate} />
+                <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
+                    <Row>
+                        <Col span={8} >
+                            <Select defaultValue={selectedType} style={{ width: 200, fontSize: 20 }} onChange={onSelectedTypeChange}>
+                                <Option value={SELECTED_TYPE_CATEGORY} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_CATEGORY}</Option>
+                                <Option value={SELECTED_TYPE_EVENT} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_EVENT}</Option>
+                            </Select>
                         </Col>
                     </Row>
-                </Col>
-            </Row>
-        </div >
-        <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
-            <Row>
-                <Col span={8} >
-                    <Select defaultValue={SELECTED_TYPE_CATEGORY} style={{ width: 200, fontSize: 20 }} onChange={onSelectedTypeChange}>
-                        <Option value={SELECTED_TYPE_CATEGORY} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_CATEGORY}</Option>
-                        <Option value={SELECTED_TYPE_EVENT} style={{ textTransform: 'capitalize' }}>{SELECTED_TYPE_EVENT}</Option>
-                    </Select>
-                </Col>
-            </Row>
-        </div>
-        <div id="arrangement-space">
-            {selectedType === SELECTED_TYPE_CATEGORY ? <>
-                {categoryComponents.length != 0 ? <>
-                    <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
-                        // // dropped outside the list
-                        if (!destination) {
-                            return;
+                </div>
+
+                <div id="arrangement-space">
+                    {selectedType === SELECTED_TYPE_CATEGORY ? <>
+                        {categoryComponents.length != 0 ?
+                            <CustomDragDropContext
+                                selectedType={selectedType}
+                                setComponents={setCategoryComponents}
+                                previousComponents={categoryComponents}
+                                deleteRow={deleteRow}
+                                haveEmptyRow={haveEmptyRowWithParam}
+                                setChanging={setChanging}
+                            />
+                            :
+                            <>
+                                <h3>You're not install any service application!</h3>
+                            </>
                         }
-                        if (destination.droppableId !== ROOT_ROW_CATEGORY && categoryComponents[destination.droppableId].length === 5) {
-                            if (source.droppableId !== destination.droppableId) {
-                                toast.warn('Maxium only 5');
-                                return;
-                            }
+                    </> : <>
+                        {eventComponents.length != 0 ?
+                            <CustomDragDropContext
+                                selectedType={selectedType}
+                                setComponents={setEventComponents}
+                                previousComponents={eventComponents}
+                                deleteRow={deleteRow}
+                                haveEmptyRow={haveEmptyRowWithParam}
+                                setChanging={setChanging}
+                            />
+                            :
+                            <>
+                                <h3>Don't have any event to show!</h3>
+                            </>
                         }
-                        const reorder = reorderComponent(
-                            categoryComponents,
-                            source,
-                            destination
-                        );
-                        setChanging(true)
-                        setCategoryComponents(
-                            reorder
-                        );
+                    </>
+                    }
+                </div>
 
-                        if (haveEmptyRowWithParam(reorder) && source.droppableId !== destination.droppableId) {
-                            toast.warn("Dont leave a empty row, it will be deleted when you save")
-                        }
-                    }}>
-                        <div>
-                            {Object.entries(categoryComponents).map((e, i) => (
-                                <div >
-                                    <div style={{ fontSize: 20, paddingTop: 10 }}>
-                                        <Row>
-                                            <Col span={6} offset={9} justify="center" align="middle">
-                                                {i == 0 ? 'Available' : 'Row ' + i + ' (Maxium 5)'}
-                                            </Col>
-                                            {e[0] !== ROOT_ROW_CATEGORY && e[0] !== FIRST_ROW_CATEGORY ?
-                                                <Col span={6} offset={3} justify="left" align="end">
-                                                    <DeleteOutlined style={{ fontSize: 20, color: 'red' }} onClick={() => deleteRow(e[0])} />
-                                                </Col>
-                                                :
-                                                <></>
-                                            }
-                                        </Row>
-                                    </div>
-                                    <ComponentList
-                                        internalScroll
-                                        key={e[0]}
-                                        listId={e[0]}
-                                        listType="CARD"
-                                        components={e[1]}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </DragDropContext>
-                </> :
-                    <>
-                        <h3>You're not install any service application!</h3>
-                    </>}
-            </> : <>{eventComponents.length != 0 ?
-                <>
-                    <DragDropContext key={selectedType} onDragEnd={({ destination, source }) => {
-                        // // dropped outside the list
-                        if (!destination) {
-                            return;
-                        }
-
-                        setEventComponents(
-                            reorderComponent(
-                                eventComponents,
-                                source,
-                                destination
-                            )
-                        );
-                        setChanging(true)
-                        if (haveEmptyRow() && source.droppableId !== destination.droppableId) {
-                            toast.warn("Dont leave a empty row, it will be deleted when you save")
-                        }
-                    }}>
-                        <div>
-                            {Object.entries(eventComponents).map((e, i) => (
-                                <div >
-                                    <div style={{ fontSize: 20, paddingTop: 10 }}>
-                                        <Row>
-                                            <Col span={6} offset={9} justify="center" align="middle">
-                                                {i == 0 ? 'Available' : 'Row ' + i}
-                                            </Col>
-                                            {e[0] !== ROOT_ROW_EVENT && e[0] !== FIRST_ROW_EVENT ?
-                                                <Col span={6} offset={3} justify="left" align="end">
-                                                    <DeleteOutlined style={{ fontSize: 20, color: 'red' }} onClick={() => deleteRow(e[0])} />
-                                                </Col>
-                                                :
-                                                <></>
-                                            }
-                                        </Row>
-                                    </div>
-                                    <ComponentList
-                                        internalScroll
-                                        key={e[0]}
-                                        listId={e[0]}
-                                        listType="CARD"
-                                        components={e[1]}
-                                        event={e}
-                                    />
-
-                                </div>
-                            ))}
-                        </div>
-                    </DragDropContext>
-                </> :
-                <>
-                    <h3>Don't have any event to show!</h3>
-                </>}
-            </>}
-
-
-        </div>
-
-        {(selectedType === SELECTED_TYPE_CATEGORY && categoryComponents.length != 0) || (selectedType === SELECTED_TYPE_EVENT && eventComponents.length != 0) ?
-
-            <div style={{ marginTop: 40 }}>
-                <Row justify="center" align="middle">
-                    <Col>
-
-                        <Button type="" shape="round" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { onClickAddNewRow() }}>
-                            <PlusOutlined style={{ fontSize: 32 }} />
-                        </Button>
-                    </Col>
-                </Row>
-                <Row justify="center" align="middle" style={{ marginTop: 40 }}>
-                    <Col>
-                        {isLoading === false ?
-                            <Button type="primary" style={{ width: 200, height: 50, fontSize: 24, fontWeight: 'bold' }} onClick={() => { save() }}>Save</Button>
-                            : <Spin />}
-                    </Col>
-                </Row>
-            </div> : null
+                {
+                    (selectedType === SELECTED_TYPE_CATEGORY && categoryComponents.length != 0) || (selectedType === SELECTED_TYPE_EVENT && eventComponents.length != 0) ?
+                        <div style={{ marginTop: 40 }}>
+                            <AddRowComponent onClickAddNewRow={onClickAddNewRow} />
+                            <SaveButtonComponent save={save} isLoading={isLoading} />
+                        </div> : null
+                }
+            </> : <Skeleton />
         }
     </>)
 }
 export default EditTemplatePage;
+
+

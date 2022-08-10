@@ -1,21 +1,44 @@
-import { Button, Col, Form, Input, Pagination, Row, Space, Table } from "antd";
+import {
+  Button,
+  Col,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Pagination,
+  Row,
+  Skeleton,
+  Space,
+  Table,
+} from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getListPoiService } from "../../services/poi_service";
+import {
+  changeStatusPoiService,
+  getListPoiService,
+} from "../../services/poi_service";
 import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
-import DetailPoiPage from "./";
-import { SearchOutlined, PlusOutlined, EyeFilled } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  EyeFilled,
+  SwapOutlined,
+} from "@ant-design/icons";
 import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
 import { TYPE_SERVER } from "../../../@app/constants/key";
-import { POI_MANAGER_HREF, POI_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  POI_MANAGER_HREF,
+  POI_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { toast } from "react-toastify";
 
 const PoiPage = () => {
   const { t } = useTranslation();
-  const [listUnit, setListUnit] = useState([]);
+  const [listUnit, setListUnit] = useState();
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,16 +77,17 @@ const PoiPage = () => {
       setTotalUnit(res.data.metadata.total);
       setListUnit(res.data.data);
     } catch (error) {
-      console.log(error);
+      setListUnit([]);
+      console.error(error);
     }
   };
   const breadCumbData = [
     {
       href: POI_MANAGER_HREF,
       label: POI_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   useEffect(async () => {
     getListPoiFunction("", "", "", "", "", "", "", currentPage, numUnitInPage);
     const resProvinces = await getListProvinceService();
@@ -140,7 +164,7 @@ const PoiPage = () => {
     }
   };
 
-  const onSearchModal = async (data) => { };
+  const onSearchModal = async (data) => {};
 
   const handleCancelModalPoi = (type) => {
     if (type === "create") {
@@ -155,6 +179,35 @@ const PoiPage = () => {
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
     await getListPoiFunction("", "", "", "", "", "", "", page, pageSize);
+  };
+
+  const onFinishChangeStatusPoi = (values) => {
+    Modal.confirm({
+      title: "Are you sure to change status this POI",
+      okText: "Yes",
+      cancelText: "No",
+      onOk: async () => {
+        {
+          try {
+            await changeStatusPoiService(JSON.stringify(values.id));
+            toast.success("Change status successful");
+            getListPoiFunction(
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              currentPage,
+              numUnitInPage
+            );
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
   };
 
   const columns = [
@@ -180,7 +233,9 @@ const PoiPage = () => {
       title: "Create By",
       dataIndex: "type",
       key: "type",
-      render: (text) => <p>{text === TYPE_SERVER ? "Admin" : "Location owner"}</p>,
+      render: (text) => (
+        <p>{text === TYPE_SERVER ? "Admin" : "Location owner"}</p>
+      ),
     },
 
     {
@@ -192,6 +247,7 @@ const PoiPage = () => {
     {
       title: t("action"),
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -201,7 +257,16 @@ const PoiPage = () => {
               onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
             }}
           >
-            <EyeFilled />  Details
+            <EyeFilled /> Details
+          </Button>
+          <Button
+            className="warn-button"
+            shape="default"
+            onClick={() => {
+              onFinishChangeStatusPoi(record);
+            }}
+          >
+            <SwapOutlined /> Change Status
           </Button>
         </Space>
       ),
@@ -256,15 +321,28 @@ const PoiPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listUnit} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalUnit}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-        current={currentPage}
-      />
-
+      {listUnit ? (
+        listUnit.length === 0 ? (
+          <Row justify="center" align="center" style={{ marginTop: 250 }}>
+            <Col>
+              <Empty />
+            </Col>
+          </Row>
+        ) : (
+          <>
+            <Table columns={columns} dataSource={listUnit} pagination={false} />
+            <Pagination
+              defaultCurrent={1}
+              total={totalUnit}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+              current={currentPage}
+            />
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
       <ModalCreatePoi
         modalToIndex={onFinishModal}
         listProvinces={listProvinces}

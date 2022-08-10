@@ -2,33 +2,39 @@ import {
   Button,
   Col,
   Descriptions,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
 } from "antd";
 import {
   SearchOutlined,
-  EyeFilled
+  EyeFilled,
+  StopOutlined
 } from "@ant-design/icons";
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  cancelPublishRequestService,
   getListAppPublishRequestSearchService,
   getListAppPublishRequestService,
 } from "../../../services/app_publish_request_service";
 import {
   PUBLISH_APPROVED,
+  PUBLISH_CANCEL,
   PUBLISH_DENIED,
   PUBLISH_IN_PROGRESS,
 } from "../../../constants/app_publish_request_status_constant";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const searchTypeKiosk = [
   {
@@ -43,7 +49,7 @@ const AppPublishRequestTable = ({ partyId }) => {
   const [appPublishRequestPage, setAppPublishRequestPage] = useState(1);
   const [appPublishRequestTotal, setAppPublishRequestTotal] = useState(0);
   const [appPublishRequestPageSize, setAppPublishRequestPageSize] = useState(5);
-  const [listAppPublishRequest, setListListAppPublishRequest] = useState([]);
+  const [listAppPublishRequest, setListListAppPublishRequest] = useState();
   const [appPublishRequestSelected, setAppPublishRequestSelected] = useState();
   const [appPublishRequestSearchType, setAppPublishRequestSearchType] =
     useState("CreatorEmail");
@@ -52,6 +58,25 @@ const AppPublishRequestTable = ({ partyId }) => {
     setPublishRequestDetailModalVisible,
   ] = useState();
   const navigator = useNavigate();
+  const onFinishCancel=(record)=>{
+    Modal.confirm({
+      title: "Are you sure to cancel request publish of this application",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            console.log(record)
+            await cancelPublishRequestService(JSON.stringify(record.id))
+            await getListAppPublishRequest(appPublishRequestPage, appPublishRequestPageSize);
+            toast.success("Cancel request success")
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
+  }
   const AdminApplicationPublishRequestColumn = [
     {
       title: "No",
@@ -84,19 +109,22 @@ const AppPublishRequestTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === PUBLISH_APPROVED ? (
-          <Tag color={"green"}>Approved</Tag>
+          <Tag color={"green"}>APPOVED</Tag>
         ) : record.status === PUBLISH_IN_PROGRESS ? (
           <Tag color={"blue"}>IN PROGRESS</Tag>
         ) : record.status === PUBLISH_DENIED ? (
           <Tag color={"red"}>DENIED</Tag>
-        ) : (
+        ) : record.status === PUBLISH_CANCEL?(
+          <Tag color={"grey"}>CANCELED</Tag>
+        ) :
+        (
           <></>
         ),
     },
     {
       title: t("action"),
       key: "action",
-      
+
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -105,11 +133,12 @@ const AppPublishRequestTable = ({ partyId }) => {
               navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
-            <EyeFilled/> Detail
+            <EyeFilled /> Detail
           </Button>
+
           {record.status === PUBLISH_DENIED ? (
             <Button
-              className="infor-button"
+              className="warn-button"
               onClick={() => {
                 setAppPublishRequestSelected(record);
                 setPublishRequestDetailModalVisible(true);
@@ -120,6 +149,19 @@ const AppPublishRequestTable = ({ partyId }) => {
           ) : (
             <></>
           )}
+          {
+            record.status === PUBLISH_IN_PROGRESS?(
+<Button
+            className="danger-button"
+            onClick={() => {
+              onFinishCancel(record);
+            }}
+          >
+            <StopOutlined/> Cancel Request
+          </Button>
+            ):null
+          }
+          
         </Space>
       ),
     },
@@ -154,13 +196,17 @@ const AppPublishRequestTable = ({ partyId }) => {
     appPublishRequestPage,
     appPublishRequestPageSize
   ) => {
-    const res = await getListAppPublishRequestService(
-      appPublishRequestPage,
-      appPublishRequestPageSize
-    );
-    console.log(res);
-    setAppPublishRequestTotal(res.data.metadata.total);
-    setListListAppPublishRequest(res.data.data);
+    try {
+      const res = await getListAppPublishRequestService(
+        appPublishRequestPage,
+        appPublishRequestPageSize
+      );
+      setAppPublishRequestTotal(res.data.metadata.total);
+      setListListAppPublishRequest(res.data.data);
+    } catch (e) {
+      console.error(e);
+      setListListAppPublishRequest([])
+    }
   };
   const handlePaginationAppPublishRequest = async (page, pageSize) => {
     setAppPublishRequestPage(page);
@@ -239,7 +285,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                       type="primary"
                       size={"large"}
                     >
-                     <SearchOutlined/>
+                      <SearchOutlined />
                     </Button>
                   </Form.Item>
                 </Col>
@@ -248,19 +294,31 @@ const AppPublishRequestTable = ({ partyId }) => {
           </Col>
           <Col span={5} />
         </Row>
-        <Col span={24}>
-          <Table
-            columns={AdminApplicationPublishRequestColumn}
-            dataSource={listAppPublishRequest}
-            pagination={false}
-          />
-        </Col>
-        <Pagination
-          defaultCurrent={appPublishRequestPage}
-          total={appPublishRequestTotal}
-          pageSize={appPublishRequestPageSize}
-          onChange={handlePaginationAppPublishRequest}
-        />
+        {listAppPublishRequest ?
+          listAppPublishRequest.length === 0 ?
+            <>
+              <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                <Col>
+                  <Empty />
+                </Col>
+              </Row>
+            </> :
+            <>
+              <Col span={24}>
+                <Table
+                  columns={AdminApplicationPublishRequestColumn}
+                  dataSource={listAppPublishRequest}
+                  pagination={false}
+                />
+              </Col>
+              <Pagination
+                defaultCurrent={appPublishRequestPage}
+                total={appPublishRequestTotal}
+                pageSize={appPublishRequestPageSize}
+                onChange={handlePaginationAppPublishRequest}
+              />
+            </> : <Skeleton />
+        }
       </div>
       {appPublishRequestSelected ? (
         <Modal

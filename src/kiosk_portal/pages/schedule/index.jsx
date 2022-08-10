@@ -2,12 +2,14 @@ import {
   Button,
   Checkbox,
   Col,
+  Empty,
   Form,
   Input,
   Modal,
   Pagination,
   Row,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
@@ -18,7 +20,9 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { searchAccountService } from "../../services/account_service";
+import "./styles.css";
 import {
+  changeScheduleStatusService,
   createScheduleService,
   getListScheduleService,
   updateScheduleService,
@@ -28,6 +32,7 @@ import {
   PlusOutlined,
   EditFilled,
   PoweroffOutlined,
+  SyncOutlined,
 } from "@ant-design/icons";
 import {
   formatTimePicker,
@@ -43,61 +48,35 @@ import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const ScheduleManagerPage = () => {
   const { Option } = Select;
   const { t } = useTranslation();
-  const [listSchedule, setListSchedule] = useState([]);
+  const [listSchedule, setListSchedule] = useState();
   const [totalSchedule, setTotalSchedule] = useState(0);
   const [numScheduleInPage, setNumScheduleInPage] = useState(5);
-  const [isSearch, setIsSearch] = useState(false);
   const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
-  const [listTemplate, setListTemplate] = useState([]);
   const [isCreateScheduleModalVisible, setIsCreateScheduleModalVisible] =
     useState(false);
   const [isEditScheduleModalVisible, setIsEditScheduleModalVisible] =
     useState(false);
-  const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
-    useState(false);
 
   const [form] = Form.useForm();
 
-  const getListTemplateFunction = async () => {
-    try {
-      let name = querySearch !== "" ? querySearch : "";
-      const res = await getListTemplateService(1, 100000000, "");
-      setListTemplate(res.data.data);
-      console.log(res.data.data);
-      console.log(listTemplate);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const getListScheduleFunction = async (currentPageToGetList, numInPage) => {
     try {
-      if (isSearch) {
-        querySearch.page = currentPageToGetList;
-        await searchAccountService(querySearch).then((res) => {
+      await getListScheduleService(currentPageToGetList, numInPage).then(
+        (res) => {
           setTotalSchedule(res.data.metadata.total);
           setListSchedule(res.data.data);
-        });
-      } else {
-        await getListScheduleService(currentPageToGetList, numInPage).then(
-          (res) => {
-            setTotalSchedule(res.data.metadata.total);
-            setListSchedule(res.data.data);
-          }
-        );
-      }
-      return;
+        }
+      );
     } catch (error) {
-      console.log(error);
+      setListSchedule([]);
+      toast.error(error.response.data.message);
     }
   };
 
   useEffect(() => {
     getListScheduleFunction(currentPage, numScheduleInPage);
-    getListTemplateFunction();
-    console.log(listTemplate);
   }, []);
 
   const formItemLayout = {
@@ -123,7 +102,7 @@ const ScheduleManagerPage = () => {
       },
     },
   };
-  const onFinishEditAccount = async (values) => {
+  const onFinishEditShedule = async (values) => {
     const invalidMsg = [];
     var check = true;
     let dOW = "";
@@ -146,7 +125,6 @@ const ScheduleManagerPage = () => {
           dayOfWeek: dOW,
           status: currentItem.status,
         };
-        console.log(updateSchedule);
         await updateScheduleService(updateSchedule).then(() => {
           getListScheduleFunction(currentPage, numScheduleInPage);
           setIsEditScheduleModalVisible(false);
@@ -157,76 +135,13 @@ const ScheduleManagerPage = () => {
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
-    }
-  };
-  const onFinishAdvancedSearch = async (values) => {
-    const search = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      address: values.address,
-      size: numScheduleInPage,
-      page: 1,
-    };
-    try {
-      await searchAccountService(search).then((res) => {
-        setTotalSchedule(res.data.metadata.total);
-        setListSchedule(res.data.data);
-        setIsSearch(true);
-        setQuerySearch(search);
-      });
-    } catch (error) {
-      console.log(error);
-      setTotalSchedule(0);
-      setListSchedule([]);
+      console.error(error);
     }
   };
   const onFinishSearch = async (values) => {
+    console.log(values);
     let firstName = "";
     let lastName = "";
-    let phoneNumber = "";
-    let email = "";
-    let address = "";
-    switch (values.type) {
-      case "FirstName":
-        firstName = values.searchString;
-        break;
-      case "LastName":
-        lastName = values.searchString;
-        break;
-      case "PhoneNumber":
-        phoneNumber = values.searchString;
-        break;
-      case "Email":
-        email = values.searchString;
-        break;
-      case "Address":
-        address = values.searchString;
-        break;
-    }
-    const search = {
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: phoneNumber,
-      email: email,
-      address: address,
-      size: numScheduleInPage,
-      page: 1,
-    };
-    try {
-      await searchAccountService(search).then((res) => {
-        setTotalSchedule(res.data.metadata.total);
-        setListSchedule(res.data.data);
-        setIsSearch(true);
-        setQuerySearch(search);
-      });
-    } catch (error) {
-      console.log(error);
-      setTotalSchedule(0);
-      setListSchedule([]);
-    }
   };
   const showModalEditSchedule = () => {
     setIsEditScheduleModalVisible(true);
@@ -260,7 +175,7 @@ const ScheduleManagerPage = () => {
         toast.error(errormsg);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -272,55 +187,28 @@ const ScheduleManagerPage = () => {
   const handleCancelCreateSchedule = () => {
     setIsCreateScheduleModalVisible(false);
   };
-  const showModalAdvancedSearchSchedule = () => {
-    setIsAdvancedSearchModalVisible(true);
-    form.resetFields();
-  };
-  const handleCloseModalAdvancedSearchSchedule = () => {
-    setIsAdvancedSearchModalVisible(false);
-  };
-  const handleChangeStatusSchedule = async (record) => {
-    Modal.confirm({
-      title: t("confirmChangeStatusAccount"),
-      okText: t("yes"),
-      cancelText: t("no"),
-      onOk: async () => {
-        {
-          try {
-            toast.error("Chưa làm");
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      },
-    });
-  };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
     await getListScheduleFunction(page, numScheduleInPage);
   };
-
+  const handleChangeStatusSchedule = async (scheduleId) => {
+    try {
+      await changeScheduleStatusService(scheduleId);
+      await getListScheduleFunction(currentPage, numScheduleInPage);
+      toast.success("Change schedule status success");
+    } catch (e) {
+      toast.error("Change schedule status fail");
+    }
+  };
   const types = [
     {
-      name: "FirstName",
-      label: "First Name",
+      name: "name",
+      label: "Name",
     },
     {
-      name: "LastName",
-      label: "Last Name",
-    },
-    {
-      name: "PhoneNumber",
-      label: "Phone Number",
-    },
-    {
-      name: "Email",
-      label: "Email",
-    },
-    {
-      name: "Address",
-      label: "Address",
+      name: "status",
+      label: "Status",
     },
   ];
   const columns = [
@@ -348,15 +236,16 @@ const ScheduleManagerPage = () => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "on" ? (
-          <Tag color={"green"}>{t("active")}</Tag>
+          <Tag color={"green"}>ON</Tag>
         ) : (
-          <Tag color={"red"}>{t("deactivate")}</Tag>
+          <Tag color={"red"}>OFF</Tag>
         ),
     },
 
     {
       title: t("action"),
       key: "action",
+      align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button
@@ -369,30 +258,15 @@ const ScheduleManagerPage = () => {
           >
             <EditFilled /> {t("edit")}
           </Button>
-
-          {record.roleName === "Admin" ? (
-            <Button
-              shape="default"
-              name={record}
-              disabled="false"
-              onClick={() => {
-                handleChangeStatusSchedule(record);
-              }}
-            >
-              <PoweroffOutlined /> {t("change-status")}
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              shape="default"
-              name={record}
-              onClick={() => {
-                handleChangeStatusSchedule(record);
-              }}
-            >
-              <PoweroffOutlined /> {t("change-status")}
-            </Button>
-          )}
+          <Button
+            className="change-status-button"
+            shape="default"
+            onClick={() => {
+              handleChangeStatusSchedule(record.id);
+            }}
+          >
+            <SyncOutlined /> Change Status
+          </Button>
         </Space>
       ),
     },
@@ -400,13 +274,14 @@ const ScheduleManagerPage = () => {
 
   const prefixSearch = (
     <Form.Item name="type" noStyle>
-      <Select defaultValue="FirstName">
+      <Select defaultValue="name">
         {types.map((item) => {
           return <Option value={item.name}>{item.label}</Option>;
         })}
       </Select>
     </Form.Item>
   );
+
   const breadCumbData = [
     {
       href: SCHEDULE_MANAGER_HREF,
@@ -419,12 +294,12 @@ const ScheduleManagerPage = () => {
       <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
         <Col span={15}>
-          <Form
+          {/* <Form
             form={form}
             name="search"
             onFinish={onFinishSearch}
             initialValues={{
-              type: "FirstName",
+              type: "name",
               searchString: "",
             }}
           >
@@ -451,19 +326,8 @@ const ScheduleManagerPage = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col>
-                <Button
-                  span={3}
-                  style={{ marginLeft: 10 }}
-                  type="danger"
-                  size={"large"}
-                  onClick={showModalAdvancedSearchSchedule}
-                >
-                  <SearchOutlined /> Advance
-                </Button>
-              </Col>
             </Row>
-          </Form>
+          </Form> */}
         </Col>
         <Col span={5} />
         <Col span={4}>
@@ -477,14 +341,36 @@ const ScheduleManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      <Table columns={columns} dataSource={listSchedule} pagination={false} />
-      <Pagination
-        defaultCurrent={1}
-        total={totalSchedule}
-        pageSize={5}
-        onChange={handleChangeNumberOfPaging}
-      />
-
+      {listSchedule ? (
+        listSchedule.length === 0 ? (
+          <Row justify="center" align="center" style={{ marginTop: 250 }}>
+            <Col>
+              <Empty />
+            </Col>
+          </Row>
+        ) : (
+          <>
+            <Table
+              rowClassName={(record, index) =>
+                record.status === "off"
+                  ? "tb-row-schedule-off"
+                  : "tb-row-schedule-on"
+              }
+              columns={columns}
+              dataSource={listSchedule}
+              pagination={false}
+            />
+            <Pagination
+              defaultCurrent={1}
+              total={totalSchedule}
+              pageSize={5}
+              onChange={handleChangeNumberOfPaging}
+            />
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
       <Modal
         title={t("createschedule")}
         visible={isCreateScheduleModalVisible}
@@ -581,7 +467,7 @@ const ScheduleManagerPage = () => {
             {...formItemLayout}
             form={form}
             name="edit"
-            onFinish={onFinishEditAccount}
+            onFinish={onFinishEditShedule}
             scrollToFirstError
             initialValues={{
               name: currentItem.name,
