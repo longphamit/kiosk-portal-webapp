@@ -108,12 +108,11 @@ export const EventCreatingPage = () => {
         listImage: listImage,
         banner: banner[1],
       };
-      let res = await createEventService(data);
-      toast.success(res.message);
+      await createEventService(data);
+      toast.success("Create event success");
       navigate(EVENT_MANAGER_PATH);
     } catch (error) {
-      toast.error("Create failed!");
-      console.error(error);
+      toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
     }

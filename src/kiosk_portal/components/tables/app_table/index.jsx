@@ -301,7 +301,7 @@ const ApplicationTable = () => {
   };
   const handleChangeStatusApplication = async (record) => {
     Modal.confirm({
-      title: "Are you sure to send request change status this application",
+      title: "Are you sure to send request publish this application",
       okText: t("yes"),
       cancelText: t("no"),
       onOk: async () => {
