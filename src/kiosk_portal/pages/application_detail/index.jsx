@@ -91,15 +91,15 @@ const ApplicationDetailPage = () => {
       await getAppById();
       await getInprogressAppPublishRequestByAppId();
       toast.success("Approve publish app success");
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      toast.error(error.response.data.message);
     }
   };
   const onDenySuccess = async () => {
     setDenyAppPublishModalVisible(false);
     await getInprogressAppPublishRequestByAppId();
     await getAppById();
-    toast.success("Approve publish app success");
+    toast.success("Deny publish app success");
   };
   const getApplicationPage = () => {
     const previousBreadCumb = JSON.parse(

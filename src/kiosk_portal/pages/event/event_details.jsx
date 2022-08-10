@@ -212,12 +212,9 @@ export const EventDetailsPage = () => {
     };
     try {
       let res = await updateEventService(data);
-      toast.success("Update Success");
-    } catch (e) {
-      if (e.response.code === 400) {
-        toast.error(e.response.data.message + ". Please edit date and time");
-      }
-      console.error(e);
+      toast.success("Update event success");
+    } catch (error) {
+      toast.error(error.response.data.message);
     } finally {
       setIsLoadingBasicInfo(false);
     }
@@ -273,7 +270,7 @@ export const EventDetailsPage = () => {
           banner: banner,
         };
         await updateBannerEventService(updateBanner);
-        toast.success("Update success");
+        toast.success("Update banner success");
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -296,7 +293,7 @@ export const EventDetailsPage = () => {
       values.listImage.fileList === undefined
     ) {
       // not update any image
-      toast.info("Nothing changed to save!");
+      toast.info("Nothing changed!");
       setIsLoadingListImage(false);
       return;
     } else if (

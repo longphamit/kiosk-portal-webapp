@@ -42,9 +42,12 @@ import {
   searchAccountService,
   updateAccountService,
 } from "../../services/account_service";
-import "./styles.css"
+import "./styles.css";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
-import { ACCOUNT_MANAGER_HREF, ACCOUNT_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  ACCOUNT_MANAGER_HREF,
+  ACCOUNT_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState(false);
@@ -83,7 +86,7 @@ const AccountManagerPage = () => {
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
     } catch (error) {
-      setListAccount([])
+      setListAccount([]);
       console.error(error);
     } finally {
       setListAccountLoading(false);
@@ -110,10 +113,10 @@ const AccountManagerPage = () => {
       await updateAccountService(updateAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
-      toast.success(t("toastsuccesseditaccount"));
+      toast.success("Edit account success");
       handleCancelEditAccount();
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     } finally {
       setUpdateAccountLoading(false);
     }
@@ -224,9 +227,12 @@ const AccountManagerPage = () => {
       await createAccountService(newAccount);
       getListAccountFunction(currentPage, numAccountInPage);
       setIsCreateAccountModalVisible(false);
-      toast.success(t("toastsuccesscreateaccount"));
+      toast.success("Create account success");
     } catch (error) {
-      toast.error(error.response.data.message ?? 'Cannot create new account! Please try again')
+      toast.error(
+        error.response.data.message ??
+          "Cannot create new account! Please try again"
+      );
       console.error(error);
     } finally {
       setCreateAccountLoading(false);
@@ -258,7 +264,7 @@ const AccountManagerPage = () => {
           try {
             await changeStatusAccountService(record.id, null).then(() => {
               getListAccountFunction(currentPage, numAccountInPage);
-              toast.success(t("toastsuccesschangestatus"));
+              toast.success("Change status account success");
             });
           } catch (error) {
             console.error(error);
@@ -418,9 +424,9 @@ const AccountManagerPage = () => {
     {
       href: ACCOUNT_MANAGER_HREF,
       label: ACCOUNT_MANAGER_LABEL,
-      icon: <UserOutlined />
+      icon: <UserOutlined />,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -513,25 +519,33 @@ const AccountManagerPage = () => {
           </Button>
         </Col>
       </Row>
-      {listAccount && !isListAccountLoading ?
-        listAccount.lenght === 0 ?
+      {listAccount && !isListAccountLoading ? (
+        listAccount.lenght === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
-            <Table columns={columns} dataSource={listAccount} pagination={false} />
+            <Table
+              columns={columns}
+              dataSource={listAccount}
+              pagination={false}
+            />
             <Pagination
               defaultCurrent={1}
               total={totalAccount}
               pageSize={5}
               onChange={handleChangeNumberOfPaging}
             />
-          </> : <Skeleton />
-      }
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
       <Modal
         title={t("createaccount")}
         visible={isCreateAccountModalVisible}
@@ -633,8 +647,8 @@ const AccountManagerPage = () => {
             <Select placeholder={t("selectrole")}>
               {listRole
                 ? listRole.map((item) => {
-                  return <Option value={item.id}>{item.name}</Option>;
-                })
+                    return <Option value={item.id}>{item.name}</Option>;
+                  })
                 : null}
             </Select>
           </Form.Item>

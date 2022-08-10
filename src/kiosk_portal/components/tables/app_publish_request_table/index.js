@@ -69,7 +69,7 @@ const AppPublishRequestTable = ({ partyId }) => {
             console.log(record)
             await cancelPublishRequestService(JSON.stringify(record.id))
             await getListAppPublishRequest(appPublishRequestPage, appPublishRequestPageSize);
-            toast.success("Cancel Success")
+            toast.success("Cancel request success")
           } catch (error) {
             toast.error(error.response.data.message);
           }
