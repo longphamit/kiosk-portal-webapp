@@ -30,6 +30,7 @@ import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { EVENT_CREATING_PATH } from "../../constants/path_constants";
 const EventManagerPage = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isEventsLoading, setEventsLoading] = useState(false);
     const [totalEvent, setTotalEvent] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [querySearch, setQuerySearch] = useState('');
@@ -47,6 +48,7 @@ const EventManagerPage = () => {
 
     const getListEventFunction = async (currentPageToGetList, numInPage) => {
         try {
+            setEventsLoading(true)
             if (isSearch) {
                 querySearch.page = currentPageToGetList;
                 let res = searchEventService(querySearch)
@@ -57,7 +59,6 @@ const EventManagerPage = () => {
             const res = await getListEventService(currentPageToGetList, numInPage);
             setTotalEvent(res.data.metadata.total);
             setListEvent(res.data.data);
-            return;
         } catch (error) {
             setListEvent([])
             if (error.response.code === 400) {
@@ -65,6 +66,8 @@ const EventManagerPage = () => {
             }
             resetPage();
             console.error(error);
+        } finally {
+            setEventsLoading(false)
         }
     };
 
@@ -426,28 +429,36 @@ const EventManagerPage = () => {
                     </Button>
                 </Col>
             </Row>
-            {listEvent ?
-                listEvent.length === 0 ?
-                    <>
+            {!isEventsLoading ?
+                listEvent ?
+                    listEvent.length === 0 ?
+                        <>
+                            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+                                <Col>
+                                    <Empty />
+                                </Col>
+                            </Row>
+                        </> :
+                        <>
+                            <Table
+                                rowClassName={(record, index) =>
+                                    record.status === STATUS_END ? 'tb-row-event-end' :
+
+                                        record.status === STATUS_ON_GOING ? 'tb-row-event-ongoing' : ''}
+                                columns={columns} dataSource={listEvent} pagination={false} />
+                            <Pagination
+                                defaultCurrent={1}
+                                total={totalEvent}
+                                pageSize={numEventInPage}
+                                onChange={handleChangeNumberOfPaging}
+                            />
+                        </>
+                    : <>
                         <Row justify='center' align='center' style={{ marginTop: 250 }}>
                             <Col>
                                 <Empty />
                             </Col>
                         </Row>
-                    </> :
-                    <>
-                        <Table 
-                        rowClassName={(record,index)=>
-                            record.status === STATUS_END? 'tb-row-event-end':
-                            
-                            record.status === STATUS_ON_GOING? 'tb-row-event-ongoing':''}
-                        columns={columns} dataSource={listEvent} pagination={false} />
-                        <Pagination
-                            defaultCurrent={1}
-                            total={totalEvent}
-                            pageSize={numEventInPage}
-                            onChange={handleChangeNumberOfPaging}
-                        />
                     </>
                 : <Skeleton />
             }
