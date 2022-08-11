@@ -1,12 +1,5 @@
 import { toast } from "react-toastify";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Upload,
-  Spin,
-} from "antd";
+import { Button, Form, Input, Modal, Upload, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -154,6 +147,16 @@ const ModalCreateLocation = ({
             name="description"
             label="Description"
             value={description}
+            rules={[
+              {
+                validator(values) {
+                  if (description === null || description === "") {
+                    return Promise.reject("Please input description");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <Editor
               style={{ height: "320px" }}

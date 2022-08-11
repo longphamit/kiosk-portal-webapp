@@ -367,7 +367,20 @@ export const EventCreatingPage = () => {
             <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
           </Upload>
         </Form.Item>
-        <Form.Item name="description" label="Description">
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[
+            {
+              validator(values) {
+                if (description === null || description === "") {
+                  return Promise.reject("Please input description");
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <Editor
             onTextChange={(e) => setDescription(e.htmlValue)}
             style={{ height: "300px" }}

@@ -150,7 +150,6 @@ const ModalCreatePoi = ({
           listImage: listImage,
           banner: banner[1],
         };
-        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
           toast.success("Create Poi Success");
@@ -193,13 +192,26 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: t("reqnameschedule"),
+                message: "Please input name",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              {
+                validator(values) {
+                  if (description === null || description === "") {
+                    return Promise.reject("Please input description");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
             <Editor
               onTextChange={(e) => setDescription(e.htmlValue)}
               style={{ height: "300px" }}
