@@ -54,7 +54,7 @@ const DetailLocationPage = () => {
     try {
       let res = await getLocationByIdService(id);
       setCurrentItem(res.data);
-      setDescription(res.data.description)
+      setDescription(res.data.description);
       let list = [];
       await Promise.all(
         res.data.listImage.map((img, index) => {

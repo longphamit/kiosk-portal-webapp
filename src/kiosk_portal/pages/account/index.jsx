@@ -29,11 +29,6 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import {
-  ROLE_ADMIN,
-  ROLE_LOCATION_OWNER,
-  ROLE_SERVICE_PROVIDER,
-} from "../../../@app/constants/role";
 import { getListRoleService } from "../../services/role_service";
 import {
   changeStatusAccountService,
@@ -67,8 +62,6 @@ const AccountManagerPage = () => {
     useState(false);
   const [isEditAccountModalVisible, setIsEditAccountModalVisible] =
     useState(false);
-  const [isAdvancedSearchModalVisible, setIsAdvancedSearchModalVisible] =
-    useState(false);
   const [accountSearchType, setAccountSearchType] = useState("FirstName");
   const [form] = Form.useForm();
   let navigate = useNavigate();
@@ -86,8 +79,7 @@ const AccountManagerPage = () => {
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
     } catch (error) {
-      setListAccount([]);
-      console.error(error);
+      toast.error(error.response.data.message);
     } finally {
       setListAccountLoading(false);
     }
@@ -100,21 +92,29 @@ const AccountManagerPage = () => {
   }, []);
 
   const onFinishEditAccount = async (values) => {
-    setUpdateAccountLoading(true);
-    const updateAccount = {
-      id: values.id,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      address: values.address,
-      dateOfBirth: values.dateOfBirth,
-    };
     try {
-      await updateAccountService(updateAccount);
-      getListAccountFunction(currentPage, numAccountInPage);
-      setIsCreateAccountModalVisible(false);
-      toast.success("Edit account success");
-      handleCancelEditAccount();
+      setUpdateAccountLoading(true);
+      let isCheck = true;
+      const today = new Date();
+      if (values.dateOfBirth - today > 0) {
+        isCheck = false;
+        toast.error("Date of birth need to soon form now");
+      }
+      if (isCheck) {
+        const updateAccount = {
+          id: values.id,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phoneNumber: values.phoneNumber,
+          address: values.address,
+          dateOfBirth: values.dateOfBirth,
+        };
+        await updateAccountService(updateAccount);
+        getListAccountFunction(currentPage, numAccountInPage);
+        setIsCreateAccountModalVisible(false);
+        toast.success("Edit account success");
+        handleCancelEditAccount();
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -122,31 +122,6 @@ const AccountManagerPage = () => {
     }
   };
 
-  const onFinishAdvancedSearch = async (values) => {
-    const search = {
-      firstName: values.firstName ?? "",
-      lastName: values.lastName ?? "",
-      phoneNumber: values.phoneNumber ?? "",
-      email: values.email ?? "",
-      address: values.address ?? "",
-      status: values.status ?? "",
-      roleName: values.roleName ?? "",
-      size: numAccountInPage,
-      page: 1,
-    };
-    try {
-      const res = await searchAccountService(search);
-      setTotalAccount(res.data.metadata.total);
-      setListAccount(res.data.data);
-      setIsSearch(true);
-      setQuerySearch(search);
-      handleCloseModalAdvancedSearch();
-    } catch (error) {
-      console.error(error);
-      setTotalAccount(0);
-      setListAccount([]);
-    }
-  };
   const buildPartyParamSearch = (value) => {
     let firstName = "";
     let lastName = "";
@@ -189,6 +164,7 @@ const AccountManagerPage = () => {
     };
   };
   const onFinishSearch = async (values) => {
+    console.log(values);
     const search = buildPartyParamSearch(values.searchString);
     search["status"] = values.status;
     search["size"] = numAccountInPage;
@@ -213,21 +189,29 @@ const AccountManagerPage = () => {
     setIsEditAccountModalVisible(false);
   };
   const onFinishCreateAccount = async (values) => {
-    setCreateAccountLoading(true);
-    const newAccount = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      email: values.email,
-      address: values.address,
-      dateOfBirth: values.dateOfBirth,
-      roleId: values.roleId,
-    };
     try {
-      await createAccountService(newAccount);
-      getListAccountFunction(currentPage, numAccountInPage);
-      setIsCreateAccountModalVisible(false);
-      toast.success("Create account success");
+      setCreateAccountLoading(true);
+      let isCheck = true;
+      const today = new Date();
+      if (values.dateOfBirth - today > 0) {
+        isCheck = false;
+        toast.error("Date of birth need to soon form now");
+      }
+      if (isCheck) {
+        const newAccount = {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          address: values.address,
+          dateOfBirth: values.dateOfBirth,
+          roleId: values.roleId,
+        };
+        await createAccountService(newAccount);
+        getListAccountFunction(currentPage, numAccountInPage);
+        setIsCreateAccountModalVisible(false);
+        toast.success("Create account success");
+      }
     } catch (error) {
       toast.error(
         error.response.data.message ??
@@ -247,13 +231,7 @@ const AccountManagerPage = () => {
   const handleCancelCreateAccount = () => {
     setIsCreateAccountModalVisible(false);
   };
-  const showModalAdvancedSearch = () => {
-    setIsAdvancedSearchModalVisible(true);
-    form.resetFields();
-  };
-  const handleCloseModalAdvancedSearch = () => {
-    setIsAdvancedSearchModalVisible(false);
-  };
+
   const handleChangeStatusAccount = async (record) => {
     Modal.confirm({
       title: t("confirmChangeStatusAccount"),
@@ -267,7 +245,7 @@ const AccountManagerPage = () => {
               toast.success("Change status account success");
             });
           } catch (error) {
-            console.error(error);
+            toast.error(error.response.data.message);
           }
         }
       },
@@ -275,8 +253,11 @@ const AccountManagerPage = () => {
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
+    console.log(page);
     setCurrentPage(page);
-    await getListAccountFunction(page, numAccountInPage);
+    const res = await getListAccountService(page, 5);
+    setTotalAccount(res.data.metadata.total);
+    setListAccount(res.data.data);
   };
 
   const converDate = (stringToConvert) => {
@@ -301,10 +282,6 @@ const AccountManagerPage = () => {
     {
       name: "Email",
       label: "Email",
-    },
-    {
-      name: "Address",
-      label: "Address",
     },
   ];
   const columns = [
@@ -479,7 +456,7 @@ const AccountManagerPage = () => {
                 >
                   <Select>
                     <Option value="">All</Option>
-                    <Option value="active">Active</Option>
+                    <Option value="activate">Active</Option>
                     <Option value="deactivate">Deactive</Option>
                   </Select>
                 </Form.Item>
@@ -496,15 +473,7 @@ const AccountManagerPage = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col span={3}>
-                <Button
-                  type="danger"
-                  size={"large"}
-                  onClick={showModalAdvancedSearch}
-                >
-                  <SearchOutlined /> Advance
-                </Button>
-              </Col>
+              <Col span={3} />
             </Row>
           </Form>
         </Col>
@@ -588,7 +557,7 @@ const AccountManagerPage = () => {
             label={t("phonenumber")}
             rules={[
               {
-                pattern: new RegExp("(84|0[3|5|7|8|9])+([0-9]{8})"),
+                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
                 message: t("formatphonenumber"),
               },
               {
@@ -661,71 +630,6 @@ const AccountManagerPage = () => {
                 {t("register")}
               </Button>
             )}
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Advanced Search"
-        visible={isAdvancedSearchModalVisible}
-        onCancel={handleCloseModalAdvancedSearch}
-        footer={null}
-      >
-        <Form
-          {...formItemLayout}
-          form={form}
-          name="advancedSearch"
-          onFinish={onFinishAdvancedSearch}
-          scrollToFirstError
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 14 }}
-          initialValues={{
-            address: "",
-            email: "",
-            firstName: "",
-            lastName: "",
-            phoneNumber: "",
-            roleName: "",
-            status: "",
-          }}
-        >
-          <Form.Item name="firstName" label={t("firstname")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="lastName" label={t("lastname")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="phoneNumber" label={t("phonenumber")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="email" label={t("email")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="address" label={t("address")}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="roleName" label={t("role")}>
-            <Select>
-              <Option value="">All</Option>
-              <Option value={ROLE_SERVICE_PROVIDER}>
-                {ROLE_SERVICE_PROVIDER}
-              </Option>
-              <Option value={ROLE_LOCATION_OWNER}>{ROLE_LOCATION_OWNER}</Option>
-              <Option value={ROLE_ADMIN}>{ROLE_ADMIN}</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="status" label={t("status")}>
-            <Select initialValues="">
-              <Option value="">All</Option>
-              <Option value="active">{t("active")}</Option>
-              <Option value="deactive">{t("deactive")}</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Space align="center">
-              <Button align="center" type="primary" htmlType="submit">
-                Search
-              </Button>
-            </Space>
           </Form.Item>
         </Form>
       </Modal>
