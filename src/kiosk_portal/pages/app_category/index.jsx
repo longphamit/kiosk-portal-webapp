@@ -131,7 +131,7 @@ const AppCategoryPage = () => {
     <>
       <CustomBreadCumb props={breadCumbData} />
       <Modal
-        title="Create Application"
+        title="Create Application Category"
         visible={isCreateCategoryModalVisible}
         onCancel={handleCancelCreateCategory}
         footer={null}
