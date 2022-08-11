@@ -346,6 +346,12 @@ const ApplicationTable = () => {
     );
   };
   const onFinishSearch = async (values) => {
+    var status = "";
+    if (typeof values.status === "undefined") {
+      status = "";
+    } else {
+      status = values.status;
+    }
     try {
       if (values.type === "name") {
         await getListApplicationFunction(
@@ -354,18 +360,7 @@ const ApplicationTable = () => {
           "",
           "",
           "",
-          "",
-          1,
-          numApplicationInPage
-        );
-      } else if (values.type === "status") {
-        await getListApplicationFunction(
-          "",
-          "",
-          "",
-          "",
-          "",
-          values.searchString,
+          status,
           1,
           numApplicationInPage
         );
@@ -376,11 +371,12 @@ const ApplicationTable = () => {
           values.searchString,
           "",
           "",
-          "",
+          status,
           1,
           numApplicationInPage
         );
       }
+      setCurrentPage(1);
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -415,6 +411,7 @@ const ApplicationTable = () => {
       toast.error(error.response.data.message);
     } finally {
       setIsAdvancedSearchModalVisible(false);
+      form.resetFields();
     }
   };
 
@@ -464,10 +461,6 @@ const ApplicationTable = () => {
     {
       name: "name",
       label: "Name",
-    },
-    {
-      name: "status",
-      label: "Status",
     },
     {
       name: "partyEmail",
@@ -667,18 +660,20 @@ const ApplicationTable = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={10}>
+              <Col span={8}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                  {applicationSearchType === "status" ? (
-                    <Select defaultValue="">
-                      <Option value="">Get all</Option>
-                      <Option value="available">Available</Option>
-                      <Option value="unavailable">Un Available</Option>
-                    </Select>
-                  ) : (
-                    <Input placeholder="Please input" />
-                  )}
+                  <Input placeholder="Please input" />
+
                   {/* <Input placeholder="Please input" /> */}
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item name="status" style={{ marginTop: 5 }}>
+                  <Select defaultValue="">
+                    <Option value="">Get all</Option>
+                    <Option value="available">Available</Option>
+                    <Option value="unavailable">Un Available</Option>
+                  </Select>
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -741,6 +736,7 @@ const ApplicationTable = () => {
               defaultCurrent={1}
               total={totalApplication}
               pageSize={5}
+              current={currentPage}
               onChange={handleChangeNumberOfPaging}
             />
           </>

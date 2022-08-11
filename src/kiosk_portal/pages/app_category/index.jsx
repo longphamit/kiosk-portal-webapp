@@ -27,6 +27,7 @@ const AppCategoryPage = () => {
   const [appCategoryPageTotal, setAppCategoryPageTotal] = useState(0);
   const [isCreateCategoryModalVisible, setIsCreateCategoryModalVisible] =
     useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [currentUnit, setCurrentUnit] = useState(null);
   const columns = [
@@ -83,6 +84,7 @@ const AppCategoryPage = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setAppCategoryPage(page);
+    setCurrentPage(page);
     await getAppCategoryList(page, appCategoryPageSize);
   };
 
@@ -177,6 +179,7 @@ const AppCategoryPage = () => {
               defaultCurrent={1}
               total={appCategoryPageTotal}
               pageSize={appCategoryPageSize}
+              current={currentPage}
               onChange={handleChangeNumberOfPaging}
             />
           </>
