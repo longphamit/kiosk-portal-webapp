@@ -151,7 +151,7 @@ const ProfilePage = () => {
                     label={t("phonenumber")}
                     rules={[
                       {
-                        pattern: new RegExp("(84|0[3|5|7|8|9])+([0-9]{8})"),
+                        pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
                         message: t("formatphonenumber"),
                       },
                       {
