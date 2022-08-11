@@ -783,10 +783,9 @@ const ApplicationTable = () => {
             required
             rules={[
               {
-                message: "Please input application description!",
-                validator: (_, value) => {
-                  if (!description) {
-                    return Promise.reject("");
+                validator(values) {
+                  if (description === null || description === "") {
+                    return Promise.reject("Please input description");
                   }
                   return Promise.resolve();
                 },
@@ -980,10 +979,9 @@ const ApplicationTable = () => {
                 required
                 rules={[
                   {
-                    message: "Please input application description!",
-                    validator: (_, value) => {
-                      if (!description) {
-                        return Promise.reject("");
+                    validator(values) {
+                      if (description === null || description === "") {
+                        return Promise.reject("Please input description");
                       }
                       return Promise.resolve();
                     },

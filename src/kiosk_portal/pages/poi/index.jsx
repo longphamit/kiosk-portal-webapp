@@ -26,7 +26,6 @@ import {
   EyeFilled,
   SwapOutlined,
 } from "@ant-design/icons";
-import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
 import { TYPE_SERVER } from "../../../@app/constants/key";
 import {
@@ -42,11 +41,8 @@ const PoiPage = () => {
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentUnit, setCurrentUnit] = useState(null);
   const [listPoiCategories, setListPoiCategories] = useState([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [listProvinces, setListProvinces] = useState([]);
   let navigate = useNavigate();
 
@@ -119,20 +115,12 @@ const PoiPage = () => {
   const showModal = (type) => {
     if (type === "create") {
       setIsCreateModalVisible(true);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(true);
-    } else if (type === "search") {
-      setIsSearchModalVisible(true);
     }
   };
 
   const onFinishModal = async (type, data) => {
     if (type === "create") {
       setIsCreateModalVisible(false);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(false);
-    } else if (type === "search") {
-      setIsSearchModalVisible(false);
     }
     if (data === null) {
       setCurrentPage(1);
@@ -164,15 +152,9 @@ const PoiPage = () => {
     }
   };
 
-  const onSearchModal = async (data) => {};
-
   const handleCancelModalPoi = (type) => {
     if (type === "create") {
       setIsCreateModalVisible(false);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(false);
-    } else if (type === "search") {
-      setIsSearchModalVisible(false);
     }
   };
 
@@ -298,15 +280,7 @@ const PoiPage = () => {
                 </Form.Item>
               </Col>
               <Col span={1} />
-              <Col span={3}>
-                <Button
-                  type="danger"
-                  size={"large"}
-                  onClick={() => showModal("search")}
-                >
-                  <SearchOutlined /> Advanced
-                </Button>
-              </Col>
+              <Col span={3} />
             </Row>
           </Form>
         </Col>
@@ -315,7 +289,9 @@ const PoiPage = () => {
           <Button
             className="success-button"
             size={"large"}
-            onClick={() => showModal("create")}
+            onClick={() => {
+              showModal("create");
+            }}
           >
             <PlusOutlined /> Create
           </Button>
@@ -350,16 +326,6 @@ const PoiPage = () => {
         handleCancelPoiModal={handleCancelModalPoi}
         listPoiCategories={listPoiCategories}
       />
-      {
-        <ModalAdvanceSearch
-          onSearchModal={onSearchModal}
-          modalToIndex={onFinishModal}
-          listProvinces={listProvinces}
-          isPoiModalVisible={isSearchModalVisible}
-          handleCancelPoiModal={handleCancelModalPoi}
-          listPoiCategories={listPoiCategories}
-        />
-      }
     </>
   );
 };

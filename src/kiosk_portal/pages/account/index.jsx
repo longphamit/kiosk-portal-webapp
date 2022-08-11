@@ -96,6 +96,7 @@ const AccountManagerPage = () => {
       setUpdateAccountLoading(true);
       let isCheck = true;
       const today = new Date();
+      console.log(values.dateOfBirth - today);
       if (values.dateOfBirth - today > 0) {
         isCheck = false;
         toast.error("Date of birth need to soon form now");

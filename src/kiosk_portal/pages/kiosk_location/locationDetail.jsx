@@ -208,6 +208,16 @@ const DetailLocationPage = () => {
                 <Form.Item
                   name="description"
                   label="Description"
+                  rules={[
+                    {
+                      validator(values) {
+                        if (description === null || description === "") {
+                          return Promise.reject("Please input description");
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
                   value={description}
                 >
                   <Editor
