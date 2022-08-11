@@ -172,6 +172,7 @@ const AccountManagerPage = () => {
     search["page"] = 1;
     try {
       const res = await searchAccountService(search);
+      setCurrentPage(1);
       setTotalAccount(res.data.metadata.total);
       setListAccount(res.data.data);
       setIsSearch(true);
@@ -509,6 +510,7 @@ const AccountManagerPage = () => {
               defaultCurrent={1}
               total={totalAccount}
               pageSize={5}
+              current={currentPage}
               onChange={handleChangeNumberOfPaging}
             />
           </>

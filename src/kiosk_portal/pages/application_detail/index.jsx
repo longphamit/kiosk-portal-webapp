@@ -192,7 +192,7 @@ const ApplicationDetailPage = () => {
                   >
                     <Image
                       size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
-                      src={app.logo}
+                      src={app.banner}
                       sizes="large"
                       width={40}
                       height={40}

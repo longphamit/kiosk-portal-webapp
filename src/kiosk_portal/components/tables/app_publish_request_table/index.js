@@ -222,8 +222,9 @@ const AppPublishRequestTable = ({ partyId }) => {
     };
     searchParam[`${type}`] = searchString;
     try {
+      setAppPublishRequestPage(1)
       const res = await getListAppPublishRequestSearchService(
-        appPublishRequestPage,
+        1,
         appPublishRequestPageSize,
         searchParam
       );
@@ -315,6 +316,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                 defaultCurrent={appPublishRequestPage}
                 total={appPublishRequestTotal}
                 pageSize={appPublishRequestPageSize}
+                current={appPublishRequestPage}
                 onChange={handlePaginationAppPublishRequest}
               />
             </> : <Skeleton />
