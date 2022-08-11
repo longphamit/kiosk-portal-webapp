@@ -16,15 +16,17 @@ const ModalUpdateAppCategory = ({
   currentUnit,
 }) => {
   const [form] = Form.useForm();
-  const [isHasPicture, setIsHasPicture] = useState(true);
 
   useEffect(async () => {
     form.resetFields();
-  }, []);
+  }, [form]);
 
-  const onFinishUpdatePoi = async (values) => {
+  const onFinishUpdateAppCaterogy = async (values) => {
     try {
-      if (isHasPicture) {
+      if (
+        typeof values.logo === "undefined" ||
+        values.logo.fileList.length !== 0
+      ) {
         let valueLogo = "";
         if (typeof values.logo === "undefined") {
           valueLogo = currentUnit.logo;
@@ -57,13 +59,7 @@ const ModalUpdateAppCategory = ({
     form.resetFields();
     handleCancelModal("update");
   };
-  const onChange = (file) => {
-    if (file.file.status === "removed") {
-      setIsHasPicture(false);
-    } else {
-      setIsHasPicture(true);
-    }
-  };
+
   return (
     <>
       {currentUnit ? (
@@ -78,10 +74,11 @@ const ModalUpdateAppCategory = ({
             {...formItemLayout}
             form={form}
             name="registerPoi"
-            onFinish={onFinishUpdatePoi}
+            onFinish={onFinishUpdateAppCaterogy}
             scrollToFirstError
             initialValues={{
               name: currentUnit.name,
+              commissionPercentage: currentUnit.commissionPercentage + "",
             }}
           >
             <Form.Item
@@ -103,7 +100,6 @@ const ModalUpdateAppCategory = ({
                 maxCount={1}
                 accept={ACCEPT_IMAGE}
                 beforeUpload={beforeUpload}
-                onChange={onChange}
                 defaultFileList={[
                   {
                     uid: "abc",
@@ -115,6 +111,25 @@ const ModalUpdateAppCategory = ({
               >
                 <Button icon={<UploadOutlined />}>Upload</Button>
               </Upload>
+            </Form.Item>
+            <Form.Item
+              name="commissionPercentage"
+              label="Commission"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input Commission Percentage!",
+                },
+                {
+                  pattern:
+                    "^([0-9]*[.])?[0-9]$|^([1-9][0-9]*[.])?[0-9]$|[1-9][0-9]?|^(100)$",
+                  message: "Please input number >0 and <100",
+                },
+              ]}
+            >
+              <Input
+                addonAfter={<p style={{ height: 16, fontWeight: 900 }}>%</p>}
+              />
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
