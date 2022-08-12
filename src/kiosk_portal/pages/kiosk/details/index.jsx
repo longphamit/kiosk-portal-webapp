@@ -42,7 +42,6 @@ export const KioskDetailsPage = () => {
         try {
             const res = await getAllMyApplicationService();
             setApps(res.data.data);
-            console.log(res.data.data)
             return;
         } catch (error) {
             setApps([])

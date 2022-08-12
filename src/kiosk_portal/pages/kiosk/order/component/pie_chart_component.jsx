@@ -5,8 +5,8 @@ import { EmptyCard } from "../../../../../@app/components/card/empty_card";
 import OrderPieChart from "../../../../components/charts/order_pie_chart";
 import { getKisokOrderCommissionByMonthService, getKisokOrderCommissionByYearService, getKisokOrderCommissionService } from "../../../../services/order_service";
 import moment from 'moment'
-import { randomColor } from "../../../../../@app/utils/chart_util";
 import { FilterChartType } from "../../../../components/charts/utils";
+import { rePerformChartData } from "./utils";
 
 const TITLE_PIE_STATISTIC_ALL = `Revenue statistic`
 export const PieChartComponent = ({ kioskId }) => {
@@ -53,7 +53,7 @@ export const PieChartComponent = ({ kioskId }) => {
         try {
             setPieChartLoading(true);
             const res = await getKisokOrderCommissionByMonthService(month, year, kioskId)
-            setOrders(res.data);
+            setOrders(rePerformChartData(res.data));
         } catch (error) {
             setOrders(null)
             console.error(error);
@@ -66,7 +66,7 @@ export const PieChartComponent = ({ kioskId }) => {
         try {
             setPieChartLoading(true);
             const res = await getKisokOrderCommissionByYearService(year, kioskId)
-            setOrders(res.data);
+            setOrders(rePerformChartData(res.data));
         } catch (error) {
             setOrders(null)
             console.error(error);
@@ -97,6 +97,8 @@ export const PieChartComponent = ({ kioskId }) => {
         }
         setTitlePieChart(title);
     }
+
+
     const getListOrderFunction = async () => {
         try {
             setPieChartLoading(true);
@@ -104,18 +106,7 @@ export const PieChartComponent = ({ kioskId }) => {
             if (res.data.length == 0) {
                 setOrders(null);
             } else {
-                const colors = res.data.map(e => randomColor());
-                const data = {
-                    labels: res.data.map(e => e.serviceApplicationName),
-                    datasets: [
-                        {
-                            data: res.data.map(e => e.totalCommission),
-                            backgroundColor: colors,
-                            hoverBackgroundColor: colors
-                        }
-                    ]
-                }
-                setOrders(data);
+                setOrders(rePerformChartData(res.data));
             }
         } catch (error) {
             setOrders(null)
@@ -137,7 +128,7 @@ export const PieChartComponent = ({ kioskId }) => {
         {
             !isPieChartLoading ?
                 orders ?
-                    orders.length === 0 || orders.datasets.length === 0 ?
+                    orders.labels.length === 0 ?
                         <>
                             <EmptyCard styles={{ marginTop: 50 }} />
                         </> :
