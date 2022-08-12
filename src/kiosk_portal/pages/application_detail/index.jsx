@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Collapse,
   Descriptions,
   Empty,
   Image,
@@ -37,6 +38,7 @@ import CreateFeedbackModal from "./components/create_feedback_modal";
 import UpdateFeedbackModal from "./components/update_feedback_modal";
 import CustomRatingAndFeedback from "../../components/general/CustomRatingAndFeedback";
 import { CommissionTabComponent } from "./components/comission_tab";
+import { getMyApplicationById } from "../../services/party_service_application";
 const ApplicationDetailPage = () => {
   const { id } = useParams();
   const { TabPane } = Tabs;
@@ -51,14 +53,15 @@ const ApplicationDetailPage = () => {
   const [isDenyAppPublishModalVisible, setDenyAppPublishModalVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
+  const { Panel } = Collapse;
   const getAppById = async () => {
     let tempId = "";
     if (id.includes("installed")) {
       tempId = id.replaceAll("&&installed", "");
-      setInstalled(true);
     } else {
       tempId = id;
     }
+    checkAppIsInstalled(tempId)
     setAppId(tempId);
     try {
       const res = await getApplicationServiceById(tempId);
@@ -71,6 +74,15 @@ const ApplicationDetailPage = () => {
       setListFeedback([]);
     }
   };
+  const checkAppIsInstalled = async (applicationId) => {
+    try {
+      let res = await getMyApplicationById(applicationId);
+      setInstalled(true);
+    } catch (e) {
+      console.error(e)
+      setInstalled(false);
+    }
+  }
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
       if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
@@ -114,6 +126,18 @@ const ApplicationDetailPage = () => {
     label: APP_DETAILS_LABEL,
     icon: null,
   };
+  const getButtonFeedback = () => {
+    if (isInstalled && myFeedback === null)
+      return <>
+        <Button
+          type="primary"
+          onClick={() => setCreateModalVisible(true)}
+        >
+          Feedback Now
+        </Button>
+      </>
+    return null;
+  }
 
   return (
     <>
@@ -249,7 +273,11 @@ const ApplicationDetailPage = () => {
               ) : null}
             </Col>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: app.description }} />
+          <Collapse defaultActiveKey={['1']} >
+            <Panel header="Description" key="1">
+              <div dangerouslySetInnerHTML={{ __html: app.description }} />
+            </Panel>
+          </Collapse>
           <Tabs defaultActiveKey="1">
             <TabPane tab="App Preview" key="1">
               <Row>
@@ -309,7 +337,7 @@ const ApplicationDetailPage = () => {
                                     type="primary"
                                     onClick={() => setCreateModalVisible(true)}
                                   >
-                                    Feedback Now
+                                    {getButtonFeedback()}
                                   </Button>
                                 </Empty>
                               </>
@@ -320,12 +348,7 @@ const ApplicationDetailPage = () => {
                     </>
                   ) : (
                     <Empty>
-                      <Button
-                        type="primary"
-                        onClick={() => setCreateModalVisible(true)}
-                      >
-                        Feedback Now
-                      </Button>
+                      {getButtonFeedback()}
                     </Empty>
                   )
                 ) : (
