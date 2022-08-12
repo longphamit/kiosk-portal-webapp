@@ -36,6 +36,7 @@ import { PREVIOUS_PATH } from "../../../@app/constants/key";
 import CreateFeedbackModal from "./components/create_feedback_modal";
 import UpdateFeedbackModal from "./components/update_feedback_modal";
 import CustomRatingAndFeedback from "../../components/general/CustomRatingAndFeedback";
+import { CommissionTabComponent } from "./components/comission_tab";
 const ApplicationDetailPage = () => {
   const { id } = useParams();
   const { TabPane } = Tabs;
@@ -213,7 +214,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               approveAppPublishRequest();
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -229,7 +230,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               setDenyAppPublishModalVisible(true);
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -332,6 +333,13 @@ const ApplicationDetailPage = () => {
                 )}
               </div>
             </TabPane>
+            {isInstalled ?
+              <>
+                <TabPane tab="Commission" key="3">
+                  <CommissionTabComponent appId={appId} />
+                </TabPane>
+              </> : null
+            }
           </Tabs>
         </>
       ) : (

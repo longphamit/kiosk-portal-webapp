@@ -3,6 +3,7 @@ import { getKisokOrderCommissionService } from "../../../services/order_service"
 import { Col, Empty, Row, Select, Skeleton, Spin, Table } from "antd";
 import OrderPieChart from "../../../components/charts/order_pie_chart";
 import { AppSelectComponent } from "./component/app_select_component";
+import { convertToVietNameCurrency } from "../../../components/charts/utils";
 export const KioskOrderTable = ({ kioskId, apps }) => {
     const [orders, setOrders] = useState();
     const [appSelects, setAppSelects] = useState();
@@ -42,10 +43,6 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
         initialAppSelect()
         getListOrderFunction();
     }, []);
-
-    const convertToVietNameCurrency = (text) => {
-        return text.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
-    }
 
     const columns = [
         {

@@ -8,3 +8,7 @@ export enum FilterChartType {
     Year,
     Month
 }
+
+export const convertToVietNameCurrency = (text: any) => {
+    return text.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+}
