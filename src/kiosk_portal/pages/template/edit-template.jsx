@@ -8,19 +8,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { createAppCategoryPosition, createEventPosition, getAppCategoryPositionService, getEventPositionService, getTemplateById, updateAppCategoryPosition, updateEventPosition } from "../../services/template_service";
 import { TEMPLATE_CREATE_LABEL, TEMPLATE_EDITING_HREF, TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-import { buildPositionsModelRequest, checkEmptyRow, createEventModel, getComponentFromList, getIndexOfEmptyRow, isColumnExisted, removeItemFromList, reorderKeysOfObject } from "./components/utils";
+import { buildPositionsModelRequest, createEventModel, getComponentFromList, removeItemFromList, reorderKeysOfObject } from "./components/utils";
 import { CustomDragDropContext } from "./components/custom_drag_drop_context";
 import { TemplateBasicInfo } from "./components/template_basic_info";
 import { SaveButtonComponent } from "./components/save_button_component";
-import { AddRowComponent } from "./components/add_row_button_component";
 //Selected Type
 const SELECTED_TYPE_CATEGORY = "category";
 const SELECTED_TYPE_EVENT = "event";
-const ROOT_ROW_CATEGORY = "categoryavailable";
-const ROOT_ROW_EVENT = "eventavailable";
-const FIRST_ROW_EVENT = "eventrow1"
-const FIRST_ROW_CATEGORY = "categoryrow1"
-const WARN_DO_NOT_LEAVE_EMPTY_ROW = 'Dont leave an empty row!'
+
 const EditTemplatePage = () => {
     const [isLoading, setLoading] = useState(false);
     const [isChanging, setChanging] = useState(false);
@@ -87,7 +82,11 @@ const EditTemplatePage = () => {
         try {
             let allEvents = await getAllEvents();
             let res = await getEventPositionService(searchParams.get("id"));
-            let data = {};
+            let data = {
+                '0': [],
+                '1': [],
+                '2': []
+            };
             let listEventPosition = res.data.listPosition;
             if (listEventPosition.length !== 0) {
                 for (let p of listEventPosition) {
@@ -107,15 +106,11 @@ const EditTemplatePage = () => {
                             }
                         }
                         let rowIndex = p.rowIndex;
-                        if (!isColumnExisted(rowIndex, data)) {
-                            data['eventrow' + `${rowIndex + 1}`] = dataTemp;
-                        }
+                        data[rowIndex == 0 ? '1' : '2'] = dataTemp;
                     }
                 }
-            } else {
-                data[`${FIRST_ROW_EVENT}`] = [];
             }
-            data[`${ROOT_ROW_EVENT}`] = allEvents;
+            data['0'] = allEvents;
             setEventComponents(reorderKeysOfObject(data))
         } catch (e) {
             setEventComponents({})
@@ -126,7 +121,10 @@ const EditTemplatePage = () => {
         try {
             let allCategories = await getAllAppCategories();
             let res = await getAppCategoryPositionService(searchParams.get("id"));
-            let data = {};
+            let data = {
+                '0': [],
+                '1': [],
+            };
             let listAppCategoryPosition = res.data.listPosition;
             if (listAppCategoryPosition.length !== 0) {
                 for (let p of listAppCategoryPosition) {
@@ -138,15 +136,11 @@ const EditTemplatePage = () => {
                             dataTemp[component.columnIndex] = { id: appCategory.id, image: appCategory.image, name: appCategory.name }
                         }
                         let rowIndex = p.rowIndex;
-                        if (!isColumnExisted(rowIndex, data)) {
-                            data['categoryrow' + `${rowIndex + 1}`] = dataTemp;
-                        }
+                        data[rowIndex == 0 ? '1' : '2'] = dataTemp;
                     }
                 }
-            } else {
-                data[`${FIRST_ROW_CATEGORY}`] = [];
             }
-            data[`${ROOT_ROW_CATEGORY}`] = allCategories;
+            data['0'] = allCategories;
             setCategoryComponents(reorderKeysOfObject(data))
         } catch (e) {
             setCategoryComponents({})
@@ -158,34 +152,7 @@ const EditTemplatePage = () => {
         getEventPositions();
         getAppCategoryPositions();
     }, []);
-    function generateRowName() {
-        let defaultName = selectedType + "row";
-        let index = 1;
-        Object.entries(selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents).map(([k, v]) => {
-            if (k.includes(defaultName)) {
-                index = parseInt(k.replace(defaultName, ''));
-            }
-        });
-        return defaultName + (parseInt(index) + 1);
-    }
 
-    function onClickAddNewRow() {
-        if (haveEmptyRow()) {
-            toast.warn(WARN_DO_NOT_LEAVE_EMPTY_ROW)
-        }
-        let rowName = generateRowName();
-        if (selectedType == SELECTED_TYPE_CATEGORY) {
-            setCategoryComponents(prevState => {
-                return { ...prevState, [`${rowName}`]: [] };
-            });
-            setChanging(true);
-            return;
-        }
-        setEventComponents(prevState => {
-            return { ...prevState, [`${rowName}`]: [] };
-        });
-        setChanging(true)
-    }
     const onSelectedTypeChange = (value) => {
         if (isChanging) {
             Modal.confirm({
@@ -206,59 +173,10 @@ const EditTemplatePage = () => {
         setChanging(false)
         setSelectedType(value);
     }
-    function deleteRow(rowName) {
-        let state;
-        if (selectedType === SELECTED_TYPE_CATEGORY) {
-            state = { ...categoryComponents };
-            if (state[`${rowName}`].length != 0) {
-                state[`${rowName}`].forEach(element => {
-                    state[`${ROOT_ROW_CATEGORY}`].push(element);
-                });
-            }
-            delete state[`${rowName}`];
-            setCategoryComponents(state);
-            setChanging(true);
-            return;
-        }
-        state = { ...eventComponents };
-        if (state[`${rowName}`].length != 0) {
-            state[`${rowName}`].forEach(element => {
-                state[`${ROOT_ROW_EVENT}`].push(element);
-            });
-        }
-        delete state[`${rowName}`];
-        setChanging(true)
-        setEventComponents(state)
-    }
-    const haveEmptyRow = () => {
-        if (selectedType === SELECTED_TYPE_CATEGORY) {
-            return checkEmptyRow(categoryComponents, ROOT_ROW_CATEGORY)
-        }
-        return checkEmptyRow(eventComponents, ROOT_ROW_EVENT)
-
-    }
-    const haveEmptyRowWithParam = (components) => {
-        if (selectedType === SELECTED_TYPE_CATEGORY) {
-            return checkEmptyRow(components, ROOT_ROW_CATEGORY)
-        }
-        return checkEmptyRow(components, ROOT_ROW_EVENT);
-    }
 
     const save = async () => {
         setLoading(true);
-        if (checkEmptyRow) {
-            let rowIndex;
-            if (selectedType === SELECTED_TYPE_CATEGORY) {
-                rowIndex = getIndexOfEmptyRow(categoryComponents, ROOT_ROW_CATEGORY)
-            } else {
-                rowIndex = getIndexOfEmptyRow(eventComponents, ROOT_ROW_EVENT)
-            }
-            if (rowIndex !== -1) {
-                toast.error(`The row ${rowIndex} is empty!\nPlease remove all empty rows before you save!`)
-                setLoading(false);
-                return;
-            }
-        }
+
         let request = buildPositionsModelRequest(
             selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents,
             currentTemplate.id, selectedType);
@@ -268,7 +186,7 @@ const EditTemplatePage = () => {
                 if (selectedType === SELECTED_TYPE_CATEGORY && isFirstSavingCategory) {
                     res = await createAppCategoryPosition(request)
                     setFirstSavingCategory(false)
-                } else if (selectedType === SELECTED_TYPE_EVENT && isFirstSavingCategory) {
+                } else if (selectedType === SELECTED_TYPE_EVENT && isFirstSavingEvent) {
                     res = await createEventPosition(request);
                     setFirstSavingEvent(false)
                 } else {
@@ -279,7 +197,7 @@ const EditTemplatePage = () => {
                     }
                 }
             } else {
-                if (selectedType === SELECTED_TYPE_CATEGORY) {
+                if (selectedType === SELECTED_TYPE_CATEGORY && isFirstSavingEvent) {
                     res = await updateAppCategoryPosition(request);
                 } else {
                     res = await updateEventPosition(request);
@@ -328,13 +246,11 @@ const EditTemplatePage = () => {
 
                 <div id="arrangement-space">
                     {selectedType === SELECTED_TYPE_CATEGORY ? <>
-                        {categoryComponents.length != 0 ?
+                        {categoryComponents ?
                             <CustomDragDropContext
                                 selectedType={selectedType}
                                 setComponents={setCategoryComponents}
                                 previousComponents={categoryComponents}
-                                deleteRow={deleteRow}
-                                haveEmptyRow={haveEmptyRowWithParam}
                                 setChanging={setChanging}
                             />
                             :
@@ -343,13 +259,11 @@ const EditTemplatePage = () => {
                             </>
                         }
                     </> : <>
-                        {eventComponents.length != 0 ?
+                        {eventComponents ?
                             <CustomDragDropContext
                                 selectedType={selectedType}
                                 setComponents={setEventComponents}
                                 previousComponents={eventComponents}
-                                deleteRow={deleteRow}
-                                haveEmptyRow={haveEmptyRowWithParam}
                                 setChanging={setChanging}
                             />
                             :
@@ -364,7 +278,6 @@ const EditTemplatePage = () => {
                 {
                     (selectedType === SELECTED_TYPE_CATEGORY && categoryComponents.length != 0) || (selectedType === SELECTED_TYPE_EVENT && eventComponents.length != 0) ?
                         <div style={{ marginTop: 40 }}>
-                            <AddRowComponent onClickAddNewRow={onClickAddNewRow} />
                             <SaveButtonComponent save={save} isLoading={isLoading} />
                         </div> : null
                 }
