@@ -29,7 +29,7 @@ const KioskLocationPage = () => {
       render: (text) => <p>{text}</p>,
     },
     {
-      title: "HotLine",
+      title: "Hotline",
       dataIndex: "hotLine",
       key: "hotLine",
       render: (text) => <p>{text}</p>,

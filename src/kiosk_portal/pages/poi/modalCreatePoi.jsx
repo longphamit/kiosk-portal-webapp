@@ -152,7 +152,7 @@ const ModalCreatePoi = ({
         };
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
-          toast.success("Create Poi Success");
+          toast.success("Create POI Success");
           form.resetFields();
         });
       } else {
@@ -172,7 +172,7 @@ const ModalCreatePoi = ({
   return (
     <>
       <Modal
-        title="Create Poi"
+        title="Create POI"
         visible={isCreatePoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
@@ -421,7 +421,7 @@ const ModalCreatePoi = ({
               <Spin />
             ) : (
               <Button type="primary" htmlType="submit">
-                Create Poi
+                Create POI
               </Button>
             )}
           </Form.Item>

@@ -105,7 +105,7 @@ export const KioskLocationInformationComponent = ({ kioskLocationId }) => {
                         }
                     </Row>
                 </> :
-                <Empty style={{ marginTop: 40 }} /> :
+                <Empty style={{ marginTop: 300 }} /> :
             <Skeleton />
         }
     </>

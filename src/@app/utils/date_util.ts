@@ -15,7 +15,7 @@ export  const getDate = (dateOfBirth: any) => {
 
 export   const splitTimeString = (time:any) => {
     const timeSplit = time.split(".");
-    return timeSplit[0];
+    return timeSplit[0].slice(0, 5);
   };
 
 export  const formatDatePicker = (str:any) => {

@@ -44,6 +44,7 @@ import {
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { EVENT_CREATING_PATH } from "../../constants/path_constants";
+import { adminColumns, locationOwnerColumns } from "./utils";
 const EventManagerPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEventsLoading, setEventsLoading] = useState(false);
@@ -55,6 +56,7 @@ const EventManagerPage = () => {
   const [numEventInPage, setNumEventInPage] = useState(10);
   const [listEvent, setListEvent] = useState();
   useState(false);
+  let role = localStorageGetReduxState().auth.role;
   const [searchForm] = Form.useForm();
   let navigate = useNavigate();
 
@@ -180,7 +182,7 @@ const EventManagerPage = () => {
     searchStr["size"] = numEventInPage;
     searchStr["page"] = 1;
     searchStr["status"] = values.status;
-    if (localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) {
+    if (role === ROLE_LOCATION_OWNER) {
       searchStr["type"] = "local";
     }
     try {
@@ -223,111 +225,8 @@ const EventManagerPage = () => {
     });
   };
 
-  const convertDate = (str) => {
-    return {
-      date: moment(str).format("DD/MM/YYYY"),
-      time: moment(str).format("HH:ss"),
-    };
-  };
-  const columns = [
-    {
-      title: "Image",
-      render: (text, record, dataIndex) => (
-        <img src={record.thumbnail.link} width={50} height={50} />
-      ),
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Time Start",
-      dataIndex: "timeStart",
-      key: "timeStart",
-      render: (text) => {
-        let data = convertDate(text);
-        return (
-          <>
-            <p>{data.date}</p>
-            <br />
-            <p>{data.time}</p>
-          </>
-        );
-      },
-    },
-    {
-      title: "Time End",
-      dataIndex: "timeEnd",
-      key: "timeEnd",
-      render: (text) => {
-        let data = convertDate(text);
-        return (
-          <>
-            <p>{data.date}</p>
-            <br />
-            <p>{data.time}</p>
-          </>
-        );
-      },
-    },
-    {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (text) =>
-        text === STATUS_COMING_SOON ? (
-          <Tag color={"yellow"}>Up coming</Tag>
-        ) : text === STATUS_ON_GOING ? (
-          <Tag color={"green"}>On going</Tag>
-        ) : (
-          <Tag color={"grey"}>End</Tag>
-        ),
-    },
-    {
-      title: "Created By",
-      dataIndex: "type",
-      key: "type",
-      render: (text) =>
-        text == TYPE_SERVER ? <p>Admin</p> : <p>Location Owner</p>,
-    },
-    {
-      title: "Action",
-      key: "action",
-      align: "center",
-      render: (text, record, dataIndex) => (
-        <Space size="middle">
-          <Button
-            className="infor-button"
-            shape="default"
-            onClick={() => {
-              onNavigate({ pathname: "/./event", search: "?id=" + record.id });
-            }}
-          >
-            <EyeFilled /> Details
-          </Button>
 
-          <Button
-            className="danger-button"
-            shape="default"
-            name={record}
-            onClick={() => {
-              handleDeleteEvent(record);
-            }}
-          >
-            <DeleteFilled /> Delete
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+
   const breadCumbData = [
     {
       href: EVENT_MANAGER_HREF,
@@ -416,10 +315,10 @@ const EventManagerPage = () => {
                   record.status === STATUS_END
                     ? "tb-row-event-end"
                     : record.status === STATUS_ON_GOING
-                    ? "tb-row-event-ongoing"
-                    : ""
+                      ? "tb-row-event-ongoing"
+                      : ""
                 }
-                columns={columns}
+                columns={role === ROLE_ADMIN ? adminColumns(handleDeleteEvent, onNavigate) : locationOwnerColumns(handleDeleteEvent, onNavigate)}
                 dataSource={listEvent}
                 pagination={false}
               />

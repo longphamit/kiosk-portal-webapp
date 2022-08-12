@@ -329,9 +329,9 @@ const AccountManagerPage = () => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "activate" ? (
-          <Tag color="green">{t("activate")}</Tag>
+          <Tag color="green">Activate</Tag>
         ) : (
-          <Tag color="red">{t("deactive")}</Tag>
+          <Tag color="red">Deactivate</Tag>
         ),
     },
 
@@ -560,7 +560,7 @@ const AccountManagerPage = () => {
             label={t("phonenumber")}
             rules={[
               {
-                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
+                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
                 message: t("formatphonenumber"),
               },
               {
@@ -692,7 +692,7 @@ const AccountManagerPage = () => {
               label={t("phonenumber")}
               rules={[
                 {
-                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
+                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
                   message: t("formatphonenumber"),
                 },
                 {

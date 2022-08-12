@@ -8,7 +8,6 @@ import {
   Pagination,
   Row,
   Skeleton,
-  Space,
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -23,17 +22,16 @@ import { getListPoiCategoriesService } from "../../services/poi_category_service
 import {
   SearchOutlined,
   PlusOutlined,
-  EyeFilled,
-  SwapOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { TYPE_SERVER } from "../../../@app/constants/key";
 import {
   POI_MANAGER_HREF,
   POI_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { toast } from "react-toastify";
+import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
+import { columns } from "./utils";
 
 const PoiPage = () => {
   const { t } = useTranslation();
@@ -44,6 +42,7 @@ const PoiPage = () => {
   const [listPoiCategories, setListPoiCategories] = useState([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [listProvinces, setListProvinces] = useState([]);
+  let role = localStorageGetReduxState().auth.role;
   let navigate = useNavigate();
 
   const [form] = Form.useForm();
@@ -192,68 +191,6 @@ const PoiPage = () => {
     });
   };
 
-  const columns = [
-    {
-      title: "Image",
-      render: (text, record, dataIndex) => (
-        <img src={record.thumbnail.link} width={50} height={50} />
-      ),
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Open Day",
-      dataIndex: "dayOfWeek",
-      key: "dayOfWeek",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Create By",
-      dataIndex: "type",
-      key: "type",
-      render: (text) => (
-        <p>{text === TYPE_SERVER ? "Admin" : "Location owner"}</p>
-      ),
-    },
-
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text, record, dataIndex) => <p>{text}</p>,
-    },
-    {
-      title: t("action"),
-      key: "action",
-      align: "center",
-      render: (text, record, dataIndex) => (
-        <Space size="middle">
-          <Button
-            className="infor-button"
-            shape="default"
-            onClick={() => {
-              onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
-            }}
-          >
-            <EyeFilled /> Details
-          </Button>
-          <Button
-            className="warn-button"
-            shape="default"
-            onClick={() => {
-              onFinishChangeStatusPoi(record);
-            }}
-          >
-            <SwapOutlined /> Change Status
-          </Button>
-        </Space>
-      ),
-    },
-  ];
 
   return (
     <>
@@ -306,7 +243,7 @@ const PoiPage = () => {
           </Row>
         ) : (
           <>
-            <Table columns={columns} dataSource={listUnit} pagination={false} />
+            <Table columns={columns(onFinishChangeStatusPoi, t)} dataSource={listUnit} pagination={false} />
             <Pagination
               defaultCurrent={1}
               total={totalUnit}

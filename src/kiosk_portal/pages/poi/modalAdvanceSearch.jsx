@@ -143,7 +143,7 @@ const ModalAdvanceSearch = ({
   return (
     <>
       <Modal
-        title="Search Poi"
+        title="Search POI"
         visible={isPoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
@@ -230,7 +230,7 @@ const ModalAdvanceSearch = ({
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Search Poi
+              Search POI
             </Button>
           </Form.Item>
         </Form>

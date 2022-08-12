@@ -1,13 +1,10 @@
 import {
   Button,
   Col,
-  Collapse,
   Form,
   Input,
   Modal,
   Pagination,
-  Popconfirm,
-  Rate,
   Row,
   Select,
   Skeleton,
@@ -16,31 +13,22 @@ import {
   Table,
   Tag,
 } from "antd";
-import {StopFilled, ArrowDownOutlined, EditFilled, EyeFilled, SwapOutlined, SyncOutlined } from "@ant-design/icons";
-
+import { StopFilled, EditFilled, EyeFilled, SwapOutlined, ExclamationCircleOutlined, StarOutlined, StarFilled } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
-import { downloadTxtFile } from "../../../../@app/utils/file_util";
 import {
   createKioskService,
   getListKioskService,
   changeStatusKioskService,
-  updateKioskService,
 } from "../../../services/kiosk_service";
 import {
-  formItemLayout,
-  tailFormItemLayout,
-} from "../../../layouts/form_layout";
-import {
   localStorageGetReduxState,
-  localStorageSaveReduxState,
 } from "../../../../@app/services/localstorage_service";
 import { ROLE_ADMIN } from "../../../../@app/constants/role";
 import { useNavigate } from "react-router-dom";
 import ModalAddLocation from "../../../pages/kiosk/modalAddLocation";
 import { getListKioskLocationService } from "../../../services/kiosk_location_service";
-import { async } from "@firebase/util";
 import { PREVIOUS_PATH } from "../../../../@app/constants/key";
 import {
   KIOSK_MANAGER_HREF,
@@ -61,19 +49,15 @@ const KioskTable = ({ partyId }) => {
   const [kioskTotal, setKioskTotal] = useState(0);
   const [kioskPage, setKioskPage] = useState(0);
   const [kioskPageSize, setKioskPageSize] = useState(5);
-  const [kioskLocations, setKioskLocations] = useState();
   const [currentKiosk, setCurrentKiosk] = useState();
-  const [isCreateKioskModalVisible, setIsCreateKioskModalVisible] =
-    useState(false);
   const { t } = useTranslation();
   const [searchKioskForm, createKioskForm] = Form.useForm();
   const [isModalAddLocationVisible, setIsModalAddLocationVisible] =
     useState(false);
-    const [isModalChangeNameKioskVisible, setIsModalChangeNameKioskVisible] =
+  const [isModalChangeNameKioskVisible, setIsModalChangeNameKioskVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
   const [isLoading, setIsLoading] = useState(false);
-
   const [listLocation, setListLocation] = useState([]);
   const breadCumbData = [
     {
@@ -176,7 +160,7 @@ const KioskTable = ({ partyId }) => {
             {text}
           </Tag>
         ) : (
-          <Tag color={"red"}>Null</Tag>
+          <Tag color={"red"}>Unknow</Tag>
         ),
     },
     {
@@ -185,10 +169,8 @@ const KioskTable = ({ partyId }) => {
       key: "averageRating",
       render: (text, record, dataIndex) => (
         <>
-          <p style={{ display: "inline", fontWeight: 500, fontSize: 30 }}>
-            {parseFloat(record.averageRating).toFixed(1)}/5.0
-          </p>{" "}
-          /{record.numberOfRating} turns
+          {parseFloat(record.averageRating).toFixed(1)}<StarFilled style={{ color: 'orange', marginRight: 7, marginLeft: 1 }} />
+          ({record.numberOfRating} reviews)
         </>
       ),
     },
@@ -263,11 +245,11 @@ const KioskTable = ({ partyId }) => {
               Stop
             </Button>
           )}
-          <Button className="infor-button"  onClick={() => {
-                setCurrentKiosk(record);
-                showModal("changeNameKiosk");
-              }}>
-          <SwapOutlined />Change Name
+          <Button className="infor-button" onClick={() => {
+            setCurrentKiosk(record);
+            showModal("changeNameKiosk");
+          }}>
+            <SwapOutlined />Change Name
           </Button>
         </Space>
       ),
@@ -294,21 +276,20 @@ const KioskTable = ({ partyId }) => {
       setListKiosk([]);
     }
   };
-  const onCreateKiosk = async (values) => {
+  const onCreateKiosk = async () => {
     try {
       const res = await createKioskService({
-        name: values.name,
+        name: "kiosk" + "-" + (kioskTotal + 1),
         partyId: partyId,
       });
       getListKiosk(partyId, kioskPage, kioskPageSize);
       toast.success("Create Kiosk Success");
-      setIsCreateKioskModalVisible(false);
       createKioskForm.resetFields();
     } catch (e) {
       console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => {};
+  const onFinishSearchKiosk = () => { };
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
@@ -321,12 +302,12 @@ const KioskTable = ({ partyId }) => {
 
   const handleCancelModal = (type) => {
     console.log(type);
-    if(type==="addLocation"){
+    if (type === "addLocation") {
       setIsModalAddLocationVisible(false);
-    } else if (type === "changeNameKiosk"){
+    } else if (type === "changeNameKiosk") {
       setIsModalChangeNameKioskVisible(false)
     }
-    
+
   };
 
   const showModal = async (type) => {
@@ -335,7 +316,7 @@ const KioskTable = ({ partyId }) => {
       setIsModalAddLocationVisible(true);
       const res = await getListKioskLocationService("", 1, -1);
       setListLocation(res.data.data);
-    } else if (type==="changeNameKiosk" ){
+    } else if (type === "changeNameKiosk") {
       setIsModalChangeNameKioskVisible(true)
     }
 
@@ -344,7 +325,7 @@ const KioskTable = ({ partyId }) => {
   const onFinishModal = (type) => {
     if (type === "addLocation") {
       setIsModalAddLocationVisible(false);
-    } else if( type === "changeNameKiosk"){
+    } else if (type === "changeNameKiosk") {
       setIsModalChangeNameKioskVisible(false);
     }
     getListKiosk(partyId, kioskPage, kioskPageSize);
@@ -418,7 +399,14 @@ const KioskTable = ({ partyId }) => {
                   className="success-button"
                   size={"large"}
                   onClick={() => {
-                    setIsCreateKioskModalVisible(true);
+                    Modal.confirm({
+                      title: 'Confirm',
+                      icon: <ExclamationCircleOutlined />,
+                      content: 'Are you sure to create new Kiosk ?',
+                      okText: 'Confirm',
+                      cancelText: 'Cancel',
+                      onOk: async () => onCreateKiosk()
+                    });
                   }}
                 >
                   {t("createkiosk")}
@@ -458,34 +446,6 @@ const KioskTable = ({ partyId }) => {
         )}
       </div>
 
-      <Modal
-        key={kioskTotal}
-        title={t("createkiosk")}
-        visible={isCreateKioskModalVisible}
-        onCancel={() => {
-          setIsCreateKioskModalVisible(false);
-        }}
-        footer={null}
-      >
-        <Form
-          key={kioskTotal}
-          {...formItemLayout}
-          form={createKioskForm}
-          name="CreateKiosk"
-          onFinish={onCreateKiosk}
-          initialValues={{ name: "kiosk" + "-" + (kioskTotal + 1) }}
-          scrollToFirstError
-        >
-          <Form.Item name="name" label={t("name")}>
-            <Input disabled />
-          </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            <Button type="primary" htmlType="submit">
-              Save
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
     </>
   );
 };

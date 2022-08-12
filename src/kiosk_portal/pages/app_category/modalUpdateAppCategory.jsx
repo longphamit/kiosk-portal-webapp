@@ -45,7 +45,7 @@ const ModalUpdateAppCategory = ({
 
         await updateAppCategoryService(updateItem).then(() => {
           modalToIndex("update");
-          toast.success("Update Poi Category Success");
+          toast.success("Update POI Category Success");
           form.resetFields();
         });
       } else {

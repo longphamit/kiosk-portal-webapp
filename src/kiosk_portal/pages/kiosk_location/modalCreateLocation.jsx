@@ -66,7 +66,7 @@ const ModalCreateLocation = ({
       };
       await createLocationService(newLocation).then(() => {
         modalToIndex("create");
-        toast.success("Create Poi Success");
+        toast.success("Create POI Success");
         form.resetFields();
       });
     } catch (error) {
@@ -109,7 +109,7 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="hotline"
-            label="HotLine"
+            label="Hotline"
             rules={[
               {
                 pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
