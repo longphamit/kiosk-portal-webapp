@@ -11,8 +11,8 @@ export const CommissionTabComponent = ({ appId }) => {
     const columns = [
         {
             title: 'Time',
-            dataIndex: "time",
-            key: "time",
+            dataIndex: "createDate",
+            key: "createDate",
             render: (text) => <p>{moment(text).format('DD/MM/YYYY HH:mm')}</p>,
         },
         {
