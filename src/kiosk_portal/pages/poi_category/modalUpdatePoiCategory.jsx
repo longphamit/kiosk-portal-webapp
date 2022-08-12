@@ -42,7 +42,7 @@ const ModalUpdatePoiCategory = ({
         };
         await updatePoiCategoryService(updateItem).then(() => {
           modalToIndex("update");
-          toast.success("Update Poi Category Success");
+          toast.success("Update POI Category Success");
           form.resetFields();
         });
       } else {
@@ -68,7 +68,7 @@ const ModalUpdatePoiCategory = ({
       {currentUnit ? (
         <Modal
           key={currentUnit.id}
-          title="Update Poi Category"
+          title="Update POI Category"
           visible={isUpdateModalVisible}
           onCancel={handleCancelPoiInModal}
           footer={null}
@@ -117,7 +117,7 @@ const ModalUpdatePoiCategory = ({
             </Form.Item>
             <Form.Item {...tailFormItemLayout}>
               <Button type="primary" htmlType="submit">
-                Update Poi Category
+                Update POI Category
               </Button>
             </Form.Item>
           </Form>

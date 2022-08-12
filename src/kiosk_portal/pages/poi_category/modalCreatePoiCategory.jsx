@@ -31,7 +31,7 @@ const ModalCreatePoiCategory = ({
       };
       await createPoiCategoriesService(newItem).then(() => {
         modalToIndex("create");
-        toast.success("Create Poi Category Success");
+        toast.success("Create POI Category Success");
         form.resetFields();
       });
     } catch (error) {
@@ -45,7 +45,7 @@ const ModalCreatePoiCategory = ({
   return (
     <>
       <Modal
-        title="Create Poi Category"
+        title="Create POI Category"
         visible={isCreateModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
@@ -91,7 +91,7 @@ const ModalCreatePoiCategory = ({
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>
             <Button type="primary" htmlType="submit">
-              Create Poi Category
+              Create POI Category
             </Button>
           </Form.Item>
         </Form>

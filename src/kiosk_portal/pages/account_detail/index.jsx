@@ -72,9 +72,9 @@ const AccountDetailPage = () => {
                   </Descriptions.Item>
                   <Descriptions.Item label="Status" labelStyle={{ fontWeight: "bold" }}>{
                     accountDetail.status === "activate" ? (
-                      <Tag color="green">{t("activate")}</Tag>
+                      <Tag color="green">Activate</Tag>
                     ) : (
-                      <Tag color="red">{t("deactivate")}</Tag>
+                      <Tag color="red">Deactivate</Tag>
                     )
                   }</Descriptions.Item>
                 </Descriptions>

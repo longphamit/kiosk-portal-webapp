@@ -19,10 +19,10 @@ const initCountValue = {
   deactive: 0,
 };
 const labelCountKiosk = ["Working", "Stopped"];
-const labelCountEvent = ["UpComming", "End"];
-const lableCountPoi = ["Active", "DeActive"];
-const lableCountApp = ["Install", "UnInstall"];
-const lableCountAppSupportProvider = ["Available", "UnAvailable"];
+const labelCountEvent = ["Upcomming", "End"];
+const lableCountPoi = ["Active", "Deactive"];
+const lableCountApp = ["Install", "Uninstall"];
+const lableCountAppSupportProvider = ["Available", "Unavailable"];
 const HomePage = () => {
   const [role, setRole] = useState();
   const [countKiosk, setCountKiosk] = useState(initCountValue);
@@ -96,7 +96,7 @@ const HomePage = () => {
                       />
                     ) : null}
                     <DashBoardPieChartInfor
-                      activeTitle={"UpComming"}
+                      activeTitle={"Upcomming"}
                       deactiveTitle={"End"}
                       total={"Total"}
                       background="#92e8b5"
@@ -108,13 +108,13 @@ const HomePage = () => {
               <Col span={6}>
                 {countPoi ? (
                   <div className="count-chart-box">
-                    <h2>Poi</h2>
+                    <h2>POI</h2>
                     {countPoi.total != 0 ? (
                       <CountPieChart labels={lableCountPoi} count={countPoi} />
                     ) : null}
                     <DashBoardPieChartInfor
                       activeTitle={"Active"}
-                      deactiveTitle={"DeAtive"}
+                      deactiveTitle={"Deative"}
                       total={"Total"}
                       background="#95c8f0"
                       count={countPoi}
@@ -131,7 +131,7 @@ const HomePage = () => {
               ) : null}
               <DashBoardPieChartInfor
                 activeTitle={"Install"}
-                deactiveTitle={"UnInstall"}
+                deactiveTitle={"Uninstall"}
                 total={"Total"}
                 background="#f0de95"
                 count={countApp}
@@ -151,7 +151,7 @@ const HomePage = () => {
               ) : null}
               <DashBoardPieChartInfor
                 activeTitle={"Available"}
-                deactiveTitle={"UnAvailable"}
+                deactiveTitle={"Unavailable"}
                 total={"Total"}
                 background="#f0de95"
                 count={countApp}

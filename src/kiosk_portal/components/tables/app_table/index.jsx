@@ -909,7 +909,7 @@ const ApplicationTable = () => {
             <Select defaultValue="">
               <Option value="">Get all</Option>
               <Option value="available">Available</Option>
-              <Option value="unavailable">Un Available</Option>
+              <Option value="unavailable">Unavailable</Option>
             </Select>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>

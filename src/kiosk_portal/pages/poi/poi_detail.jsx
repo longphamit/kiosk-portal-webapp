@@ -288,7 +288,7 @@ const DetailPoiPage = () => {
           thumbnail: valueLogo,
         };
         await updatePoiBasicService(updatePoi).then(() => {
-          toast.success("Update Poi Success");
+          toast.success("Update POI Success");
         });
       } else {
         var errormsg = invalidMsg.join("-");
@@ -321,7 +321,7 @@ const DetailPoiPage = () => {
         addFields: listImage,
       };
       await updatePoiListImgService(updateListImage).then(() => {
-        toast.success("Update List Img Poi Success");
+        toast.success("Update List Img POI Success");
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -350,13 +350,15 @@ const DetailPoiPage = () => {
       <CustomBreadCumb props={breadCumbData} />
       {currentItem ? (
         <Row style={{ padding: 10 }}>
-          <Col span={14}>
+          <Col span={24}>
             <Card title="Basic Information">
               <Form
                 {...formItemLayout}
                 form={formBasic}
                 name="basicInfor"
                 onFinish={onFinishUpdatePoi}
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
                 scrollToFirstError
                 initialValues={{
                   name: currentItem.name,
@@ -496,10 +498,10 @@ const DetailPoiPage = () => {
                   <Select name="selectProvince" onChange={handleProvinceChange}>
                     {listProvinces
                       ? listProvinces.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -519,10 +521,10 @@ const DetailPoiPage = () => {
                   >
                     {listDistrictsInForm
                       ? listDistrictsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -539,10 +541,10 @@ const DetailPoiPage = () => {
                   <Select name="selectWards">
                     {listWardsInForm
                       ? listWardsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
+                        <Option key={item.code} value={item.code}>
+                          {item.name}
+                        </Option>
+                      ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -598,6 +600,8 @@ const DetailPoiPage = () => {
                 {...formItemLayout}
                 form={formListImg}
                 name="listImg"
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
                 onFinish={onFinishUpdateListImage}
                 scrollToFirstError
               >
@@ -646,6 +650,8 @@ const DetailPoiPage = () => {
                 name="banner"
                 onFinish={onFinishUpdateBanner}
                 scrollToFirstError
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
               >
                 <Form.Item name="banner" label="Banner">
                   {currentItem.banner ? (

@@ -53,7 +53,7 @@ const getAppsQuery = (appIds: any) => {
 
 export const getAppOrderCommission = async (appId: any) => {
     const response = await request.get(
-        `${HOST}/v1/serviceOrders/commission/kiosk/?kioskId=${appId}`
+        `${HOST}/v1/serviceOrders/commission?ServiceApplicationId=${appId}`
     );
     return response.data;
 }
