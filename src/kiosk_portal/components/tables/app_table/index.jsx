@@ -79,7 +79,7 @@ const ApplicationTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentItem, setCurrentItem] = useState(null);
   const [listCategories, setListCategories] = useState([]);
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   const [isCreateApplicationModalVisible, setIsCreateApplicationModalVisible] =
     useState(false);
   const [isEditApplicationModalVisible, setIsEditApplicationModalVisible] =
@@ -511,6 +511,8 @@ const ApplicationTable = () => {
       render: (text, record, dataIndex) =>
         record.status === "available" ? (
           <Tag color="green">Available</Tag>
+        ) : record.status === "pending" ? (
+          <Tag color="blue">Pending</Tag>
         ) : (
           <Tag color="red">Unavailable</Tag>
         ),

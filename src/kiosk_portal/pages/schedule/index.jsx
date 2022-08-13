@@ -193,13 +193,22 @@ const ScheduleManagerPage = () => {
     await getListScheduleFunction(page, numScheduleInPage);
   };
   const handleChangeStatusSchedule = async (scheduleId) => {
-    try {
-      await changeScheduleStatusService(scheduleId);
-      await getListScheduleFunction(currentPage, numScheduleInPage);
-      toast.success("Change schedule status success");
-    } catch (e) {
-      toast.error("Change schedule status fail");
-    }
+    Modal.confirm({
+      title: "Are you sure to change status this schedule",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            await changeScheduleStatusService(scheduleId);
+            await getListScheduleFunction(currentPage, numScheduleInPage);
+            toast.success("Change schedule status success");
+          } catch (e) {
+            toast.error("Change schedule status fail");
+          }
+        }
+      },
+    });
   };
   const types = [
     {
@@ -420,7 +429,16 @@ const ScheduleManagerPage = () => {
           >
             <TimePicker allowClear={false} format="HH" />
           </Form.Item>
-          <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+          <Form.Item
+            name="dayOfWeek"
+            label={t("dayofweek")}
+            rules={[
+              {
+                required: true,
+                message: "Please choose day of week",
+              },
+            ]}
+          >
             <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
               <Row>
                 <Col span={8}>

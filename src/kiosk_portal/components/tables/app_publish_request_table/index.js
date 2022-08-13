@@ -35,6 +35,8 @@ import {
 } from "../../../constants/app_publish_request_status_constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
+import { localStorageGetReduxState } from "../../../../@app/services/localstorage_service";
 
 const searchTypeKiosk = [
   {
@@ -44,6 +46,7 @@ const searchTypeKiosk = [
 ];
 const { Option } = Select;
 const AppPublishRequestTable = ({ partyId }) => {
+  const role = localStorageGetReduxState().auth.role;
   const { t } = useTranslation();
   const [searchAppPublishFrom] = Form.useForm();
   const [appPublishRequestPage, setAppPublishRequestPage] = useState(1);
@@ -136,7 +139,7 @@ const AppPublishRequestTable = ({ partyId }) => {
             <EyeFilled /> Detail
           </Button>
 
-          {record.status === PUBLISH_DENIED ? (
+          {(record.status === PUBLISH_DENIED && role === ROLE_SERVICE_PROVIDER)? (
             <Button
               className="warn-button"
               onClick={() => {
@@ -150,16 +153,16 @@ const AppPublishRequestTable = ({ partyId }) => {
             <></>
           )}
           {
-            record.status === PUBLISH_IN_PROGRESS?(
-<Button
+            (record.status === PUBLISH_IN_PROGRESS && role === ROLE_SERVICE_PROVIDER)?(
+            <Button
             className="danger-button"
             onClick={() => {
               onFinishCancel(record);
             }}
-          >
-            <StopOutlined/> Cancel Request
-          </Button>
-            ):null
+            >
+              <StopOutlined/> Cancel Request
+            </Button>
+              ):null
           }
           
         </Space>

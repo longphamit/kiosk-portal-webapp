@@ -40,7 +40,7 @@ const DetailLocationPage = () => {
   const [listRemoveImg, setListRemoveImg] = useState([]);
   const [isLoadingBasicInfor, setIsLoadingBasicInfor] = useState(false);
   const [isLoadingListImg, setIsLoadingListImg] = useState(false);
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);

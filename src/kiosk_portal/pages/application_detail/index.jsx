@@ -79,10 +79,10 @@ const ApplicationDetailPage = () => {
       let res = await getMyApplicationById(applicationId);
       setInstalled(true);
     } catch (e) {
-      console.error(e)
+      console.error(e);
       setInstalled(false);
     }
-  }
+  };
   const getInprogressAppPublishRequestByAppId = async () => {
     try {
       if (role === ROLE_SERVICE_PROVIDER || role === ROLE_ADMIN) {
@@ -128,16 +128,15 @@ const ApplicationDetailPage = () => {
   };
   const getButtonFeedback = () => {
     if (isInstalled && myFeedback === null)
-      return <>
-        <Button
-          type="primary"
-          onClick={() => setCreateModalVisible(true)}
-        >
-          Feedback Now
-        </Button>
-      </>
+      return (
+        <>
+          <Button type="primary" onClick={() => setCreateModalVisible(true)}>
+            Feedback Now
+          </Button>
+        </>
+      );
     return null;
-  }
+  };
 
   return (
     <>
@@ -238,7 +237,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               approveAppPublishRequest();
                             }}
-                            onCancel={() => { }}
+                            onCancel={() => {}}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -254,7 +253,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               setDenyAppPublishModalVisible(true);
                             }}
-                            onCancel={() => { }}
+                            onCancel={() => {}}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -273,7 +272,7 @@ const ApplicationDetailPage = () => {
               ) : null}
             </Col>
           </div>
-          <Collapse defaultActiveKey={['1']} >
+          <Collapse defaultActiveKey={["1"]}>
             <Panel header="Description" key="1">
               <div dangerouslySetInnerHTML={{ __html: app.description }} />
             </Panel>
@@ -347,22 +346,20 @@ const ApplicationDetailPage = () => {
                       </Row>
                     </>
                   ) : (
-                    <Empty>
-                      {getButtonFeedback()}
-                    </Empty>
+                    <Empty>{getButtonFeedback()}</Empty>
                   )
                 ) : (
                   <Skeleton />
                 )}
               </div>
             </TabPane>
-            {isInstalled ?
+            {isInstalled ? (
               <>
                 <TabPane tab="Commission" key="3">
                   <CommissionTabComponent appId={appId} />
                 </TabPane>
-              </> : null
-            }
+              </>
+            ) : null}
           </Tabs>
         </>
       ) : (
