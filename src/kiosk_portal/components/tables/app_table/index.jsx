@@ -499,9 +499,9 @@ const ApplicationTable = () => {
       key: "isAffiliate",
       render: (text, record, dataIndex) =>
         record.isAffiliate === true ? (
-          <Tag color="green">True</Tag>
+          <Tag color="green">Yes</Tag>
         ) : (
-          <Tag color="red">False</Tag>
+          <Tag color="red">No</Tag>
         ),
     },
     {
@@ -514,7 +514,7 @@ const ApplicationTable = () => {
         ) : record.status === "pending" ? (
           <Tag color="blue">Pending</Tag>
         ) : (
-          <Tag color="red">Un Available</Tag>
+          <Tag color="red">Unavailable</Tag>
         ),
     },
 
@@ -674,7 +674,7 @@ const ApplicationTable = () => {
                   <Select defaultValue="">
                     <Option value="">Get all</Option>
                     <Option value="available">Available</Option>
-                    <Option value="unavailable">Un Available</Option>
+                    <Option value="unavailable">Unavailable</Option>
                   </Select>
                 </Form.Item>
               </Col>

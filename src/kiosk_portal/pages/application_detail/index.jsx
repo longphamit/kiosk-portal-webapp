@@ -58,10 +58,10 @@ const ApplicationDetailPage = () => {
     let tempId = "";
     if (id.includes("installed")) {
       tempId = id.replaceAll("&&installed", "");
+      checkAppIsInstalled(tempId)
     } else {
       tempId = id;
     }
-    checkAppIsInstalled(tempId);
     setAppId(tempId);
     try {
       const res = await getApplicationServiceById(tempId);
@@ -191,9 +191,9 @@ const ApplicationDetailPage = () => {
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.isAffiliate === true ? (
-                    <Tag color="green">True</Tag>
+                    <Tag color="green">Yes</Tag>
                   ) : (
-                    <Tag color="red">False</Tag>
+                    <Tag color="red">No</Tag>
                   )}
                 </Descriptions.Item>
 
