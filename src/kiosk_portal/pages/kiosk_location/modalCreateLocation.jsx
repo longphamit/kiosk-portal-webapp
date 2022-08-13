@@ -41,7 +41,7 @@ const ModalCreateLocation = ({
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   useEffect(async () => {
     form.resetFields();
   }, []);
@@ -150,6 +150,7 @@ const ModalCreateLocation = ({
             rules={[
               {
                 validator(values) {
+                  console.log(description);
                   if (description === null || description === "") {
                     return Promise.reject("Please input description");
                   }
