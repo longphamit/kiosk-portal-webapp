@@ -1,31 +1,48 @@
 import { useEffect, useState } from "react"
 import { getKisokOrderCommissionService } from "../../../services/order_service";
-import { Col, Empty, Row, Select, Skeleton, Spin, Table } from "antd";
-import OrderPieChart from "../../../components/charts/order_pie_chart";
+import { Col, Empty, Row, Skeleton, Spin, Table } from "antd";
 import { AppSelectComponent } from "./component/app_select_component";
 import { convertToVietNameCurrency } from "../../../components/charts/utils";
+import { EmptyCard } from "../../../../@app/components/card/empty_card";
 export const KioskOrderTable = ({ kioskId, apps }) => {
     const [orders, setOrders] = useState();
     const [appSelects, setAppSelects] = useState();
-
+    const [isLoading, setLoading] = useState(false);
     const getListOrderFunction = async () => {
         try {
+            setLoading(true)
             const res = await getKisokOrderCommissionService(kioskId, '')
-            setOrders(res.data);
-            return;
+            setOrders(repperformData(res.data));
         } catch (error) {
-            setOrders([])
+            setOrders(null)
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     };
+    const repperformData = (obj) => {
+        if (obj.labels.length === 0) {
+            return [];
+        }
+        let temp = []
+        for (let i = 0; i < obj.labels.length; i++) {
+            temp.push({
+                serviceApplicationName: obj.labels[i],
+                totalCommission: obj.datasets[i]
+            })
+        }
+        return temp;
+    }
     const getListOrderWithAppIdFunction = async (appId) => {
         try {
+            setLoading(true)
             const res = await getKisokOrderCommissionService(kioskId, appId)
-            setOrders(res.data);
-            return;
+            setOrders(repperformData(res.data));
         } catch (error) {
-            setOrders([])
+            setOrders(null)
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     };
     const initialAppSelect = () => {
@@ -64,7 +81,7 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
                 <AppSelectComponent apps={appSelects} onChange={getListOrderWithAppIdFunction} /> :
                 <Spin />
         }
-        {
+        {!isLoading ?
             orders ?
                 orders.length === 0 ?
                     <>
@@ -76,8 +93,8 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
                     </> :
                     <>
                         <Table columns={columns} dataSource={orders} pagination={false} />
-                    </>
-                : <Skeleton />
+                    </> : <EmptyCard styles={{ marginTop: 250 }} />
+            : <Skeleton />
         }
 
 

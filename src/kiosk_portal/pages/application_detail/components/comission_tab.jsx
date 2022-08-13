@@ -10,12 +10,6 @@ export const CommissionTabComponent = ({ appId }) => {
     const [isTableLoading, setTableLoading] = useState(false);
     const columns = [
         {
-            title: 'Time',
-            dataIndex: "createDate",
-            key: "createDate",
-            render: (text) => <p>{moment(text).format('DD/MM/YYYY HH:mm')}</p>,
-        },
-        {
             title: 'Total',
             dataIndex: "totalCommission",
             key: "totalCommission",

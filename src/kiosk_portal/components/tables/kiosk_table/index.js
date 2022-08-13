@@ -199,27 +199,15 @@ const KioskTable = ({ partyId }) => {
             <EyeFilled />
             Details
           </Button>
-          {record.kioskLocationId ? (
-            <Button
-              className="warn-button"
-              onClick={() => {
-                setCurrentKiosk(record);
-                showModal("addLocation");
-              }}
-            >
-              <EditFilled /> Update Location
-            </Button>
-          ) : (
-            <Button
-              type="primary"
-              onClick={() => {
-                setCurrentKiosk(record);
-                showModal("addLocation");
-              }}
-            >
-              Add Location
-            </Button>
-          )}
+          <Button
+            className="warn-button"
+            onClick={() => {
+              setCurrentKiosk(record);
+              showModal("addLocation");
+            }}
+          >
+            <EditFilled /> Update Location
+          </Button>
           {isLoading ? (
             <Spin />
           ) : record.status === "activate" ? (
