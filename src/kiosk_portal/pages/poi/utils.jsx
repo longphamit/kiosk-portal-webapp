@@ -1,13 +1,7 @@
 import { EyeFilled, SwapOutlined } from "@ant-design/icons";
 import { Button, Space, Tag } from "antd";
-import { useTranslation } from "react-i18next";
-import { Navigate } from "react-router-dom";
-import { TYPE_SERVER } from "../../../@app/constants/key";
-const onNavigate = (url) => {
-    Navigate(url);
-};
 
-export const columns = (onFinishChangeStatusPoi, t) => [
+export const columns = (onFinishChangeStatusPoi, t, onNavigate) => [
     {
         title: "Image",
         render: (text, record, dataIndex) => (
