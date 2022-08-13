@@ -105,27 +105,29 @@ export const createEventModel = (event) => {
 export const buildPositionsModelRequest = (components, templateId, type) => {
     let listPosition = [];
     Object.entries(components).map((element, index) => {
-        let component = element[1];
-        for (let i = 0; i < component.length; i++) {
-            let position;
-            if (type === 'event') {
-                position = {
-                    eventId: component[i].id,
-                    rowIndex: index - 1,
-                    columnIndex: i
-                };
+        if (index !== 0) {
+            let component = element[1];
+            for (let i = 0; i < component.length; i++) {
+                let position;
+                if (type === 'event') {
+                    position = {
+                        eventId: component[i].id,
+                        rowIndex: index - 1,
+                        columnIndex: i
+                    };
+                }
+                else {
+                    position = {
+                        appCategoryId: component[i].id,
+                        rowIndex: index - 1,
+                        columnIndex: i
+                    };
+                }
+                listPosition.push(position);
             }
-            else {
-                position = {
-                    appCategoryId: component[i].id,
-                    rowIndex: index - 1,
-                    columnIndex: i
-                };
-            }
-            listPosition.push(position);
         }
-
-    });
+    }
+    );
     let request = {
         templateId: templateId,
         listPosition: listPosition

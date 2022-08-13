@@ -180,6 +180,11 @@ const EditTemplatePage = () => {
         let request = buildPositionsModelRequest(
             selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents,
             currentTemplate.id, selectedType);
+        if (request.listPosition.length === 0) {
+            toast.warn('No component is added!')
+            setLoading(false);
+            return;
+        }
         try {
             let res;
             if (currentTemplate.status === 'incomplete') {
