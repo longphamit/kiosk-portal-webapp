@@ -4,7 +4,7 @@ import request from "../../@app/utils/http_client";
 export const getKisokOrderCommissionService = async (kioskId: any, serviceApplicationId: any) => {
     let extraQuery = serviceApplicationId.length !== 0 ? `&ServiceApplicationId=${serviceApplicationId}` : ''
     const response = await request.get(
-        `${HOST}/v1/serviceOrders/commission?kioskId=${kioskId}${extraQuery}`
+        `${HOST}/v1/serviceOrders/commission/kiosk?kioskId=${kioskId}${extraQuery}`
     );
     return response.data;
 }
