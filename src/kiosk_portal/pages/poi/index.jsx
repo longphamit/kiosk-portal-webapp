@@ -243,7 +243,7 @@ const PoiPage = () => {
           </Row>
         ) : (
           <>
-            <Table columns={columns(onFinishChangeStatusPoi, t)} dataSource={listUnit} pagination={false} />
+            <Table columns={columns(onFinishChangeStatusPoi, t, onNavigate)} dataSource={listUnit} pagination={false} />
             <Pagination
               defaultCurrent={1}
               total={totalUnit}
