@@ -5,7 +5,7 @@ import { LineChartType } from './utils';
 
 const LABELS_YEAR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const LABELS_MONTH = [1, 5, 10, 15, 20, 25, 30]
-export const OrderLineChart = ({ datas, type }) => {
+export const OrderLineChart = ({ datas, type, labelName, aspectRatio }) => {
     const [basicData, setBasicData] = useState();
     const initialize = () => {
         if (type === LineChartType.Year) {
@@ -13,7 +13,7 @@ export const OrderLineChart = ({ datas, type }) => {
             if (datas && datas.length !== 0) {
                 datas.map((e) => {
                     tempDatasets.push({
-                        label: e.serviceApplicationName,
+                        label: e[`${labelName}`],
                         data: e.datasets,
                         fill: false,
                         borderColor: randomColor(),
@@ -31,7 +31,7 @@ export const OrderLineChart = ({ datas, type }) => {
             if (datas && datas.length !== 0) {
                 datas.map((e) => {
                     tempDatasets.push({
-                        label: e.serviceApplicationName,
+                        label: e[`${labelName}`],
                         data: reformatDatasets(e.datasets),
                         fill: false,
                         borderColor: randomColor(),
@@ -39,7 +39,6 @@ export const OrderLineChart = ({ datas, type }) => {
                     })
                 })
             }
-            console.log(tempDatasets)
             setBasicData({
                 labels: LABELS_MONTH,
                 datasets: tempDatasets
@@ -69,38 +68,41 @@ export const OrderLineChart = ({ datas, type }) => {
     useEffect(() => {
         initialize()
     }, []);
-    const basicOptions = {
-        maintainAspectRatio: false,
-        aspectRatio: .6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#495057'
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: '#495057'
-                },
-                grid: {
-                    color: '#ebedef'
+    const basicOptions = () => {
+        return {
+            maintainAspectRatio: false,
+            responsive: true,
+            aspectRatio: aspectRatio,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#495057'
+                    }
                 }
             },
-            y: {
-                ticks: {
-                    color: '#495057'
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#495057'
+                    },
+                    grid: {
+                        color: '#ebedef'
+                    }
                 },
-                grid: {
-                    color: '#ebedef'
+                y: {
+                    ticks: {
+                        color: '#495057'
+                    },
+                    grid: {
+                        color: '#ebedef'
+                    }
                 }
             }
         }
     };
     return <>
         <div className="card">
-            <Chart type="line" data={basicData} options={basicOptions} />
+            <Chart type="line" data={basicData} options={basicOptions()} />
         </div>
     </>
 }

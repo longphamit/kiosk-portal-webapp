@@ -99,7 +99,9 @@ const ApplicationMarketPage = () => {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <a href={text} target="_blank"><LinkOutlined />Click here</a>,
+      render: (text) => <p><a href={text} target="_blank" >
+        <LinkOutlined />Click here
+      </a></p>,
     },
 
     {

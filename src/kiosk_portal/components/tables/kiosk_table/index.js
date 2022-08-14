@@ -25,7 +25,7 @@ import {
 import {
   localStorageGetReduxState,
 } from "../../../../@app/services/localstorage_service";
-import { ROLE_ADMIN } from "../../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../../@app/constants/role";
 import { useNavigate } from "react-router-dom";
 import ModalAddLocation from "../../../pages/kiosk/modalAddLocation";
 import { getListKioskLocationService } from "../../../services/kiosk_location_service";
@@ -400,7 +400,17 @@ const KioskTable = ({ partyId }) => {
                   {t("createkiosk")}
                 </Button>
               </Col>
-            ) : null
+            ) : role === ROLE_LOCATION_OWNER ? <>
+              <Button
+                type="primary"
+                size={"large"}
+                onClick={() => {
+
+                }}
+              >
+                View Kiosk Statics
+              </Button>
+            </> : null
           ) : null}
         </Row>
         {listKiosk ? (
