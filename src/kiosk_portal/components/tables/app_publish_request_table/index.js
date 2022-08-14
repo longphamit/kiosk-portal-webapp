@@ -87,7 +87,7 @@ const AppPublishRequestTable = ({ partyId }) => {
       render: (text, record, index) => <>{index + 1}</>,
     },
     {
-      title: "Creator Email",
+      title: "Requester",
       dataIndex: "creatorEmail",
       key: "id",
       render: (text) => <a>{text}</a>,

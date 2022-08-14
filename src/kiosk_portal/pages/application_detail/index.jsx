@@ -3,6 +3,7 @@ import {
   Col,
   Collapse,
   Descriptions,
+  Divider,
   Empty,
   Image,
   Modal,
@@ -159,19 +160,19 @@ const ApplicationDetailPage = () => {
                   {app.appCategoryName}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Num Of Install"
+                  label="installed users "
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.userInstalled}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Party"
+                  label="Owner's Name"
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.partyName}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Party Email"
+                  label="Owner's Email"
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.partyEmail}
@@ -209,20 +210,6 @@ const ApplicationDetailPage = () => {
                     height={40}
                   />
                 </Descriptions.Item>
-                {app.banner ? (
-                  <Descriptions.Item
-                    label="Banner"
-                    labelStyle={{ fontWeight: "bold" }}
-                  >
-                    <Image
-                      size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
-                      src={app.banner}
-                      sizes="large"
-                      width={40}
-                      height={40}
-                    />
-                  </Descriptions.Item>
-                ) : null}
               </Descriptions>
             </Col>
             <Col>
@@ -237,7 +224,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               approveAppPublishRequest();
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -253,7 +240,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               setDenyAppPublishModalVisible(true);
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -272,12 +259,48 @@ const ApplicationDetailPage = () => {
               ) : null}
             </Col>
           </div>
-          <Collapse defaultActiveKey={["1"]}>
-            <Panel header="Description" key="1">
-              <div dangerouslySetInnerHTML={{ __html: app.description }} />
-            </Panel>
-          </Collapse>
           <Tabs defaultActiveKey="1">
+            <TabPane tab="Other Info" key="0">
+              <Row>
+                {app.banner ? <>
+                  <Col span={12}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        APPLICATION BANNER
+                      </p>
+                    </Row>
+                    <Row justify="center" align="middle">
+                      <Image
+                        src={app.banner}
+                        sizes="large"
+                      />
+                      <br />
+                    </Row>
+                  </Col>
+                  <Col span={12}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        DESCRIPTION
+                      </p>
+                    </Row>
+                    <Row style={{ margin: '0px 30px' }}>
+                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
+                    </Row>
+                  </Col>
+                </> :
+                  <Col span={24}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        DESCRIPTION
+                      </p>
+                    </Row>
+                    <Row >
+                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
+                    </Row>
+                  </Col>
+                }
+              </Row>
+            </TabPane>
             <TabPane tab="App Preview" key="1">
               <Row>
                 <Col span={24}>
