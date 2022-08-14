@@ -105,7 +105,9 @@ const ScheduleManagerPage = () => {
       if (isEndDay === true) {
         timeEnd = "23:59:59";
       } else {
-        timeEnd = formatTimePicker(values.timeEnd);
+        var date = new Date(values.timeEnd);
+        var hours = ("0" + date.getHours()).slice(-2);
+        timeEnd = [hours, "00", "00"].join(":");
         if (values.timeStart - values.timeEnd > 0) {
           invalidMsg.push("Time start need to before or match with time end\n");
           check = false;
