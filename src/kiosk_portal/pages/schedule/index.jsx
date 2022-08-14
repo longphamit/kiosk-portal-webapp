@@ -19,7 +19,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { searchAccountService } from "../../services/account_service";
 import "./styles.css";
 import {
   changeScheduleStatusService,
@@ -27,18 +26,11 @@ import {
   getListScheduleService,
   updateScheduleService,
 } from "../../services/schedule_service";
-import {
-  SearchOutlined,
-  PlusOutlined,
-  EditFilled,
-  PoweroffOutlined,
-  SyncOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, EditFilled, SyncOutlined } from "@ant-design/icons";
 import {
   formatTimePicker,
   splitTimeString,
 } from "../../../@app/utils/date_util";
-import { getListTemplateService } from "../../services/template_service";
 import {
   SCHEDULE_MANAGER_HREF,
   SCHEDULE_MANAGER_LABEL,
@@ -51,15 +43,17 @@ const ScheduleManagerPage = () => {
   const [listSchedule, setListSchedule] = useState();
   const [totalSchedule, setTotalSchedule] = useState(0);
   const [numScheduleInPage, setNumScheduleInPage] = useState(5);
-  const [querySearch, setQuerySearch] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isEndDay, setIsEndDay] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
   const [isCreateScheduleModalVisible, setIsCreateScheduleModalVisible] =
     useState(false);
+  const [timePickerValue, setTimePickerValue] = useState("00:00");
   const [isEditScheduleModalVisible, setIsEditScheduleModalVisible] =
     useState(false);
-
+  const [isCheckEdit, setIsCheckEdit] = useState(false);
   const [form] = Form.useForm();
+  const [formCreate] = Form.useForm();
 
   const getListScheduleFunction = async (currentPageToGetList, numInPage) => {
     try {
@@ -103,25 +97,31 @@ const ScheduleManagerPage = () => {
     },
   };
   const onFinishEditShedule = async (values) => {
+    let timeEnd = "";
     const invalidMsg = [];
     var check = true;
     let dOW = "";
     try {
-      if (values.timeStart - values.timeEnd > 0) {
-        invalidMsg.push("Time start need to before or match with time end\n");
-        check = false;
-      }
-      if (Array.isArray(values.dayOfWeek)) {
-        dOW = values.dayOfWeek.join("-");
+      if (isEndDay === true) {
+        timeEnd = "23:59:59";
       } else {
-        dOW = values.dayOfWeek;
+        timeEnd = formatTimePicker(values.timeEnd);
+        if (values.timeStart - values.timeEnd > 0) {
+          invalidMsg.push("Time start need to before or match with time end\n");
+          check = false;
+        }
+        if (Array.isArray(values.dayOfWeek)) {
+          dOW = values.dayOfWeek.join("-");
+        } else {
+          dOW = values.dayOfWeek;
+        }
       }
       if (check) {
         const updateSchedule = {
           id: currentItem.id,
           name: values.name,
           stringTimeStart: formatTimePicker(values.timeStart),
-          stringTimeEnd: formatTimePicker(values.timeEnd),
+          stringTimeEnd: timeEnd,
           dayOfWeek: dOW,
           status: currentItem.status,
         };
@@ -138,11 +138,6 @@ const ScheduleManagerPage = () => {
       console.error(error);
     }
   };
-  const onFinishSearch = async (values) => {
-    console.log(values);
-    let firstName = "";
-    let lastName = "";
-  };
   const showModalEditSchedule = () => {
     setIsEditScheduleModalVisible(true);
   };
@@ -151,18 +146,34 @@ const ScheduleManagerPage = () => {
     setIsEditScheduleModalVisible(false);
   };
   const onFinishCreateSchedule = async (values) => {
+    let timeEnd = "";
     const invalidMsg = [];
     var check = true;
     try {
-      if (values.timeStart - values.timeEnd > 0) {
-        invalidMsg.push("Time start need to before or match with time end\n");
-        check = false;
+      if (isEndDay === true) {
+        timeEnd = "23:59:59";
+      } else {
+        if (typeof values.timeEnd === "undefined") {
+          invalidMsg.push(
+            "Please choose time end or check to end day checkbox"
+          );
+          check = false;
+        } else {
+          if (values.timeStart - values.timeEnd > 0) {
+            invalidMsg.push(
+              "Time start need to before or match with time end\n"
+            );
+            check = false;
+          }
+          timeEnd = formatTimePicker(values.timeEnd);
+        }
       }
+
       if (check) {
         const createSchedule = {
           name: values.name,
           stringTimeStart: formatTimePicker(values.timeStart),
-          stringTimeEnd: formatTimePicker(values.timeEnd),
+          stringTimeEnd: timeEnd,
           dayOfWeek: values.dayOfWeek.join("-"),
         };
         await createScheduleService(createSchedule).then(() => {
@@ -180,8 +191,9 @@ const ScheduleManagerPage = () => {
   };
 
   const showModalCreateSchedule = () => {
+    setIsEndDay(false);
+    formCreate.resetFields();
     setIsCreateScheduleModalVisible(true);
-    form.resetFields();
   };
 
   const handleCancelCreateSchedule = () => {
@@ -262,6 +274,14 @@ const ScheduleManagerPage = () => {
             shape="default"
             onClick={() => {
               setCurrentItem(record);
+              if (record.timeEnd === "23:59:59.0000000") {
+                setIsEndDay(true);
+                setIsCheckEdit(true);
+              } else {
+                setIsEndDay(false);
+                setIsCheckEdit(false);
+              }
+              console.log(isCheckEdit);
               showModalEditSchedule();
             }}
           >
@@ -281,16 +301,6 @@ const ScheduleManagerPage = () => {
     },
   ];
 
-  const prefixSearch = (
-    <Form.Item name="type" noStyle>
-      <Select defaultValue="name">
-        {types.map((item) => {
-          return <Option value={item.name}>{item.label}</Option>;
-        })}
-      </Select>
-    </Form.Item>
-  );
-
   const breadCumbData = [
     {
       href: SCHEDULE_MANAGER_HREF,
@@ -302,42 +312,7 @@ const ScheduleManagerPage = () => {
     <>
       <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
-        <Col span={15}>
-          {/* <Form
-            form={form}
-            name="search"
-            onFinish={onFinishSearch}
-            initialValues={{
-              type: "name",
-              searchString: "",
-            }}
-          >
-            <Row>
-              <Col span={14}>
-                <Form.Item name="searchString" style={{ marginTop: 5 }}>
-                  <Input
-                    addonBefore={prefixSearch}
-                    style={{ width: "100%" }}
-                    placeholder="Search..."
-                    value=""
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={2}>
-                <Form.Item>
-                  <Button
-                    htmlType="submit"
-                    style={{ marginLeft: 10, borderRadius: 5 }}
-                    type="primary"
-                    size={"large"}
-                  >
-                    <SearchOutlined />
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form> */}
-        </Col>
+        <Col span={15}></Col>
         <Col span={5} />
         <Col span={4}>
           <Button
@@ -388,7 +363,7 @@ const ScheduleManagerPage = () => {
       >
         <Form
           {...formItemLayout}
-          form={form}
+          form={formCreate}
           name="register"
           onFinish={onFinishCreateSchedule}
           scrollToFirstError
@@ -417,18 +392,42 @@ const ScheduleManagerPage = () => {
           >
             <TimePicker allowClear={false} format="HH" />
           </Form.Item>
-          <Form.Item
-            name="timeEnd"
-            label={t("timeend")}
-            rules={[
-              {
-                required: true,
-                message: t("reqtimeendschedule"),
-              },
-            ]}
-          >
-            <TimePicker allowClear={false} format="HH" />
+          <Form.Item label={t("timeend")} style={{ marginBottom: 0 }}>
+            <Form.Item
+              style={{ display: "inline-block", width: "calc(50% - 12px)" }}
+              name="timeEnd"
+            >
+              {isEndDay ? (
+                <TimePicker value={timePickerValue} disabled />
+              ) : (
+                <TimePicker
+                  allowClear={false}
+                  format="HH"
+                  value={timePickerValue}
+                />
+              )}
+            </Form.Item>
+            <Form.Item
+              name="isEndDay"
+              style={{ display: "inline-block", width: "calc(50% - 12px)" }}
+            >
+              <Checkbox
+                defaultChecked={true}
+                checked={true}
+                onChange={() => {
+                  if (isEndDay) {
+                    setIsEndDay(false);
+                  } else {
+                    setTimePickerValue(moment("23:59:59", "HH:mm:ss"));
+                    setIsEndDay(true);
+                  }
+                }}
+              >
+                End Day (24h)
+              </Checkbox>
+            </Form.Item>
           </Form.Item>
+
           <Form.Item
             name="dayOfWeek"
             label={t("dayofweek")}
@@ -521,18 +520,61 @@ const ScheduleManagerPage = () => {
             >
               <TimePicker allowClear={false} format="HH" />
             </Form.Item>
-            <Form.Item
-              name="timeEnd"
-              label={t("timeend")}
-              rules={[
-                {
-                  required: true,
-                  message: t("reqtimeendschedule"),
-                },
-              ]}
-            >
-              <TimePicker allowClear={false} format="HH" />
+
+            <Form.Item label={t("timeend")} style={{ marginBottom: 0 }}>
+              <Form.Item
+                style={{ display: "inline-block", width: "calc(50% - 12px)" }}
+                name="timeEnd"
+              >
+                {isEndDay ? (
+                  <TimePicker
+                    defaultValue={moment("00:00:00", "HH:mm:ss")}
+                    value={timePickerValue}
+                    disabled
+                  />
+                ) : (
+                  <TimePicker
+                    allowClear={false}
+                    format="HH"
+                    value={timePickerValue}
+                  />
+                )}
+              </Form.Item>
+              <Form.Item
+                name="isEndDay"
+                style={{ display: "inline-block", width: "calc(50% - 12px)" }}
+              >
+                {isCheckEdit ? (
+                  <Checkbox
+                    defaultChecked={true}
+                    onChange={() => {
+                      if (isEndDay) {
+                        setIsEndDay(false);
+                      } else {
+                        setTimePickerValue(moment("23:59:59", "HH:mm:ss"));
+                        setIsEndDay(true);
+                      }
+                    }}
+                  >
+                    End Day (24h)
+                  </Checkbox>
+                ) : (
+                  <Checkbox
+                    onChange={() => {
+                      if (isEndDay) {
+                        setIsEndDay(false);
+                      } else {
+                        setTimePickerValue(moment("23:59:59", "HH:mm:ss"));
+                        setIsEndDay(true);
+                      }
+                    }}
+                  >
+                    End Day (24h)
+                  </Checkbox>
+                )}
+              </Form.Item>
             </Form.Item>
+
             <Form.Item name="dayOfWeek" label={t("dayofweek")}>
               <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
                 <Row>
