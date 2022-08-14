@@ -1,4 +1,4 @@
-import { Button, Space, Tag } from "antd";
+import { Button, Col, Row, Space, Tag } from "antd";
 import { TYPE_SERVER } from "../../../@app/constants/key";
 import { STATUS_COMING_SOON, STATUS_ON_GOING } from "../../constants/event_constants";
 import moment from 'moment'
@@ -7,7 +7,7 @@ import { DeleteFilled, EyeFilled } from "@ant-design/icons";
 const convertDate = (str) => {
     return {
         date: moment(str).format("DD/MM/YYYY"),
-        time: moment(str).format("HH:ss"),
+        time: moment(str).format("HH:mm"),
     };
 };
 
@@ -32,9 +32,8 @@ export const adminColumns = (handleDeleteEvent, navigate) => [
             let data = convertDate(text);
             return (
                 <>
-                    <p>{data.date}</p>
-                    <br />
-                    <p>{data.time}</p>
+                    {data.time}<br />
+                    {data.date}
                 </>
             );
         },
@@ -47,9 +46,8 @@ export const adminColumns = (handleDeleteEvent, navigate) => [
             let data = convertDate(text);
             return (
                 <>
-                    <p>{data.date}</p>
-                    <br />
-                    <p>{data.time}</p>
+                    {data.time}<br />
+                    {data.date}
                 </>
             );
         },
@@ -132,9 +130,8 @@ export const locationOwnerColumns = (handleDeleteEvent, navigate) => [
             let data = convertDate(text);
             return (
                 <>
-                    <p>{data.date}</p>
-                    <br />
-                    <p>{data.time}</p>
+                    {data.time}<br />
+                    {data.date}
                 </>
             );
         },
@@ -147,9 +144,8 @@ export const locationOwnerColumns = (handleDeleteEvent, navigate) => [
             let data = convertDate(text);
             return (
                 <>
-                    <p>{data.date}</p>
-                    <br />
-                    <p>{data.time}</p>
+                    {data.time}<br />
+                    {data.date}
                 </>
             );
         },
