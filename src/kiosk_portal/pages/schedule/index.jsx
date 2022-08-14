@@ -412,8 +412,6 @@ const ScheduleManagerPage = () => {
               style={{ display: "inline-block", width: "calc(50% - 12px)" }}
             >
               <Checkbox
-                defaultChecked={true}
-                checked={true}
                 onChange={() => {
                   if (isEndDay) {
                     setIsEndDay(false);
