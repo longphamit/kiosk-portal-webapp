@@ -355,7 +355,7 @@ const ApplicationDetailPage = () => {
             </TabPane>
             {isInstalled ? (
               <>
-                <TabPane tab="Commission" key="3">
+                <TabPane tab="Revenue" key="3">
                   <CommissionTabComponent appId={appId} />
                 </TabPane>
               </>
