@@ -1,3 +1,4 @@
+import { Row } from 'antd';
 import { Chart } from 'primereact/chart';
 import { useEffect, useState } from 'react';
 const OrderPieChart = ({ orders }) => {
@@ -16,9 +17,7 @@ const OrderPieChart = ({ orders }) => {
         setChartData(orders);
     }, [])
     return (
-        <div className="card flex justify-content-center">
-            <Chart type="pie" data={chartData} options={lightOptions} style={{ position: 'relative', width: '80%' }} />
-        </div>
+        <Chart type="pie" data={chartData} options={lightOptions} style={{ position: 'relative', width: '100%' }} />
     )
 }
 export default OrderPieChart

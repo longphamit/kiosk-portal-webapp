@@ -96,7 +96,9 @@ const MyApplicationPage = () => {
       title: "Link",
       dataIndex: "serviceApplicationLink",
       key: "serviceApplicationLink",
-      render: (text) => <a href={text} target="_blank"><LinkOutlined />Click here</a>,
+      render: (text) => <p><a href={text} target="_blank" >
+        <LinkOutlined />Click here
+      </a></p>,
     },
 
     {

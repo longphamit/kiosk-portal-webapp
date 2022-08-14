@@ -1,7 +1,8 @@
+import { Col, Row } from 'antd';
 import { Chart } from 'primereact/chart';
 import { useState } from 'react';
 import { randomColor } from '../../../@app/utils/chart_util';
-const CountPieChart = ({ count,labels }) => {
+const CountPieChart = ({ count, labels }) => {
     const [chartData] = useState({
         labels: labels,
         datasets: [
@@ -28,10 +29,11 @@ const CountPieChart = ({ count,labels }) => {
             }
         }
     });
-    return (
-        <div>
-            <Chart type="pie" data={chartData} options={lightOptions}  />
-        </div>
+    return (<div>
+        <Row justify='center' align='middle'>
+            <Chart type="pie" data={chartData} options={lightOptions} style={{ position: 'relative', width: '70%' }} />
+        </Row>
+    </div>
     )
 }
 export default CountPieChart

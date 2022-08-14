@@ -117,7 +117,7 @@ export const PieChartComponent = ({ kioskId }) => {
         }
     };
     return <div id="pie-chart-div" style={{ marginBottom: 50 }}>
-        <div style={{ marginTop: 20, marginBottom: 20 }} id='select-pie-div'>
+        <div style={{ marginTop: 20, marginBottom: 10 }} id='select-pie-div'>
             <Select defaultValue='All' style={{ width: 120 }} onChange={(value) => { onChangeFilterPieChart(value) }} key={`pie-chart-select`}>
                 <Option key={`pie-chart-option-1`} value={FilterChartType.All}>All</Option>
                 <Option key={`pie-chart-option-2`} value={FilterChartType.Month}>Month</Option>
@@ -134,13 +134,13 @@ export const PieChartComponent = ({ kioskId }) => {
                             <EmptyCard styles={{ marginTop: 50 }} />
                         </> :
                         <>
-                            <div style={{ minWidth: 700 }}>
-                                <Row justify='center' align='center' >
-                                    <Col span={8}>
+                            <div style={{ minWidth: 600 }}>
+                                <Row justify='center' align='middle'>
+                                    <Col span={4}>
                                         <OrderPieChart key={'order-pie-char'} orders={orders} />
                                     </Col>
                                 </Row>
-                                <Row justify='center' align='center' style={{ marginTop: 15, marginLeft: -100 }}>
+                                <Row justify='center' align='middle' style={{ marginTop: 15 }}>
                                     <p style={ChartTitleStyle}>
                                         {titlePieChart + ' by VND '}
                                     </p>

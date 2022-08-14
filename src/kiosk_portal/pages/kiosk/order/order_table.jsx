@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { getKisokOrderCommissionService } from "../../../services/order_service";
+import { getKisokOrderCommissionByAppIdService } from "../../../services/order_service";
 import { Col, Empty, Row, Skeleton, Spin, Table } from "antd";
-import { AppSelectComponent } from "./component/app_select_component";
 import { convertToVietNameCurrency } from "../../../components/charts/utils";
 import { EmptyCard } from "../../../../@app/components/card/empty_card";
+import { LoationOwnerAppSelectByGroupComponent } from "../../../components/select/app_select_component";
 export const KioskOrderTable = ({ kioskId, apps }) => {
     const [orders, setOrders] = useState();
     const [appSelects, setAppSelects] = useState();
@@ -11,8 +11,8 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
     const getListOrderFunction = async () => {
         try {
             setLoading(true)
-            const res = await getKisokOrderCommissionService(kioskId, '')
-            setOrders(repperformData(res.data));
+            const res = await getKisokOrderCommissionByAppIdService(kioskId, '')
+            setOrders(reperformData(res.data.data));
         } catch (error) {
             setOrders(null)
             console.error(error);
@@ -20,24 +20,52 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
             setLoading(false)
         }
     };
-    const repperformData = (obj) => {
-        if (obj.labels.length === 0) {
-            return [];
+    const getAppName = (appId) => {
+        let appName = ''
+        apps.map((e) => {
+            if (e.serviceApplicationId === appId) {
+                appName = e.serviceApplicationName;
+                return;
+            }
+        })
+        return appName;
+    }
+    
+    const buildOrderData = (oldData, newData) => {
+        let appName = getAppName(newData.serviceApplicationId)
+        if (oldData === null) {
+            return {
+                "total": newData.total,
+                "commission": newData.commission,
+                "systemCommission": newData.systemCommission,
+                "serviceApplicationId": newData.serviceApplicationId,
+                "serviceApplicationName": appName
+            }
         }
-        let temp = []
-        for (let i = 0; i < obj.labels.length; i++) {
-            temp.push({
-                serviceApplicationName: obj.labels[i],
-                totalCommission: obj.datasets[i]
-            })
+        return {
+            "total": oldData.total + newData.total,
+            "commission": oldData.commission + newData.commission,
+            "systemCommission": oldData.systemCommission + newData.systemCommission,
+            "serviceApplicationId": oldData.serviceApplicationId,
+            "serviceApplicationName": appName
         }
-        return temp;
+    }
+    const reperformData = (data) => {
+        let orderMap = new Map();
+        data.map((e) => {
+            if (orderMap.get(e.serviceApplicationId) === undefined) {
+                orderMap.set(e.serviceApplicationId, buildOrderData(null, e))
+            } else {
+                orderMap.set(e.serviceApplicationId, buildOrderData(orderMap.get(e.serviceApplicationId), e))
+            }
+        })
+        return [...orderMap.values()];
     }
     const getListOrderWithAppIdFunction = async (appId) => {
         try {
             setLoading(true)
-            const res = await getKisokOrderCommissionService(kioskId, appId)
-            setOrders(repperformData(res.data));
+            const res = await getKisokOrderCommissionByAppIdService(kioskId, appId)
+            setOrders(reperformData(res.data.data));
         } catch (error) {
             setOrders(null)
             console.error(error);
@@ -69,16 +97,28 @@ export const KioskOrderTable = ({ kioskId, apps }) => {
             render: (text) => <p>{text}</p>,
         },
         {
-            title: 'Total',
-            dataIndex: "totalCommission",
-            key: "totalCommission",
+            title: 'Commission',
+            dataIndex: "commission",
+            key: "commission",
+            render: (text) => <p>{convertToVietNameCurrency(text)}</p>,
+        },
+        {
+            title: 'Orders Total',
+            dataIndex: "total",
+            key: "total",
+            render: (text) => <p>{convertToVietNameCurrency(text)}</p>,
+        },
+        {
+            title: 'System Commission',
+            dataIndex: "systemCommission",
+            key: "systemCommission",
             render: (text) => <p>{convertToVietNameCurrency(text)}</p>,
         }
     ];
     return <>
         {
             appSelects ?
-                <AppSelectComponent apps={appSelects} onChange={getListOrderWithAppIdFunction} /> :
+                <LoationOwnerAppSelectByGroupComponent apps={appSelects} onChange={getListOrderWithAppIdFunction} /> :
                 <Spin />
         }
         {!isLoading ?

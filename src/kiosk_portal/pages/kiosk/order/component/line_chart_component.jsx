@@ -196,10 +196,15 @@ export const LineChartComponent = ({ kioskId, apps }) => {
                                 <>
                                     <Row justify='center' align='center' >
                                         <Col span={20}>
-                                            <OrderLineChart datas={lineChartData} type={lineChartType} />
+                                            <OrderLineChart
+                                                datas={lineChartData}
+                                                type={lineChartType}
+                                                labelName={'serviceApplicationName'}
+                                                aspectRatio={1}
+                                            />
                                         </Col>
                                     </Row>
-                                    <Row justify='center' align='center' style={{ marginTop: 15, marginLeft: -100 }}>
+                                    <Row justify='center' align='center' style={{ marginTop: 15 }}>
                                         <p style={ChartTitleStyle}>
                                             {titleLineChart + ' by VND '}
                                         </p>

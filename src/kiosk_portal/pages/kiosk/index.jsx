@@ -2,16 +2,17 @@ import { localStorageGetUserIdService } from "../../../@app/services/localstorag
 import KioskTable from "../../components/tables/kiosk_table";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { KIOSK_MANAGER_HREF, KIOSK_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import { Button, PageHeader } from "antd";
 
 
 const KioskPage = () => {
     const breadCumbData = [
         {
-            href: KIOSK_MANAGER_HREF,
-            label: KIOSK_MANAGER_LABEL,
-            icon: null
+            path: KIOSK_MANAGER_HREF,
+            breadcrumbName: KIOSK_MANAGER_LABEL,
         },
     ]
+
     const partyId = localStorageGetUserIdService()
     return (
         <>
