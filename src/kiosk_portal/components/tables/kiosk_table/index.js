@@ -400,17 +400,7 @@ const KioskTable = ({ partyId }) => {
                   {t("createkiosk")}
                 </Button>
               </Col>
-            ) : role === ROLE_LOCATION_OWNER ? <>
-              <Button
-                type="primary"
-                size={"large"}
-                onClick={() => {
-
-                }}
-              >
-                View Kiosk Statics
-              </Button>
-            </> : null
+            ) : null
           ) : null}
         </Row>
         {listKiosk ? (
