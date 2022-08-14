@@ -27,6 +27,7 @@ import {
   ArrowUpOutlined,
   DownloadOutlined,
   DeleteOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -485,7 +486,9 @@ const ApplicationTable = () => {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <p href={text}>{text}</p>,
+      render: (text) => <p><a href={text} target="_blank" >
+        <LinkOutlined />Click here
+      </a></p>,
     },
     {
       title: "Installed Users ",
@@ -1047,8 +1050,8 @@ const ApplicationTable = () => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                        return <Option value={item.id}>{item.name}</Option>;
-                      })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                     : null}
                 </Select>
               </Form.Item>
