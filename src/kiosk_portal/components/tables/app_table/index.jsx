@@ -464,7 +464,7 @@ const ApplicationTable = () => {
     },
     {
       name: "partyEmail",
-      label: "Party Email",
+      label: "Owner's Email",
     },
   ];
 
@@ -488,7 +488,7 @@ const ApplicationTable = () => {
       render: (text) => <p href={text}>{text}</p>,
     },
     {
-      title: "Num Of Install",
+      title: "Installed Users ",
       dataIndex: "userInstalled",
       key: "userInstalled",
       render: (text) => <p>{text}</p>,
