@@ -104,7 +104,7 @@ export const KioskDetailsPage = () => {
                 <Menu.Item key={menuItemKeys.locationInformation} icon={<InfoOutlined />}>
                     Location Information
                 </Menu.Item>
-                <Menu.SubMenu key={menuItemKeys.order} title="Order" icon={<TransactionOutlined />}>
+                <Menu.SubMenu key={menuItemKeys.order} title="Revenue" icon={<TransactionOutlined />}>
                     <Menu.Item key={menuItemKeys.order_table} icon={<TableOutlined />}>
                         Table
                     </Menu.Item>

@@ -6,15 +6,16 @@ import OrderPieChart from "../../../../components/charts/order_pie_chart";
 import { getKisokOrderCommissionByMonthService, getKisokOrderCommissionByYearService, getKisokOrderCommissionService } from "../../../../services/order_service";
 import moment from 'moment'
 import { FilterChartType } from "../../../../components/charts/utils";
-import { rePerformChartData } from "./utils";
+import { ChartTitleStyle, rePerformChartData } from "./utils";
 
-const TITLE_PIE_STATISTIC_ALL = `Revenue statistic`
+const TITLE_PIE_STATISTIC_ALL = `Revenue of year`
+const currentTime = new Date();
 export const PieChartComponent = ({ kioskId }) => {
     const [orders, setOrders] = useState();
     const { Option } = Select;
     const [filterPieChart, setFilterPieChart] = useState(FilterChartType.All);
     const [isPieChartLoading, setPieChartLoading] = useState(false)
-    const [titlePieChart, setTitlePieChart] = useState(TITLE_PIE_STATISTIC_ALL);
+    const [titlePieChart, setTitlePieChart] = useState(TITLE_PIE_STATISTIC_ALL + ' ' + currentTime.getFullYear());
     useEffect(() => {
         getListOrderFunction();
     }, []);
@@ -140,7 +141,9 @@ export const PieChartComponent = ({ kioskId }) => {
                                     </Col>
                                 </Row>
                                 <Row justify='center' align='center' style={{ marginTop: 15, marginLeft: -100 }}>
-                                    {titlePieChart}
+                                    <p style={ChartTitleStyle}>
+                                        {titlePieChart + ' by VND '}
+                                    </p>
                                 </Row>
                             </div>
                         </> :

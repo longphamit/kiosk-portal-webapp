@@ -30,3 +30,8 @@ export const rePerformChartData = (resData) => {
     console.log(data)
     return data
 }
+
+export const ChartTitleStyle = {
+    fontSize: 18,
+    fontWeight: 'bold'
+}

@@ -6,6 +6,7 @@ import { getKisokOrderCommissionByMonthAndAppsService, getKisokOrderCommissionBy
 import moment from 'moment';
 import { toast } from "react-toastify";
 import { FilterChartType, LineChartType } from "../../../../components/charts/utils";
+import { ChartTitleStyle } from "./utils";
 
 const TITLE_LINE_STATISTIC_YEAR = `Revenue of year `
 const currentTime = new Date();
@@ -199,7 +200,9 @@ export const LineChartComponent = ({ kioskId, apps }) => {
                                         </Col>
                                     </Row>
                                     <Row justify='center' align='center' style={{ marginTop: 15, marginLeft: -100 }}>
-                                        {titleLineChart}
+                                        <p style={ChartTitleStyle}>
+                                            {titleLineChart + ' by VND '}
+                                        </p>
                                     </Row></>
                                 :
                                 <EmptyCard /> :
