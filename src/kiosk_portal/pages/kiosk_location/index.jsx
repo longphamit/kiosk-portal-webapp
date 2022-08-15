@@ -1,5 +1,18 @@
-import { Button, Col, Empty, Pagination, Row, Skeleton, Space, Table, Tag } from "antd";
-import { EyeFilled, PlusOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  Empty,
+  Form,
+  Input,
+  Pagination,
+  Row,
+  Select,
+  Skeleton,
+  Space,
+  Table,
+  Tag,
+} from "antd";
+import { EyeFilled, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import {
   KIOSK_LOCATION_MANAGER_HREF,
@@ -17,6 +30,8 @@ const KioskLocationPage = () => {
   const [pageSize, setPageSize] = useState(5);
   const [kioskLocationPageTotal, setKioskLocationPageTotal] = useState(0);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const [currentPaging, setCurrentPaging] = useState(1);
+  const [form] = Form.useForm();
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
@@ -55,9 +70,9 @@ const KioskLocationPage = () => {
       ),
     },
   ];
-  const getKioskLocationList = async (page, size) => {
+  const getKioskLocationList = async (name, page, size) => {
     try {
-      const res = await getListKioskLocationService("", page, size);
+      const res = await getListKioskLocationService(name, page, size);
       setKioskLocationList(res.data.data);
       setKioskLocationPageTotal(res.data.metadata.total);
     } catch (e) {
@@ -68,7 +83,8 @@ const KioskLocationPage = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setKioskLocationPage(page);
-    await getKioskLocationList(page, pageSize);
+    setCurrentPaging(page);
+    await getKioskLocationList("", page, pageSize);
   };
 
   useEffect(async () => {
@@ -76,7 +92,7 @@ const KioskLocationPage = () => {
       PREVIOUS_PATH,
       JSON.stringify({ data: breadCumbData })
     );
-    getKioskLocationList(kioskLocationPage, pageSize);
+    getKioskLocationList("", kioskLocationPage, pageSize);
   }, []);
   const breadCumbData = [
     {
@@ -94,7 +110,11 @@ const KioskLocationPage = () => {
     if (type === "create") {
       setIsCreateModalVisible(false);
     }
-    await getKioskLocationList(kioskLocationPage, pageSize);
+    await getKioskLocationList("", kioskLocationPage, pageSize);
+  };
+  const onFinishSearch = async (values) => {
+    await getKioskLocationList(values.searchString, 1, pageSize);
+    setCurrentPaging(1);
   };
 
   const handleCancelModal = (type) => {
@@ -111,7 +131,42 @@ const KioskLocationPage = () => {
       />
       <CustomBreadCumb props={breadCumbData} />
       <Row style={{ padding: 10 }}>
-        <Col span={15}></Col>
+        <Col span={15}>
+          <Form
+            form={form}
+            name="search"
+            onFinish={onFinishSearch}
+            initialValues={{
+              type: "Name",
+              searchString: "",
+              status: "",
+            }}
+          >
+            <Row>
+              <Col span={14}>
+                <Form.Item name="searchString" style={{ marginTop: 5 }}>
+                  <Input
+                    style={{ width: "100%" }}
+                    placeholder="Search by name"
+                    value=""
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  <Button
+                    htmlType="submit"
+                    style={{ marginLeft: 10, borderRadius: 5 }}
+                    type="primary"
+                    size={"large"}
+                  >
+                    <SearchOutlined />
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
         <Col span={5} />
         <Col span={4}>
           <Button
@@ -123,13 +178,14 @@ const KioskLocationPage = () => {
           </Button>
         </Col>
       </Row>
-      {kioskLocationList ?
-        kioskLocationList.length === 0 ?
-          <Row justify='center' align='center' style={{ marginTop: 250 }}>
+      {kioskLocationList ? (
+        kioskLocationList.length === 0 ? (
+          <Row justify="center" align="center" style={{ marginTop: 250 }}>
             <Col>
               <Empty />
             </Col>
-          </Row> :
+          </Row>
+        ) : (
           <>
             <Table
               columns={columns}
@@ -140,10 +196,14 @@ const KioskLocationPage = () => {
               defaultCurrent={1}
               total={kioskLocationPageTotal}
               pageSize={pageSize}
+              current={currentPaging}
               onChange={handleChangeNumberOfPaging}
             />
-          </> : <Skeleton />
-      }
+          </>
+        )
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };
