@@ -35,6 +35,7 @@ const UpdateFeedbackModal = ({
       setMyFeedback(feedbackRes.data);
       let res = await getFeedbacksService(appId);
       setListFeedback(res.data.data);
+      handleCancelModal()
       toast.success("Update feedback success!");
     } catch (e) {
       console.error(e);

@@ -45,7 +45,7 @@ export const changeStatusAccountService = async (id: any, data: any) => {
 
 export const searchAccountService = async (data: any) => {
   const response = await request.get(
-    `${HOST}/v1/parties?FirstName=${data.firstName}&LastName=${data.lastName}&PhoneNumber=${data.phoneNumber}&Email=${data.email}&Address=${data.email}&Status=${data.status}&RoleName=${data.roleName}&size=${data.size}&page=${data.page}`
+    `${HOST}/v1/parties?FirstName=${data.firstName}&LastName=${data.lastName}&PhoneNumber=${data.phoneNumber}&Email=${data.email}&Address=${data.address}&Status=${data.status}&RoleName=${data.roleName}&size=${data.size}&page=${data.page}`
   );
   return response.data;
 };

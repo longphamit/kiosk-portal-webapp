@@ -40,7 +40,7 @@ const DetailLocationPage = () => {
   const [listRemoveImg, setListRemoveImg] = useState([]);
   const [isLoadingBasicInfor, setIsLoadingBasicInfor] = useState(false);
   const [isLoadingListImg, setIsLoadingListImg] = useState(false);
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   let navigate = useNavigate();
   const onNavigate = (url) => {
     navigate(url);
@@ -54,7 +54,7 @@ const DetailLocationPage = () => {
     try {
       let res = await getLocationByIdService(id);
       setCurrentItem(res.data);
-      setDescription(res.data.description)
+      setDescription(res.data.description);
       let list = [];
       await Promise.all(
         res.data.listImage.map((img, index) => {
@@ -115,27 +115,37 @@ const DetailLocationPage = () => {
   };
 
   const onFinishUpdateListImage = async (values) => {
+    console.log(values);
     setIsLoadingListImg(true);
+    let isCheck = true;
     try {
-      let listImage = [];
-      let formatImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          if (value?.originFileObj) {
-            let result = await getBase64(value.originFileObj);
-            formatImage = result.split(",");
-            listImage.push(formatImage[1]);
-          }
-        })
-      );
-      const updateListImage = {
-        id: currentItem.id,
-        removeFields: listRemoveImg,
-        addFields: listImage,
-      };
-      await updateLocationListImgService(updateListImage).then(() => {
-        toast.success("Update List Image Location Success");
-      });
+      if (values.listImage.fileList.length === 0) {
+        isCheck = false;
+        toast.error("Please choose at least 1 picture in list img");
+      }
+      if (isCheck) {
+        let listImage = [];
+        let formatImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            if (value?.originFileObj) {
+              let result = await getBase64(value.originFileObj);
+              formatImage = result.split(",");
+              listImage.push(formatImage[1]);
+            }
+          })
+        );
+        const updateListImage = {
+          id: currentItem.id,
+          removeFields: listRemoveImg,
+          addFields: listImage,
+        };
+        console.log(updateListImage);
+        await updateLocationListImgService(updateListImage).then(() => {
+          toast.success("Update List Image Location Success");
+          setListRemoveImg([]);
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -208,6 +218,16 @@ const DetailLocationPage = () => {
                 <Form.Item
                   name="description"
                   label="Description"
+                  rules={[
+                    {
+                      validator(values) {
+                        if (description === null || description === "") {
+                          return Promise.reject("Please input description");
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
                   value={description}
                 >
                   <Editor
@@ -243,7 +263,7 @@ const DetailLocationPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose images!",
+                        message: "Please update images!",
                       },
                     ]}
                   >

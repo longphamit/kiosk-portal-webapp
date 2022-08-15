@@ -49,6 +49,7 @@ const ResetPassPage = () => {
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
+                    console.log(value)
                     if (!value || getFieldValue("password") === value) {
                       return Promise.resolve();
                     }

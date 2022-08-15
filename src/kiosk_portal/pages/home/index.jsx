@@ -11,18 +11,22 @@ import "./styles.css";
 import { Chart } from "primereact/chart";
 import DashBoardPieChartInfor from "../../components/chart_info/pie_chart_info/dashboard_piechart_info";
 import CountPieChart from "../../components/charts/count_pie_chart";
-import { ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
+import { KioskLineChartComponent } from "./components/kiosk_line_chart_component";
+import { AdminStatisticComponent } from "./components/admin_statistic_component";
 const initCountValue = {
   total: 0,
   active: 0,
   deactive: 0,
 };
+const SPAN_PIE_CHART_COL = 6
+const SPAN_LINE_CHART_COL = 20
 const labelCountKiosk = ["Working", "Stopped"];
-const labelCountEvent = ["UpComming", "End"];
-const lableCountPoi = ["Active", "DeActive"];
-const lableCountApp = ["Install", "UnInstall"];
-const lableCountAppSupportProvider = ["Available", "UnAvailable"];
+const labelCountEvent = ["Upcomming", "End"];
+const lableCountPoi = ["Active", "Deactive"];
+const lableCountApp = ["Install", "Uninstall"];
+const lableCountAppSupportProvider = ["Available", "Unavailable"];
 const HomePage = () => {
   const [role, setRole] = useState();
   const [countKiosk, setCountKiosk] = useState(initCountValue);
@@ -61,20 +65,18 @@ const HomePage = () => {
   return (
     <>
       <CustomBreadCumb props={[]}></CustomBreadCumb>
-      <Row>
+      <Row justify="space-around">
         {role ? (
           role !== ROLE_SERVICE_PROVIDER ? (
             <>
-              <Col span={6}>
+              <Col span={SPAN_PIE_CHART_COL}>
                 {countKiosk ? (
                   <div className="count-chart-box">
                     <h2>Kiosk</h2>
-                    {countKiosk.total != 0 ? (
-                      <CountPieChart
-                        labels={labelCountKiosk}
-                        count={countKiosk}
-                      />
-                    ) : null}
+                    <CountPieChart
+                      labels={labelCountKiosk}
+                      count={countKiosk}
+                    />
                     <DashBoardPieChartInfor
                       activeTitle={"Working"}
                       deactiveTitle={"Stopped"}
@@ -85,18 +87,16 @@ const HomePage = () => {
                   </div>
                 ) : null}
               </Col>
-              <Col span={6}>
+              <Col span={SPAN_PIE_CHART_COL}>
                 {countEvent ? (
                   <div className="count-chart-box">
                     <h2>Event</h2>
-                    {countEvent.total != 0 ? (
-                      <CountPieChart
-                        labels={labelCountEvent}
-                        count={countEvent}
-                      />
-                    ) : null}
+                    <CountPieChart
+                      labels={labelCountEvent}
+                      count={countEvent}
+                    />
                     <DashBoardPieChartInfor
-                      activeTitle={"UpComming"}
+                      activeTitle={"Upcomming"}
                       deactiveTitle={"End"}
                       total={"Total"}
                       background="#92e8b5"
@@ -105,16 +105,14 @@ const HomePage = () => {
                   </div>
                 ) : null}
               </Col>
-              <Col span={6}>
+              <Col span={SPAN_PIE_CHART_COL}>
                 {countPoi ? (
                   <div className="count-chart-box">
-                    <h2>Poi</h2>
-                    {countPoi.total != 0 ? (
-                      <CountPieChart labels={lableCountPoi} count={countPoi} />
-                    ) : null}
+                    <h2>POI</h2>
+                    <CountPieChart labels={lableCountPoi} count={countPoi} />
                     <DashBoardPieChartInfor
                       activeTitle={"Active"}
-                      deactiveTitle={"DeAtive"}
+                      deactiveTitle={"Deative"}
                       total={"Total"}
                       background="#95c8f0"
                       count={countPoi}
@@ -122,47 +120,51 @@ const HomePage = () => {
                   </div>
                 ) : null}
               </Col>
-              <Col span={6}>
-          {countApp ? (
-            <div className="count-chart-box">
-              <h2>App</h2>
-              {countApp.total != 0 ? (
-                <CountPieChart labels={lableCountApp} count={countApp} />
-              ) : null}
-              <DashBoardPieChartInfor
-                activeTitle={"Install"}
-                deactiveTitle={"UnInstall"}
-                total={"Total"}
-                background="#f0de95"
-                count={countApp}
-              />
-            </div>
-          ) : null}
-        </Col>
+              <Col span={SPAN_PIE_CHART_COL}>
+                {countApp ? (
+                  <div className="count-chart-box">
+                    <h2>App</h2>
+                    <CountPieChart labels={lableCountApp} count={countApp} />
+                    <DashBoardPieChartInfor
+                      activeTitle={"Install"}
+                      deactiveTitle={"Uninstall"}
+                      total={"Total"}
+                      background="#f0de95"
+                      count={countApp}
+                    />
+                  </div>
+                ) : null}
+              </Col>
             </>
           ) :
-          role===ROLE_SERVICE_PROVIDER?
-          <Col span={6}>
-          {countApp ? (
-            <div className="count-chart-box">
-              <h2>App</h2>
-              {countApp.total != 0 ? (
-                <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
-              ) : null}
-              <DashBoardPieChartInfor
-                activeTitle={"Available"}
-                deactiveTitle={"UnAvailable"}
-                total={"Total"}
-                background="#f0de95"
-                count={countApp}
-              />
-            </div>
-          ) : null}
-        </Col>:null
+            role === ROLE_SERVICE_PROVIDER ?
+              <Col span={SPAN_PIE_CHART_COL}>
+                {countApp ? (
+                  <div className="count-chart-box">
+                    <h2>App</h2>
+                    <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
+                    <DashBoardPieChartInfor
+                      activeTitle={"Available"}
+                      deactiveTitle={"Unavailable"}
+                      total={"Total"}
+                      background="#f0de95"
+                      count={countApp}
+                    />
+                  </div>
+                ) : null}
+              </Col> : null
         ) : null}
-
-       
       </Row>
+      {role === ROLE_LOCATION_OWNER ?
+        <>
+          <KioskLineChartComponent span={SPAN_LINE_CHART_COL} />
+        </> : null
+      }
+      {role === ROLE_ADMIN ?
+        <>
+          <AdminStatisticComponent />
+        </> : null
+      }
     </>
   );
 };

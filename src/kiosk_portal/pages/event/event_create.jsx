@@ -63,8 +63,20 @@ export const EventCreatingPage = () => {
     }
   };
   const onFinishCreateEvent = async (values) => {
+    console.log(values);
+    const invalidMsg = [];
+    let check = true;
+    setIsLoading(true);
+
     try {
-      setIsLoading(true);
+      if (values.thumbnail.fileList.length === 0) {
+        invalidMsg.push("You need to add picture to logo\n");
+        check = false;
+      }
+      if (values.listImage.fileList.length === 0) {
+        invalidMsg.push("You need to add at least 1 picture to list img\n");
+        check = false;
+      }
       //Check date time of event
       let msg = checkDateTime(
         values.dateStart,
@@ -73,44 +85,49 @@ export const EventCreatingPage = () => {
         values.dateEnd
       );
       if (msg.length !== 0) {
-        toast.error(msg);
-        setIsLoading(false);
-        return;
+        invalidMsg.push(msg);
+        check = false;
       }
-      let thumbnail = (
-        await getBase64(values.thumbnail.file.originFileObj)
-      ).split(",")[1];
+      if (check) {
+        let thumbnail = (
+          await getBase64(values.thumbnail.file.originFileObj)
+        ).split(",")[1];
 
-      let banner = [];
-      if (values.banner?.fileList[0]) {
-        let resultBanner = await getBase64(values.banner.file.originFileObj);
-        banner = resultBanner.split(",");
+        let banner = [];
+        if (values.banner?.fileList[0]) {
+          let resultBanner = await getBase64(values.banner.file.originFileObj);
+          banner = resultBanner.split(",");
+        }
+
+        let listImage = [];
+        if (values.listImage !== undefined)
+          await Promise.all(
+            values.listImage.fileList.map(async (value) => {
+              let result = (await getBase64(value.originFileObj)).split(",")[1];
+              listImage.push(result);
+            })
+          );
+        let data = {
+          name: values.name,
+          description: description ?? "",
+          thumbnail: thumbnail,
+          timeStart: toStringDateTimePicker(values.dateStart, values.timeStart),
+          timeEnd: toStringDateTimePicker(values.dateEnd, values.timeEnd),
+          ward: getName(wardOptions, values.ward),
+          district: getName(districtOptions, values.district),
+          city: getName(proviceOptions, values.provice),
+          address: values.address,
+          listImage: listImage,
+          banner: banner[1],
+        };
+        console.log(data);
+        await createEventService(data);
+        toast.success("Create event success");
+        navigate(EVENT_MANAGER_PATH);
+      } else {
+        var errormsg = invalidMsg.join("-");
+        toast.error(errormsg);
       }
-
-      let listImage = [];
-      if (values.listImage !== undefined)
-        await Promise.all(
-          values.listImage.fileList.map(async (value) => {
-            let result = (await getBase64(value.originFileObj)).split(",")[1];
-            listImage.push(result);
-          })
-        );
-      let data = {
-        name: values.name,
-        description: description ?? "",
-        thumbnail: thumbnail,
-        timeStart: toStringDateTimePicker(values.dateStart, values.timeStart),
-        timeEnd: toStringDateTimePicker(values.dateEnd, values.timeEnd),
-        ward: getName(wardOptions, values.ward),
-        district: getName(districtOptions, values.district),
-        city: getName(proviceOptions, values.provice),
-        address: values.address,
-        listImage: listImage,
-        banner: banner[1],
-      };
-      await createEventService(data);
-      toast.success("Create event success");
-      navigate(EVENT_MANAGER_PATH);
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -367,7 +384,20 @@ export const EventCreatingPage = () => {
             <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
           </Upload>
         </Form.Item>
-        <Form.Item name="description" label="Description">
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[
+            {
+              validator(values) {
+                if (description === null || description === "") {
+                  return Promise.reject("Please input description");
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <Editor
             onTextChange={(e) => setDescription(e.htmlValue)}
             style={{ height: "300px" }}

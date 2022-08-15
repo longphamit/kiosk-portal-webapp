@@ -14,6 +14,10 @@ export const getListInstallAppService = async () => {
   const response = await request.get(`${HOST}/v1/my-app?&page=1&status=installed`);
   return response.data;
 };
+export const getAllMyApplicationService = async () => {
+  const response = await request.get(`${HOST}/v1/my-app?&page=1`);
+  return response.data;
+};
 export const changeStatusMyAppService = async (serviceApplication: any) => {
   const response = await request.patch(`${HOST}/v1/my-app/status`, {
     "serviceApplication": serviceApplication
@@ -27,3 +31,10 @@ export const getApplicationsByCategoryIdService = async (categoryId: any) => {
   );
   return response.data;
 };
+
+export const getMyApplicationById = async (id: any) => {
+  const response = await request.get(
+    `${HOST}/v1/my-app?ServiceApplicationId=${id}&Status=installed&page=1`
+  );
+  return response.data;
+}

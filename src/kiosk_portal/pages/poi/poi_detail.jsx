@@ -217,7 +217,7 @@ const DetailPoiPage = () => {
         check = false;
       }
       if (isHasPicture === false) {
-        invalidMsg.push("Please choose logo \n");
+        invalidMsg.push("Please choose avatar \n");
         check = false;
       }
       if (Array.isArray(values.dayOfWeek)) {
@@ -288,7 +288,7 @@ const DetailPoiPage = () => {
           thumbnail: valueLogo,
         };
         await updatePoiBasicService(updatePoi).then(() => {
-          toast.success("Update Poi Success");
+          toast.success("Update POI Success");
         });
       } else {
         var errormsg = invalidMsg.join("-");
@@ -304,25 +304,32 @@ const DetailPoiPage = () => {
   const onFinishUpdateListImage = async (values) => {
     try {
       setIsLoadingListImg(true);
-      let listImage = [];
-      let formatImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          if (value?.originFileObj) {
-            let result = await getBase64(value.originFileObj);
-            formatImage = result.split(",");
-            listImage.push(formatImage[1]);
-          }
-        })
-      );
-      const updateListImage = {
-        id: currentItem.id,
-        removeFields: listRemoveImg,
-        addFields: listImage,
-      };
-      await updatePoiListImgService(updateListImage).then(() => {
-        toast.success("Update List Img Poi Success");
-      });
+      let isTrue = true;
+      if (values.listImage.fileList.length === 0) {
+        toast.error("Please input at least 1 picture");
+        isTrue = false;
+      }
+      if (isTrue) {
+        let listImage = [];
+        let formatImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            if (value?.originFileObj) {
+              let result = await getBase64(value.originFileObj);
+              formatImage = result.split(",");
+              listImage.push(formatImage[1]);
+            }
+          })
+        );
+        const updateListImage = {
+          id: currentItem.id,
+          removeFields: listRemoveImg,
+          addFields: listImage,
+        };
+        await updatePoiListImgService(updateListImage).then(() => {
+          toast.success("Update List Img POI Success");
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -350,13 +357,15 @@ const DetailPoiPage = () => {
       <CustomBreadCumb props={breadCumbData} />
       {currentItem ? (
         <Row style={{ padding: 10 }}>
-          <Col span={14}>
+          <Col span={24}>
             <Card title="Basic Information">
               <Form
                 {...formItemLayout}
                 form={formBasic}
                 name="basicInfor"
                 onFinish={onFinishUpdatePoi}
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
                 scrollToFirstError
                 initialValues={{
                   name: currentItem.name,
@@ -391,7 +400,20 @@ const DetailPoiPage = () => {
                 >
                   <Input />
                 </Form.Item>
-                <Form.Item name="description" label="Description">
+                <Form.Item
+                  name="description"
+                  label="Description"
+                  rules={[
+                    {
+                      validator(values) {
+                        if (description === null || description === "") {
+                          return Promise.reject("Please input description");
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
                   <Editor
                     value={currentItem.description}
                     onTextChange={(e) => setDescription(e.htmlValue)}
@@ -585,6 +607,8 @@ const DetailPoiPage = () => {
                 {...formItemLayout}
                 form={formListImg}
                 name="listImg"
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
                 onFinish={onFinishUpdateListImage}
                 scrollToFirstError
               >
@@ -633,6 +657,8 @@ const DetailPoiPage = () => {
                 name="banner"
                 onFinish={onFinishUpdateBanner}
                 scrollToFirstError
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 20 }}
               >
                 <Form.Item name="banner" label="Banner">
                   {currentItem.banner ? (

@@ -10,7 +10,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { EyeFilled, CloseCircleFilled } from "@ant-design/icons";
+import { EyeFilled, CloseCircleFilled, LinkOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -41,10 +41,12 @@ const MyApplicationPage = () => {
         numInPage,
         currentPageToGetList
       );
+      console.log(res);
       setTotalMyApplication(res.data.metadata.total);
       setListMyApplication(res.data.data);
     } catch (error) {
       console.error(error);
+      setListMyApplication([]);
     }
   };
 
@@ -57,7 +59,7 @@ const MyApplicationPage = () => {
         {
           try {
             await changeStatusMyAppService(values.serviceApplicationId);
-            await getListMyAppFunction(currentPage, numApplicationInPage);
+            await getListMyAppFunction(1, numApplicationInPage);
             toast.success("Uninstall successful");
           } catch (error) {
             toast.error(error.response.data.message);
@@ -96,7 +98,14 @@ const MyApplicationPage = () => {
       title: "Link",
       dataIndex: "serviceApplicationLink",
       key: "serviceApplicationLink",
-      render: (text) => <p href={text}>{text}</p>,
+      render: (text) => (
+        <p>
+          <a href={text} target="_blank">
+            <LinkOutlined />
+            Click here
+          </a>
+        </p>
+      ),
     },
 
     {
@@ -114,7 +123,7 @@ const MyApplicationPage = () => {
         record.serviceApplicationStatus === "available" ? (
           <Tag color={"green"}>Available</Tag>
         ) : (
-          <Tag color={"red"}>UnAvailable</Tag>
+          <Tag color={"red"}>Unavailable</Tag>
         ),
     },
 

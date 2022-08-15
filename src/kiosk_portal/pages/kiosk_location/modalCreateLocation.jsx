@@ -1,12 +1,5 @@
 import { toast } from "react-toastify";
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Upload,
-  Spin,
-} from "antd";
+import { Button, Form, Input, Modal, Upload, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -48,34 +41,41 @@ const ModalCreateLocation = ({
   const { TextArea } = Input;
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-  const [description, setDescription] = useState();
+  const [description, setDescription] = useState("");
   useEffect(async () => {
     form.resetFields();
   }, []);
 
   const onFinishCreatePoi = async (values) => {
     setIsLoading(true);
+    let isCheck = true;
     try {
-      let listImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          let formatImage = (await getBase64(value.originFileObj)).split(
-            ","
-          )[1];
-          listImage.push(formatImage);
-        })
-      );
-      let newLocation = {
-        name: values.name,
-        description: description,
-        hotLine: values.hotline,
-        listImage: listImage,
-      };
-      await createLocationService(newLocation).then(() => {
-        modalToIndex("create");
-        toast.success("Create Poi Success");
-        form.resetFields();
-      });
+      if (values.listImage.fileList.length === 0) {
+        isCheck = false;
+        toast.error("Please input at least 1 picture to list img ");
+      }
+      if (isCheck) {
+        let listImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            let formatImage = (await getBase64(value.originFileObj)).split(
+              ","
+            )[1];
+            listImage.push(formatImage);
+          })
+        );
+        let newLocation = {
+          name: values.name,
+          description: description,
+          hotLine: values.hotline,
+          listImage: listImage,
+        };
+        await createLocationService(newLocation).then(() => {
+          modalToIndex("create");
+          toast.success("Create POI Success");
+          form.resetFields();
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -116,7 +116,7 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="hotline"
-            label="HotLine"
+            label="Hotline"
             rules={[
               {
                 pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
@@ -154,6 +154,17 @@ const ModalCreateLocation = ({
             name="description"
             label="Description"
             value={description}
+            rules={[
+              {
+                validator(values) {
+                  console.log(description);
+                  if (description === null || description === "") {
+                    return Promise.reject("Please input description");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <Editor
               style={{ height: "320px" }}

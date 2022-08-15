@@ -8,7 +8,6 @@ import {
   Pagination,
   Row,
   Skeleton,
-  Space,
   Table,
 } from "antd";
 import { useEffect, useState } from "react";
@@ -23,18 +22,16 @@ import { getListPoiCategoriesService } from "../../services/poi_category_service
 import {
   SearchOutlined,
   PlusOutlined,
-  EyeFilled,
-  SwapOutlined,
 } from "@ant-design/icons";
-import ModalAdvanceSearch from "./modalAdvanceSearch";
 import { useNavigate } from "react-router-dom";
-import { TYPE_SERVER } from "../../../@app/constants/key";
 import {
   POI_MANAGER_HREF,
   POI_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { toast } from "react-toastify";
+import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
+import { columns } from "./utils";
 
 const PoiPage = () => {
   const { t } = useTranslation();
@@ -42,12 +39,10 @@ const PoiPage = () => {
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentUnit, setCurrentUnit] = useState(null);
   const [listPoiCategories, setListPoiCategories] = useState([]);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
-  const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const [listProvinces, setListProvinces] = useState([]);
+  let role = localStorageGetReduxState().auth.role;
   let navigate = useNavigate();
 
   const [form] = Form.useForm();
@@ -119,20 +114,12 @@ const PoiPage = () => {
   const showModal = (type) => {
     if (type === "create") {
       setIsCreateModalVisible(true);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(true);
-    } else if (type === "search") {
-      setIsSearchModalVisible(true);
     }
   };
 
   const onFinishModal = async (type, data) => {
     if (type === "create") {
       setIsCreateModalVisible(false);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(false);
-    } else if (type === "search") {
-      setIsSearchModalVisible(false);
     }
     if (data === null) {
       setCurrentPage(1);
@@ -164,15 +151,9 @@ const PoiPage = () => {
     }
   };
 
-  const onSearchModal = async (data) => {};
-
   const handleCancelModalPoi = (type) => {
     if (type === "create") {
       setIsCreateModalVisible(false);
-    } else if (type === "update") {
-      setIsUpdateModalVisible(false);
-    } else if (type === "search") {
-      setIsSearchModalVisible(false);
     }
   };
 
@@ -210,68 +191,6 @@ const PoiPage = () => {
     });
   };
 
-  const columns = [
-    {
-      title: "Image",
-      render: (text, record, dataIndex) => (
-        <img src={record.thumbnail.link} width={50} height={50} />
-      ),
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Open Day",
-      dataIndex: "dayOfWeek",
-      key: "dayOfWeek",
-      render: (text) => <p>{text}</p>,
-    },
-    {
-      title: "Create By",
-      dataIndex: "type",
-      key: "type",
-      render: (text) => (
-        <p>{text === TYPE_SERVER ? "Admin" : "Location owner"}</p>
-      ),
-    },
-
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text, record, dataIndex) => <p>{text}</p>,
-    },
-    {
-      title: t("action"),
-      key: "action",
-      align: "center",
-      render: (text, record, dataIndex) => (
-        <Space size="middle">
-          <Button
-            className="infor-button"
-            shape="default"
-            onClick={() => {
-              onNavigate({ pathname: "/./poi", search: "?id=" + record.id });
-            }}
-          >
-            <EyeFilled /> Details
-          </Button>
-          <Button
-            className="warn-button"
-            shape="default"
-            onClick={() => {
-              onFinishChangeStatusPoi(record);
-            }}
-          >
-            <SwapOutlined /> Change Status
-          </Button>
-        </Space>
-      ),
-    },
-  ];
 
   return (
     <>
@@ -298,15 +217,7 @@ const PoiPage = () => {
                 </Form.Item>
               </Col>
               <Col span={1} />
-              <Col span={3}>
-                <Button
-                  type="danger"
-                  size={"large"}
-                  onClick={() => showModal("search")}
-                >
-                  <SearchOutlined /> Advanced
-                </Button>
-              </Col>
+              <Col span={3} />
             </Row>
           </Form>
         </Col>
@@ -315,7 +226,9 @@ const PoiPage = () => {
           <Button
             className="success-button"
             size={"large"}
-            onClick={() => showModal("create")}
+            onClick={() => {
+              showModal("create");
+            }}
           >
             <PlusOutlined /> Create
           </Button>
@@ -330,7 +243,7 @@ const PoiPage = () => {
           </Row>
         ) : (
           <>
-            <Table columns={columns} dataSource={listUnit} pagination={false} />
+            <Table columns={columns(onFinishChangeStatusPoi, t, onNavigate)} dataSource={listUnit} pagination={false} />
             <Pagination
               defaultCurrent={1}
               total={totalUnit}
@@ -350,16 +263,6 @@ const PoiPage = () => {
         handleCancelPoiModal={handleCancelModalPoi}
         listPoiCategories={listPoiCategories}
       />
-      {
-        <ModalAdvanceSearch
-          onSearchModal={onSearchModal}
-          modalToIndex={onFinishModal}
-          listProvinces={listProvinces}
-          isPoiModalVisible={isSearchModalVisible}
-          handleCancelPoiModal={handleCancelModalPoi}
-          listPoiCategories={listPoiCategories}
-        />
-      }
     </>
   );
 };

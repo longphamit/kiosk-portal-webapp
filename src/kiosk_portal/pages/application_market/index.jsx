@@ -1,5 +1,5 @@
 import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Spin, Table } from "antd";
-import { EyeFilled, DownloadOutlined } from "@ant-design/icons";
+import { EyeFilled, DownloadOutlined, LinkOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -99,7 +99,9 @@ const ApplicationMarketPage = () => {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <p href={text}>{text}</p>,
+      render: (text) => <p><a href={text} target="_blank" >
+        <LinkOutlined />Click here
+      </a></p>,
     },
 
     {
@@ -112,7 +114,7 @@ const ApplicationMarketPage = () => {
     {
       title: t("action"),
       key: "action",
-      
+
       render: (text, record, dataIndex) => (
         <Space size="middle">
           <Button

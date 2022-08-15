@@ -1,18 +1,8 @@
+import { Row } from 'antd';
 import { Chart } from 'primereact/chart';
-import { useState } from 'react';
-import { randomColor } from '../../../@app/utils/chart_util';
+import { useEffect, useState } from 'react';
 const OrderPieChart = ({ orders }) => {
-    const colors = orders.map(e => randomColor());
-    const [chartData] = useState({
-        labels: orders.map(e => e.serviceApplicationName),
-        datasets: [
-            {
-                data: orders.map(e => e.totalCommission),
-                backgroundColor: colors,
-                hoverBackgroundColor: colors
-            }
-        ]
-    });
+    const [chartData, setChartData] = useState();
 
     const [lightOptions] = useState({
         plugins: {
@@ -23,10 +13,11 @@ const OrderPieChart = ({ orders }) => {
             }
         }
     });
+    useEffect(() => {
+        setChartData(orders);
+    }, [])
     return (
-        <div className="card flex justify-content-center">
-            <Chart type="pie" data={chartData} options={lightOptions} style={{ position: 'relative', width: '40%' }} />
-        </div>
+        <Chart type="pie" data={chartData} options={lightOptions} style={{ position: 'relative', width: '100%' }} />
     )
 }
 export default OrderPieChart

@@ -105,13 +105,15 @@ const ProfilePage = () => {
         {isLoadingInfo ? <Skeleton className="center" /> : null}
         {party ? (
           <Row style={{ padding: 10 }}>
-            <Col span={14}>
+            <Col span={24}>
               <Card title="Profile Information">
                 <Form
                   {...formItemLayout}
                   form={formProfile}
                   name="register"
                   scrollToFirstError
+                  labelCol={{ span: 2 }}
+                  wrapperCol={{ span: 22 }}
                   onFinish={onFinishUpdateProfile}
                   initialValues={{
                     firstName: party.firstName,
@@ -151,7 +153,7 @@ const ProfilePage = () => {
                     label={t("phonenumber")}
                     rules={[
                       {
-                        pattern: new RegExp("(84|0[3|5|7|8|9])+([0-9]{8})"),
+                        pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
                         message: t("formatphonenumber"),
                       },
                       {
@@ -222,6 +224,8 @@ const ProfilePage = () => {
                   validateMessages={validateMessages}
                   {...formItemLayout}
                   onFinish={onFinishUpdatePassword}
+                  labelCol={{ span: 2 }}
+                  wrapperCol={{ span: 22 }}
                 >
                   <Form.Item
                     label="Old Password"
@@ -234,6 +238,35 @@ const ProfilePage = () => {
                     label="New Password"
                     name="newPassword"
                     rules={[{ required: true, type: "string", min: 7 }]}
+                  >
+                    <Input.Password />
+                  </Form.Item>
+                  <Form.Item
+                    name="confirm"
+                    label="Confirm Password"
+                    dependencies={["newPassword"]}
+                    hasFeedback
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please confirm your password!",
+                      },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (
+                            !value ||
+                            getFieldValue("newPassword") === value
+                          ) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error(
+                              "The two passwords that you entered do not match!"
+                            )
+                          );
+                        },
+                      }),
+                    ]}
                   >
                     <Input.Password />
                   </Form.Item>

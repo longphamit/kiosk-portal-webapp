@@ -53,26 +53,7 @@ export const thumbnailTemplate = (item) => {
         />
     </div>
 }
-export const checkEmptyRow = (obj, root) => {
-    let result = false;
-    Object.entries(obj).map(([k, v]) => {
-        if (k !== root && v.length == 0) {
-            result = true;
-            return;
-        }
-    });
-    return result;
-}
-export const getIndexOfEmptyRow = (obj, root) => {
-    let i = -1;
-    Object.entries(obj).map(([k, v], index) => {
-        if (k !== root && v.length == 0) {
-            i = index;
-            return;
-        }
-    });
-    return i;
-}
+
 export const removeItemFromList = (id, list) => {
     const removeIndex = []
     for (let i = 0; i < list.length; i++) {
@@ -84,13 +65,6 @@ export const removeItemFromList = (id, list) => {
         list.splice(index, 1)
     }
     return list
-}
-
-export const isColumnExisted = (rowIndex, componentsObj) => {
-    if (componentsObj['row' + `${rowIndex}`] === undefined) {
-        return false;
-    }
-    return true;
 }
 
 export const getComponentFromList = (id, list) => {
@@ -130,32 +104,30 @@ export const createEventModel = (event) => {
 }
 export const buildPositionsModelRequest = (components, templateId, type) => {
     let listPosition = [];
-    let rowIndex = 0;
     Object.entries(components).map((element, index) => {
-        if (index != 0 && element[1].length != 0) {
+        if (index !== 0) {
             let component = element[1];
             for (let i = 0; i < component.length; i++) {
                 let position;
                 if (type === 'event') {
                     position = {
                         eventId: component[i].id,
-                        rowIndex: rowIndex,
+                        rowIndex: index - 1,
                         columnIndex: i
                     };
                 }
                 else {
                     position = {
                         appCategoryId: component[i].id,
-                        rowIndex: rowIndex,
+                        rowIndex: index - 1,
                         columnIndex: i
                     };
                 }
                 listPosition.push(position);
             }
-            rowIndex++;
         }
-
-    });
+    }
+    );
     let request = {
         templateId: templateId,
         listPosition: listPosition

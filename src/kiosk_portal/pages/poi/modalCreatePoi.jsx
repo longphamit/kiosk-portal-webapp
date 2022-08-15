@@ -94,6 +94,16 @@ const ModalCreatePoi = ({
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
       }
+
+      if (values.listImage.fileList.length === 0) {
+        invalidMsg.push("You need to add picture to list img\n");
+        check = false;
+      }
+      if (values.thumbnail.fileList.length === 0) {
+        invalidMsg.push("You need to add avatar\n");
+        check = false;
+      }
+
       if (check) {
         let objCity = listProvinces.find(
           (element) => element.code === values.city
@@ -150,10 +160,9 @@ const ModalCreatePoi = ({
           listImage: listImage,
           banner: banner[1],
         };
-        console.log(newPoi);
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
-          toast.success("Create Poi Success");
+          toast.success("Create POI Success");
           form.resetFields();
         });
       } else {
@@ -173,7 +182,7 @@ const ModalCreatePoi = ({
   return (
     <>
       <Modal
-        title="Create Poi"
+        title="Create POI"
         visible={isCreatePoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
@@ -193,13 +202,26 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: t("reqnameschedule"),
+                message: "Please input name",
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              {
+                validator(values) {
+                  if (description === null || description === "") {
+                    return Promise.reject("Please input description");
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
             <Editor
               onTextChange={(e) => setDescription(e.htmlValue)}
               style={{ height: "300px" }}
@@ -409,7 +431,7 @@ const ModalCreatePoi = ({
               <Spin />
             ) : (
               <Button type="primary" htmlType="submit">
-                Create Poi
+                Create POI
               </Button>
             )}
           </Form.Item>

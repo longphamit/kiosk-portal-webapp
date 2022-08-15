@@ -162,55 +162,55 @@ export const EventDetailsPage = () => {
     }
   };
   const onClickSubmit = async (values) => {
-    setIsLoadingBasicInfo(true);
-    //Start to check date time of event
-    let msg = checkDateTime(
-      values.dateStart,
-      values.timeStart,
-      values.timeEnd,
-      values.dateEnd
-    );
-    if (!!msg || msg.length !== 0) {
-      toast.error(msg);
-      setIsLoadingBasicInfo(false);
-      return;
-    }
-    //End to check date time of event
-
-    let thumbnail = values.thumbnail;
-    if (!checkThumbnail(thumbnail)) {
-      // Check thumbnail must import
-      toast.warn("Please add a thumbnail image");
+    try {
       setIsLoadingBasicInfo(true);
-      return;
-    }
-    let base64Thumnail = "";
-    if (thumbnail[0].originFileObj !== undefined) {
-      // Update thubnail
-      try {
-        base64Thumnail = (await getBase64(thumbnail[0].originFileObj)).split(
-          ","
-        )[1];
-      } catch (e) {
-        console.error(e);
+      //Start to check date time of event
+      let msg = checkDateTime(
+        values.dateStart,
+        values.timeStart,
+        values.timeEnd,
+        values.dateEnd
+      );
+      if (!!msg || msg.length !== 0) {
+        toast.error(msg);
         setIsLoadingBasicInfo(false);
         return;
       }
-    }
-    let data = {
-      id: currentEvent.id,
-      name: values.name,
-      description: description,
-      timeStart: toStringDateTimePicker(values.dateStart, values.timeStart),
-      timeEnd: toStringDateTimePicker(values.dateEnd, values.timeEnd),
-      ward: getName(wardOptions, values.ward, WARD_TYPE),
-      district: getName(districtOptions, values.district, DISTRICT_TYPE),
-      city: getName(proviceOptions, values.city, CITY_TYPE),
-      address: values.address,
-      image: base64Thumnail,
-      imageId: base64Thumnail === "" ? null : currentEvent.thumbnail.id,
-    };
-    try {
+      //End to check date time of event
+
+      let thumbnail = values.thumbnail;
+      if (!checkThumbnail(thumbnail)) {
+        // Check thumbnail must import
+        toast.warn("Please add a thumbnail image");
+        setIsLoadingBasicInfo(true);
+        return;
+      }
+      let base64Thumnail = "";
+      if (thumbnail[0].originFileObj !== undefined) {
+        // Update thubnail
+        try {
+          base64Thumnail = (await getBase64(thumbnail[0].originFileObj)).split(
+            ","
+          )[1];
+        } catch (e) {
+          console.error(e);
+          setIsLoadingBasicInfo(false);
+          return;
+        }
+      }
+      let data = {
+        id: currentEvent.id,
+        name: values.name,
+        description: description,
+        timeStart: toStringDateTimePicker(values.dateStart, values.timeStart),
+        timeEnd: toStringDateTimePicker(values.dateEnd, values.timeEnd),
+        ward: getName(wardOptions, values.ward, WARD_TYPE),
+        district: getName(districtOptions, values.district, DISTRICT_TYPE),
+        city: getName(proviceOptions, values.city, CITY_TYPE),
+        address: values.address,
+        image: base64Thumnail,
+        imageId: base64Thumnail === "" ? null : currentEvent.thumbnail.id,
+      };
       let res = await updateEventService(data);
       toast.success("Update event success");
     } catch (error) {
@@ -280,53 +280,63 @@ export const EventDetailsPage = () => {
   };
 
   const onFinishUpdateListImage = async (values) => {
-    if (!isUpdateListImage) {
-      toast.info("Nothing changed!");
-      return;
-    }
-    setIsLoadingListImage(true);
-    //Add images
-    let existingImage = [];
-    let addFields = [];
-    if (
-      values.listImage === undefined ||
-      values.listImage.fileList === undefined
-    ) {
-      // not update any image
-      toast.info("Nothing changed!");
-      setIsLoadingListImage(false);
-      return;
-    } else if (
-      values.listImage !== undefined &&
-      values.listImage.fileList !== undefined
-    ) {
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          if (value.uid.includes("rc-upload-")) {
-            let result = (await getBase64(value.originFileObj)).split(",")[1];
-            addFields.push(result);
-          } else {
-            existingImage.push(value.uid);
-          }
-        })
-      );
-    }
-    let removeFields = [];
-    currentEvent.listImage.some((img) => {
-      if (!existingImage.includes(img.id)) {
-        removeFields.push(img.id);
-      }
-    });
-
-    let data = {
-      id: currentEvent.id,
-      removeFields: removeFields,
-      addFields: addFields,
-    };
     try {
-      await updateListImageService(data);
-      toast.success("Update success");
-      setUpdateListImage(false);
+      setIsLoadingListImage(true);
+      let isCheck = true;
+
+      if (!isUpdateListImage) {
+        toast.info("Nothing changed!");
+        return;
+      }
+      if (values.listImage.fileList.length === 0) {
+        isCheck = false;
+        toast.error("Please input at least 1 picture to list img");
+      }
+      if (isCheck) {
+        //Add images
+        let existingImage = [];
+        let addFields = [];
+        if (
+          values.listImage === undefined ||
+          values.listImage.fileList === undefined
+        ) {
+          // not update any image
+          toast.info("Nothing changed!");
+          setIsLoadingListImage(false);
+          return;
+        } else if (
+          values.listImage !== undefined &&
+          values.listImage.fileList !== undefined
+        ) {
+          await Promise.all(
+            values.listImage.fileList.map(async (value) => {
+              if (value.uid.includes("rc-upload-")) {
+                let result = (await getBase64(value.originFileObj)).split(
+                  ","
+                )[1];
+                addFields.push(result);
+              } else {
+                existingImage.push(value.uid);
+              }
+            })
+          );
+        }
+        let removeFields = [];
+        currentEvent.listImage.some((img) => {
+          if (!existingImage.includes(img.id)) {
+            removeFields.push(img.id);
+          }
+        });
+
+        let data = {
+          id: currentEvent.id,
+          removeFields: removeFields,
+          addFields: addFields,
+        };
+        await updateListImageService(data);
+        toast.success("Update success");
+        setUpdateListImage(false);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -551,7 +561,20 @@ export const EventDetailsPage = () => {
               >
                 <TextArea />
               </Form.Item>
-              <Form.Item name="description" label="Description">
+              <Form.Item
+                name="description"
+                label="Description"
+                rules={[
+                  {
+                    validator(values) {
+                      if (description === null || description === "") {
+                        return Promise.reject("Please input description");
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
                 <Editor
                   value={currentEvent.description}
                   onTextChange={(e) => setDescription(e.htmlValue)}

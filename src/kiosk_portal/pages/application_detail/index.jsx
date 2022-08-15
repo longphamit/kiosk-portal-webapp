@@ -1,6 +1,7 @@
 import {
   Button,
   Col,
+  Collapse,
   Descriptions,
   Empty,
   Image,
@@ -36,6 +37,8 @@ import { PREVIOUS_PATH } from "../../../@app/constants/key";
 import CreateFeedbackModal from "./components/create_feedback_modal";
 import UpdateFeedbackModal from "./components/update_feedback_modal";
 import CustomRatingAndFeedback from "../../components/general/CustomRatingAndFeedback";
+import { CommissionTabComponent } from "./components/comission_tab";
+import { getMyApplicationById } from "../../services/party_service_application";
 const ApplicationDetailPage = () => {
   const { id } = useParams();
   const { TabPane } = Tabs;
@@ -50,11 +53,12 @@ const ApplicationDetailPage = () => {
   const [isDenyAppPublishModalVisible, setDenyAppPublishModalVisible] =
     useState(false);
   const role = localStorageGetReduxState().auth.role;
+  const { Panel } = Collapse;
   const getAppById = async () => {
     let tempId = "";
     if (id.includes("installed")) {
       tempId = id.replaceAll("&&installed", "");
-      setInstalled(true);
+      checkAppIsInstalled(tempId)
     } else {
       tempId = id;
     }
@@ -68,6 +72,15 @@ const ApplicationDetailPage = () => {
       console.error(e);
       setMyFeedback({});
       setListFeedback([]);
+    }
+  };
+  const checkAppIsInstalled = async (applicationId) => {
+    try {
+      let res = await getMyApplicationById(applicationId);
+      setInstalled(true);
+    } catch (e) {
+      console.error(e);
+      setInstalled(false);
     }
   };
   const getInprogressAppPublishRequestByAppId = async () => {
@@ -113,6 +126,17 @@ const ApplicationDetailPage = () => {
     label: APP_DETAILS_LABEL,
     icon: null,
   };
+  const getButtonFeedback = () => {
+    if (isInstalled && myFeedback === null)
+      return (
+        <>
+          <Button type="primary" onClick={() => setCreateModalVisible(true)}>
+            Feedback Now
+          </Button>
+        </>
+      );
+    return null;
+  };
 
   return (
     <>
@@ -135,19 +159,19 @@ const ApplicationDetailPage = () => {
                   {app.appCategoryName}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Num Of Install"
+                  label="installed users "
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.userInstalled}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Party"
+                  label="Owner's Name"
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.partyName}
                 </Descriptions.Item>
                 <Descriptions.Item
-                  label="Party Email"
+                  label="Owner's Email"
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.partyEmail}
@@ -167,9 +191,9 @@ const ApplicationDetailPage = () => {
                   labelStyle={{ fontWeight: "bold" }}
                 >
                   {app.isAffiliate === true ? (
-                    <Tag color="green">True</Tag>
+                    <Tag color="green">Yes</Tag>
                   ) : (
-                    <Tag color="red">False</Tag>
+                    <Tag color="red">No</Tag>
                   )}
                 </Descriptions.Item>
 
@@ -185,20 +209,6 @@ const ApplicationDetailPage = () => {
                     height={40}
                   />
                 </Descriptions.Item>
-                {app.banner ? (
-                  <Descriptions.Item
-                    label="Banner"
-                    labelStyle={{ fontWeight: "bold" }}
-                  >
-                    <Image
-                      size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 60 }}
-                      src={app.logo}
-                      sizes="large"
-                      width={40}
-                      height={40}
-                    />
-                  </Descriptions.Item>
-                ) : null}
               </Descriptions>
             </Col>
             <Col>
@@ -213,7 +223,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               approveAppPublishRequest();
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -229,7 +239,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               setDenyAppPublishModalVisible(true);
                             }}
-                            onCancel={() => {}}
+                            onCancel={() => { }}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -248,8 +258,48 @@ const ApplicationDetailPage = () => {
               ) : null}
             </Col>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: app.description }} />
           <Tabs defaultActiveKey="1">
+            <TabPane tab="Other Info" key="0">
+              <Row>
+                {app.banner ? <>
+                  <Col span={12}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        APPLICATION BANNER
+                      </p>
+                    </Row>
+                    <Row justify="center" align="middle">
+                      <Image
+                        src={app.banner}
+                        sizes="large"
+                      />
+                      <br />
+                    </Row>
+                  </Col>
+                  <Col span={12}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        DESCRIPTION
+                      </p>
+                    </Row>
+                    <Row style={{ margin: '0px 30px' }}>
+                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
+                    </Row>
+                  </Col>
+                </> :
+                  <Col span={24}>
+                    <Row justify="center" align="middle">
+                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                        DESCRIPTION
+                      </p>
+                    </Row>
+                    <Row >
+                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
+                    </Row>
+                  </Col>
+                }
+              </Row>
+            </TabPane>
             <TabPane tab="App Preview" key="1">
               <Row>
                 <Col span={24}>
@@ -308,7 +358,7 @@ const ApplicationDetailPage = () => {
                                     type="primary"
                                     onClick={() => setCreateModalVisible(true)}
                                   >
-                                    Feedback Now
+                                    {getButtonFeedback()}
                                   </Button>
                                 </Empty>
                               </>
@@ -318,20 +368,20 @@ const ApplicationDetailPage = () => {
                       </Row>
                     </>
                   ) : (
-                    <Empty>
-                      <Button
-                        type="primary"
-                        onClick={() => setCreateModalVisible(true)}
-                      >
-                        Feedback Now
-                      </Button>
-                    </Empty>
+                    <Empty>{getButtonFeedback()}</Empty>
                   )
                 ) : (
                   <Skeleton />
                 )}
               </div>
             </TabPane>
+            {isInstalled ? (
+              <>
+                <TabPane tab="Revenue" key="3">
+                  <CommissionTabComponent appId={appId} />
+                </TabPane>
+              </>
+            ) : null}
           </Tabs>
         </>
       ) : (
