@@ -48,27 +48,34 @@ const ModalCreateLocation = ({
 
   const onFinishCreatePoi = async (values) => {
     setIsLoading(true);
+    let isCheck = true;
     try {
-      let listImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          let formatImage = (await getBase64(value.originFileObj)).split(
-            ","
-          )[1];
-          listImage.push(formatImage);
-        })
-      );
-      let newLocation = {
-        name: values.name,
-        description: description,
-        hotLine: values.hotline,
-        listImage: listImage,
-      };
-      await createLocationService(newLocation).then(() => {
-        modalToIndex("create");
-        toast.success("Create POI Success");
-        form.resetFields();
-      });
+      if (values.listImage.fileList.length === 0) {
+        isCheck = false;
+        toast.error("Please input at least 1 picture to list img ");
+      }
+      if (isCheck) {
+        let listImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            let formatImage = (await getBase64(value.originFileObj)).split(
+              ","
+            )[1];
+            listImage.push(formatImage);
+          })
+        );
+        let newLocation = {
+          name: values.name,
+          description: description,
+          hotLine: values.hotline,
+          listImage: listImage,
+        };
+        await createLocationService(newLocation).then(() => {
+          modalToIndex("create");
+          toast.success("Create POI Success");
+          form.resetFields();
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

@@ -74,7 +74,7 @@ export const EventCreatingPage = () => {
         check = false;
       }
       if (values.listImage.fileList.length === 0) {
-        invalidMsg.push("You need to add at lease 1 picture to list img\n");
+        invalidMsg.push("You need to add at least 1 picture to list img\n");
         check = false;
       }
       //Check date time of event

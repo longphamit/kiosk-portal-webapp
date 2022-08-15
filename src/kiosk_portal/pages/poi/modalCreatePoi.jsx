@@ -99,6 +99,10 @@ const ModalCreatePoi = ({
         invalidMsg.push("You need to add picture to list img\n");
         check = false;
       }
+      if (values.thumbnail.fileList.length === 0) {
+        invalidMsg.push("You need to add avatar\n");
+        check = false;
+      }
 
       if (check) {
         let objCity = listProvinces.find(

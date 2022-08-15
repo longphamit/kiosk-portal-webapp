@@ -217,7 +217,7 @@ const DetailPoiPage = () => {
         check = false;
       }
       if (isHasPicture === false) {
-        invalidMsg.push("Please choose logo \n");
+        invalidMsg.push("Please choose avatar \n");
         check = false;
       }
       if (Array.isArray(values.dayOfWeek)) {
@@ -306,7 +306,7 @@ const DetailPoiPage = () => {
       setIsLoadingListImg(true);
       let isTrue = true;
       if (values.listImage.fileList.length === 0) {
-        toast.error("Please input at lease 1 picture");
+        toast.error("Please input at least 1 picture");
         isTrue = false;
       }
       if (isTrue) {
