@@ -2,12 +2,18 @@ import { HOST } from "../../@app/constants/host";
 import request from "../../@app/utils/http_client";
 
 export const getListKioskService = async (
+  Name:any,
   partyId: string,
+  KioskLocationName:any,
+  Status:any,
+  Longtitude:any,
+  Latitude:any,
+  size: any,
   page: any,
-  size: any
+  
 ) => {
   const response = await request.get(
-    `${HOST}/v1/kiosks?partyId=${partyId}&page=${page}&size=${size}`
+    `${HOST}/v1/kiosks?Name=${Name}&partyId=${partyId}&KioskLocationName=${KioskLocationName}&Status=${Status}&Longtitude=${Longtitude}&Latitude=${Latitude}&page=${page}&size=${size}`
   );
   return response.data;
 };

@@ -304,25 +304,32 @@ const DetailPoiPage = () => {
   const onFinishUpdateListImage = async (values) => {
     try {
       setIsLoadingListImg(true);
-      let listImage = [];
-      let formatImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          if (value?.originFileObj) {
-            let result = await getBase64(value.originFileObj);
-            formatImage = result.split(",");
-            listImage.push(formatImage[1]);
-          }
-        })
-      );
-      const updateListImage = {
-        id: currentItem.id,
-        removeFields: listRemoveImg,
-        addFields: listImage,
-      };
-      await updatePoiListImgService(updateListImage).then(() => {
-        toast.success("Update List Img POI Success");
-      });
+      let isTrue = true;
+      if (values.listImage.fileList.length === 0) {
+        toast.error("Please input at lease 1 picture");
+        isTrue = false;
+      }
+      if (isTrue) {
+        let listImage = [];
+        let formatImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            if (value?.originFileObj) {
+              let result = await getBase64(value.originFileObj);
+              formatImage = result.split(",");
+              listImage.push(formatImage[1]);
+            }
+          })
+        );
+        const updateListImage = {
+          id: currentItem.id,
+          removeFields: listRemoveImg,
+          addFields: listImage,
+        };
+        await updatePoiListImgService(updateListImage).then(() => {
+          toast.success("Update List Img POI Success");
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -498,10 +505,10 @@ const DetailPoiPage = () => {
                   <Select name="selectProvince" onChange={handleProvinceChange}>
                     {listProvinces
                       ? listProvinces.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -521,10 +528,10 @@ const DetailPoiPage = () => {
                   >
                     {listDistrictsInForm
                       ? listDistrictsInForm.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>
@@ -541,10 +548,10 @@ const DetailPoiPage = () => {
                   <Select name="selectWards">
                     {listWardsInForm
                       ? listWardsInForm.map((item) => (
-                        <Option key={item.code} value={item.code}>
-                          {item.name}
-                        </Option>
-                      ))
+                          <Option key={item.code} value={item.code}>
+                            {item.name}
+                          </Option>
+                        ))
                       : null}
                   </Select>
                 </Form.Item>

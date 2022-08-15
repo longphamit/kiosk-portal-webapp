@@ -94,6 +94,12 @@ const ModalCreatePoi = ({
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
       }
+
+      if (values.listImage.fileList.length === 0) {
+        invalidMsg.push("You need to add picture to list img\n");
+        check = false;
+      }
+
       if (check) {
         let objCity = listProvinces.find(
           (element) => element.code === values.city
