@@ -115,27 +115,37 @@ const DetailLocationPage = () => {
   };
 
   const onFinishUpdateListImage = async (values) => {
+    console.log(values);
     setIsLoadingListImg(true);
+    let isCheck = true;
     try {
-      let listImage = [];
-      let formatImage = [];
-      await Promise.all(
-        values.listImage.fileList.map(async (value) => {
-          if (value?.originFileObj) {
-            let result = await getBase64(value.originFileObj);
-            formatImage = result.split(",");
-            listImage.push(formatImage[1]);
-          }
-        })
-      );
-      const updateListImage = {
-        id: currentItem.id,
-        removeFields: listRemoveImg,
-        addFields: listImage,
-      };
-      await updateLocationListImgService(updateListImage).then(() => {
-        toast.success("Update List Image Location Success");
-      });
+      if (values.listImage.fileList.length === 0) {
+        isCheck = false;
+        toast.error("Please choose at least 1 picture in list img");
+      }
+      if (isCheck) {
+        let listImage = [];
+        let formatImage = [];
+        await Promise.all(
+          values.listImage.fileList.map(async (value) => {
+            if (value?.originFileObj) {
+              let result = await getBase64(value.originFileObj);
+              formatImage = result.split(",");
+              listImage.push(formatImage[1]);
+            }
+          })
+        );
+        const updateListImage = {
+          id: currentItem.id,
+          removeFields: listRemoveImg,
+          addFields: listImage,
+        };
+        console.log(updateListImage);
+        await updateLocationListImgService(updateListImage).then(() => {
+          toast.success("Update List Image Location Success");
+          setListRemoveImg([]);
+        });
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -253,7 +263,7 @@ const DetailLocationPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose images!",
+                        message: "Please update images!",
                       },
                     ]}
                   >
