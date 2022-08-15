@@ -109,7 +109,7 @@ const KioskTable = ({ partyId }) => {
           setIsLoading(true);
           try {
             await changeStatusKioskService(values.id);
-            await getListKiosk(partyId, kioskPage, kioskPageSize);
+            await getListKiosk("",partyId,"","","","",kioskPageSize, kioskPage);
             toast.success("Stop kiosk success")
           } catch (error) {
             console.error(error);
@@ -246,14 +246,26 @@ const KioskTable = ({ partyId }) => {
 
   const handlePaginationKioskTable = async (page, pageSize) => {
     setKioskPage(page);
-    await getListKiosk(partyId, page, kioskPageSize);
+    await getListKiosk("",partyId,"","","","", kioskPageSize, page);
   };
-  const getListKiosk = async (partyId, kioskPage, kioskPageSize) => {
+  const getListKiosk = async (  Name,
+    partyId,
+    KioskLocationName,
+    Status,
+    Longtitude,
+    Latitude,
+    size,
+    page) => {
     try {
       const { data } = await getListKioskService(
+        Name,
         partyId,
-        kioskPage,
-        kioskPageSize
+    KioskLocationName,
+    Status,
+    Longtitude,
+    Latitude,
+    size,
+    page
       );
       setListKiosk(data.data);
       setKioskPage(data.metadata.page);
@@ -270,14 +282,20 @@ const KioskTable = ({ partyId }) => {
         name: "kiosk" + "-" + (kioskTotal + 1),
         partyId: partyId,
       });
-      getListKiosk(partyId, kioskPage, kioskPageSize);
+      getListKiosk("",partyId,"","","","",kioskPageSize, kioskPage );
       toast.success("Create Kiosk Success");
       createKioskForm.resetFields();
     } catch (e) {
       console.error(e);
     }
   };
-  const onFinishSearchKiosk = () => { };
+  const onFinishSearchKiosk = (values) => { 
+    console.log(values)
+    if(values.type==="Name"){
+      getListKiosk(values.searchString,partyId,"","","","",kioskPageSize, 1 );
+    }
+    
+  };
   const prefixSearchKiosk = (
     <Form.Item name="type" noStyle>
       <Select defaultValue="Name">
@@ -316,7 +334,7 @@ const KioskTable = ({ partyId }) => {
     } else if (type === "changeNameKiosk") {
       setIsModalChangeNameKioskVisible(false);
     }
-    getListKiosk(partyId, kioskPage, kioskPageSize);
+    getListKiosk("",partyId,"","","","",kioskPageSize, kioskPage );
   };
 
   useEffect(() => {
@@ -324,7 +342,7 @@ const KioskTable = ({ partyId }) => {
       PREVIOUS_PATH,
       JSON.stringify({ data: breadCumbData })
     );
-    getListKiosk(partyId, kioskPage, kioskPageSize);
+    getListKiosk("",partyId,"","","","",kioskPageSize, kioskPage );
   }, []);
   return (
     <>

@@ -423,7 +423,7 @@ const ScheduleManagerPage = () => {
                   }
                 }}
               >
-                End Day (24h)
+                End Day (23:59:59)
               </Checkbox>
             </Form.Item>
           </Form.Item>
@@ -556,7 +556,7 @@ const ScheduleManagerPage = () => {
                       }
                     }}
                   >
-                    End Day (24h)
+                    End Day (23:59:59)
                   </Checkbox>
                 ) : (
                   <Checkbox
@@ -569,7 +569,7 @@ const ScheduleManagerPage = () => {
                       }
                     }}
                   >
-                    End Day (24h)
+                    End Day (23:59:59)
                   </Checkbox>
                 )}
               </Form.Item>

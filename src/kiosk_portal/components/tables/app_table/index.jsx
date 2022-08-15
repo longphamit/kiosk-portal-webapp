@@ -148,47 +148,55 @@ const ApplicationTable = () => {
   }, []);
 
   const onFinishUpdateApplication = async (values) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      let updateApplication = [];
-      if (typeof values.logo === "object") {
-        let formatResult = [];
-        const result = await getBase64(values.logo.file.originFileObj);
-        formatResult = result.split(",");
-        updateApplication = {
-          id: values.id,
-          name: values.name,
-          description: description,
-          logo: formatResult[1],
-          link: values.link,
-          appCategoryId: values.appCategoryId,
-          isAffiliate: isCheck,
-        };
-      } else {
-        updateApplication = {
-          id: values.id,
-          name: values.name,
-          description: description,
-          logo: null,
-          link: values.link,
-          appCategoryId: values.appCategoryId,
-          isAffiliate: isCheck,
-        };
+      let isCheck = true;
+      if (values.logo.fileList.length === 0) {
+        toast.error("Please choose logo");
+        isCheck = false;
       }
-      await updateApplicationService(updateApplication);
-      getListApplicationFunction(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        currentPage,
-        numApplicationInPage
-      );
-      setIsCreateApplicationModalVisible(false);
-      toast.success("Update Application Success");
-      handleCancelEditApplication();
+      if (isCheck) {
+        let updateApplication = [];
+        if (typeof values.logo === "object") {
+          let formatResult = [];
+          const result = await getBase64(values.logo.file.originFileObj);
+          formatResult = result.split(",");
+          updateApplication = {
+            id: values.id,
+            name: values.name,
+            description: description,
+            logo: formatResult[1],
+            link: values.link,
+            appCategoryId: values.appCategoryId,
+            isAffiliate: isCheck,
+          };
+        } else {
+          updateApplication = {
+            id: values.id,
+            name: values.name,
+            description: description,
+            logo: null,
+            link: values.link,
+            appCategoryId: values.appCategoryId,
+            isAffiliate: isCheck,
+          };
+        }
+        console.log(updateApplication);
+        await updateApplicationService(updateApplication);
+        getListApplicationFunction(
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          currentPage,
+          numApplicationInPage
+        );
+        setIsCreateApplicationModalVisible(false);
+        toast.success("Update Application Success");
+        handleCancelEditApplication();
+      }
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -486,9 +494,14 @@ const ApplicationTable = () => {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <p><a href={text} target="_blank" >
-        <LinkOutlined />Click here
-      </a></p>,
+      render: (text) => (
+        <p>
+          <a href={text} target="_blank">
+            <LinkOutlined />
+            Click here
+          </a>
+        </p>
+      ),
     },
     {
       title: "Installed Users ",
@@ -1050,8 +1063,8 @@ const ApplicationTable = () => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
+                        return <Option value={item.id}>{item.name}</Option>;
+                      })
                     : null}
                 </Select>
               </Form.Item>
