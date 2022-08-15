@@ -73,12 +73,10 @@ const HomePage = () => {
                 {countKiosk ? (
                   <div className="count-chart-box">
                     <h2>Kiosk</h2>
-                    {countKiosk.total != 0 ? (
-                      <CountPieChart
-                        labels={labelCountKiosk}
-                        count={countKiosk}
-                      />
-                    ) : null}
+                    <CountPieChart
+                      labels={labelCountKiosk}
+                      count={countKiosk}
+                    />
                     <DashBoardPieChartInfor
                       activeTitle={"Working"}
                       deactiveTitle={"Stopped"}
@@ -93,12 +91,10 @@ const HomePage = () => {
                 {countEvent ? (
                   <div className="count-chart-box">
                     <h2>Event</h2>
-                    {countEvent.total != 0 ? (
-                      <CountPieChart
-                        labels={labelCountEvent}
-                        count={countEvent}
-                      />
-                    ) : null}
+                    <CountPieChart
+                      labels={labelCountEvent}
+                      count={countEvent}
+                    />
                     <DashBoardPieChartInfor
                       activeTitle={"Upcomming"}
                       deactiveTitle={"End"}
@@ -113,9 +109,7 @@ const HomePage = () => {
                 {countPoi ? (
                   <div className="count-chart-box">
                     <h2>POI</h2>
-                    {countPoi.total != 0 ? (
-                      <CountPieChart labels={lableCountPoi} count={countPoi} />
-                    ) : null}
+                    <CountPieChart labels={lableCountPoi} count={countPoi} />
                     <DashBoardPieChartInfor
                       activeTitle={"Active"}
                       deactiveTitle={"Deative"}
@@ -130,9 +124,7 @@ const HomePage = () => {
                 {countApp ? (
                   <div className="count-chart-box">
                     <h2>App</h2>
-                    {countApp.total != 0 ? (
-                      <CountPieChart labels={lableCountApp} count={countApp} />
-                    ) : null}
+                    <CountPieChart labels={lableCountApp} count={countApp} />
                     <DashBoardPieChartInfor
                       activeTitle={"Install"}
                       deactiveTitle={"Uninstall"}
@@ -150,9 +142,7 @@ const HomePage = () => {
                 {countApp ? (
                   <div className="count-chart-box">
                     <h2>App</h2>
-                    {countApp.total != 0 ? (
-                      <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
-                    ) : null}
+                    <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
                     <DashBoardPieChartInfor
                       activeTitle={"Available"}
                       deactiveTitle={"Unavailable"}
