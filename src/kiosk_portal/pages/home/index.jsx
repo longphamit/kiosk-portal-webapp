@@ -73,10 +73,14 @@ const HomePage = () => {
                 {countKiosk ? (
                   <div className="count-chart-box">
                     <h2>Kiosk</h2>
-                    <CountPieChart
-                      labels={labelCountKiosk}
-                      count={countKiosk}
-                    />
+                    <div style={{ height: 200 }}>
+                      {countKiosk.total ? (
+                        <CountPieChart
+                          labels={labelCountKiosk}
+                          count={countKiosk}
+                        />
+                      ) : null}
+                    </div>
                     <DashBoardPieChartInfor
                       activeTitle={"Working"}
                       deactiveTitle={"Stopped"}
@@ -88,28 +92,35 @@ const HomePage = () => {
                 ) : null}
               </Col>
               <Col span={SPAN_PIE_CHART_COL}>
-                {countEvent ? (
-                  <div className="count-chart-box">
-                    <h2>Event</h2>
-                    <CountPieChart
-                      labels={labelCountEvent}
-                      count={countEvent}
-                    />
-                    <DashBoardPieChartInfor
-                      activeTitle={"Upcomming"}
-                      deactiveTitle={"End"}
-                      total={"Total"}
-                      background="#92e8b5"
-                      count={countEvent}
-                    />
+                <div className="count-chart-box">
+                  <h2>Event</h2>
+                  <div style={{ height: 200 }}>
+                    {
+                      countEvent.total ? <CountPieChart
+                        labels={labelCountEvent}
+                        count={countEvent}
+                      /> : null
+                    }
                   </div>
-                ) : null}
+                  <DashBoardPieChartInfor
+                    activeTitle={"Upcomming"}
+                    deactiveTitle={"End"}
+                    total={"Total"}
+                    background="#92e8b5"
+                    count={countEvent}
+                  />
+                </div>
               </Col>
               <Col span={SPAN_PIE_CHART_COL}>
                 {countPoi ? (
                   <div className="count-chart-box">
                     <h2>POI</h2>
-                    <CountPieChart labels={lableCountPoi} count={countPoi} />
+                    <div style={{ height: 200 }}>
+                      {countPoi.total ? (
+                        <CountPieChart labels={lableCountPoi} count={countPoi} />
+                      ) : null}
+
+                    </div>
                     <DashBoardPieChartInfor
                       activeTitle={"Active"}
                       deactiveTitle={"Deative"}
@@ -124,7 +135,12 @@ const HomePage = () => {
                 {countApp ? (
                   <div className="count-chart-box">
                     <h2>App</h2>
-                    <CountPieChart labels={lableCountApp} count={countApp} />
+                    <div style={{ height: 200 }}>
+                      {countApp.total ? (
+                        <CountPieChart labels={lableCountApp} count={countApp} />
+                      ) : null}
+                    </div>
+
                     <DashBoardPieChartInfor
                       activeTitle={"Install"}
                       deactiveTitle={"Uninstall"}
@@ -142,7 +158,12 @@ const HomePage = () => {
                 {countApp ? (
                   <div className="count-chart-box">
                     <h2>App</h2>
-                    <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
+                    <div style={{ height: 200 }}>
+                      {countApp.total != 0 ? (
+                        <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
+                      ) : null}
+                    </div>
+
                     <DashBoardPieChartInfor
                       activeTitle={"Available"}
                       deactiveTitle={"Unavailable"}
