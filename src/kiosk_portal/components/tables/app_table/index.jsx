@@ -68,7 +68,7 @@ import { ACCEPT_IMAGE } from "../../../constants/accept_file";
 import {
   ERROR_SELECT_CATEGORY,
   ERROR_INPUT_LINK,
-  ERROR_INPUT_LOGO,
+  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   UPDATE_SUCCESS,
   CREATE_SUCCESS,
@@ -840,7 +840,7 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: ERROR_INPUT_LOGO,
+                message: ERROR_UPLOAD_LOGO,
               },
             ]}
           >
@@ -1036,7 +1036,7 @@ const ApplicationTable = () => {
                 rules={[
                   {
                     required: true,
-                    message: ERROR_INPUT_LOGO,
+                    message: ERROR_UPLOAD_LOGO,
                   },
                 ]}
               >
