@@ -49,6 +49,18 @@ import { checkDateTime, toStringDateTimePicker } from "./checkdatetime";
 import { getDistricts, getWards } from "./location_utils";
 import { getListProvinceService } from "../../services/map_service";
 import { Editor } from "primereact/editor";
+import {
+  ERROR_INPUT_ADDRESS,
+  ERROR_INPUT_CITY,
+  ERROR_INPUT_DISTRICT,
+  ERROR_INPUT_NAME,
+  ERROR_INPUT_WARD,
+  ERROR_SELECT_DATE_END,
+  ERROR_SELECT_DATE_START,
+  ERROR_SELECT_TIME_END,
+  ERROR_SELECT_TIME_START,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -394,7 +406,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input name",
+                    message: ERROR_INPUT_NAME,
                   },
                 ]}
               >
@@ -403,7 +415,7 @@ export const EventDetailsPage = () => {
               <Form.Item
                 label="Time start"
                 style={{ marginBottom: 0 }}
-                rules={[{ required: true, message: "" }]}
+                rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
               >
                 <Form.Item
                   name="dateStart"
@@ -411,7 +423,7 @@ export const EventDetailsPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input the start date",
+                      message: ERROR_SELECT_DATE_START,
                     },
                   ]}
                 >
@@ -436,7 +448,7 @@ export const EventDetailsPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input the event start time",
+                      message: ERROR_SELECT_TIME_START,
                     },
                   ]}
                 >
@@ -451,7 +463,7 @@ export const EventDetailsPage = () => {
               <Form.Item
                 label="Time end"
                 style={{ marginBottom: 0 }}
-                rules={[{ required: true, message: "" }]}
+                rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
               >
                 <Form.Item
                   name="dateEnd"
@@ -459,7 +471,7 @@ export const EventDetailsPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input the end date",
+                      message: ERROR_SELECT_DATE_END,
                     },
                   ]}
                 >
@@ -484,7 +496,7 @@ export const EventDetailsPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input the event end time",
+                      message: ERROR_SELECT_TIME_END,
                     },
                   ]}
                 >
@@ -502,7 +514,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the city",
+                    message: ERROR_INPUT_CITY,
                   },
                 ]}
               >
@@ -523,7 +535,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the district",
+                    message: ERROR_INPUT_DISTRICT,
                   },
                 ]}
               >
@@ -539,7 +551,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the ward",
+                    message: ERROR_INPUT_WARD,
                   },
                 ]}
               >
@@ -555,7 +567,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the address",
+                    message: ERROR_INPUT_ADDRESS,
                   },
                 ]}
               >
@@ -645,7 +657,7 @@ export const EventDetailsPage = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input list img!",
+                    message: ERROR_UPLOAD_LIST_IMG,
                   },
                 ]}
               >

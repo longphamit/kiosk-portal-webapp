@@ -6,6 +6,12 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { createCategoriesService } from "../../services/categories_service";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import {
+  ERROR_INPUT_COMMISSION_PERCENTAGE,
+  ERROR_INPUT_LOGO,
+  ERROR_INPUT_NAME,
+  ERROR_REGREX_COMMISSION_PERCENTAGE,
+} from "../../../@app/constants/message";
 
 const FormCreateCategory = ({ visible }) => {
   const [form] = Form.useForm();
@@ -47,7 +53,7 @@ const FormCreateCategory = ({ visible }) => {
           rules={[
             {
               required: true,
-              message: "Please input application name!",
+              message: ERROR_INPUT_NAME,
             },
           ]}
         >
@@ -59,7 +65,7 @@ const FormCreateCategory = ({ visible }) => {
           rules={[
             {
               required: true,
-              message: "Please choose application logo!",
+              message: ERROR_INPUT_LOGO,
             },
           ]}
         >
@@ -80,11 +86,11 @@ const FormCreateCategory = ({ visible }) => {
           rules={[
             {
               required: true,
-              message: "Please input Commission Percentage!",
+              message: ERROR_INPUT_COMMISSION_PERCENTAGE,
             },
             {
               pattern: "^[1-9]?[0-9]{1}$|^100$",
-              message: "Please input number >0 and <100",
+              message: ERROR_REGREX_COMMISSION_PERCENTAGE,
             },
           ]}
         >

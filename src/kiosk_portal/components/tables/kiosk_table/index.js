@@ -13,7 +13,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { StopFilled, EditFilled, EyeFilled, SwapOutlined, ExclamationCircleOutlined, StarOutlined, StarFilled } from "@ant-design/icons";
+import { StopFilled, EditFilled, EyeFilled, SwapOutlined, ExclamationCircleOutlined, StarOutlined, StarFilled, SearchOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -390,7 +390,7 @@ const KioskTable = ({ partyId }) => {
                       type="primary"
                       size={"large"}
                     >
-                      Search
+                      <SearchOutlined />
                     </Button>
                   </Form.Item>
                 </Col>

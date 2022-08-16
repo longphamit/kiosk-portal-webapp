@@ -8,6 +8,11 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { updateAppCategoryService } from "../../services/app_category_service";
+import {
+  ERROR_INPUT_COMMISSION_PERCENTAGE,
+  ERROR_INPUT_NAME,
+  ERROR_REGREX_COMMISSION_PERCENTAGE,
+} from "../../../@app/constants/message";
 
 const ModalUpdateAppCategory = ({
   modalToIndex,
@@ -89,7 +94,7 @@ const ModalUpdateAppCategory = ({
               rules={[
                 {
                   required: true,
-                  message: "Please Input Name!",
+                  message: ERROR_INPUT_NAME,
                 },
               ]}
             >
@@ -120,11 +125,11 @@ const ModalUpdateAppCategory = ({
               rules={[
                 {
                   required: true,
-                  message: "Please input Commission Percentage!",
+                  message: ERROR_INPUT_COMMISSION_PERCENTAGE,
                 },
                 {
                   pattern: "^[1-9]?[0-9]{1}$|^100$",
-                  message: "Please input number >0 and <100",
+                  message: ERROR_REGREX_COMMISSION_PERCENTAGE,
                 },
               ]}
             >

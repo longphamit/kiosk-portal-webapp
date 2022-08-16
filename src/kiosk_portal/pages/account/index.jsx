@@ -44,6 +44,22 @@ import {
   ACCOUNT_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import {
+  ROLE_ADMIN,
+  ROLE_LOCATION_OWNER,
+  ROLE_SERVICE_PROVIDER,
+} from "../../../@app/constants/role";
+import {
+  ERROR_INPUT_ADDRESS,
+  ERROR_INPUT_EMAIL,
+  ERROR_INPUT_FIRST_NAME,
+  ERROR_INPUT_LAST_NAME,
+  ERROR_INPUT_PHONE_NUMBER,
+  ERROR_REGREX_EMAIL,
+  ERROR_REGREX_PHONE_NUMBER,
+  ERROR_SELECT_DOB,
+  ERROR_SELECT_ROLE,
+} from "../../../@app/constants/message";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -169,6 +185,7 @@ const AccountManagerPage = () => {
     const search = buildPartyParamSearch(values.searchString);
     search["status"] = values.status;
     search["size"] = numAccountInPage;
+    search["roleName"] = values.role;
     search["page"] = 1;
     try {
       const res = await searchAccountService(search);
@@ -394,7 +411,7 @@ const AccountManagerPage = () => {
       {
         type: "object",
         required: true,
-        message: t("reqdob"),
+        message: ERROR_SELECT_DOB,
       },
     ],
   };
@@ -435,7 +452,7 @@ const AccountManagerPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={6}>
+              <Col span={5}>
                 <Form.Item name="searchString" style={{ marginTop: 5 }}>
                   <AutoComplete
                     style={{ width: "100%" }}
@@ -463,6 +480,23 @@ const AccountManagerPage = () => {
                   </Select>
                 </Form.Item>
               </Col>
+              <Col span={7}>
+                <Form.Item
+                  initialValue=""
+                  name="role"
+                  label="Role"
+                  style={{ margin: 5 }}
+                >
+                  <Select>
+                    <Option value="">All</Option>
+                    <Option value={ROLE_ADMIN}>Admin</Option>
+                    <Option value={ROLE_LOCATION_OWNER}>Location Owner</Option>
+                    <Option value={ROLE_SERVICE_PROVIDER}>
+                      Service Provider
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col span={2}>
                 <Form.Item>
                   <Button
@@ -475,7 +509,6 @@ const AccountManagerPage = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col span={3} />
             </Row>
           </Form>
         </Col>
@@ -537,7 +570,7 @@ const AccountManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: t("reqfirstname"),
+                message: ERROR_INPUT_FIRST_NAME,
               },
             ]}
           >
@@ -549,7 +582,7 @@ const AccountManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: t("reqlastname"),
+                message: ERROR_INPUT_LAST_NAME,
               },
             ]}
           >
@@ -561,11 +594,11 @@ const AccountManagerPage = () => {
             rules={[
               {
                 pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
-                message: t("formatphonenumber"),
+                message: ERROR_REGREX_PHONE_NUMBER,
               },
               {
                 required: true,
-                message: t("reqphonenumber"),
+                message: ERROR_INPUT_PHONE_NUMBER,
               },
             ]}
           >
@@ -577,7 +610,7 @@ const AccountManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: t("reqaddress"),
+                message: ERROR_INPUT_ADDRESS,
               },
             ]}
           >
@@ -600,11 +633,11 @@ const AccountManagerPage = () => {
             rules={[
               {
                 type: "email",
-                message: "The input is not valid E-mail!",
+                message: ERROR_REGREX_EMAIL,
               },
               {
                 required: true,
-                message: t("reqemail"),
+                message: ERROR_INPUT_EMAIL,
               },
             ]}
           >
@@ -614,7 +647,7 @@ const AccountManagerPage = () => {
           <Form.Item
             name="roleId"
             label={t("role")}
-            rules={[{ required: true, message: t("reqrole") }]}
+            rules={[{ required: true, message: ERROR_SELECT_ROLE }]}
           >
             <Select placeholder={t("selectrole")}>
               {listRole
@@ -669,7 +702,7 @@ const AccountManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: t("reqfirstname"),
+                  message: ERROR_INPUT_FIRST_NAME,
                 },
               ]}
             >
@@ -681,7 +714,7 @@ const AccountManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: t("reqlastname"),
+                  message: ERROR_INPUT_LAST_NAME,
                 },
               ]}
             >
@@ -693,11 +726,11 @@ const AccountManagerPage = () => {
               rules={[
                 {
                   pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
-                  message: t("formatphonenumber"),
+                  message: ERROR_REGREX_PHONE_NUMBER,
                 },
                 {
                   required: true,
-                  message: t("reqphonenumber"),
+                  message: ERROR_INPUT_PHONE_NUMBER,
                 },
               ]}
             >
@@ -709,7 +742,7 @@ const AccountManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: t("reqaddress"),
+                  message: ERROR_INPUT_ADDRESS,
                 },
               ]}
             >

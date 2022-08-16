@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PRIMARY_COLOR } from "../../constants/colors";
+import { ERROR_INPUT_EMAIL } from "../../constants/message";
 import { forgotPasswordService } from "../../services/auth_service";
 
 const ForgotPassPage: React.FC = () => {
@@ -50,7 +51,7 @@ const ForgotPassPage: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input email!",
+                  message: ERROR_INPUT_EMAIL,
                 },
               ]}
             >

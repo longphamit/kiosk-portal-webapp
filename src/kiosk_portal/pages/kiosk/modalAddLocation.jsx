@@ -1,5 +1,6 @@
 import { Button, Form, Modal, Select, Spin } from "antd";
 import { useState } from "react";
+import { ERROR_SELECT_LOCATION } from "../../../@app/constants/message";
 import { updateKioskService } from "../../services/kiosk_service";
 import {
   formItemLayout,
@@ -60,7 +61,7 @@ const ModalAddLocation = ({
             rules={[
               {
                 required: true,
-                message: "Please choose location!",
+                message: ERROR_SELECT_LOCATION,
               },
             ]}
           >

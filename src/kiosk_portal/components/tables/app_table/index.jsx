@@ -65,6 +65,12 @@ import { Editor } from "primereact/editor";
 import { async } from "@firebase/util";
 import { FILE_UPLOAD_URL } from "../../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../../constants/accept_file";
+import {
+  ERROR_SELECT_CATEGORY,
+  ERROR_INPUT_LINK,
+  ERROR_INPUT_LOGO,
+  ERROR_INPUT_NAME,
+} from "../../../../@app/constants/message";
 
 const ApplicationTable = () => {
   const navigator = useNavigate();
@@ -785,7 +791,7 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: "Please input application name!",
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -820,7 +826,7 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: "Please input application link!",
+                message: ERROR_INPUT_LINK,
               },
             ]}
           >
@@ -832,7 +838,7 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: ERROR_INPUT_LOGO,
               },
             ]}
           >
@@ -852,7 +858,7 @@ const ApplicationTable = () => {
             rules={[
               {
                 required: true,
-                message: "Please choose application category!",
+                message: ERROR_SELECT_CATEGORY,
               },
             ]}
           >
@@ -981,7 +987,7 @@ const ApplicationTable = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input application name!",
+                    message: ERROR_INPUT_NAME,
                   },
                 ]}
               >
@@ -1016,7 +1022,7 @@ const ApplicationTable = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input application link!",
+                    message: ERROR_INPUT_LINK,
                   },
                 ]}
               >
@@ -1028,7 +1034,7 @@ const ApplicationTable = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please choose application logo!",
+                    message: ERROR_INPUT_LOGO,
                   },
                 ]}
               >
@@ -1056,7 +1062,7 @@ const ApplicationTable = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please choose application category!",
+                    message: ERROR_SELECT_CATEGORY,
                   },
                 ]}
               >

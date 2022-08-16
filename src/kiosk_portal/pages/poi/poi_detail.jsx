@@ -44,6 +44,18 @@ import {
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { Editor } from "primereact/editor";
+import {
+  ERROR_CHECKBOX_DATE_OF_WEEK,
+  ERROR_INPUT_ADDRESS,
+  ERROR_INPUT_CITY,
+  ERROR_INPUT_DISTRICT,
+  ERROR_INPUT_NAME,
+  ERROR_INPUT_WARD,
+  ERROR_SELECT_CATEGORY,
+  ERROR_SELECT_TIME_END,
+  ERROR_SELECT_TIME_START,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -394,7 +406,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: t("reqnameschedule"),
+                      message: ERROR_INPUT_NAME,
                     },
                   ]}
                 >
@@ -426,7 +438,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: t("reqtimestartschedule"),
+                      message: ERROR_SELECT_TIME_START,
                     },
                   ]}
                 >
@@ -438,7 +450,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: t("reqtimeendschedule"),
+                      message: ERROR_SELECT_TIME_END,
                     },
                   ]}
                 >
@@ -450,7 +462,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: t("reqtimestartschedule"),
+                      message: ERROR_CHECKBOX_DATE_OF_WEEK,
                     },
                   ]}
                 >
@@ -486,7 +498,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input your address!",
+                      message: ERROR_INPUT_ADDRESS,
                     },
                   ]}
                 >
@@ -498,7 +510,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please choose your city!",
+                      message: ERROR_INPUT_CITY,
                     },
                   ]}
                 >
@@ -518,7 +530,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please choose your district!",
+                      message: ERROR_INPUT_DISTRICT,
                     },
                   ]}
                 >
@@ -541,7 +553,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please choose your ward!",
+                      message: ERROR_INPUT_WARD,
                     },
                   ]}
                 >
@@ -561,7 +573,7 @@ const DetailPoiPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please choose your category!",
+                      message: ERROR_SELECT_CATEGORY,
                     },
                   ]}
                 >
@@ -619,7 +631,7 @@ const DetailPoiPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please choose poi logo!",
+                        message: ERROR_UPLOAD_LIST_IMG,
                       },
                     ]}
                   >

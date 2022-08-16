@@ -22,6 +22,17 @@ import {
 } from "../../services/account_service";
 import moment from "moment";
 import { toast } from "react-toastify";
+import {
+  ERROR_INPUT_ADDRESS,
+  ERROR_INPUT_CONFIRM_PASSWORD,
+  ERROR_INPUT_EMAIL,
+  ERROR_INPUT_FIRST_NAME,
+  ERROR_INPUT_LAST_NAME,
+  ERROR_INPUT_PHONE_NUMBER,
+  ERROR_REGREX_EMAIL,
+  ERROR_REGREX_PHONE_NUMBER,
+  ERROR_SELECT_DOB,
+} from "../../../@app/constants/message";
 const validateMessages = {
   required: "${label} is required!",
   string: {
@@ -88,7 +99,7 @@ const ProfilePage = () => {
       {
         type: "object",
         required: true,
-        message: t("reqdob"),
+        message: ERROR_SELECT_DOB,
       },
     ],
   };
@@ -130,7 +141,7 @@ const ProfilePage = () => {
                     rules={[
                       {
                         required: true,
-                        message: t("reqfirstname"),
+                        message: ERROR_INPUT_FIRST_NAME,
                       },
                     ]}
                   >
@@ -142,7 +153,7 @@ const ProfilePage = () => {
                     rules={[
                       {
                         required: true,
-                        message: t("reqlastname"),
+                        message: ERROR_INPUT_LAST_NAME,
                       },
                     ]}
                   >
@@ -154,11 +165,11 @@ const ProfilePage = () => {
                     rules={[
                       {
                         pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
-                        message: t("formatphonenumber"),
+                        message: ERROR_REGREX_PHONE_NUMBER,
                       },
                       {
                         required: true,
-                        message: t("reqphonenumber"),
+                        message: ERROR_INPUT_PHONE_NUMBER,
                       },
                     ]}
                   >
@@ -170,7 +181,7 @@ const ProfilePage = () => {
                     rules={[
                       {
                         required: true,
-                        message: t("reqaddress"),
+                        message: ERROR_INPUT_ADDRESS,
                       },
                     ]}
                   >
@@ -182,11 +193,11 @@ const ProfilePage = () => {
                     rules={[
                       {
                         type: "email",
-                        message: "The input is not valid E-mail!",
+                        message: ERROR_REGREX_EMAIL,
                       },
                       {
                         required: true,
-                        message: t("reqemail"),
+                        message: ERROR_INPUT_EMAIL,
                       },
                     ]}
                   >
@@ -249,7 +260,7 @@ const ProfilePage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please confirm your password!",
+                        message: ERROR_INPUT_CONFIRM_PASSWORD,
                       },
                       ({ getFieldValue }) => ({
                         validator(_, value) {

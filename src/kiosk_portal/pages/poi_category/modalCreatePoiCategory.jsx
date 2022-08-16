@@ -8,6 +8,10 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { createPoiCategoriesService } from "../../services/poi_category_service";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
+import {
+  ERROR_INPUT_NAME,
+  ERROR_UPLOAD_LOGO,
+} from "../../../@app/constants/message";
 
 const ModalCreatePoiCategory = ({
   modalToIndex,
@@ -63,7 +67,7 @@ const ModalCreatePoiCategory = ({
             rules={[
               {
                 required: true,
-                message: "Please Input Name!",
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -75,7 +79,7 @@ const ModalCreatePoiCategory = ({
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: ERROR_UPLOAD_LOGO,
               },
             ]}
           >
