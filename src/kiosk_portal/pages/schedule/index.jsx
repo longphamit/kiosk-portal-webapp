@@ -40,6 +40,7 @@ import {
   ERROR_CHECKBOX_DATE_OF_WEEK,
   ERROR_INPUT_NAME,
   ERROR_SELECT_TIME_START,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 
 const ScheduleManagerPage = () => {
@@ -135,7 +136,7 @@ const ScheduleManagerPage = () => {
         await updateScheduleService(updateSchedule).then(() => {
           getListScheduleFunction(currentPage, numScheduleInPage);
           setIsEditScheduleModalVisible(false);
-          toast.success("Update Schedule Success");
+          toast.success(UPDATE_SUCCESS);
         });
       } else {
         var errormsg = invalidMsg.join("-");

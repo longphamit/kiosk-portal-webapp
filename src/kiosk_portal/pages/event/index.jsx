@@ -39,6 +39,7 @@ import {
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { EVENT_CREATING_PATH } from "../../constants/path_constants";
 import { adminColumns, locationOwnerColumns } from "./utils";
+import { DELETE_SUCCESS } from "../../../@app/constants/message";
 const EventManagerPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEventsLoading, setEventsLoading] = useState(false);
@@ -208,7 +209,7 @@ const EventManagerPage = () => {
           try {
             await deleteEventService(record.id);
             getListEventFunction(currentPage, numEventInPage);
-            toast("Delete successful");
+            toast(DELETE_SUCCESS);
           } catch (e) {
             toast.error(e.response.data.message);
           } finally {

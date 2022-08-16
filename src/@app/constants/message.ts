@@ -44,3 +44,8 @@ export const ERROR_REGREX_COMMISSION_PERCENTAGE = "Please input number >0 and <1
 //upload
 export const ERROR_UPLOAD_LOGO = "Please choose picture to thumnail !"
 export const ERROR_UPLOAD_LIST_IMG = "Please choose picture to list img !"
+
+export const UPDATE_SUCCESS = "Update success"
+export const DELETE_SUCCESS = "Delete success"
+export const CREATE_SUCCESS = "Create success"
+

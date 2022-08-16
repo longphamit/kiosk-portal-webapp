@@ -47,6 +47,7 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  CREATE_SUCCESS,
 } from "../../../@app/constants/message";
 const { TextArea } = Input;
 
@@ -135,7 +136,7 @@ export const EventCreatingPage = () => {
         };
         console.log(data);
         await createEventService(data);
-        toast.success("Create event success");
+        toast.success(CREATE_SUCCESS);
         navigate(EVENT_MANAGER_PATH);
       } else {
         var errormsg = invalidMsg.join("-");

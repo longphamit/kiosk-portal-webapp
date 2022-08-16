@@ -12,6 +12,7 @@ import {
   ERROR_INPUT_COMMISSION_PERCENTAGE,
   ERROR_INPUT_NAME,
   ERROR_REGREX_COMMISSION_PERCENTAGE,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 
 const ModalUpdateAppCategory = ({
@@ -52,7 +53,7 @@ const ModalUpdateAppCategory = ({
 
         await updateAppCategoryService(updateItem).then(() => {
           modalToIndex("update");
-          toast.success("Update success!");
+          toast.success(UPDATE_SUCCESS);
           form.resetFields();
         });
       } else {
