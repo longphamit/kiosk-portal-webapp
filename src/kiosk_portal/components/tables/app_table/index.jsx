@@ -70,6 +70,8 @@ import {
   ERROR_INPUT_LINK,
   ERROR_INPUT_LOGO,
   ERROR_INPUT_NAME,
+  UPDATE_SUCCESS,
+  CREATE_SUCCESS,
 } from "../../../../@app/constants/message";
 
 const ApplicationTable = () => {
@@ -200,7 +202,7 @@ const ApplicationTable = () => {
           numApplicationInPage
         );
         setIsCreateApplicationModalVisible(false);
-        toast.success("Update Application Success");
+        toast.success(UPDATE_SUCCESS);
         handleCancelEditApplication();
       }
     } catch (error) {
@@ -290,7 +292,7 @@ const ApplicationTable = () => {
         numApplicationInPage
       );
       setIsCreateApplicationModalVisible(false);
-      toast.success("Create Application Success");
+      toast.success(CREATE_SUCCESS);
       form.resetFields();
     } catch (error) {
       toast.error(error.response.data.message);
@@ -463,7 +465,7 @@ const ApplicationTable = () => {
           numApplicationInPage
         );
         setIsEditApplicationModalVisible(false);
-        toast.success("Update success");
+        toast.success(UPDATE_SUCCESS);
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -694,7 +696,7 @@ const ApplicationTable = () => {
               <Col span={4}>
                 <Form.Item name="status" style={{ marginTop: 5 }}>
                   <Select defaultValue="">
-                    <Option value="">Get all</Option>
+                    <Option value="">All status</Option>
                     <Option value="available">Available</Option>
                     <Option value="unavailable">Unavailable</Option>
                   </Select>
@@ -931,7 +933,7 @@ const ApplicationTable = () => {
           </Form.Item>
           <Form.Item name="status" label="Status">
             <Select defaultValue="">
-              <Option value="">Get all</Option>
+              <Option value="">All status</Option>
               <Option value="available">Available</Option>
               <Option value="unavailable">Unavailable</Option>
             </Select>

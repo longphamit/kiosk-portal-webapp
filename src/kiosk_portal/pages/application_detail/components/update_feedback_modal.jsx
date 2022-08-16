@@ -7,6 +7,7 @@ import {
   getFeedbacksService,
   updateFeedbackService,
 } from "../../../services/feedback_service";
+import { UPDATE_SUCCESS } from "../../../../@app/constants/message";
 
 const UpdateFeedbackModal = ({
   isModalVisible,
@@ -36,10 +37,10 @@ const UpdateFeedbackModal = ({
       let res = await getFeedbacksService(appId);
       setListFeedback(res.data.data);
       handleCancelModal()
-      toast.success("Update feedback success!");
+      toast.success(UPDATE_SUCCESS);
     } catch (e) {
       console.error(e);
-      toast.error("Update failed!");
+      toast.error(e.response.data.message ?? "Update failed!");
     } finally {
       setLoading(false);
     }

@@ -10,17 +10,12 @@ import {
   Row,
   Select,
   Skeleton,
-  Space,
   Table,
-  Tag,
 } from "antd";
 import {
-  DeleteFilled,
-  EyeFilled,
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
 import {
@@ -30,7 +25,6 @@ import {
 } from "../../services/event_service";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
-import { TYPE_SERVER } from "../../../@app/constants/key";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
 import {
@@ -45,6 +39,7 @@ import {
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { EVENT_CREATING_PATH } from "../../constants/path_constants";
 import { adminColumns, locationOwnerColumns } from "./utils";
+import { DELETE_SUCCESS } from "../../../@app/constants/message";
 const EventManagerPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEventsLoading, setEventsLoading] = useState(false);
@@ -214,7 +209,7 @@ const EventManagerPage = () => {
           try {
             await deleteEventService(record.id);
             getListEventFunction(currentPage, numEventInPage);
-            toast("Delete successful");
+            toast(DELETE_SUCCESS);
           } catch (e) {
             toast.error(e.response.data.message);
           } finally {

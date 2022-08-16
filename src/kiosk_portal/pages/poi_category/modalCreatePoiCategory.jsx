@@ -9,6 +9,7 @@ import { createPoiCategoriesService } from "../../services/poi_category_service"
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import {
+  CREATE_SUCCESS,
   ERROR_INPUT_NAME,
   ERROR_UPLOAD_LOGO,
 } from "../../../@app/constants/message";
@@ -35,7 +36,7 @@ const ModalCreatePoiCategory = ({
       };
       await createPoiCategoriesService(newItem).then(() => {
         modalToIndex("create");
-        toast.success("Create POI Category Success");
+        toast.success(CREATE_SUCCESS);
         form.resetFields();
       });
     } catch (error) {

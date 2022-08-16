@@ -7,6 +7,7 @@ import { createCategoriesService } from "../../services/categories_service";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import {
+  CREATE_SUCCESS,
   ERROR_INPUT_COMMISSION_PERCENTAGE,
   ERROR_INPUT_LOGO,
   ERROR_INPUT_NAME,
@@ -28,7 +29,7 @@ const FormCreateCategory = ({ visible }) => {
         commissionPercentage: parseFloat(values.commissionPercentage, 10),
       };
       await createCategoriesService(newCategories);
-      toast.success("Create Category Success");
+      toast.success(CREATE_SUCCESS);
       visible(false);
       form.resetFields();
     } catch (error) {
@@ -103,7 +104,7 @@ const FormCreateCategory = ({ visible }) => {
             <Spin />
           ) : (
             <Button type="primary" htmlType="submit">
-              Create Application
+              Create Application Category
             </Button>
           )}
         </Form.Item>

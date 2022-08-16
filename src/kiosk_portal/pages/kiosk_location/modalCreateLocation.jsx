@@ -10,6 +10,7 @@ import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { createLocationService } from "../../services/kiosk_location_service";
 import { Editor } from "primereact/editor";
 import {
+  CREATE_SUCCESS,
   ERROR_INPUT_HOT_LINE,
   ERROR_INPUT_NAME,
   ERROR_REGREX_HOT_LINE,
@@ -78,7 +79,7 @@ const ModalCreateLocation = ({
         };
         await createLocationService(newLocation).then(() => {
           modalToIndex("create");
-          toast.success("Create POI Success");
+          toast.success(CREATE_SUCCESS);
           form.resetFields();
         });
       }

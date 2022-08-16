@@ -39,6 +39,7 @@ import {
   ERROR_UPLOAD_LOGO,
   ERROR_CHECKBOX_DATE_OF_WEEK,
   ERROR_UPLOAD_LIST_IMG,
+  CREATE_SUCCESS,
 } from "../../../@app/constants/message";
 
 const ModalCreatePoi = ({
@@ -175,7 +176,7 @@ const ModalCreatePoi = ({
         };
         await createPoiService(newPoi).then(() => {
           modalToIndex("create", null);
-          toast.success("Create POI Success");
+          toast.success(CREATE_SUCCESS);
           form.resetFields();
         });
       } else {

@@ -36,6 +36,7 @@ import {
   ERROR_REGREX_HOT_LINE,
   ERROR_REGREX_PHONE_NUMBER,
   ERROR_UPLOAD_LIST_IMG,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 
 const DetailLocationPage = () => {
@@ -112,7 +113,7 @@ const DetailLocationPage = () => {
         hotLine: values.hotline,
       };
       await updateLocationBasicService(updateLocation).then(() => {
-        toast.success("Update Location Success");
+        toast.success(UPDATE_SUCCESS);
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -149,7 +150,7 @@ const DetailLocationPage = () => {
         };
         console.log(updateListImage);
         await updateLocationListImgService(updateListImage).then(() => {
-          toast.success("Update List Image Location Success");
+          toast.success(UPDATE_SUCCESS);
           setListRemoveImg([]);
         });
       }

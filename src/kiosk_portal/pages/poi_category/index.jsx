@@ -2,7 +2,6 @@ import {
   DeleteFilled,
   EditFilled,
   PlusOutlined,
-  PoweroffOutlined,
 } from "@ant-design/icons";
 import {
   Pagination,
@@ -29,6 +28,7 @@ import {
 import ModalCreatePoiCategory from "./modalCreatePoiCategory";
 import ModalUpdatePoiCategory from "./modalUpdatePoiCategory";
 import { toast } from "react-toastify";
+import { DELETE_SUCCESS } from "../../../@app/constants/message";
 
 const PoiCategory = () => {
   const { t } = useTranslation();
@@ -76,7 +76,7 @@ const PoiCategory = () => {
 
   const handleRemovePoiCategory = async (record) => {
     Modal.confirm({
-      title: "Are you sure to remove this POI category",
+      title: "Are you sure to delete this POI category",
       okText: t("yes"),
       cancelText: t("no"),
       onOk: async () => {
@@ -84,7 +84,7 @@ const PoiCategory = () => {
           try {
             await deletePoiCategoryService(record.id);
             await getListPoiCategoryFunction("", 1, numUnitInPage);
-            toast.success("Remove poi caterogy success");
+            toast.success(DELETE_SUCCESS);
           } catch (error) {
             toast.error(error.response.data.message);
           }
