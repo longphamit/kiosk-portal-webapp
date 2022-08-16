@@ -103,7 +103,7 @@ const FormCreateCategory = ({ visible }) => {
             <Spin />
           ) : (
             <Button type="primary" htmlType="submit">
-              Create Application
+              Create Application Category
             </Button>
           )}
         </Form.Item>

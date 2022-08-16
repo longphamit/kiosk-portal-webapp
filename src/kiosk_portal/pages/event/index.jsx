@@ -10,17 +10,12 @@ import {
   Row,
   Select,
   Skeleton,
-  Space,
   Table,
-  Tag,
 } from "antd";
 import {
-  DeleteFilled,
-  EyeFilled,
   PlusOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import moment from "moment";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
 import {
@@ -30,7 +25,6 @@ import {
 } from "../../services/event_service";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
-import { TYPE_SERVER } from "../../../@app/constants/key";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER } from "../../../@app/constants/role";
 import {

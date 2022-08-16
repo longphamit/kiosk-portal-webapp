@@ -38,7 +38,7 @@ import { getCities, getDistricts, getWards } from "./location_utils";
 import {
   ERROR_INPUT_ADDRESS,
   ERROR_INPUT_DISTRICT,
-  ERROR_INPUT_LOGO,
+  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
@@ -83,11 +83,11 @@ export const EventCreatingPage = () => {
 
     try {
       if (values.thumbnail.fileList.length === 0) {
-        invalidMsg.push("You need to add picture to logo\n");
+        invalidMsg.push("You need to add thumbnail\n");
         check = false;
       }
       if (values.listImage.fileList.length === 0) {
-        invalidMsg.push("You need to add at least 1 picture to list img\n");
+        invalidMsg.push("You need to add at least 1 picture to list image\n");
         check = false;
       }
       //Check date time of event
@@ -358,11 +358,11 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="thumbnail"
-          label="Logo"
+          label="Thumbnail"
           rules={[
             {
               required: true,
-              message: ERROR_INPUT_LOGO,
+              message: ERROR_UPLOAD_LOGO,
             },
           ]}
         >
