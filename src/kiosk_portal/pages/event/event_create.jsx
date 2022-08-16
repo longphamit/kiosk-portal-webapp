@@ -35,6 +35,19 @@ import {
   EVENT_MANAGER_PATH,
 } from "../../constants/path_constants";
 import { getCities, getDistricts, getWards } from "./location_utils";
+import {
+  ERROR_INPUT_ADDRESS,
+  ERROR_INPUT_DISTRICT,
+  ERROR_INPUT_LOGO,
+  ERROR_INPUT_NAME,
+  ERROR_INPUT_PROVINCE,
+  ERROR_INPUT_WARD,
+  ERROR_SELECT_DATE_END,
+  ERROR_SELECT_DATE_START,
+  ERROR_SELECT_TIME_END,
+  ERROR_SELECT_TIME_START,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 const { TextArea } = Input;
 
 export const EventCreatingPage = () => {
@@ -179,7 +192,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please input name",
+              message: ERROR_INPUT_NAME,
             },
           ]}
         >
@@ -187,7 +200,7 @@ export const EventCreatingPage = () => {
         </Form.Item>
         <Form.Item
           label="Time start"
-          rules={[{ required: true, message: "" }]}
+          rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
           style={{ marginBottom: 0 }}
         >
           <Form.Item
@@ -196,7 +209,7 @@ export const EventCreatingPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the start date",
+                message: ERROR_SELECT_DATE_START,
               },
             ]}
           >
@@ -220,7 +233,7 @@ export const EventCreatingPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the event start time",
+                message: ERROR_SELECT_TIME_START,
               },
             ]}
           >
@@ -233,7 +246,7 @@ export const EventCreatingPage = () => {
         </Form.Item>
         <Form.Item
           label="Time end"
-          rules={[{ required: true, message: "" }]}
+          rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
           style={{ marginBottom: 0 }}
         >
           <Form.Item
@@ -242,7 +255,7 @@ export const EventCreatingPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the end date",
+                message: ERROR_SELECT_DATE_END,
               },
             ]}
           >
@@ -266,7 +279,7 @@ export const EventCreatingPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input the event end time",
+                message: ERROR_SELECT_TIME_END,
               },
             ]}
           >
@@ -280,11 +293,11 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="provice"
-          label="Provice"
+          label="Province"
           rules={[
             {
               required: true,
-              message: "Please input the provice",
+              message: ERROR_INPUT_PROVINCE,
             },
           ]}
         >
@@ -304,7 +317,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please input the district",
+              message: ERROR_INPUT_DISTRICT,
             },
           ]}
         >
@@ -320,7 +333,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please input the ward",
+              message: ERROR_INPUT_WARD,
             },
           ]}
         >
@@ -336,7 +349,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please input the address",
+              message: ERROR_INPUT_ADDRESS,
             },
           ]}
         >
@@ -349,7 +362,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please choose application logo!",
+              message: ERROR_INPUT_LOGO,
             },
           ]}
         >
@@ -369,7 +382,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: "Please choose list image",
+              message: ERROR_UPLOAD_LIST_IMG,
             },
           ]}
         >

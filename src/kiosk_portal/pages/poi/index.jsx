@@ -19,10 +19,7 @@ import {
 import { getListProvinceService } from "../../services/map_service";
 import ModalCreatePoi from "./modalCreatePoi";
 import { getListPoiCategoriesService } from "../../services/poi_category_service";
-import {
-  SearchOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
   POI_MANAGER_HREF,
@@ -97,8 +94,12 @@ const PoiPage = () => {
 
   const onFinishSearch = async (values) => {
     setCurrentPage(1);
+    let name = "";
+    if (typeof values.name !== "undefined") {
+      name = values.name;
+    }
     const res = await getListPoiFunction(
-      values.name,
+      name,
       "",
       "",
       "",
@@ -191,7 +192,6 @@ const PoiPage = () => {
     });
   };
 
-
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -243,7 +243,11 @@ const PoiPage = () => {
           </Row>
         ) : (
           <>
-            <Table columns={columns(onFinishChangeStatusPoi, t, onNavigate)} dataSource={listUnit} pagination={false} />
+            <Table
+              columns={columns(onFinishChangeStatusPoi, t, onNavigate)}
+              dataSource={listUnit}
+              pagination={false}
+            />
             <Pagination
               defaultCurrent={1}
               total={totalUnit}

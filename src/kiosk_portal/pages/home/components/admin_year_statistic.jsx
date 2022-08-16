@@ -1,4 +1,4 @@
-import { Col, Row, Skeleton } from "antd"
+import { Col, DatePicker, Row, Skeleton } from "antd"
 import { useEffect, useState } from "react";
 import { OrderLineChart } from "../../../components/charts/order_line_chart"
 import OrderPieChart from "../../../components/charts/order_pie_chart";
@@ -8,13 +8,20 @@ import { MultiItemsSelectComponents } from "../../../components/select/app_selec
 import { getSystemCommissionByYearAndServiceApplicationIdsServices, getSystemCommissionByYearService } from "../../../services/order_service";
 import './../styles.css'
 import { rePerformAdminCommissionPieChartData } from "./utils";
+import moment from 'moment';
+import { toast } from 'react-toastify';
 
 let currentTime = new Date();
+const yearFormat = 'YYYY';
+const CHART_TITLE = 'Revenue From Service Applications Year ';
 export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
     const [isYearPieChartLoading, setYearPieChartLoading] = useState(false);
     const [isYearLineChartLoading, setYearLineChartLoading] = useState(false);
     const [yearPieChartData, setYearPieChartData] = useState();
     const [yearLineChartData, setYearLineChartData] = useState();
+    const [timeValue, setTimeValue] = useState(currentTime.getFullYear());
+    const [selectedServices, setSelectedServices] = useState([])
+    const [chartTitle, setChartTitle] = useState(CHART_TITLE + `${currentTime.getFullYear()}`);
     const getSystemCommissionByYear = async () => {
         try {
             setYearPieChartLoading(true);
@@ -27,12 +34,13 @@ export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
             setYearPieChartLoading(false);
         }
     }
-    const getSystemCommissionByYearAndService = async (appIds) => {
+    const getSystemCommissionByYearAndService = async (year, appIds) => {
         try {
             setYearLineChartLoading(true);
             let res = await getSystemCommissionByYearAndServiceApplicationIdsServices(
-                currentTime.getFullYear(), appIds);
+                year, appIds);
             setYearLineChartData(res.data.datas)
+            setChartTitle(CHART_TITLE + year)
         } catch (e) {
             console.error(e);
             setYearLineChartData(null)
@@ -43,11 +51,21 @@ export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
 
     useEffect(() => {
         getSystemCommissionByYear();
-        getSystemCommissionByYearAndService([]);
+        getSystemCommissionByYearAndService(currentTime.getFullYear(), []);
     }, []);
 
-    const onSelectApps = async (appIds, type) => {
-        await getSystemCommissionByYearAndService(appIds);
+    const onSelectApps = async (appIds) => {
+        setSelectedServices(appIds);
+        await getSystemCommissionByYearAndService(timeValue, appIds);
+    }
+    const onChangeDatePicker = async (value) => {
+        if (value === null) {
+            toast.warn('Invalid Year!');
+            return;
+        }
+        let year = moment(value).format(yearFormat)
+        setTimeValue(year);
+        await getSystemCommissionByYearAndService(year, selectedServices);
     }
     return <>
         <Row>
@@ -61,6 +79,12 @@ export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
                                     style={{ width: '50%' }}
                                     onChange={onSelectApps}
                                     placeholder="Choose Service Applications"
+                                />
+                                <DatePicker
+                                    picker="year"
+                                    defaultValue={moment(currentTime, yearFormat)}
+                                    format={yearFormat}
+                                    onChange={value => onChangeDatePicker(value)}
                                 />
                             </Row> : null
                     }
@@ -78,7 +102,7 @@ export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
                                             />
                                         </Col>
                                     </Row>
-                                    <ChartTitle title={`Revenue From Service Applications Year ${currentTime.getFullYear()}`} />
+                                    <ChartTitle title={chartTitle} />
                                 </>
                                 :
                                 null :
@@ -92,7 +116,7 @@ export const AdminYearStatistic = ({ lineSpanCol, pieSpanCol, apps }) => {
                     <Col span={pieSpanCol}>
                         <div style={{ height: 300 }} className="count-chart-box">
                             <Row justify='center' align='middle'>
-                                <Col span={16}>
+                                <Col span={14}>
                                     <OrderPieChart key={'year-pie-char'} orders={yearPieChartData} />
                                 </Col>
                             </Row>

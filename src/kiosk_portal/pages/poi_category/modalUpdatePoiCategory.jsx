@@ -8,6 +8,7 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { updatePoiCategoryService } from "../../services/poi_category_service";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
+import { ERROR_INPUT_NAME } from "../../../@app/constants/message";
 
 const ModalUpdatePoiCategory = ({
   modalToIndex,
@@ -89,7 +90,7 @@ const ModalUpdatePoiCategory = ({
               rules={[
                 {
                   required: true,
-                  message: "Please Input Name!",
+                  message: ERROR_INPUT_NAME,
                 },
               ]}
             >

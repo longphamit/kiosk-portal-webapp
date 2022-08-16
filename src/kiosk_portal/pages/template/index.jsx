@@ -27,11 +27,17 @@ import {
   SearchOutlined,
   PlusOutlined,
   EditFilled,
-  DeleteFilled
-
+  DeleteFilled,
 } from "@ant-design/icons";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-import { TEMPLATE_MANAGER_HREF, TEMPLATE_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  TEMPLATE_MANAGER_HREF,
+  TEMPLATE_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
+import {
+  ERROR_INPUT_DESCRIPTION,
+  ERROR_INPUT_NAME,
+} from "../../../@app/constants/message";
 const TemplateManagerPage = () => {
   const { Option } = Select;
   const [isEditLoading, setEditLoading] = useState(false);
@@ -63,7 +69,12 @@ const TemplateManagerPage = () => {
         setListTemplate(res.data.data);
         return;
       }
-      const res = await getListTemplateService(currentPageToGetList, numInPage, '', '');
+      const res = await getListTemplateService(
+        currentPageToGetList,
+        numInPage,
+        "",
+        ""
+      );
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
       return;
@@ -76,11 +87,10 @@ const TemplateManagerPage = () => {
   };
   const checkEmptyObj = (obj) => {
     for (let i in obj) {
-      if (obj[i] !== '')
-        return false;
+      if (obj[i] !== "") return false;
     }
     return true;
-  }
+  };
   const onNavigate = (url) => {
     navigate(url);
   };
@@ -126,7 +136,7 @@ const TemplateManagerPage = () => {
       console.error(e);
       toast("Update failed");
     } finally {
-      setEditLoading(false)
+      setEditLoading(false);
     }
   };
   const onFinishSearch = async (values) => {
@@ -134,8 +144,8 @@ const TemplateManagerPage = () => {
       // Only search by name and status
       let searchObj = {
         name: values.searchString,
-        status: values.status
-      }
+        status: values.status,
+      };
       setQuerySearch(searchObj);
       setCurrentPage(1);
       const res = await getListTemplateService(
@@ -147,7 +157,7 @@ const TemplateManagerPage = () => {
       setTotalTemplate(res.data.metadata.total);
       setListTemplate(res.data.data);
     } catch (e) {
-      setListTemplate([])
+      setListTemplate([]);
       toast("Cannot found!");
     }
   };
@@ -166,14 +176,16 @@ const TemplateManagerPage = () => {
     try {
       let res = await createTemplateService(data);
       handleCancelCreateTemplate();
-      onNavigate({ pathname: '/./edit-template', search: '?id=' + res.data.id });
+      onNavigate({
+        pathname: "/./edit-template",
+        search: "?id=" + res.data.id,
+      });
     } catch (e) {
-      console.error(e)
+      console.error(e);
       toast("Create failed");
     } finally {
-      setCreateLoading(false)
+      setCreateLoading(false);
     }
-
   };
 
   const showModalCreateTemplate = () => {
@@ -196,7 +208,7 @@ const TemplateManagerPage = () => {
             toast("Delete successful");
             await getListTemplateFunction(1, numTemplateInPage);
           } catch (e) {
-            toast.error("Delete failed!")
+            toast.error("Delete failed!");
           }
         }
       },
@@ -280,9 +292,9 @@ const TemplateManagerPage = () => {
     {
       href: TEMPLATE_MANAGER_HREF,
       label: TEMPLATE_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -295,7 +307,7 @@ const TemplateManagerPage = () => {
             initialValues={{
               type: "Name",
               searchString: "",
-              status: ''
+              status: "",
             }}
           >
             <Row>
@@ -310,8 +322,8 @@ const TemplateManagerPage = () => {
                 </Form.Item>
               </Col>
               <Col span={5}>
-                <Form.Item name={'status'} style={{ marginTop: 5 }}>
-                  <Select >
+                <Form.Item name={"status"} style={{ marginTop: 5 }}>
+                  <Select>
                     <Option value="">All Status</Option>
                     <Option value="incomplete">Incomplete</Option>
                     <Option value="complete">Complete</Option>
@@ -335,25 +347,28 @@ const TemplateManagerPage = () => {
         </Col>
         <Col span={5} />
         <Col span={4}>
-          <Button
-            className="success-button"
-            onClick={showModalCreateTemplate}
-          >
+          <Button className="success-button" onClick={showModalCreateTemplate}>
             <PlusOutlined /> Template
           </Button>
         </Col>
       </Row>
-      {listTemplate ?
+      {listTemplate ? (
         <>
-          <Table columns={columns} dataSource={listTemplate} pagination={false} />
+          <Table
+            columns={columns}
+            dataSource={listTemplate}
+            pagination={false}
+          />
           <Pagination
             defaultCurrent={1}
             total={totalTemplate}
             pageSize={numTemplateInPage}
             onChange={handleChangeNumberOfPaging}
           />
-        </> : <Skeleton />
-      }
+        </>
+      ) : (
+        <Skeleton />
+      )}
       <Modal
         title="Create template"
         visible={isCreateTemplateModalVisible}
@@ -373,7 +388,7 @@ const TemplateManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input name",
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -385,7 +400,7 @@ const TemplateManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input décription",
+                message: ERROR_INPUT_DESCRIPTION,
               },
             ]}
           >
@@ -393,11 +408,13 @@ const TemplateManagerPage = () => {
           </Form.Item>
 
           <Form.Item {...tailFormItemLayout}>
-            {isCreateLoading === false ?
+            {isCreateLoading === false ? (
               <Button type="primary" htmlType="submit">
                 CONTINUE
               </Button>
-              : <Spin />}
+            ) : (
+              <Spin />
+            )}
           </Form.Item>
         </Form>
       </Modal>
@@ -433,7 +450,7 @@ const TemplateManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input name",
+                  message: ERROR_INPUT_NAME,
                 },
               ]}
             >
@@ -445,35 +462,48 @@ const TemplateManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input décription",
+                  message: ERROR_INPUT_DESCRIPTION,
                 },
               ]}
             >
               <Input />
             </Form.Item>
 
-            {isEditLoading === false ?
+            {isEditLoading === false ? (
               <div>
                 <Row align="center" style={{ marginBottom: 10 }}>
-                  <Button type="primary" htmlType="submit" style={{ width: 170 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    style={{ width: 170 }}
+                  >
                     Save
                   </Button>
                 </Row>
 
-
                 <Row align="center">
-                  <Button type="primary" style={{ width: 170 }}
-                    onClick={() => onNavigate({ pathname: '/./edit-template', search: '?id=' + currentItem.id })}>
+                  <Button
+                    type="primary"
+                    style={{ width: 170 }}
+                    onClick={() =>
+                      onNavigate({
+                        pathname: "/./edit-template",
+                        search: "?id=" + currentItem.id,
+                      })
+                    }
+                  >
                     Arrange Component
                   </Button>
                 </Row>
-
               </div>
-              : <Row align="center"><Spin /> </Row>}
+            ) : (
+              <Row align="center">
+                <Spin />{" "}
+              </Row>
+            )}
           </Form>
         </Modal>
-      ) : null
-      }
+      ) : null}
     </>
   );
 };

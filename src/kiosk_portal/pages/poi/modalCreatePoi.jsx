@@ -27,6 +27,19 @@ import { getBase64 } from "../../../@app/utils/file_util";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { Editor } from "primereact/editor";
+import {
+  ERROR_INPUT_ADDRESS,
+  ERROR_SELECT_CATEGORY,
+  ERROR_INPUT_CITY,
+  ERROR_INPUT_DISTRICT,
+  ERROR_INPUT_NAME,
+  ERROR_INPUT_WARD,
+  ERROR_SELECT_TIME_END,
+  ERROR_SELECT_TIME_START,
+  ERROR_UPLOAD_LOGO,
+  ERROR_CHECKBOX_DATE_OF_WEEK,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 
 const ModalCreatePoi = ({
   modalToIndex,
@@ -202,7 +215,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please input name",
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -233,7 +246,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: t("reqtimestartschedule"),
+                message: ERROR_SELECT_TIME_START,
               },
             ]}
           >
@@ -245,7 +258,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: t("reqtimeendschedule"),
+                message: ERROR_SELECT_TIME_END,
               },
             ]}
           >
@@ -257,7 +270,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: t("reqtimestartschedule"),
+                message: ERROR_CHECKBOX_DATE_OF_WEEK,
               },
             ]}
           >
@@ -293,7 +306,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please input your address!",
+                message: ERROR_INPUT_ADDRESS,
               },
             ]}
           >
@@ -305,7 +318,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please choose your city!",
+                message: ERROR_INPUT_CITY,
               },
             ]}
           >
@@ -325,7 +338,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please choose your district!",
+                message: ERROR_INPUT_DISTRICT,
               },
             ]}
           >
@@ -345,7 +358,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please choose your ward!",
+                message: ERROR_INPUT_WARD,
               },
             ]}
           >
@@ -365,7 +378,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please choose your category!",
+                message: ERROR_SELECT_CATEGORY,
               },
             ]}
           >
@@ -377,11 +390,11 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="thumbnail"
-            label="Avatar"
+            label="Logo"
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: ERROR_UPLOAD_LOGO,
               },
             ]}
           >
@@ -401,7 +414,7 @@ const ModalCreatePoi = ({
             rules={[
               {
                 required: true,
-                message: "Please choose application logo!",
+                message: ERROR_UPLOAD_LIST_IMG,
               },
             ]}
           >

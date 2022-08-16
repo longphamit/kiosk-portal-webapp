@@ -36,6 +36,11 @@ import {
   SCHEDULE_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import {
+  ERROR_CHECKBOX_DATE_OF_WEEK,
+  ERROR_INPUT_NAME,
+  ERROR_SELECT_TIME_START,
+} from "../../../@app/constants/message";
 
 const ScheduleManagerPage = () => {
   const { Option } = Select;
@@ -376,7 +381,7 @@ const ScheduleManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: t("reqnameschedule"),
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -388,7 +393,7 @@ const ScheduleManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: t("reqtimestartschedule"),
+                message: ERROR_SELECT_TIME_START,
               },
             ]}
           >
@@ -434,7 +439,7 @@ const ScheduleManagerPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please choose day of week",
+                message: ERROR_CHECKBOX_DATE_OF_WEEK,
               },
             ]}
           >
@@ -502,7 +507,7 @@ const ScheduleManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: t("reqnameschedule"),
+                  message: ERROR_INPUT_NAME,
                 },
               ]}
             >
@@ -514,7 +519,7 @@ const ScheduleManagerPage = () => {
               rules={[
                 {
                   required: true,
-                  message: t("reqtimestartschedule"),
+                  message: ERROR_SELECT_TIME_START,
                 },
               ]}
             >

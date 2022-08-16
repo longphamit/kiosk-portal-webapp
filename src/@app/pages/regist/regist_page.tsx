@@ -8,6 +8,14 @@ import { ValidateMessages } from "rc-field-form/lib/interface";
 import { signUpService } from "../../services/auth_service";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import {
+  ERROR_SELECT_GENDER,
+  ERROR_INPUT_CONFIRM_PASSWORD,
+  ERROR_INPUT_FIRST_NAME,
+  ERROR_INPUT_IDENTITY_NUM,
+  ERROR_INPUT_LAST_NAME,
+  ERROR_SELECT_TIME,
+} from "../../constants/message";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
@@ -24,7 +32,7 @@ const RegistPage: React.FC = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
-    setIsLoading(true)
+    setIsLoading(true);
     console.log(values);
     const dobDate = new Date(values.dob);
     await signUpService(
@@ -46,8 +54,9 @@ const RegistPage: React.FC = () => {
       .catch((error: any) => {
         console.error(error.response);
         toast(error.response.data.message);
-      }).finally(() => {
-        setIsLoading(false)
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -55,7 +64,7 @@ const RegistPage: React.FC = () => {
     console.log("Failed:", errorInfo);
   };
   const configTime = {
-    rules: [{ type: "object" as const, message: "Please select time!" }],
+    rules: [{ type: "object" as const, message: ERROR_SELECT_TIME }],
   };
 
   return (
@@ -90,18 +99,14 @@ const RegistPage: React.FC = () => {
             <Form.Item
               label="Last name"
               name="lastName"
-              rules={[
-                { required: true, message: "Please input your last name!" },
-              ]}
+              rules={[{ required: true, message: ERROR_INPUT_LAST_NAME }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="First name"
               name="firstName"
-              rules={[
-                { required: true, message: "Please input your first name!" },
-              ]}
+              rules={[{ required: true, message: ERROR_INPUT_FIRST_NAME }]}
             >
               <Input />
             </Form.Item>
@@ -127,7 +132,7 @@ const RegistPage: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your identity card number!",
+                  message: ERROR_INPUT_IDENTITY_NUM,
                 },
               ]}
             >
@@ -136,7 +141,7 @@ const RegistPage: React.FC = () => {
             <Form.Item
               name="gender"
               label="Gender"
-              rules={[{ required: true, message: "Please select gender!" }]}
+              rules={[{ required: true, message: ERROR_SELECT_GENDER }]}
             >
               <Select placeholder="select your gender">
                 <Option value="male">Male</Option>
@@ -163,7 +168,7 @@ const RegistPage: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please confirm your password!",
+                  message: ERROR_INPUT_CONFIRM_PASSWORD,
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {

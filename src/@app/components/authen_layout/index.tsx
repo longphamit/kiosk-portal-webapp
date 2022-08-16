@@ -134,7 +134,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                     onNavigate("/poi-page");
                   }}
                 >
-                  POI Manager
+                  POI
                 </Menu.Item>
                 <Menu.Item
                   key="poi_category"
