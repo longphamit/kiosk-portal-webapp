@@ -50,6 +50,7 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../../@app/constants/role";
 import {
+  CREATE_SUCCESS,
   ERROR_INPUT_ADDRESS,
   ERROR_INPUT_EMAIL,
   ERROR_INPUT_FIRST_NAME,
@@ -229,7 +230,7 @@ const AccountManagerPage = () => {
         await createAccountService(newAccount);
         getListAccountFunction(currentPage, numAccountInPage);
         setIsCreateAccountModalVisible(false);
-        toast.success("Create account success");
+        toast.success(CREATE_SUCCESS);
       }
     } catch (error) {
       toast.error(

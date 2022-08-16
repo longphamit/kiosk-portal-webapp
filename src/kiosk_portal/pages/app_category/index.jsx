@@ -9,9 +9,9 @@ import {
   Space,
   Table,
 } from "antd";
-import { EditFilled, PlusOutlined } from "@ant-design/icons";
+import { DeleteFilled, EditFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getListAppCategoryService } from "../../services/app_category_service";
+import { deleteAppCategoryService, getListAppCategoryService } from "../../services/app_category_service";
 import FormCreateCategory from "./formCreate";
 import ModalUpdateAppCategory from "./modalUpdateAppCategory";
 import {
@@ -19,6 +19,9 @@ import {
   APP_CATEGORY_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
+import { t } from "i18next";
+import { toast } from "react-toastify";
+import { DELETE_SUCCESS } from "../../../@app/constants/message";
 
 const AppCategoryPage = () => {
   const [appCategoryList, setAppCategoryList] = useState();
@@ -64,13 +67,41 @@ const AppCategoryPage = () => {
           >
             <EditFilled /> UPDATE
           </Button>
-          {/* <Button type="primary" shape="default" name={record} onClick={{}}>
-            <PoweroffOutlined /> Change Status
-          </Button> */}
+          <Button
+            className="danger-button"
+            shape="default"
+            name={record}
+            onClick={() => {
+              handleRemoveAppCategory(record);
+            }}
+          >
+            <DeleteFilled /> Delete
+          </Button>
         </Space>
       ),
     },
   ];
+
+  const handleRemoveAppCategory = async (record) => {
+    Modal.confirm({
+      title: "Are you sure to delete this application category",
+      okText: t("yes"),
+      cancelText: t("no"),
+      onOk: async () => {
+        {
+          try {
+            await deleteAppCategoryService(record.id);
+            setCurrentPage(1);
+            await getAppCategoryList(1, appCategoryPageSize);
+            toast.success(DELETE_SUCCESS);
+          } catch (error) {
+            toast.error(error.response.data.message);
+          }
+        }
+      },
+    });
+  };
+
   const getAppCategoryList = async (page, size) => {
     try {
       const res = await getListAppCategoryService(page, size);

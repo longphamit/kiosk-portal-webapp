@@ -60,6 +60,7 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
@@ -224,7 +225,7 @@ export const EventDetailsPage = () => {
         imageId: base64Thumnail === "" ? null : currentEvent.thumbnail.id,
       };
       let res = await updateEventService(data);
-      toast.success("Update event success");
+      toast.success(UPDATE_SUCCESS);
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {
@@ -282,7 +283,7 @@ export const EventDetailsPage = () => {
           banner: banner,
         };
         await updateBannerEventService(updateBanner);
-        toast.success("Update banner success");
+        toast.success(UPDATE_SUCCESS);
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -346,7 +347,7 @@ export const EventDetailsPage = () => {
           addFields: addFields,
         };
         await updateListImageService(data);
-        toast.success("Update success");
+        toast.success(UPDATE_SUCCESS);
         setUpdateListImage(false);
       }
     } catch (e) {

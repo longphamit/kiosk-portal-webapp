@@ -35,8 +35,10 @@ import {
   TEMPLATE_MANAGER_LABEL,
 } from "../../components/breadcumb/breadcumb_constant";
 import {
+  DELETE_SUCCESS,
   ERROR_INPUT_DESCRIPTION,
   ERROR_INPUT_NAME,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 const TemplateManagerPage = () => {
   const { Option } = Select;
@@ -130,11 +132,11 @@ const TemplateManagerPage = () => {
     };
     try {
       const res = await updateTemplateService(data);
-      toast("Update successful");
+      toast(UPDATE_SUCCESS);
       getListTemplateFunction(currentPage, numTemplateInPage);
     } catch (e) {
       console.error(e);
-      toast("Update failed");
+      toast.error(e.response.data.message ?? "Update failed!");
     } finally {
       setEditLoading(false);
     }
@@ -182,7 +184,7 @@ const TemplateManagerPage = () => {
       });
     } catch (e) {
       console.error(e);
-      toast("Create failed");
+      toast.error(e.response.data.message ?? "Create failed!");
     } finally {
       setCreateLoading(false);
     }
@@ -205,10 +207,10 @@ const TemplateManagerPage = () => {
         {
           try {
             await deleteTemplateService(record.id);
-            toast("Delete successful");
+            toast(DELETE_SUCCESS);
             await getListTemplateFunction(1, numTemplateInPage);
           } catch (e) {
-            toast.error("Delete failed!");
+            toast.error(e.response.data.message ?? "Delete failed!");
           }
         }
       },

@@ -35,6 +35,7 @@ import {
   KIOSK_MANAGER_LABEL,
 } from "../../breadcumb/breadcumb_constant";
 import ModalChangeNameKiosk from "../../../pages/kiosk/modalChangeNameKiosk";
+import { CREATE_SUCCESS } from "../../../../@app/constants/message";
 
 const searchTypeKiosk = [
   {
@@ -283,7 +284,7 @@ const KioskTable = ({ partyId }) => {
         partyId: partyId,
       });
       getListKiosk("",partyId,"","","","",kioskPageSize, kioskPage );
-      toast.success("Create Kiosk Success");
+      toast.success(CREATE_SUCCESS);
       createKioskForm.resetFields();
     } catch (e) {
       console.error(e);

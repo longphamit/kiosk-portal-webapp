@@ -30,6 +30,7 @@ import {
   SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH,
 } from "../../../constants/path_constants";
+import { CREATE_SUCCESS, DELETE_SUCCESS, UPDATE_SUCCESS } from "../../../../@app/constants/message";
 
 const KioskSchedulingPage = ({ currentKioskId }) => {
   const { Panel } = Collapse;
@@ -55,7 +56,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         templateId,
       };
       let res = await createKisokScheduleService(data);
-      toast.success("Create success!");
+      toast.success(CREATE_SUCCESS);
       try {
         let res = await getKisokScheduleService(currentKioskId);
         setListKioskShedule(res.data.data);
@@ -118,7 +119,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         {
           try {
             let res = await deleteKisokScheduleService(id);
-            toast.success("Delete success");
+            toast.success(DELETE_SUCCESS);
             getKisokSchedule(currentKioskId);
           } catch (e) {
             toast.error(e.response.data.message ?? "Delete failed!");
@@ -139,7 +140,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
         templateId,
       };
       let res = await updateKisokScheduleService(data);
-      toast.success("Update success!");
+      toast.success(UPDATE_SUCCESS);
       getKisokSchedule(currentKioskId);
       setUpdateVisible(false);
     } catch (e) {

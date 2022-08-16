@@ -55,6 +55,7 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
 
 const DetailPoiPage = () => {
@@ -209,7 +210,7 @@ const DetailPoiPage = () => {
         };
         console.log(updateBanner);
         await updateBannerPoiService(updateBanner);
-        toast.success("Update success");
+        toast.success(UPDATE_SUCCESS);
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -300,7 +301,7 @@ const DetailPoiPage = () => {
           thumbnail: valueLogo,
         };
         await updatePoiBasicService(updatePoi).then(() => {
-          toast.success("Update POI Success");
+          toast.success(UPDATE_SUCCESS);
         });
       } else {
         var errormsg = invalidMsg.join("-");
@@ -339,7 +340,7 @@ const DetailPoiPage = () => {
           addFields: listImage,
         };
         await updatePoiListImgService(updateListImage).then(() => {
-          toast.success("Update List Img POI Success");
+          toast.success(UPDATE_SUCCESS);
         });
       }
     } catch (error) {

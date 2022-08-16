@@ -38,7 +38,7 @@ import { getCities, getDistricts, getWards } from "./location_utils";
 import {
   ERROR_INPUT_ADDRESS,
   ERROR_INPUT_DISTRICT,
-  ERROR_INPUT_LOGO,
+  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
@@ -47,6 +47,7 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  CREATE_SUCCESS,
 } from "../../../@app/constants/message";
 const { TextArea } = Input;
 
@@ -83,11 +84,11 @@ export const EventCreatingPage = () => {
 
     try {
       if (values.thumbnail.fileList.length === 0) {
-        invalidMsg.push("You need to add picture to logo\n");
+        invalidMsg.push("You need to add thumbnail\n");
         check = false;
       }
       if (values.listImage.fileList.length === 0) {
-        invalidMsg.push("You need to add at least 1 picture to list img\n");
+        invalidMsg.push("You need to add at least 1 picture to list image\n");
         check = false;
       }
       //Check date time of event
@@ -135,7 +136,7 @@ export const EventCreatingPage = () => {
         };
         console.log(data);
         await createEventService(data);
-        toast.success("Create event success");
+        toast.success(CREATE_SUCCESS);
         navigate(EVENT_MANAGER_PATH);
       } else {
         var errormsg = invalidMsg.join("-");
@@ -358,11 +359,11 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="thumbnail"
-          label="Logo"
+          label="Thumbnail"
           rules={[
             {
               required: true,
-              message: ERROR_INPUT_LOGO,
+              message: ERROR_UPLOAD_LOGO,
             },
           ]}
         >

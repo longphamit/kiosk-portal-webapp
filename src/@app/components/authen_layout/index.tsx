@@ -81,7 +81,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
       <Layout>
         <Sider width={200} className="site-layout-background">
           <Menu
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={["home"]}
             mode="inline"
             style={{ height: "100%", borderRight: 0 }}
           >
