@@ -23,7 +23,6 @@ const VerifyForgotPassPage = () => {
       toast.success("Success");
     } catch (error) {
       toast.error(error.response.data.message);
-      // toast.error("Change password error. Please check your link again !!");
       setIsSuccess(false);
     }
   }, []);

@@ -9,6 +9,12 @@ import { ACCEPT_IMAGE } from "../../constants/accept_file";
 import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import { createLocationService } from "../../services/kiosk_location_service";
 import { Editor } from "primereact/editor";
+import {
+  ERROR_INPUT_HOT_LINE,
+  ERROR_INPUT_NAME,
+  ERROR_REGREX_HOT_LINE,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 
 export const formItemLayout = {
   labelCol: {
@@ -108,7 +114,7 @@ const ModalCreateLocation = ({
             rules={[
               {
                 required: true,
-                message: t("reqnameschedule"),
+                message: ERROR_INPUT_NAME,
               },
             ]}
           >
@@ -120,11 +126,11 @@ const ModalCreateLocation = ({
             rules={[
               {
                 pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                message: "Please input 10 number to this input",
+                message: ERROR_REGREX_HOT_LINE,
               },
               {
                 required: true,
-                message: "Please input your hotline",
+                message: ERROR_INPUT_HOT_LINE,
               },
             ]}
           >
@@ -136,7 +142,7 @@ const ModalCreateLocation = ({
             rules={[
               {
                 required: true,
-                message: "Please choose images to show on carousel!",
+                message: ERROR_UPLOAD_LIST_IMG,
               },
             ]}
           >

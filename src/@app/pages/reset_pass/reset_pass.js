@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { resetPasswordService } from "../../../kiosk_portal/services/account_service";
 import { PRIMARY_COLOR } from "../../constants/colors";
+import { ERROR_INPUT_CONFIRM_PASSWORD } from "../../constants/message";
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 
 const ResetPassPage = () => {
@@ -45,7 +46,7 @@ const ResetPassPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please confirm your password!",
+                  message: ERROR_INPUT_CONFIRM_PASSWORD,
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {

@@ -30,6 +30,13 @@ import {
   updateLocationListImgService,
 } from "../../services/kiosk_location_service";
 import { PREVIOUS_PATH } from "../../../@app/constants/key";
+import {
+  ERROR_INPUT_HOT_LINE,
+  ERROR_INPUT_NAME,
+  ERROR_REGREX_HOT_LINE,
+  ERROR_REGREX_PHONE_NUMBER,
+  ERROR_UPLOAD_LIST_IMG,
+} from "../../../@app/constants/message";
 
 const DetailLocationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -192,7 +199,7 @@ const DetailLocationPage = () => {
                   rules={[
                     {
                       required: true,
-                      message: "Please input name",
+                      message: ERROR_INPUT_NAME,
                     },
                   ]}
                 >
@@ -205,11 +212,11 @@ const DetailLocationPage = () => {
                   rules={[
                     {
                       pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
-                      message: "Please input 10 number to this input",
+                      message: ERROR_REGREX_HOT_LINE,
                     },
                     {
                       required: true,
-                      message: "Please input your hotline",
+                      message: ERROR_INPUT_HOT_LINE,
                     },
                   ]}
                 >
@@ -263,7 +270,7 @@ const DetailLocationPage = () => {
                     rules={[
                       {
                         required: true,
-                        message: "Please update images!",
+                        message: ERROR_UPLOAD_LIST_IMG,
                       },
                     ]}
                   >

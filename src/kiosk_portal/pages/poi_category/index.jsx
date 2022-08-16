@@ -1,12 +1,34 @@
-import { EditFilled, PlusOutlined } from "@ant-design/icons";
-import { Pagination, Space, Table, Button, Row, Col, Modal, Skeleton, Empty } from "antd";
+import {
+  DeleteFilled,
+  EditFilled,
+  PlusOutlined,
+  PoweroffOutlined,
+} from "@ant-design/icons";
+import {
+  Pagination,
+  Space,
+  Table,
+  Button,
+  Row,
+  Col,
+  Modal,
+  Skeleton,
+  Empty,
+} from "antd";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getListPoiCategoriesService } from "../../services/poi_category_service";
+import {
+  deletePoiCategoryService,
+  getListPoiCategoriesService,
+} from "../../services/poi_category_service";
 import CustomBreadCumb from "../../components/breadcumb/breadcumb";
-import { POI_CATEGORY_MANAGER_HREF, POI_CATEGORY_MANAGER_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import {
+  POI_CATEGORY_MANAGER_HREF,
+  POI_CATEGORY_MANAGER_LABEL,
+} from "../../components/breadcumb/breadcumb_constant";
 import ModalCreatePoiCategory from "./modalCreatePoiCategory";
 import ModalUpdatePoiCategory from "./modalUpdatePoiCategory";
+import { toast } from "react-toastify";
 
 const PoiCategory = () => {
   const { t } = useTranslation();
@@ -60,12 +82,11 @@ const PoiCategory = () => {
       onOk: async () => {
         {
           try {
-            // await changeStatusAccountService(record.id, null).then(() => {
-            //   getListAccountFunction(currentPage, numAccountInPage);
-            //   toast.success(t("toastsuccesschangestatus"));
-            // });
+            await deletePoiCategoryService(record.id);
+            await getListPoiCategoryFunction("", 1, numUnitInPage);
+            toast.success("Remove poi caterogy success");
           } catch (error) {
-            console.error(error);
+            toast.error(error.response.data.message);
           }
         }
       },
@@ -86,7 +107,7 @@ const PoiCategory = () => {
       setTotalUnit(res.data.metadata.total);
       setListUnit(res.data.data);
     } catch (error) {
-      setListUnit([])
+      setListUnit([]);
       console.error(error);
     }
   };
@@ -121,16 +142,16 @@ const PoiCategory = () => {
           >
             <EditFilled /> UPDATE
           </Button>
-          {/* <Button
-            type="primary"
+          <Button
+            className="danger-button"
             shape="default"
             name={record}
             onClick={() => {
               handleRemovePoiCategory(record);
             }}
           >
-            <PoweroffOutlined /> {t("change-status")}
-          </Button> */}
+            <DeleteFilled /> Delete
+          </Button>
         </Space>
       ),
     },
@@ -139,9 +160,9 @@ const PoiCategory = () => {
     {
       href: POI_CATEGORY_MANAGER_HREF,
       label: POI_CATEGORY_MANAGER_LABEL,
-      icon: null
+      icon: null,
     },
-  ]
+  ];
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
@@ -157,15 +178,16 @@ const PoiCategory = () => {
           </Button>
         </Col>
       </Row>
-      {listUnit ?
-        listUnit.length === 0 ?
+      {listUnit ? (
+        listUnit.length === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
             <Table columns={columns} dataSource={listUnit} pagination={false} />
             <Pagination
@@ -174,9 +196,11 @@ const PoiCategory = () => {
               pageSize={5}
               onChange={handleChangeNumberOfPaging}
             />
-          </> :
+          </>
+        )
+      ) : (
         <Skeleton />
-      }
+      )}
       <ModalCreatePoiCategory
         modalToIndex={onFinishModal}
         isCreateModalVisible={isCreateModalVisible}

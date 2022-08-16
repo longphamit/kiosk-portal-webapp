@@ -1,6 +1,7 @@
 import { Button, Form, Input, Modal, Select, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ERROR_INPUT_NAME } from "../../../@app/constants/message";
 import {
   changeNameKioskService,
   updateKioskService,
@@ -65,7 +66,7 @@ const ModalChangeNameKiosk = ({
               rules={[
                 {
                   required: true,
-                  message: "Please input kiosk name!",
+                  message: ERROR_INPUT_NAME,
                 },
               ]}
             >
