@@ -61,6 +61,7 @@ import {
   ERROR_SELECT_DOB,
   ERROR_SELECT_ROLE,
 } from "../../../@app/constants/message";
+import { PHONE_NUMBER_REGEX } from "../../../@app/constants/regex";
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -594,7 +595,7 @@ const AccountManagerPage = () => {
             label={t("phonenumber")}
             rules={[
               {
-                pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
+                pattern: new RegExp(PHONE_NUMBER_REGEX),
                 message: ERROR_REGREX_PHONE_NUMBER,
               },
               {
@@ -726,7 +727,7 @@ const AccountManagerPage = () => {
               label={t("phonenumber")}
               rules={[
                 {
-                  pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
+                  pattern: new RegExp(PHONE_NUMBER_REGEX),
                   message: ERROR_REGREX_PHONE_NUMBER,
                 },
                 {
