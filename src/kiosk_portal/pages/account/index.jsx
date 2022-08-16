@@ -62,6 +62,8 @@ import {
   ERROR_SELECT_ROLE,
 } from "../../../@app/constants/message";
 import { PHONE_NUMBER_REGEX } from "../../../@app/constants/regex";
+
+const currentTime = new Date()
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -415,6 +417,15 @@ const AccountManagerPage = () => {
         required: true,
         message: ERROR_SELECT_DOB,
       },
+      ({ getFieldValue }) => ({
+        validator(_, value) {
+          console.log(parseInt(moment(value).format('YYYY')) )
+          if (!value || currentTime.getFullYear() - parseInt(moment(value).format('YYYY')) > 18) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('The age must be over 18'));
+        },
+      }),
     ],
   };
 
