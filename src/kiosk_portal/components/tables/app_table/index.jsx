@@ -1,10 +1,8 @@
 import {
-  AutoComplete,
   Button,
   Card,
   Checkbox,
   Col,
-  DatePicker,
   Empty,
   Form,
   Input,
@@ -52,7 +50,6 @@ import {
 } from "../../../services/application_service";
 import {
   getAllCategoriesService,
-  getListCategoriesService,
 } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
@@ -62,7 +59,6 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../../../@app/constants/role";
 import { Editor } from "primereact/editor";
-import { async } from "@firebase/util";
 import { FILE_UPLOAD_URL } from "../../../../@app/utils/api_links";
 import { ACCEPT_IMAGE } from "../../../constants/accept_file";
 import {
@@ -802,21 +798,10 @@ const ApplicationTable = () => {
           <Form.Item
             name="description"
             label="Description"
-            required
-            rules={[
-              {
-                validator(values) {
-                  if (description === null || description === "") {
-                    return Promise.reject("Please input description");
-                  }
-                  return Promise.resolve();
-                },
-              },
-            ]}
             value={description}
           >
             <Editor
-              style={{ height: "320px" }}
+              style={{ height: "250px" }}
               onTextChange={(e) => {
                 setDescription(e.htmlValue);
               }}
@@ -970,7 +955,7 @@ const ApplicationTable = () => {
               initialValues={{
                 id: currentItem.id,
                 name: currentItem.name,
-                description: currentItem.description,
+                description: currentItem.description ?? "",
                 logo: currentItem.logo,
                 link: currentItem.link,
                 partyId: localStorageGetUserIdService(),
@@ -998,21 +983,10 @@ const ApplicationTable = () => {
               <Form.Item
                 name="description"
                 label="Description"
-                required
-                rules={[
-                  {
-                    validator(values) {
-                      if (description === null || description === "") {
-                        return Promise.reject("Please input description");
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
                 value={description}
               >
                 <Editor
-                  style={{ height: "320px" }}
+                  style={{ height: "250px" }}
                   onTextChange={(e) => {
                     setDescription(e.htmlValue);
                   }}
