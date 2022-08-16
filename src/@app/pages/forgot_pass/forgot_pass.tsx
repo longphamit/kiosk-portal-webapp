@@ -53,13 +53,16 @@ const ForgotPassPage: React.FC = () => {
                   required: true,
                   message: ERROR_INPUT_EMAIL,
                 },
+                {
+                  type: 'email',
+                  warningOnly: false
+                }
               ]}
             >
               <Input />
             </Form.Item>
-            <Row justify="center" align="middle">
-              <Col span={4} />
-              <Col span={8}>
+            <Row justify="center" align="middle" style={{ marginTop: 10 }}>
+              <Col >
                 <Form.Item>
                   {isLoading ? (
                     <Spin />
@@ -70,7 +73,7 @@ const ForgotPassPage: React.FC = () => {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={8}>
+              <Col offset={2} >
                 <Form.Item>
                   <Button
                     type="primary"
@@ -81,7 +84,6 @@ const ForgotPassPage: React.FC = () => {
                   </Button>
                 </Form.Item>
               </Col>
-              <Col span={4} />
             </Row>
           </Form>
         </Col>
