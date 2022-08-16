@@ -1,6 +1,5 @@
 
 //input
-export const ERROR_INPUT_LOGO ="Please input logo !"
 export const ERROR_INPUT_EMAIL ="Please input email !"
 export const ERROR_INPUT_NAME ="Please input name !" 
 export const ERROR_INPUT_FIRST_NAME ="Please input first name !" 

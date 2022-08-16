@@ -114,15 +114,15 @@ const ScheduleManagerPage = () => {
         var date = new Date(values.timeEnd);
         var hours = ("0" + date.getHours()).slice(-2);
         timeEnd = [hours, "00", "00"].join(":");
-        if (values.timeStart - values.timeEnd > 0) {
-          invalidMsg.push("Time start need to before or match with time end\n");
-          check = false;
-        }
-        if (Array.isArray(values.dayOfWeek)) {
-          dOW = values.dayOfWeek.join("-");
-        } else {
-          dOW = values.dayOfWeek;
-        }
+      }
+      if (values.timeStart - values.timeEnd > 0) {
+        invalidMsg.push("Time start need to before or match with time end\n");
+        check = false;
+      }
+      if (Array.isArray(values.dayOfWeek)) {
+        dOW = values.dayOfWeek.join("-");
+      } else {
+        dOW = values.dayOfWeek;
       }
       if (check) {
         const updateSchedule = {
@@ -581,7 +581,16 @@ const ScheduleManagerPage = () => {
               </Form.Item>
             </Form.Item>
 
-            <Form.Item name="dayOfWeek" label={t("dayofweek")}>
+            <Form.Item
+              name="dayOfWeek"
+              label={t("dayofweek")}
+              rules={[
+                {
+                  required: true,
+                  message: ERROR_CHECKBOX_DATE_OF_WEEK,
+                },
+              ]}
+            >
               <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
                 <Row>
                   <Col span={8}>
