@@ -194,7 +194,7 @@ export const EventDetailsPage = () => {
       let thumbnail = values.thumbnail;
       if (!checkThumbnail(thumbnail)) {
         // Check thumbnail must import
-        toast.warn("Please add a thumbnail image");
+        toast.warn("Please add a logo image");
         setIsLoadingBasicInfo(true);
         return;
       }
@@ -597,7 +597,7 @@ export const EventDetailsPage = () => {
 
               <Form.Item
                 name="thumbnail"
-                label="Thumbnail"
+                label="Logo"
                 getValueFromEvent={normFile}
               >
                 <Upload
