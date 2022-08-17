@@ -62,10 +62,10 @@ import { ACCEPT_IMAGE } from "../../../constants/accept_file";
 import {
   ERROR_SELECT_CATEGORY,
   ERROR_INPUT_LINK,
-  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   UPDATE_SUCCESS,
   CREATE_SUCCESS,
+  ERROR_UPLOAD_LOGO_CATE,
 } from "../../../../@app/constants/message";
 
 const ApplicationTable = ({ partyId }) => {
@@ -829,7 +829,7 @@ const ApplicationTable = ({ partyId }) => {
             rules={[
               {
                 required: true,
-                message: ERROR_UPLOAD_LOGO,
+                message: ERROR_UPLOAD_LOGO_CATE,
               },
             ]}
           >
@@ -1019,7 +1019,7 @@ const ApplicationTable = ({ partyId }) => {
                 rules={[
                   {
                     required: true,
-                    message: ERROR_UPLOAD_LOGO,
+                    message: ERROR_UPLOAD_LOGO_CATE,
                   },
                 ]}
               >

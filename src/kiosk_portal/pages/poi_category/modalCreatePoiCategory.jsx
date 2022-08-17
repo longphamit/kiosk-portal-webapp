@@ -11,7 +11,7 @@ import { FILE_UPLOAD_URL } from "../../../@app/utils/api_links";
 import {
   CREATE_SUCCESS,
   ERROR_INPUT_NAME,
-  ERROR_UPLOAD_LOGO,
+  ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
 
 const ModalCreatePoiCategory = ({
@@ -80,7 +80,7 @@ const ModalCreatePoiCategory = ({
             rules={[
               {
                 required: true,
-                message: ERROR_UPLOAD_LOGO,
+                message: ERROR_UPLOAD_LOGO_CATE,
               },
             ]}
           >
