@@ -9,9 +9,9 @@ import { useState } from "react";
 import {
   CREATE_SUCCESS,
   ERROR_INPUT_COMMISSION_PERCENTAGE,
-  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   ERROR_REGREX_COMMISSION_PERCENTAGE,
+  ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
 
 const FormCreateCategory = ({ visible }) => {
@@ -66,7 +66,7 @@ const FormCreateCategory = ({ visible }) => {
           rules={[
             {
               required: true,
-              message: ERROR_UPLOAD_LOGO,
+              message: ERROR_UPLOAD_LOGO_CATE,
             },
           ]}
         >
