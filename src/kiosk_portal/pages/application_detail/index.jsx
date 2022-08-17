@@ -58,7 +58,7 @@ const ApplicationDetailPage = () => {
     let tempId = "";
     if (id.includes("installed")) {
       tempId = id.replaceAll("&&installed", "");
-      checkAppIsInstalled(tempId)
+      checkAppIsInstalled(tempId);
     } else {
       tempId = id;
     }
@@ -223,7 +223,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               approveAppPublishRequest();
                             }}
-                            onCancel={() => { }}
+                            onCancel={() => {}}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -239,7 +239,7 @@ const ApplicationDetailPage = () => {
                             onConfirm={() => {
                               setDenyAppPublishModalVisible(true);
                             }}
-                            onCancel={() => { }}
+                            onCancel={() => {}}
                             okText="Yes"
                             cancelText="No"
                           >
@@ -259,45 +259,48 @@ const ApplicationDetailPage = () => {
             </Col>
           </div>
           <Tabs defaultActiveKey="1">
-            <TabPane tab="Other Info" key="0">
+            <TabPane tab="Description" key="0">
               <Row>
-                {app.banner ? <>
-                  <Col span={12}>
-                    <Row justify="center" align="middle">
-                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
-                        APPLICATION BANNER
-                      </p>
-                    </Row>
-                    <Row justify="center" align="middle">
-                      <Image
-                        src={app.banner}
-                        sizes="large"
-                      />
-                      <br />
-                    </Row>
-                  </Col>
-                  <Col span={12}>
-                    <Row justify="center" align="middle">
-                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
-                        DESCRIPTION
-                      </p>
-                    </Row>
-                    <Row style={{ margin: '0px 30px' }}>
-                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
-                    </Row>
-                  </Col>
-                </> :
+                {app.banner ? (
+                  <>
+                    <Col span={12}>
+                      <Row justify="center" align="middle">
+                        <p style={{ fontWeight: "bold", fontSize: 18 }}>
+                          APPLICATION BANNER
+                        </p>
+                      </Row>
+                      <Row justify="center" align="middle">
+                        <Image src={app.banner} sizes="large" />
+                        <br />
+                      </Row>
+                    </Col>
+                    <Col span={12}>
+                      <Row justify="center" align="middle">
+                        <p style={{ fontWeight: "bold", fontSize: 18 }}>
+                          DESCRIPTION
+                        </p>
+                      </Row>
+                      <Row style={{ margin: "0px 30px" }}>
+                        <div
+                          dangerouslySetInnerHTML={{ __html: app.description }}
+                        />
+                      </Row>
+                    </Col>
+                  </>
+                ) : (
                   <Col span={24}>
                     <Row justify="center" align="middle">
-                      <p style={{ fontWeight: 'bold', fontSize: 18 }}>
+                      <p style={{ fontWeight: "bold", fontSize: 18 }}>
                         DESCRIPTION
                       </p>
                     </Row>
-                    <Row >
-                      <div dangerouslySetInnerHTML={{ __html: app.description }} />
+                    <Row>
+                      <div
+                        dangerouslySetInnerHTML={{ __html: app.description }}
+                      />
                     </Row>
                   </Col>
-                }
+                )}
               </Row>
             </TabPane>
             <TabPane tab="App Preview" key="1">
