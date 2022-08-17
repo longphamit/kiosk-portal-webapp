@@ -166,7 +166,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                     onNavigate("/kiosk");
                   }}
                 >
-                  Kiosk Manager
+                  Kiosk
                 </Menu.Item>
                 <Menu.Item
                   key="kiosk_location"

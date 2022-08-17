@@ -70,7 +70,7 @@ import {
   CREATE_SUCCESS,
 } from "../../../../@app/constants/message";
 
-const ApplicationTable = () => {
+const ApplicationTable = ({ partyId }) => {
   const navigator = useNavigate();
   const { Option } = Select;
   const { TextArea } = Input;
@@ -676,9 +676,16 @@ const ApplicationTable = () => {
                       console.log(e);
                     }}
                   >
-                    {types.map((item) => {
-                      return <Option value={item.name}>{item.label}</Option>;
-                    })}
+                    {partyId ?
+                      <>
+                        <Option value={'name'}>{'Name'}</Option>;
+                      </> : <>
+                        {types.map((item) => {
+                          return <Option value={item.name}>{item.label}</Option>;
+                        })}
+                      </>
+                    }
+
                   </Select>
                 </Form.Item>
               </Col>
@@ -913,9 +920,13 @@ const ApplicationTable = () => {
           <Form.Item name="name" label="Name">
             <Input />
           </Form.Item>
-          <Form.Item name="partyEmail" label="Party Email">
-            <Input />
-          </Form.Item>
+          {
+            partyId ? <></> :
+              <Form.Item name="partyEmail" label="Party Email">
+                <Input />
+              </Form.Item>
+          }
+
           <Form.Item name="status" label="Status">
             <Select defaultValue="">
               <Option value="">All status</Option>
@@ -1045,8 +1056,8 @@ const ApplicationTable = () => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                        return <Option value={item.id}>{item.name}</Option>;
-                      })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                     : null}
                 </Select>
               </Form.Item>

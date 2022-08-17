@@ -1,5 +1,24 @@
-import { Button, Col, Empty, Modal, Pagination, Row, Skeleton, Space, Spin, Table } from "antd";
-import { EyeFilled, DownloadOutlined, LinkOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Col,
+  Empty,
+  Form,
+  Input,
+  Modal,
+  Pagination,
+  Row,
+  Skeleton,
+  Space,
+  Spin,
+  Table,
+} from "antd";
+import {
+  EyeFilled,
+  DownloadOutlined,
+  LinkOutlined,
+  SearchOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -22,13 +41,15 @@ const ApplicationMarketPage = () => {
   const [numApplicationInPage, setNumApplicationInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [form] = Form.useForm();
   const getListApplicationFunction = async (
+    name,
     currentPageToGetList,
     numInPage
   ) => {
     try {
       const res = await getListApplicationService(
-        "",
+        name,
         "",
         "",
         "",
@@ -40,9 +61,18 @@ const ApplicationMarketPage = () => {
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
-      setListApplication([])
+      setListApplication([]);
       toast.error(error.response.data.message);
     }
+  };
+  const onFinishSearch = async (values) => {
+    getListApplicationFunction(
+      values.searchString,
+      currentPage,
+      numApplicationInPage
+    );
+    // await getKioskLocationList(values.searchString, 1, pageSize);
+    // setCurrentPaging(1);
   };
 
   const onFinishInstallApplication = (values) => {
@@ -59,7 +89,7 @@ const ApplicationMarketPage = () => {
             };
             await installApplicationService(installObj);
             toast.success("Install successful");
-            getListApplicationFunction(currentPage, numApplicationInPage);
+            getListApplicationFunction("", currentPage, numApplicationInPage);
           } catch (error) {
             toast.error(error.response.data.message);
           } finally {
@@ -71,7 +101,7 @@ const ApplicationMarketPage = () => {
   };
 
   useEffect(async () => {
-    getListApplicationFunction(currentPage, numApplicationInPage);
+    getListApplicationFunction("", currentPage, numApplicationInPage);
     localStorage.setItem(
       PREVIOUS_PATH,
       JSON.stringify({ data: breadCumbData })
@@ -80,7 +110,7 @@ const ApplicationMarketPage = () => {
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListApplicationFunction(page, numApplicationInPage);
+    await getListApplicationFunction("", page, numApplicationInPage);
   };
   const columns = [
     {
@@ -99,9 +129,14 @@ const ApplicationMarketPage = () => {
       title: "Link",
       dataIndex: "link",
       key: "link",
-      render: (text) => <p><a href={text} target="_blank" >
-        <LinkOutlined />Click here
-      </a></p>,
+      render: (text) => (
+        <p>
+          <a href={text} target="_blank">
+            <LinkOutlined />
+            Click here
+          </a>
+        </p>
+      ),
     },
 
     {
@@ -127,7 +162,7 @@ const ApplicationMarketPage = () => {
             <EyeFilled /> Detail
           </Button>
           {record.partyServiceApplication &&
-            record.partyServiceApplication.status == "installed" ? (
+          record.partyServiceApplication.status == "installed" ? (
             <Button
               className="success-button"
               onClick={() => {
@@ -163,15 +198,55 @@ const ApplicationMarketPage = () => {
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
-      {listApplication ?
-        listApplication.length === 0 ?
+      <Row style={{ padding: 10 }}>
+        <Col span={15}>
+          <Form
+            form={form}
+            name="search"
+            onFinish={onFinishSearch}
+            initialValues={{
+              type: "Name",
+              searchString: "",
+              status: "",
+            }}
+          >
+            <Row>
+              <Col span={14}>
+                <Form.Item name="searchString" style={{ marginTop: 5 }}>
+                  <Input
+                    style={{ width: "100%" }}
+                    placeholder="Search by name"
+                    value=""
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item>
+                  <Button
+                    htmlType="submit"
+                    style={{ marginLeft: 10, borderRadius: 5 }}
+                    type="primary"
+                    size={"large"}
+                  >
+                    <SearchOutlined />
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+        <Col span={9} />
+      </Row>
+      {listApplication ? (
+        listApplication.length === 0 ? (
           <>
-            <Row justify='center' align='center' style={{ marginTop: 250 }}>
+            <Row justify="center" align="center" style={{ marginTop: 250 }}>
               <Col>
                 <Empty />
               </Col>
             </Row>
-          </> :
+          </>
+        ) : (
           <>
             <Table
               columns={columns}
@@ -185,7 +260,10 @@ const ApplicationMarketPage = () => {
               onChange={handleChangeNumberOfPaging}
             />
           </>
-        : <Skeleton />}
+        )
+      ) : (
+        <Skeleton />
+      )}
     </>
   );
 };
