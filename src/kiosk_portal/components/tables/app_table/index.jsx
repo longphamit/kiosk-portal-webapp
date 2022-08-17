@@ -48,9 +48,7 @@ import {
   updateApplicationService,
   updateBannerApplicationService,
 } from "../../../services/application_service";
-import {
-  getAllCategoriesService,
-} from "../../../services/categories_service";
+import { getAllCategoriesService } from "../../../services/categories_service";
 import { beforeUpload } from "../../../../@app/utils/image_util";
 import { useNavigate } from "react-router-dom";
 import {
@@ -210,7 +208,7 @@ const ApplicationTable = ({ partyId }) => {
 
   const handleStopApplication = async (record) => {
     Modal.confirm({
-      title: "Are you sure to remove this application ?",
+      title: "Are you sure to stop this application ?",
       okText: t("yes"),
       cancelText: t("no"),
       onOk: async () => {
@@ -676,16 +674,19 @@ const ApplicationTable = ({ partyId }) => {
                       console.log(e);
                     }}
                   >
-                    {partyId ?
+                    {partyId ? (
                       <>
-                        <Option value={'name'}>{'Name'}</Option>;
-                      </> : <>
+                        <Option value={"name"}>{"Name"}</Option>;
+                      </>
+                    ) : (
+                      <>
                         {types.map((item) => {
-                          return <Option value={item.name}>{item.label}</Option>;
+                          return (
+                            <Option value={item.name}>{item.label}</Option>
+                          );
                         })}
                       </>
-                    }
-
+                    )}
                   </Select>
                 </Form.Item>
               </Col>
@@ -802,11 +803,7 @@ const ApplicationTable = ({ partyId }) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            value={description}
-          >
+          <Form.Item name="description" label="Description" value={description}>
             <Editor
               style={{ height: "250px" }}
               onTextChange={(e) => {
@@ -920,12 +917,13 @@ const ApplicationTable = ({ partyId }) => {
           <Form.Item name="name" label="Name">
             <Input />
           </Form.Item>
-          {
-            partyId ? <></> :
-              <Form.Item name="partyEmail" label="Party Email">
-                <Input />
-              </Form.Item>
-          }
+          {partyId ? (
+            <></>
+          ) : (
+            <Form.Item name="partyEmail" label="Party Email">
+              <Input />
+            </Form.Item>
+          )}
 
           <Form.Item name="status" label="Status">
             <Select defaultValue="">
@@ -1056,8 +1054,8 @@ const ApplicationTable = ({ partyId }) => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
-                    })
+                        return <Option value={item.id}>{item.name}</Option>;
+                      })
                     : null}
                 </Select>
               </Form.Item>
