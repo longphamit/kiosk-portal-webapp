@@ -33,6 +33,7 @@ import {
   ERROR_REGREX_PHONE_NUMBER,
   ERROR_SELECT_DOB,
 } from "../../../@app/constants/message";
+import { PHONE_NUMBER_REGEX } from "../../../@app/constants/regex";
 const validateMessages = {
   required: "${label} is required!",
   string: {
@@ -164,7 +165,7 @@ const ProfilePage = () => {
                     label={t("phonenumber")}
                     rules={[
                       {
-                        pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{9}$"),
+                        pattern: new RegExp(PHONE_NUMBER_REGEX),
                         message: ERROR_REGREX_PHONE_NUMBER,
                       },
                       {
