@@ -8,9 +8,14 @@ export function checkDateTime(dateStart, timeStart, timeEnd, dateEnd) {
     const d = new Date();
     let hour = d.getHours();
     let minute = d.getMinutes();
+    if (strDateResultFromNow.includes('years ago') || strDateResultFromNow.includes('year ago')) { 
+        return "Date start is over";
+    }
+
     if (strDateResultFromNow.includes('days ago') || strDateResultFromNow.includes('day ago')) { // Compare dateStart to today
         return "Date start is over";
     }
+
     if (strDateResultFromNow.includes('hour ago')) { // Compare on minute (create day is today)
         let hourTimeStart = parseInt(moment(timeStart).format('H'))
         if (hourTimeStart === hour) {
