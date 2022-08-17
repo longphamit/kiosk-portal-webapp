@@ -38,7 +38,7 @@ import { getCities, getDistricts, getWards } from "./location_utils";
 import {
   ERROR_INPUT_ADDRESS,
   ERROR_INPUT_DISTRICT,
-  ERROR_UPLOAD_LOGO,
+  ERROR_UPLOAD_THUMBNAIL,
   ERROR_INPUT_NAME,
   ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
@@ -363,7 +363,7 @@ export const EventCreatingPage = () => {
           rules={[
             {
               required: true,
-              message: ERROR_UPLOAD_LOGO,
+              message: ERROR_UPLOAD_THUMBNAIL,
             },
           ]}
         >

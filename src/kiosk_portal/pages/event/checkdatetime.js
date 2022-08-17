@@ -8,8 +8,18 @@ export function checkDateTime(dateStart, timeStart, timeEnd, dateEnd) {
     const d = new Date();
     let hour = d.getHours();
     let minute = d.getMinutes();
-    if (strDateResultFromNow.includes('days ago')) { // Compare dateStart to today
+    if (strDateResultFromNow.includes('days ago') || strDateResultFromNow.includes('day ago')) { // Compare dateStart to today
         return "Date start is over";
+    }
+    if (strDateResultFromNow.includes('hour ago')) { // Compare on minute (create day is today)
+        let hourTimeStart = parseInt(moment(timeStart).format('H'))
+        if (hourTimeStart === hour) {
+            if (moment(timeStart).format('m') < minute || moment(timeStart).format('m') == minute) {
+                return "Time start must be late from now";
+            }
+        } else if (hourTimeStart < hour) {
+            return "Time start must be late from now";
+        }
     }
     if (strDateResultFromNow.includes('hours ago')) { // Compare on minute (create day is today)
         //strDateResultFromNow will round up the time. Ex: 7:30 -> 8 hours ago.
