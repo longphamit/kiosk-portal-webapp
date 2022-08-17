@@ -230,7 +230,7 @@ const DetailPoiPage = () => {
         check = false;
       }
       if (isHasPicture === false) {
-        invalidMsg.push("Please choose avatar \n");
+        invalidMsg.push("Please choose logo \n");
         check = false;
       }
       if (Array.isArray(values.dayOfWeek)) {
@@ -584,7 +584,7 @@ const DetailPoiPage = () => {
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item name="thumbnail" label="Avatar">
+                <Form.Item name="thumbnail" label="Logo">
                   <Upload
                     action={FILE_UPLOAD_URL}
                     listType="picture"
