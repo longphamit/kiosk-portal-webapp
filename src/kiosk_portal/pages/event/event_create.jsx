@@ -84,7 +84,7 @@ export const EventCreatingPage = () => {
 
     try {
       if (values.thumbnail.fileList.length === 0) {
-        invalidMsg.push("You need to add thumbnail\n");
+        invalidMsg.push("You need to add logo\n");
         check = false;
       }
       if (values.listImage.fileList.length === 0) {
@@ -359,7 +359,7 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="thumbnail"
-          label="Thumbnail"
+          label="Logo"
           rules={[
             {
               required: true,

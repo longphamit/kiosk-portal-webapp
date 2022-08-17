@@ -114,7 +114,7 @@ const ModalCreatePoi = ({
         check = false;
       }
       if (values.thumbnail.fileList.length === 0) {
-        invalidMsg.push("You need to add avatar\n");
+        invalidMsg.push("You need to add logo\n");
         check = false;
       }
 

@@ -13,13 +13,20 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import "./notification_styles.css"
-import { getPartyNotificationService, updateStatusNotificationService } from "../../../kiosk_portal/services/party_notification_service";
-import { BellFilled, NotificationOutlined, SmileOutlined } from "@ant-design/icons";
+import "./notification_styles.css";
+import {
+  getPartyNotificationService,
+  updateStatusNotificationService,
+} from "../../../kiosk_portal/services/party_notification_service";
+import {
+  BellFilled,
+  NotificationOutlined,
+  SmileOutlined,
+} from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
 import CustomRowItem from "../../../kiosk_portal/components/general/CustomRowItem";
 const labelCol = 4;
-const wrapperCol = 20
+const wrapperCol = 20;
 const ContainerHeight = 450;
 const NotificationView = () => {
   const [data, setData] = useState([]);
@@ -59,40 +66,39 @@ const NotificationView = () => {
   const readTheNotification = async (id) => {
     try {
       let res = await updateStatusNotificationService(JSON.stringify(id));
-      const newState = data.map(obj => {
+      const newState = data.map((obj) => {
         if (obj.id === id) {
-          return { ...obj, status: 'seen' };
+          return { ...obj, status: "seen" };
         }
         return obj;
       });
       setData(newState);
       setUnseen(unseen - 1);
-
     } catch (e) {
-      console.error(e)
+      console.error(e);
     }
-  }
+  };
   const readNotification = async (item) => {
-    if (item.status === 'unseen') {
+    if (item.status === "unseen") {
       readTheNotification(item.id);
     }
-  }
+  };
   const openDetailNotiModal = (item) => {
     setDetailNotiModalVisible(!detailNotiModalVisible);
     if (!detailNotiModalVisible) {
-      readNotification(item)
+      readNotification(item);
     }
-    setCurrentNoti(item)
-  }
+    setCurrentNoti(item);
+  };
   const closeDetailNotiModal = () => {
     setDetailNotiModalVisible(false);
-  }
+  };
   const getSting = (str) => {
     if (str.length > 20) {
-      return str.substr(0, 20) + '...';
+      return str.substr(0, 20) + "...";
     }
     return str;
-  }
+  };
   return (
     <>
       <Badge count={unseen}>
@@ -115,37 +121,52 @@ const NotificationView = () => {
                         <Row>
                           <Col>
                             <Row>
-                              <Col style={{ width: 200 }} onClick={() => { openDetailNotiModal(item) }}>
-
-                                <label style={{ fontWeight: "bold" }} htmlFor="">{getSting(item.notiTitle)}</label>
+                              <Col
+                                style={{ width: 200 }}
+                                onClick={() => {
+                                  openDetailNotiModal(item);
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold" }}
+                                  htmlFor=""
+                                >
+                                  {getSting(item.notiTitle)}
+                                </label>
                                 <br />
                                 {getSting(item.notiContent)}
                               </Col>
-                              <Col style={{ width: 30, padding: 10 }} >
-                                {item.status === "unseen" ?
-                                  <Badge color="#108ee9" style={{ float: 'right' }} onClick={() => readTheNotification(item.id)} />
-                                  : null}
+                              <Col style={{ width: 30, padding: 10 }}>
+                                {item.status === "unseen" ? (
+                                  <Badge
+                                    color="#108ee9"
+                                    style={{ float: "right" }}
+                                    onClick={() => readTheNotification(item.id)}
+                                  />
+                                ) : null}
                               </Col>
                             </Row>
                           </Col>
                           <Col></Col>
                         </Row>
                       </List.Item>
-
                     </div>
                     <Divider />
                   </div>
-
                 )}
               </VirtualList>
             </div>
           }
           trigger="click"
         >
-          <Avatar shape="circle" style={{ background: "#fff" }} icon={<BellFilled style={{ color: "#000" }} />} />
+          <Avatar
+            shape="circle"
+            style={{ background: "#fff" }}
+            icon={<BellFilled style={{ color: "#000" }} />}
+          />
         </Popover>
       </Badge>
-      {currentNoti ?
+      {currentNoti ? (
         <>
           <Modal
             title="Notification Details"
@@ -153,12 +174,34 @@ const NotificationView = () => {
             footer={[]}
             onCancel={() => closeDetailNotiModal()}
           >
-            <CustomRowItem contentType='input' label='Time' content={moment(currentNoti.notiCreateDate).format("DD/MM/YYYY hh:mm")} labelCol={labelCol} wrapperCol={wrapperCol} />
-            <CustomRowItem contentType='input' label='Title' content={currentNoti.notiTitle} labelCol={labelCol} wrapperCol={wrapperCol} />
-            <CustomRowItem contentType='input' label='Content' content={currentNoti.notiContent} labelCol={labelCol} wrapperCol={wrapperCol} />
+            <CustomRowItem
+              contentType="input"
+              label="Time"
+              content={moment(currentNoti.notiCreateDate).format(
+                "DD/MM/YYYY hh:mm"
+              )}
+              labelCol={labelCol}
+              wrapperCol={wrapperCol}
+            />
+            <CustomRowItem
+              contentType="input"
+              label="Title"
+              content={currentNoti.notiTitle}
+              labelCol={labelCol}
+              wrapperCol={wrapperCol}
+            />
+            <CustomRowItem
+              contentType="input"
+              label="Content"
+              content={currentNoti.notiContent}
+              labelCol={labelCol}
+              wrapperCol={wrapperCol}
+            />
           </Modal>
-        </> : <></>
-      }
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

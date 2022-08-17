@@ -35,7 +35,7 @@ import {
 } from "../../../constants/app_publish_request_status_constant";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
+import { ROLE_ADMIN, ROLE_SERVICE_PROVIDER } from "../../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../../@app/services/localstorage_service";
 
 const searchTypeKiosk = [
@@ -112,11 +112,11 @@ const AppPublishRequestTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === PUBLISH_APPROVED ? (
-          <Tag color={"green"}>APPOVED</Tag>
+          <Tag color={"green"}>AVAILABLE</Tag>
         ) : record.status === PUBLISH_IN_PROGRESS ? (
-          <Tag color={"blue"}>IN PROGRESS</Tag>
+          <Tag color={"blue"}>PENDING</Tag>
         ) : record.status === PUBLISH_DENIED ? (
-          <Tag color={"red"}>DENIED</Tag>
+          <Tag color={"red"}>UNAVAILABLE</Tag>
         ) : record.status === PUBLISH_CANCEL?(
           <Tag color={"grey"}>CANCELED</Tag>
         ) :
@@ -130,14 +130,19 @@ const AppPublishRequestTable = ({ partyId }) => {
 
       render: (text, record, dataIndex) => (
         <Space size="middle">
-          <Button
+
+          {
+            ((record.status!==PUBLISH_CANCEL&& role===ROLE_ADMIN)||role===ROLE_SERVICE_PROVIDER)?
+            <Button
             className="infor-button"
             onClick={() => {
               navigator(`/app-detail/${record.serviceApplicationId}`);
             }}
           >
             <EyeFilled /> Detail
-          </Button>
+          </Button>:null
+          }
+          
 
           {(record.status === PUBLISH_DENIED && role === ROLE_SERVICE_PROVIDER)? (
             <Button
