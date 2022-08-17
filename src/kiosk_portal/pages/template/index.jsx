@@ -124,12 +124,14 @@ const TemplateManagerPage = () => {
     },
   };
   const onFinishEditTemplate = async (values) => {
+    console.log(values);
     setEditLoading(true);
     let data = {
       id: values.id,
       name: values.Name ?? "",
       description: values.description ?? "",
     };
+    console.log(data);
     try {
       const res = await updateTemplateService(data);
       toast(UPDATE_SUCCESS);
@@ -458,19 +460,9 @@ const TemplateManagerPage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="description"
-              label="Description"
-              rules={[
-                {
-                  required: true,
-                  message: ERROR_INPUT_DESCRIPTION,
-                },
-              ]}
-            >
+            <Form.Item name="description" label="Description">
               <Input />
             </Form.Item>
-
             {isEditLoading === false ? (
               <div>
                 <Row align="center" style={{ marginBottom: 10 }}>
