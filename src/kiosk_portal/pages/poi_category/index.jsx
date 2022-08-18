@@ -38,7 +38,7 @@ const PoiCategory = () => {
   const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
   const handleChangeNumberOfPaging = async (page, pageSize) => {
     setCurrentPage(page);
-    await getListPoiCategoryFunction();
+    await getListPoiCategoryFunction("", page, numUnitInPage);
   };
 
   const showModal = (type) => {
