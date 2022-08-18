@@ -113,7 +113,7 @@ export const KioskDetailsPage = () => {
                     </Menu.Item>
                 </Menu.SubMenu>
                 <Menu.Item key={menuItemKeys.schedule} icon={<ScheduleOutlined />}>
-                    Schedule
+                    Scenario
                 </Menu.Item>
             </Menu>
             <div>

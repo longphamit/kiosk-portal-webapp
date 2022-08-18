@@ -128,7 +128,7 @@ const ScheduleManagerPage = () => {
         const updateSchedule = {
           id: currentItem.id,
           name: values.name,
-          stringTimeStart: formatTimePicker(values.timeStart),
+          stringTimeStart: moment(values.timeStart).format('HH'),
           stringTimeEnd: timeEnd,
           dayOfWeek: dOW,
           status: currentItem.status,
@@ -180,7 +180,7 @@ const ScheduleManagerPage = () => {
       if (check) {
         const createSchedule = {
           name: values.name,
-          stringTimeStart: formatTimePicker(values.timeStart),
+          stringTimeStart: moment(values.timeStart).format("HH"),
           stringTimeEnd: timeEnd,
           dayOfWeek: values.dayOfWeek.join("-"),
         };
