@@ -107,9 +107,12 @@ const EventManagerPage = () => {
         }}
         defaultValue="Name"
       >
-        {typesForAdmin.map((item) => {
-          return <Option value={item.name}>{item.label}</Option>;
-        })}
+        {role === ROLE_ADMIN ?
+          typesForAdmin.map((item) => {
+            return <Option value={item.name}>{item.label}</Option>;
+          })
+          : <Option value={'name'}>{'Name'}</Option>
+        }
       </Select>
     </Form.Item>
   );

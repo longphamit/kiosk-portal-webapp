@@ -15,8 +15,7 @@ export const ERROR_INPUT_COMMENT = "Please input comment !"
 export const ERROR_INPUT_PROVINCE = "Please input province !"
 export const ERROR_INPUT_DISTRICT = "Please input district !"
 export const ERROR_INPUT_WARD = "Please input ward !"
-export const ERROR_INPUT_CITY = "Please input city !"
-export const ERROR_INPUT_HOT_LINE = "Please input hot line !"
+export const ERROR_INPUT_HOT_LINE = "Please input hotline !"
 export const ERROR_INPUT_DESCRIPTION = "Please input description !"
 
 //Checkbox
@@ -36,14 +35,15 @@ export const ERROR_SELECT_CATEGORY ="Please select category !"
 
 //regrex pattern
 export const ERROR_REGREX_PHONE_NUMBER = "Please input phone number with right format !"
-export const ERROR_REGREX_HOT_LINE = "Please input hot line with right format !"
+export const ERROR_REGREX_HOT_LINE = "Please input hotline with right format !"
 export const ERROR_REGREX_EMAIL = "Please input email with right format !"
 export const ERROR_REGREX_COMMISSION_PERCENTAGE = "Please input number >0 and <100 !"
 
 //upload
 export const ERROR_UPLOAD_LOGO = "Please choose picture to logo !"
-export const ERROR_UPLOAD_LIST_IMG = "Please choose picture to list img !"
-
+export const ERROR_UPLOAD_THUMBNAIL = "Please choose a thumnail image !"
+export const ERROR_UPLOAD_LIST_IMG = "Please choose picture to list image !"
+export const ERROR_UPLOAD_LOGO_CATE ="Please choose logo !"
 export const UPDATE_SUCCESS = "Update success"
 export const DELETE_SUCCESS = "Delete success"
 export const CREATE_SUCCESS = "Create success"

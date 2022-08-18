@@ -2,16 +2,7 @@ import {
   getListDistrictService,
   getListWardService,
 } from "../../services/map_service";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Row,
-  Modal,
-  Select,
-} from "antd";
+import { Button, Checkbox, Col, Form, Input, Row, Modal, Select } from "antd";
 import { useTranslation } from "react-i18next";
 import { formItemLayout, tailFormItemLayout } from "../../layouts/form_layout";
 import { useEffect, useState } from "react";
@@ -188,7 +179,7 @@ const ModalAdvanceSearch = ({
           <Form.Item name="address" label="Address">
             <Input />
           </Form.Item>
-          <Form.Item name="city" label="City">
+          <Form.Item name="city" label="Province">
             <Select name="selectProvince" onChange={handleProvinceChange}>
               {listProvinces
                 ? listProvinces.map((item) => (

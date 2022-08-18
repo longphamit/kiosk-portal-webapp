@@ -62,10 +62,10 @@ import { ACCEPT_IMAGE } from "../../../constants/accept_file";
 import {
   ERROR_SELECT_CATEGORY,
   ERROR_INPUT_LINK,
-  ERROR_UPLOAD_LOGO,
   ERROR_INPUT_NAME,
   UPDATE_SUCCESS,
   CREATE_SUCCESS,
+  ERROR_UPLOAD_LOGO_CATE,
 } from "../../../../@app/constants/message";
 
 const ApplicationTable = ({ partyId }) => {
@@ -153,9 +153,11 @@ const ApplicationTable = ({ partyId }) => {
     setIsLoading(true);
     try {
       let isCheck = true;
-      if (values.logo.fileList.length === 0) {
-        toast.error("Please choose logo");
-        isCheck = false;
+      if (values.logo.fileList !== undefined) {
+        if (values.logo.fileList.length === 0) {
+          toast.error("Please choose logo");
+          isCheck = false;
+        }
       }
       if (isCheck) {
         let updateApplication = [];
@@ -184,7 +186,7 @@ const ApplicationTable = ({ partyId }) => {
           };
         }
         console.log(updateApplication);
-        await updateApplicationService(updateApplication);
+        let res = await updateApplicationService(updateApplication);
         getListApplicationFunction(
           "",
           "",
@@ -829,7 +831,7 @@ const ApplicationTable = ({ partyId }) => {
             rules={[
               {
                 required: true,
-                message: ERROR_UPLOAD_LOGO,
+                message: ERROR_UPLOAD_LOGO_CATE,
               },
             ]}
           >
@@ -1019,7 +1021,7 @@ const ApplicationTable = ({ partyId }) => {
                 rules={[
                   {
                     required: true,
-                    message: ERROR_UPLOAD_LOGO,
+                    message: ERROR_UPLOAD_LOGO_CATE,
                   },
                 ]}
               >
@@ -1054,8 +1056,8 @@ const ApplicationTable = ({ partyId }) => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                        return <Option value={item.id}>{item.name}</Option>;
-                      })
+                      return <Option value={item.id}>{item.name}</Option>;
+                    })
                     : null}
                 </Select>
               </Form.Item>

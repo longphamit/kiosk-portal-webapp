@@ -23,6 +23,7 @@ export const LineChartComponent = ({ kioskId, apps }) => {
     const filteredLineChartOptions = apps.filter((o) => !selectedFilterLineChartItems.includes(o))
     const [valueDatePickerYear, setValueDatePickerYear] = useState(currentTime.getFullYear());
     const [valueDatePickerMonth, setValueDatePickerMonth] = useState(currentTime.getMonth() + 1 + '/' + currentTime.getFullYear())
+    const [timeValue, setTimeValue] = useState()
     const yearFormat = 'YYYY';
 
     useEffect(() => {
@@ -34,6 +35,7 @@ export const LineChartComponent = ({ kioskId, apps }) => {
             setLineChartLoading(true)
             setLineChartType(LineChartType.Year)
             let res = await getKisokOrderCommissionByYearAndAppsService(year, kioskId, ids)
+            setTimeValue('Year ' + year)
             checkDataLineChart(res.data.datas)
             setLineChartData(res.data.datas)
         } catch (e) {
@@ -146,6 +148,7 @@ export const LineChartComponent = ({ kioskId, apps }) => {
             setLineChartLoading(true)
             setLineChartType(LineChartType.Month)
             let res = await getKisokOrderCommissionByMonthAndAppsService(month, year, kioskId, ids)
+            setTimeValue(`${month}/${year}`)
             checkDataLineChart(res.data.datas)
             setLineChartData(res.data.datas)
         } catch (e) {
@@ -210,7 +213,14 @@ export const LineChartComponent = ({ kioskId, apps }) => {
                                         </p>
                                     </Row></>
                                 :
-                                <EmptyCard /> :
+                                <>
+                                    <EmptyCard />
+                                    <Row justify='center' align='middle'>
+                                        <Col >
+                                            <p style={{ color: 'red', fontStyle: 'italic', marginTop: 50 }}>* No Revenue From {timeValue}</p>
+                                        </Col>
+                                    </Row>
+                                </> :
                             <Skeleton />
                         }
                     </div>

@@ -61,7 +61,7 @@ const AppPublishRequestTable = ({ partyId }) => {
     setPublishRequestDetailModalVisible,
   ] = useState();
   const navigator = useNavigate();
-  const onFinishCancel=(record)=>{
+  const onFinishCancel = (record) => {
     Modal.confirm({
       title: "Are you sure to cancel request publish of this application",
       okText: t("yes"),
@@ -117,12 +117,12 @@ const AppPublishRequestTable = ({ partyId }) => {
           <Tag color={"blue"}>PENDING</Tag>
         ) : record.status === PUBLISH_DENIED ? (
           <Tag color={"red"}>UNAVAILABLE</Tag>
-        ) : record.status === PUBLISH_CANCEL?(
+        ) : record.status === PUBLISH_CANCEL ? (
           <Tag color={"grey"}>CANCELED</Tag>
         ) :
-        (
-          <></>
-        ),
+          (
+            <></>
+          ),
     },
     {
       title: t("action"),
@@ -132,19 +132,19 @@ const AppPublishRequestTable = ({ partyId }) => {
         <Space size="middle">
 
           {
-            ((record.status!==PUBLISH_CANCEL&& role===ROLE_ADMIN)||role===ROLE_SERVICE_PROVIDER)?
-            <Button
-            className="infor-button"
-            onClick={() => {
-              navigator(`/app-detail/${record.serviceApplicationId}`);
-            }}
-          >
-            <EyeFilled /> Detail
-          </Button>:null
+            ((record.status !== PUBLISH_CANCEL && role === ROLE_ADMIN) || role === ROLE_SERVICE_PROVIDER) ?
+              <Button
+                className="infor-button"
+                onClick={() => {
+                  navigator(`/app-detail/${record.serviceApplicationId}`);
+                }}
+              >
+                <EyeFilled /> Detail
+              </Button> : null
           }
-          
 
-          {(record.status === PUBLISH_DENIED && role === ROLE_SERVICE_PROVIDER)? (
+
+          {(record.status === PUBLISH_DENIED && role === ROLE_SERVICE_PROVIDER) ? (
             <Button
               className="warn-button"
               onClick={() => {
@@ -158,24 +158,27 @@ const AppPublishRequestTable = ({ partyId }) => {
             <></>
           )}
           {
-            (record.status === PUBLISH_IN_PROGRESS && role === ROLE_SERVICE_PROVIDER)?(
-            <Button
-            className="danger-button"
-            onClick={() => {
-              onFinishCancel(record);
-            }}
-            >
-              <StopOutlined/> Cancel Request
-            </Button>
-              ):null
+            (record.status === PUBLISH_IN_PROGRESS && role === ROLE_SERVICE_PROVIDER) ? (
+              <Button
+                className="danger-button"
+                onClick={() => {
+                  onFinishCancel(record);
+                }}
+              >
+                <StopOutlined /> Cancel Request
+              </Button>
+            ) : null
           }
-          
+
         </Space>
       ),
     },
   ];
   const searchTypeAppPublishRequest = [
     {
+      name: "ServiceApplicationName",
+      label: "App Name",
+    }, {
       name: "CreatorEmail",
       label: "Creator Email",
     },
@@ -183,20 +186,34 @@ const AppPublishRequestTable = ({ partyId }) => {
       name: "HandlerName",
       label: "Handler Name",
     },
+  ];
+  const searchTypeAppPublishRequestForSP = [
     {
       name: "ServiceApplicationName",
       label: "App Name",
+    },
+    {
+      name: "HandlerName",
+      label: "Handler Name",
     },
   ];
   const prefixSearchAppPublishRequest = (
     <Form.Item name="type" noStyle>
       <Select
-        defaultValue="CreatorEmail"
+        defaultValue="ServiceApplicationName"
         onChange={(e) => setAppPublishRequestSearchType(e)}
       >
-        {searchTypeAppPublishRequest.map((item) => {
-          return <Option value={item.name}>{item.label}</Option>;
-        })}
+        {role === ROLE_SERVICE_PROVIDER ?
+          <>
+           {searchTypeAppPublishRequestForSP.map((item) => {
+              return <Option value={item.name}>{item.label}</Option>;
+            })}
+          </> : <>
+            {searchTypeAppPublishRequest.map((item) => {
+              return <Option value={item.name}>{item.label}</Option>;
+            })}
+          </>
+        }
       </Select>
     </Form.Item>
   );
@@ -256,7 +273,7 @@ const AppPublishRequestTable = ({ partyId }) => {
               name="search"
               onFinish={onFinishSearchAppPublishRequest}
               initialValues={{
-                type: "CreatorEmail",
+                type: "ServiceApplicationName",
                 searchString: "",
               }}
             >

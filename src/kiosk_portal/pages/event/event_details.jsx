@@ -51,9 +51,9 @@ import { getListProvinceService } from "../../services/map_service";
 import { Editor } from "primereact/editor";
 import {
   ERROR_INPUT_ADDRESS,
-  ERROR_INPUT_CITY,
   ERROR_INPUT_DISTRICT,
   ERROR_INPUT_NAME,
+  ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
   ERROR_SELECT_DATE_END,
   ERROR_SELECT_DATE_START,
@@ -511,18 +511,19 @@ export const EventDetailsPage = () => {
               </Form.Item>
               <Form.Item
                 name="city"
-                label="City"
+                allowClear={false}
+                label="Province"
                 rules={[
                   {
                     required: true,
-                    message: ERROR_INPUT_CITY,
+                    message: ERROR_INPUT_PROVINCE,
                   },
                 ]}
               >
                 <Select
                   defaultValue={proviceOptions[0]}
                   onChange={loadDistrict}
-                  allowClear
+                  allowClear={false}
                   className="disable-input"
                 >
                   {proviceOptions.map((province) => (
@@ -532,6 +533,7 @@ export const EventDetailsPage = () => {
               </Form.Item>
               <Form.Item
                 name="district"
+                allowClear={false}
                 label="District"
                 rules={[
                   {
@@ -547,6 +549,7 @@ export const EventDetailsPage = () => {
                 </Select>
               </Form.Item>
               <Form.Item
+                allowClear={false}
                 name="ward"
                 label="Ward"
                 rules={[

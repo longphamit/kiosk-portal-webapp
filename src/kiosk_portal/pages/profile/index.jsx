@@ -45,6 +45,7 @@ const validateMessages = {
   },
 };
 const formatDate = "DD/MM/YYYY";
+let currentTime = new Date()
 const ProfilePage = () => {
   const [party, setParty] = useState();
   const [isLoadingInfo, setIsLoadingInfo] = useState(false);
@@ -102,6 +103,15 @@ const ProfilePage = () => {
         required: true,
         message: ERROR_SELECT_DOB,
       },
+      ({ getFieldValue }) => ({
+        validator(_, value) {
+          let age = currentTime.getFullYear() - parseInt(moment(value).format('YYYY'));
+          if (!value || age > 17) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('The age must be over 18'));
+        },
+      }),
     ],
   };
 
