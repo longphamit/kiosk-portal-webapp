@@ -400,7 +400,7 @@ const ScheduleManagerPage = () => {
           >
             <TimePicker allowClear={false} format="HH" />
           </Form.Item>
-          <Form.Item label={t("timeend")} style={{ marginBottom: 0 }}>
+          <Form.Item label={t("timeend")} style={{ marginBottom: 0 }} required>
             <Form.Item
               style={{ display: "inline-block", width: "calc(50% - 12px)" }}
               name="timeEnd"

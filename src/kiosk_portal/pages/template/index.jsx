@@ -460,7 +460,7 @@ const TemplateManagerPage = () => {
             >
               <Input />
             </Form.Item>
-            <Form.Item name="description" label="Description">
+            <Form.Item name="description" label="Description" required>
               <Input />
             </Form.Item>
             {isEditLoading === false ? (

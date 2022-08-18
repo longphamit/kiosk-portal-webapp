@@ -1,6 +1,7 @@
 import { Button, Form, Modal, Select, Spin } from "antd";
 import { useState } from "react";
-import { ERROR_SELECT_LOCATION } from "../../../@app/constants/message";
+import { toast } from "react-toastify";
+import { ERROR_SELECT_LOCATION, UPDATE_SUCCESS } from "../../../@app/constants/message";
 import { updateKioskService } from "../../services/kiosk_service";
 import {
   formItemLayout,
@@ -30,6 +31,7 @@ const ModalAddLocation = ({
       };
       await updateKioskService(updateObj);
       onFinishModal("addLocation");
+      toast.success(UPDATE_SUCCESS)
     } catch (error) {
       console.error(error);
     } finally {
@@ -43,7 +45,7 @@ const ModalAddLocation = ({
   return (
     <>
       <Modal
-        title="Choose your kiosk"
+        title="Update kiosk's location"
         visible={isModalAddLocationVisible}
         onCancel={handleCancelInModal}
         footer={null}

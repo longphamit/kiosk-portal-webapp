@@ -17,7 +17,7 @@ export const KioskMonthLineChartComponent = ({ kiosks, colSpan }) => {
     const [isLoadingChart, setLoadingChart] = useState(false);
     const [chartData, setChartData] = useState();
     const [hasData, setHasData] = useState(true);
-    const [timeValue, setTimeValue] = useState(currentTime.getFullYear());
+    const [timeValue, setTimeValue] = useState(currentTime.getMonth() + 1 + '/' + currentTime.getFullYear());
     const [chartTitle, setChartTitle] = useState(CHART_TITLE + currentTime.getMonth() + 1 + '/' + currentTime.getFullYear());
     const [selectedKiosks, setSelectedKiosk] = useState([])
     useEffect(() => {
@@ -104,7 +104,10 @@ export const KioskMonthLineChartComponent = ({ kiosks, colSpan }) => {
                                 <ChartTitle title={chartTitle} />
                             </>
                         ) : (
-                            <EmptyCard styles={{ marginTop: 50 }} />
+                            <>
+                                <EmptyCard styles={{ marginTop: 50 }} />
+                                <p style={{ color: 'red', fontStyle: 'italic', marginTop: 50 }}>* No Revenue From Kiosks In {timeValue}</p>
+                            </>
                         )}
                     </>
                 ) : (
