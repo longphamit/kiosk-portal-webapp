@@ -230,7 +230,7 @@ const PoiPage = () => {
               showModal("create");
             }}
           >
-            <PlusOutlined /> Create
+            <PlusOutlined /> Poi
           </Button>
         </Col>
       </Row>

@@ -30,7 +30,6 @@ import { Editor } from "primereact/editor";
 import {
   ERROR_INPUT_ADDRESS,
   ERROR_SELECT_CATEGORY,
-  ERROR_INPUT_CITY,
   ERROR_INPUT_DISTRICT,
   ERROR_INPUT_NAME,
   ERROR_INPUT_WARD,
@@ -40,6 +39,7 @@ import {
   ERROR_CHECKBOX_DATE_OF_WEEK,
   ERROR_UPLOAD_LIST_IMG,
   CREATE_SUCCESS,
+  ERROR_INPUT_PROVINCE,
 } from "../../../@app/constants/message";
 
 const ModalCreatePoi = ({
@@ -315,11 +315,11 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="city"
-            label="City"
+            label="Province"
             rules={[
               {
                 required: true,
-                message: ERROR_INPUT_CITY,
+                message: ERROR_INPUT_PROVINCE,
               },
             ]}
           >

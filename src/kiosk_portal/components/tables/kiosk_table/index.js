@@ -13,7 +13,7 @@ import {
   Table,
   Tag,
 } from "antd";
-import { StopFilled, EditFilled, EyeFilled, SwapOutlined, ExclamationCircleOutlined, StarOutlined, StarFilled, SearchOutlined } from "@ant-design/icons";
+import { StopFilled, EditFilled, EyeFilled, SwapOutlined, ExclamationCircleOutlined, StarOutlined, StarFilled, SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -416,7 +416,7 @@ const KioskTable = ({ partyId }) => {
                     });
                   }}
                 >
-                  {t("createkiosk")}
+                  <PlusOutlined /> Kiosk
                 </Button>
               </Col>
             ) : null

@@ -51,9 +51,9 @@ import { getListProvinceService } from "../../services/map_service";
 import { Editor } from "primereact/editor";
 import {
   ERROR_INPUT_ADDRESS,
-  ERROR_INPUT_CITY,
   ERROR_INPUT_DISTRICT,
   ERROR_INPUT_NAME,
+  ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
   ERROR_SELECT_DATE_END,
   ERROR_SELECT_DATE_START,
@@ -104,8 +104,8 @@ export const EventDetailsPage = () => {
 
       (res.data.type === TYPE_LOCAL &&
         localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) ||
-        (res.data.type === TYPE_SERVER &&
-          localStorageGetReduxState().auth.role === ROLE_ADMIN)
+      (res.data.type === TYPE_SERVER &&
+        localStorageGetReduxState().auth.role === ROLE_ADMIN)
         ? setDisable(false)
         : setDisable(true);
 
@@ -512,11 +512,11 @@ export const EventDetailsPage = () => {
               <Form.Item
                 name="city"
                 allowClear={false}
-                label="City"
+                label="Province"
                 rules={[
                   {
                     required: true,
-                    message: ERROR_INPUT_CITY,
+                    message: ERROR_INPUT_PROVINCE,
                   },
                 ]}
               >
@@ -624,8 +624,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -683,8 +683,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -753,8 +753,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
