@@ -19,7 +19,7 @@ export const ERROR_INPUT_HOT_LINE = "Please input hotline !"
 export const ERROR_INPUT_DESCRIPTION = "Please input description !"
 
 //Checkbox
-export const ERROR_CHECKBOX_DATE_OF_WEEK= "Please choose date of week !"
+export const ERROR_CHECKBOX_DATE_OF_WEEK= "Please choose day of week !"
 
 //select
 export const ERROR_SELECT_TIME= "Please select time!"
