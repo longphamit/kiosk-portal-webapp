@@ -1,8 +1,4 @@
-import {
-  DeleteFilled,
-  EditFilled,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { DeleteFilled, EditFilled, PlusOutlined } from "@ant-design/icons";
 import {
   Pagination,
   Space,
@@ -174,7 +170,7 @@ const PoiCategory = () => {
             size={"large"}
             onClick={() => showModal("create")}
           >
-            <PlusOutlined /> CREATE
+            <PlusOutlined /> Poi category
           </Button>
         </Col>
       </Row>

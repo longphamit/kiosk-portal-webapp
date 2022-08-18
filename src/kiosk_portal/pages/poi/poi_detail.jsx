@@ -47,9 +47,9 @@ import { Editor } from "primereact/editor";
 import {
   ERROR_CHECKBOX_DATE_OF_WEEK,
   ERROR_INPUT_ADDRESS,
-  ERROR_INPUT_CITY,
   ERROR_INPUT_DISTRICT,
   ERROR_INPUT_NAME,
+  ERROR_INPUT_PROVINCE,
   ERROR_INPUT_WARD,
   ERROR_SELECT_CATEGORY,
   ERROR_SELECT_TIME_END,
@@ -507,11 +507,11 @@ const DetailPoiPage = () => {
                 </Form.Item>
                 <Form.Item
                   name="city"
-                  label="City"
+                  label="Province"
                   rules={[
                     {
                       required: true,
-                      message: ERROR_INPUT_CITY,
+                      message: ERROR_INPUT_PROVINCE,
                     },
                   ]}
                 >

@@ -30,7 +30,11 @@ import {
   SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH,
 } from "../../../constants/path_constants";
-import { CREATE_SUCCESS, DELETE_SUCCESS, UPDATE_SUCCESS } from "../../../../@app/constants/message";
+import {
+  CREATE_SUCCESS,
+  DELETE_SUCCESS,
+  UPDATE_SUCCESS,
+} from "../../../../@app/constants/message";
 
 const KioskSchedulingPage = ({ currentKioskId }) => {
   const { Panel } = Collapse;
@@ -232,7 +236,7 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
               size={"large"}
               onClick={() => onOpenCreateModal()}
             >
-              <PlusOutlined /> New Kiosk Schedule
+              <PlusOutlined /> Kiosk Schedule
             </Button>
           </Col>
         </Row>

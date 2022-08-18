@@ -15,7 +15,6 @@ export const ERROR_INPUT_COMMENT = "Please input comment !"
 export const ERROR_INPUT_PROVINCE = "Please input province !"
 export const ERROR_INPUT_DISTRICT = "Please input district !"
 export const ERROR_INPUT_WARD = "Please input ward !"
-export const ERROR_INPUT_CITY = "Please input city !"
 export const ERROR_INPUT_HOT_LINE = "Please input hotline !"
 export const ERROR_INPUT_DESCRIPTION = "Please input description !"
 
