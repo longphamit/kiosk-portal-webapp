@@ -15,6 +15,7 @@ export const PieChartComponent = ({ kioskId }) => {
     const { Option } = Select;
     const [filterPieChart, setFilterPieChart] = useState(FilterChartType.All);
     const [isPieChartLoading, setPieChartLoading] = useState(false)
+    const [timeValue, setTimeValue] = useState(currentTime.getFullYear())
     const [titlePieChart, setTitlePieChart] = useState(TITLE_PIE_STATISTIC_ALL + ' ' + currentTime.getFullYear());
     useEffect(() => {
         getListOrderFunction();
@@ -54,6 +55,7 @@ export const PieChartComponent = ({ kioskId }) => {
         try {
             setPieChartLoading(true);
             const res = await getKisokOrderCommissionByMonthService(month, year, kioskId)
+            setTimeValue(month + '/' + year)
             setOrders(rePerformChartData(res.data));
         } catch (error) {
             setOrders(null)
@@ -67,6 +69,7 @@ export const PieChartComponent = ({ kioskId }) => {
         try {
             setPieChartLoading(true);
             const res = await getKisokOrderCommissionByYearService(year, kioskId)
+            setTimeValue('Year ' + year)
             setOrders(rePerformChartData(res.data));
         } catch (error) {
             setOrders(null)
@@ -104,6 +107,7 @@ export const PieChartComponent = ({ kioskId }) => {
         try {
             setPieChartLoading(true);
             const res = await getKisokOrderCommissionService(kioskId, '')
+            setTimeValue(' Now')
             if (res.data.length == 0) {
                 setOrders(null);
             } else {
@@ -132,6 +136,11 @@ export const PieChartComponent = ({ kioskId }) => {
                     orders.labels.length === 0 ?
                         <>
                             <EmptyCard styles={{ marginTop: 50 }} />
+                            <Row justify='center' align='middle'>
+                                <Col >
+                                    <p style={{ color: 'red', fontStyle: 'italic', marginTop: 50 }}>* No Revenue From {timeValue}</p>
+                                </Col>
+                            </Row>
                         </> :
                         <>
                             <div style={{ minWidth: 600 }}>
@@ -149,6 +158,11 @@ export const PieChartComponent = ({ kioskId }) => {
                         </> :
                     <>
                         <EmptyCard styles={{ marginTop: 50 }} />
+                        <Row justify='center' align='middle'>
+                            <Col >
+                                <p style={{ color: 'red', fontStyle: 'italic', marginTop: 50 }}>* No Revenue From {timeValue}</p>
+                            </Col>
+                        </Row>
                     </>
                 : <Skeleton />
         }

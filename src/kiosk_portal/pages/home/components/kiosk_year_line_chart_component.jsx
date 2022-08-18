@@ -101,7 +101,10 @@ export const KioskYearLineChartComponent = ({ kiosks, colSpan }) => {
                                 <ChartTitle title={chartTitle} />
                             </>
                         ) : (
-                            <EmptyCard styles={{ marginTop: 50 }} />
+                            <>
+                                <EmptyCard styles={{ marginTop: 50 }} />
+                                <p style={{ color: 'red', fontStyle: 'italic', marginTop: 50 }}>* No Revenue From Kiosks In The Year {timeValue}</p>
+                            </>
                         )}
                     </>
                 ) : (

@@ -209,7 +209,7 @@ const DetailLocationPage = () => {
 
                 <Form.Item
                   name="hotline"
-                  label="HotLine"
+                  label="Hotline"
                   rules={[
                     {
                       pattern: new RegExp("^[+0]{0,2}(91)?[0-9]{10}$"),
@@ -226,6 +226,7 @@ const DetailLocationPage = () => {
                 <Form.Item
                   name="description"
                   label="Description"
+                  required
                   rules={[
                     {
                       validator(values) {
@@ -285,13 +286,10 @@ const DetailLocationPage = () => {
                       onChange={onChangeListImage}
                       defaultFileList={[...fileListImage]}
                     >
-                      {isLoadingListImg ? (
-                        <Spin />
-                      ) : (
-                        <Button icon={<UploadOutlined />}>
-                          Upload ( Max:5 )
-                        </Button>
-                      )}
+
+                      <Button icon={<UploadOutlined />}>
+                        Upload ( Max:5 )
+                      </Button>
                     </Upload>
                   </Form.Item>
                 ) : null}

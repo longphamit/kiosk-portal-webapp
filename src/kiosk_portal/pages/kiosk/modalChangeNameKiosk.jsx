@@ -44,7 +44,7 @@ const ModalChangeNameKiosk = ({
       {currentKiosk ? (
         <Modal
           key={currentKiosk.id}
-          title="Choose your kiosk"
+          title="Change kiosk's name"
           visible={isModalChangeNameKioskVisible}
           onCancel={handleCancelPoiInModal}
           footer={null}

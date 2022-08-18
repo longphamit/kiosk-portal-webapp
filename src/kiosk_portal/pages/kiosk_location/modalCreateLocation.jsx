@@ -151,6 +151,7 @@ const ModalCreateLocation = ({
               action={FILE_UPLOAD_URL}
               listType="picture"
               maxCount={5}
+              multiple
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
@@ -161,6 +162,7 @@ const ModalCreateLocation = ({
             name="description"
             label="Description"
             value={description}
+            required
             rules={[
               {
                 validator(values) {
