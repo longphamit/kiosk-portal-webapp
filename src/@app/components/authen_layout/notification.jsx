@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   List,
-  message,
   Avatar,
-  Spin,
   Badge,
   Popover,
   Divider,
   Col,
   Row,
   Modal,
-  notification,
 } from "antd";
 import moment from "moment";
 import "./notification_styles.css";
@@ -20,8 +17,6 @@ import {
 } from "../../../kiosk_portal/services/party_notification_service";
 import {
   BellFilled,
-  NotificationOutlined,
-  SmileOutlined,
 } from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
 import CustomRowItem from "../../../kiosk_portal/components/general/CustomRowItem";

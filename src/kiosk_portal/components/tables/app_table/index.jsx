@@ -24,8 +24,8 @@ import {
   EditFilled,
   ArrowUpOutlined,
   DownloadOutlined,
-  DeleteOutlined,
   LinkOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -97,6 +97,7 @@ const ApplicationTable = ({ partyId }) => {
   const [formUploadBanner] = Form.useForm();
   const [formAdvanceSearch] = Form.useForm();
   const [isCheck, setIsCheck] = useState(true);
+  const [categoryCommission, setCategoryCommission] = useState(0);
   const getListApplicationFunction = async (
     Name,
     PartyName,
@@ -562,7 +563,7 @@ const ApplicationTable = ({ partyId }) => {
                   handleStopApplication(record);
                 }}
               >
-                <DeleteOutlined />
+                <StopOutlined />
                 Stop Application
               </Button>
             ) : (
@@ -575,7 +576,7 @@ const ApplicationTable = ({ partyId }) => {
                 }}
                 disabled
               >
-                <DeleteOutlined />
+                <StopOutlined />
                 Stop Application
               </Button>
             )
@@ -857,7 +858,7 @@ const ApplicationTable = ({ partyId }) => {
           >
             <Select placeholder="Select your categories">
               {listCategories.map((item) => {
-                return <Option value={item.id}>{item.name}</Option>;
+                return <Option value={item.id}>{item.name} <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>( {item.commissionPercentage}% - Referral fee )</span></Option>;
               })}
             </Select>
           </Form.Item>
@@ -1056,7 +1057,7 @@ const ApplicationTable = ({ partyId }) => {
                 <Select placeholder="Select your categories">
                   {listCategories
                     ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name}</Option>;
+                      return <Option value={item.id}>{item.name} <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>( {item.commissionPercentage}% - Referral fee )</span></Option>;
                     })
                     : null}
                 </Select>
