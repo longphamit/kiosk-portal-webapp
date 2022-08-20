@@ -923,7 +923,7 @@ const ApplicationTable = ({ partyId }) => {
           {partyId ? (
             <></>
           ) : (
-            <Form.Item name="partyEmail" label="Party Email">
+            <Form.Item name="partyEmail" label="Owner's Email">
               <Input />
             </Form.Item>
           )}
