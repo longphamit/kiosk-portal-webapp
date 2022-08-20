@@ -18,7 +18,6 @@ import { EventDetailsPage } from "../../kiosk_portal/pages/event/event_details";
 import HomePage from "../../kiosk_portal/pages/home";
 import KioskPage from "../../kiosk_portal/pages/kiosk";
 import { KioskDetailsPage } from "../../kiosk_portal/pages/kiosk/details";
-import KioskSchedulingPage from "../../kiosk_portal/pages/kiosk/schedule";
 import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
 import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";

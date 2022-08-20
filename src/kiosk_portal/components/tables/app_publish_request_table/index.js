@@ -139,7 +139,7 @@ const AppPublishRequestTable = ({ partyId }) => {
                   navigator(`/app-detail/${record.serviceApplicationId}`);
                 }}
               >
-                <EyeFilled /> Detail
+                <EyeFilled /> Details
               </Button> : null
           }
 

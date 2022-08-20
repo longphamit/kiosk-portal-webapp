@@ -159,7 +159,7 @@ const ApplicationMarketPage = () => {
               navigator(`/app-detail/${record.id}`);
             }}
           >
-            <EyeFilled /> Detail
+            <EyeFilled /> Details
           </Button>
           {record.partyServiceApplication &&
           record.partyServiceApplication.status == "installed" ? (

@@ -90,7 +90,7 @@ export const KioskLocationInformationComponent = ({ kioskLocationId }) => {
                             <div className="card-info">
                                 <Descriptions column={1} >
                                     <Descriptions.Item label="Name" labelStyle={{ fontWeight: "bold" }}>{kioskLocation.name}</Descriptions.Item>
-                                    <Descriptions.Item label="Owner Email" labelStyle={{ fontWeight: "bold" }}>{kioskLocation.ownerEmail}</Descriptions.Item>
+                                    <Descriptions.Item label="Owner's Email" labelStyle={{ fontWeight: "bold" }}>{kioskLocation.ownerEmail}</Descriptions.Item>
                                     <Descriptions.Item label="Hotline" labelStyle={{ fontWeight: "bold" }}>{kioskLocation.hotLine}</Descriptions.Item>
                                     <Descriptions.Item label="Create Date" labelStyle={{ fontWeight: "bold" }}>{moment(kioskLocation.createDate).format('DD/MM/YYYY')}</Descriptions.Item>
                                 </Descriptions>
