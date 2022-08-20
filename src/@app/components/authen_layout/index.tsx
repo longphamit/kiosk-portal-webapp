@@ -11,14 +11,12 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   NotificationOutlined,
-  TableOutlined,
   CloudOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { ReactNode } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
 import {
@@ -27,16 +25,15 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
 import {
-  localStorageClearService,
   localStorageGetReduxState,
 } from "../../services/localstorage_service";
 
 import { useTranslation } from "react-i18next";
-import { signOutService } from "../../services/auth_service";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
 
 import TimeView from "./time";
 import NotificationView from "./notification";
+import { logout } from "./components/logout_confirmation.jsx";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -46,12 +43,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const { t } = useTranslation();
 
   let navigate = useNavigate();
-  const logout = async () => {
-    await signOutService();
-    localStorageClearService();
-    navigate("/signin");
-    toast("Logout successfull");
-  };
+
   const onNavigate = (url: string) => {
     navigate(url);
   };
@@ -272,7 +264,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<LogoutOutlined />}
               key="logout"
               onClick={() => {
-                logout();
+                logout(navigate);
               }}
             >
               Logout
