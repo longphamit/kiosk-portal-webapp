@@ -87,6 +87,7 @@ const ModalCreateLocation = ({
       toast.error(error.response.data.message);
     } finally {
       setIsLoading(false);
+      setDescription("");
     }
   };
   const handleCancelPoiInModal = () => {
@@ -145,6 +146,18 @@ const ModalCreateLocation = ({
                 required: true,
                 message: ERROR_UPLOAD_LIST_IMG,
               },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || value.fileList.length !== 0) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(
+                      ERROR_UPLOAD_LIST_IMG
+                    )
+                  );
+                },
+              })
             ]}
           >
             <Upload
@@ -152,6 +165,7 @@ const ModalCreateLocation = ({
               listType="picture"
               maxCount={5}
               multiple
+              onChange={(value) => console.log(value)}
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
@@ -166,7 +180,6 @@ const ModalCreateLocation = ({
             rules={[
               {
                 validator(values) {
-                  console.log(description);
                   if (description === null || description === "") {
                     return Promise.reject("Please input description");
                   }
