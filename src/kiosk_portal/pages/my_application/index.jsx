@@ -142,7 +142,7 @@ const MyApplicationPage = () => {
               );
             }}
           >
-            <EyeFilled /> Detail
+            <EyeFilled /> Details
           </Button>
           {record.status === "installed" ? (
             <Button

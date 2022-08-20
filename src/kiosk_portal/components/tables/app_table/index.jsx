@@ -551,7 +551,7 @@ const ApplicationTable = ({ partyId }) => {
               navigator(`/app-detail/${record.id}`);
             }}
           >
-            <EyeFilled /> Detail
+            <EyeFilled /> Details
           </Button>
           {role === ROLE_ADMIN ? (
             record.status === "available" ? (

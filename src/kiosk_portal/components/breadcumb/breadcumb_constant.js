@@ -66,7 +66,7 @@ export const KIOSK_LOCATION_MANAGER_HREF = KIOSK_LOCATION_MANAGER_PATH
 export const KIOSK_LOCATION_MANAGER_LABEL = 'Kiosk Location'
 
 export const KIOSK_LOCATION_DETAIL_HREF = '/'
-export const KIOSK_LOCATION_DETAIL_LABEL = 'Kiosk Location Detail'
+export const KIOSK_LOCATION_DETAIL_LABEL = 'Kiosk Location Details'
 
 export const KIOSK_DETAILS_HREF = ''
 export const KIOSK_DETAILS_LABEL = 'Kiosk Details'

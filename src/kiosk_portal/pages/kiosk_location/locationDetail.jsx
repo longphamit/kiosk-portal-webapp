@@ -129,7 +129,7 @@ const DetailLocationPage = () => {
     try {
       if (values.listImage.fileList.length === 0) {
         isCheck = false;
-        toast.error("Please choose at least 1 picture in list img");
+        toast.error(ERROR_UPLOAD_LIST_IMG);
       }
       if (isCheck) {
         let listImage = [];

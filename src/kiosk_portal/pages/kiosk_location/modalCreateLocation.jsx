@@ -59,7 +59,7 @@ const ModalCreateLocation = ({
     try {
       if (values.listImage.fileList.length === 0) {
         isCheck = false;
-        toast.error("Please input at least 1 picture to list img ");
+        toast.error(ERROR_UPLOAD_LIST_IMG);
       }
       if (isCheck) {
         let listImage = [];
@@ -139,7 +139,7 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="listImage"
-            label="List Image Carousel"
+            label="List Image "
             rules={[
               {
                 required: true,
