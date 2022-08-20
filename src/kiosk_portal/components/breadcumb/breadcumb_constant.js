@@ -70,3 +70,6 @@ export const KIOSK_LOCATION_DETAIL_LABEL = 'Kiosk Location Details'
 
 export const KIOSK_DETAILS_HREF = ''
 export const KIOSK_DETAILS_LABEL = 'Kiosk Details'
+
+export const PROFILE_HREF = '/profile'
+export const PROFILE_LABEL = "Profile"
