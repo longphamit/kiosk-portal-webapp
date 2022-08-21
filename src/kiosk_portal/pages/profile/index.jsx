@@ -34,6 +34,8 @@ import {
   ERROR_SELECT_DOB,
 } from "../../../@app/constants/message";
 import { PHONE_NUMBER_REGEX } from "../../../@app/constants/regex";
+import { PROFILE_HREF, PROFILE_LABEL } from "../../components/breadcumb/breadcumb_constant";
+import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 const validateMessages = {
   required: "${label} is required!",
   string: {
@@ -121,8 +123,16 @@ const ProfilePage = () => {
   const getDate = (str) => {
     return moment(str).format(formatDate);
   };
+  const breadCumbData = [
+    {
+      href: PROFILE_HREF,
+      label: PROFILE_LABEL,
+      icon: null,
+    },
+  ];
   return (
     <>
+      <CustomBreadCumb props={breadCumbData} />
       <div>
         {isLoadingInfo ? <Skeleton className="center" /> : null}
         {party ? (

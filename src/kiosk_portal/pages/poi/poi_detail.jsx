@@ -319,7 +319,7 @@ const DetailPoiPage = () => {
       setIsLoadingListImg(true);
       let isTrue = true;
       if (values.listImage.fileList.length === 0) {
-        toast.error("Please input at least 1 picture");
+        toast.error(ERROR_UPLOAD_LIST_IMG);
         isTrue = false;
       }
       if (isTrue) {

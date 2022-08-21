@@ -8,7 +8,6 @@ import {
   Modal,
   Pagination,
   Row,
-  Select,
   Skeleton,
   Space,
   Table,
@@ -26,7 +25,7 @@ import {
   getListScheduleService,
   updateScheduleService,
 } from "../../services/schedule_service";
-import { PlusOutlined, EditFilled, SyncOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditFilled, SyncOutlined, EyeFilled } from "@ant-design/icons";
 import {
   formatTimePicker,
   splitTimeString,
@@ -42,9 +41,9 @@ import {
   ERROR_SELECT_TIME_START,
   UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
+import { ScheduleDetailsComponent } from "./components/details_modal";
 
 const ScheduleManagerPage = () => {
-  const { Option } = Select;
   const { t } = useTranslation();
   const [listSchedule, setListSchedule] = useState();
   const [totalSchedule, setTotalSchedule] = useState(0);
@@ -60,7 +59,8 @@ const ScheduleManagerPage = () => {
   const [isCheckEdit, setIsCheckEdit] = useState(false);
   const [form] = Form.useForm();
   const [formCreate] = Form.useForm();
-
+  const [detailsModalVisible, setDetailModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState();
   const getListScheduleFunction = async (currentPageToGetList, numInPage) => {
     try {
       await getListScheduleService(currentPageToGetList, numInPage).then(
@@ -78,6 +78,16 @@ const ScheduleManagerPage = () => {
   useEffect(() => {
     getListScheduleFunction(currentPage, numScheduleInPage);
   }, []);
+
+  const handleCloseDetailsModal = () => {
+    setSelectedItem(null);
+    setDetailModalVisible(false);
+  }
+
+  const handleOpenDetailsModal = (item) => {
+    setSelectedItem(item);
+    setDetailModalVisible(true);
+  }
 
   const formItemLayout = {
     labelCol: {
@@ -277,6 +287,15 @@ const ScheduleManagerPage = () => {
       align: "center",
       render: (text, record, dataIndex) => (
         <Space size="middle">
+          <Button
+            className="infor-button"
+            shape="default"
+            onClick={() => {
+              handleOpenDetailsModal(record);
+            }}
+          >
+            <EyeFilled /> Details
+          </Button>
           <Button
             className="warn-button"
             shape="default"
@@ -625,6 +644,14 @@ const ScheduleManagerPage = () => {
           </Form>
         </Modal>
       ) : null}
+      {
+        selectedItem ?
+          <ScheduleDetailsComponent
+            schedule={selectedItem}
+            onClose={handleCloseDetailsModal}
+            visible={detailsModalVisible}
+          /> : null
+      }
     </>
   );
 };

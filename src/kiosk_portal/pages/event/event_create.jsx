@@ -88,7 +88,7 @@ export const EventCreatingPage = () => {
         check = false;
       }
       if (values.listImage.fileList.length === 0) {
-        invalidMsg.push("You need to add at least 1 picture to list image\n");
+        invalidMsg.push(ERROR_UPLOAD_LIST_IMG);
         check = false;
       }
       //Check date time of event

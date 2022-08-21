@@ -303,7 +303,7 @@ export const EventDetailsPage = () => {
       }
       if (values.listImage.fileList.length === 0) {
         isCheck = false;
-        toast.error("Please input at least 1 picture to list img");
+        toast.error(ERROR_UPLOAD_LIST_IMG);
       }
       if (isCheck) {
         //Add images

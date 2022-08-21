@@ -110,7 +110,7 @@ const ModalCreatePoi = ({
       }
 
       if (values.listImage.fileList.length === 0) {
-        invalidMsg.push("You need to add picture to list img\n");
+        invalidMsg.push(ERROR_UPLOAD_LIST_IMG);
         check = false;
       }
       if (values.thumbnail.fileList.length === 0) {
