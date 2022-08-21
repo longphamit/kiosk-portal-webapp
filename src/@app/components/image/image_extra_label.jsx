@@ -1,6 +1,11 @@
-export const ImageExtraLabel = () => {
+import { InfoCircleOutlined } from "@ant-design/icons"
+import { Tooltip } from "antd"
+
+export const ImageLimitSizeTooltip = () => {
     return (
-        <label style={{ fontStyle: 'italic', color: 'red' }
-        }> * The image shoud be less than 5MB </label>
+        <Tooltip placement="top" title={'* The image shoud be less than 5MB'}>
+            <InfoCircleOutlined style={{ color: 'blue', marginLeft: 4 }} />
+        </Tooltip>
+
     )
 }

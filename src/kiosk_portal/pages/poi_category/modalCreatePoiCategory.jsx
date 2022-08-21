@@ -13,7 +13,7 @@ import {
   ERROR_INPUT_NAME,
   ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const ModalCreatePoiCategory = ({
   modalToIndex,
@@ -77,7 +77,6 @@ const ModalCreatePoiCategory = ({
           </Form.Item>
           <Form.Item
             name="logo"
-            extra={ImageExtraLabel()}
             label="Logo"
             rules={[
               {
@@ -93,7 +92,7 @@ const ModalCreatePoiCategory = ({
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>
+              <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
           <Form.Item {...tailFormItemLayout}>

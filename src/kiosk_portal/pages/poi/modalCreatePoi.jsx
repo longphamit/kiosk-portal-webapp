@@ -17,6 +17,7 @@ import {
   TimePicker,
   Upload,
   Spin,
+  DatePicker,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined } from "@ant-design/icons";
@@ -42,7 +43,7 @@ import {
   ERROR_INPUT_PROVINCE,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const ModalCreatePoi = ({
   modalToIndex,
@@ -202,13 +203,14 @@ const ModalCreatePoi = ({
         visible={isCreatePoiModalVisible}
         onCancel={handleCancelPoiInModal}
         footer={null}
-        width={1000}
+        width={800}
       >
         <Form
           {...formItemLayout}
           form={form}
-          style={{ marginRight: 80 }}
           name="registerPoi"
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 19 }}
           onFinish={onFinishCreatePoi}
           scrollToFirstError
         >
@@ -240,33 +242,43 @@ const ModalCreatePoi = ({
           >
             <Editor
               onTextChange={(e) => setDescription(e.htmlValue)}
-              style={{ height: "300px" }}
+              style={{ height: "200px" }}
             />
           </Form.Item>
-          <Form.Item
-            name="stringOpenTime"
-            label={t("timestart")}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_TIME_START,
-              },
-            ]}
-          >
-            <TimePicker allowClear={false} format="HH:mm" />
-          </Form.Item>
-          <Form.Item
-            name="stringCloseTime"
-            label={t("timeend")}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_TIME_END,
-              },
-            ]}
-          >
-            <TimePicker allowClear={false} format="HH:mm" />
-          </Form.Item>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="stringOpenTime"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label={t("timestart")}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_TIME_START,
+                  },
+                ]}
+              >
+                <TimePicker allowClear={false} format="HH:mm" style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                name="stringCloseTime"
+                label={t("timeend")}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_TIME_END,
+                  },
+                ]}
+              >
+                <TimePicker allowClear={false} format="HH:mm" style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item
             name="dayOfWeek"
             label={t("dayofweek")}
@@ -315,106 +327,151 @@ const ModalCreatePoi = ({
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="city"
-            label="Province"
-            rules={[
-              {
-                required: true,
-                message: ERROR_INPUT_PROVINCE,
-              },
-            ]}
-          >
-            <Select name="selectProvince" onChange={handleProvinceChange}>
-              {listProvinces
-                ? listProvinces.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="district"
-            label="District"
-            rules={[
-              {
-                required: true,
-                message: ERROR_INPUT_DISTRICT,
-              },
-            ]}
-          >
-            <Select name="selectDistricts" onChange={handleDistrictChange}>
-              {listDistrictsInForm
-                ? listDistrictsInForm.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="ward"
-            label="Ward"
-            rules={[
-              {
-                required: true,
-                message: ERROR_INPUT_WARD,
-              },
-            ]}
-          >
-            <Select name="selectWards">
-              {listWardsInForm
-                ? listWardsInForm.map((item) => (
-                    <Option key={item.code} value={item.code}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="poicategoryId"
-            label="Category"
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_CATEGORY,
-              },
-            ]}
-          >
-            <Select>
-              {listPoiCategories.map((categories) => (
-                <Option value={categories.id}>{categories.name}</Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="thumbnail"
-            extra={ImageExtraLabel()}
-            label="Logo"
-            rules={[
-              {
-                required: true,
-                message: ERROR_UPLOAD_LOGO,
-              },
-            ]}
-          >
-            <Upload
-              action={FILE_UPLOAD_URL}
-              listType="picture"
-              maxCount={1}
-              accept={ACCEPT_IMAGE}
-              beforeUpload={beforeUpload}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
-          </Form.Item>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="city"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }} label="Province"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_INPUT_PROVINCE,
+                  },
+                ]}
+              >
+                <Select name="selectProvince" onChange={handleProvinceChange}>
+                  {listProvinces
+                    ? listProvinces.map((item) => (
+                      <Option key={item.code} value={item.code}>
+                        {item.name}
+                      </Option>
+                    ))
+                    : null}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                name="district"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="District"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_INPUT_DISTRICT,
+                  },
+                ]}
+              >
+                <Select name="selectDistricts" onChange={handleDistrictChange}>
+                  {listDistrictsInForm
+                    ? listDistrictsInForm.map((item) => (
+                      <Option key={item.code} value={item.code}>
+                        {item.name}
+                      </Option>
+                    ))
+                    : null}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="ward"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="Ward"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_INPUT_WARD,
+                  },
+                ]}
+              >
+                <Select name="selectWards">
+                  {listWardsInForm
+                    ? listWardsInForm.map((item) => (
+                      <Option key={item.code} value={item.code}>
+                        {item.name}
+                      </Option>
+                    ))
+                    : null}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                name="poicategoryId"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_CATEGORY,
+                  },
+                ]}
+              >
+                <Select>
+                  {listPoiCategories.map((categories) => (
+                    <Option value={categories.id}>{categories.name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                name="thumbnail"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="Logo"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_UPLOAD_LOGO,
+                  },
+                ]}
+              >
+                <Upload
+                  action={FILE_UPLOAD_URL}
+                  listType="picture"
+                  maxCount={1}
+                  accept={ACCEPT_IMAGE}
+                  beforeUpload={beforeUpload}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  {ImageLimitSizeTooltip()}
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={11}>
+              <Form.Item
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="banner"
+                label="Banner"
+              >
+                <Upload
+                  action={FILE_UPLOAD_URL}
+                  listType="picture"
+                  maxCount={1}
+                  accept={ACCEPT_IMAGE}
+                  beforeUpload={beforeUpload}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  {ImageLimitSizeTooltip()}
+                </Upload>
+              </Form.Item>
+
+            </Col>
+          </Row>
+
           <Form.Item
             name="listImage"
-            extra={ImageExtraLabel()}
             label="List Image"
             rules={[
               {
@@ -432,32 +489,20 @@ const ModalCreatePoi = ({
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+              {ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
-          <Form.Item
-            name="banner"
-            extra={ImageExtraLabel()}
-            label="Banner"
-          >
-            <Upload
-              action={FILE_UPLOAD_URL}
-              listType="picture"
-              maxCount={1}
-              accept={ACCEPT_IMAGE}
-              beforeUpload={beforeUpload}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload>
-          </Form.Item>
-          <Form.Item {...tailFormItemLayout}>
-            {isLoading ? (
-              <Spin />
-            ) : (
-              <Button type="primary" htmlType="submit">
-                Create POI
-              </Button>
-            )}
-          </Form.Item>
+          <Row align="middle" justify="center">
+            <Form.Item >
+              {isLoading ? (
+                <Spin />
+              ) : (
+                <Button type="primary" htmlType="submit">
+                  Create POI
+                </Button>
+              )}
+            </Form.Item>
+          </Row>
         </Form>
       </Modal>
     </>

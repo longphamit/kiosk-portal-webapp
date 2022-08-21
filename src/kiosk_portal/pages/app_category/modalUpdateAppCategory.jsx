@@ -14,7 +14,7 @@ import {
   ERROR_REGREX_COMMISSION_PERCENTAGE,
   UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const ModalUpdateAppCategory = ({
   modalToIndex,
@@ -104,7 +104,6 @@ const ModalUpdateAppCategory = ({
             </Form.Item>
             <Form.Item
               name="logo"
-              extra={ImageExtraLabel()}
               label="Logo"
             >
               <Upload
@@ -123,6 +122,7 @@ const ModalUpdateAppCategory = ({
                 ]}
               >
                 <Button icon={<UploadOutlined />}>Upload</Button>
+                {ImageLimitSizeTooltip()}
               </Upload>
             </Form.Item>
             <Form.Item

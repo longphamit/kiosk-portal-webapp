@@ -14,7 +14,7 @@ import {
   ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
 import { ACCEPT_IMAGE } from "../../constants/accept_file";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const FormCreateCategory = ({ visible }) => {
   const [form] = Form.useForm();
@@ -64,7 +64,6 @@ const FormCreateCategory = ({ visible }) => {
         </Form.Item>
         <Form.Item
           name="logo"
-          extra={ImageExtraLabel()}
           label="Logo"
           rules={[
             {
@@ -81,6 +80,7 @@ const FormCreateCategory = ({ visible }) => {
             beforeUpload={beforeUpload}
           >
             <Button icon={<UploadOutlined />}>Upload</Button>
+            {ImageLimitSizeTooltip()}
           </Upload>
         </Form.Item>
 

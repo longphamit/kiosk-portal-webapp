@@ -17,7 +17,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 export const formItemLayout = {
   labelCol: {
@@ -142,7 +142,6 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="listImage"
-            extra={ImageExtraLabel()}
             label="List Image "
             rules={[
               {
@@ -172,7 +171,7 @@ const ModalCreateLocation = ({
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+              <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>{ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
           <Form.Item

@@ -39,7 +39,7 @@ import {
   UPDATE_SUCCESS,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const DetailLocationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -270,7 +270,6 @@ const DetailLocationPage = () => {
                 {fileListImage ? (
                   <Form.Item
                     name="listImage"
-                    extra={ImageExtraLabel()}
                     label="List Image"
                     rules={[
                       {
@@ -292,7 +291,7 @@ const DetailLocationPage = () => {
 
                       <Button icon={<UploadOutlined />}>
                        {UPLOAD_MAXIUM_5_IMAGES}
-                      </Button>
+                      </Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   </Form.Item>
                 ) : null}

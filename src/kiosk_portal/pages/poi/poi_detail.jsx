@@ -58,7 +58,7 @@ import {
   UPDATE_SUCCESS,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -588,7 +588,6 @@ const DetailPoiPage = () => {
                 </Form.Item>
                 <Form.Item
                   name="thumbnail"
-                  extra={ImageExtraLabel()}
                   label="Logo"
                 >
                   <Upload
@@ -607,7 +606,7 @@ const DetailPoiPage = () => {
                       },
                     ]}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                   </Upload>
                 </Form.Item>
                 <Form.Item {...tailFormItemLayout}>
@@ -634,7 +633,6 @@ const DetailPoiPage = () => {
                 {fileListImage ? (
                   <Form.Item
                     name="listImage"
-                    extra={ImageExtraLabel()}
                     label="List Image"
                     rules={[
                       {
@@ -655,7 +653,7 @@ const DetailPoiPage = () => {
                     >
                       <Button icon={<UploadOutlined />}>
                         {UPLOAD_MAXIUM_5_IMAGES}
-                      </Button>
+                      </Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   </Form.Item>
                 ) : null}
@@ -682,7 +680,6 @@ const DetailPoiPage = () => {
               >
                 <Form.Item
                   name="banner"
-                  extra={ImageExtraLabel()}
                   label="Banner"
                 >
                   {currentItem.banner ? (
@@ -701,7 +698,7 @@ const DetailPoiPage = () => {
                         },
                       ]}
                     >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
+                      <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   ) : (
                     <Upload

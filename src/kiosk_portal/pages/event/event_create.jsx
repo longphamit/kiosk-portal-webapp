@@ -50,7 +50,7 @@ import {
   CREATE_SUCCESS,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
-import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
 
 export const EventCreatingPage = () => {
@@ -361,7 +361,6 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="thumbnail"
-          extra={ImageExtraLabel()}
           label="Logo"
           rules={[
             {
@@ -377,7 +376,7 @@ export const EventCreatingPage = () => {
             accept={ACCEPT_IMAGE}
             beforeUpload={beforeUpload}
           >
-            <Button icon={<UploadOutlined />}>Upload</Button>
+            <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
           </Upload>
         </Form.Item>
         <Form.Item
@@ -399,6 +398,7 @@ export const EventCreatingPage = () => {
             beforeUpload={beforeUpload}
           >
             <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+            {ImageLimitSizeTooltip()}
           </Upload>
         </Form.Item>
         <Form.Item
@@ -422,7 +422,6 @@ export const EventCreatingPage = () => {
         </Form.Item>
         <Form.Item
           name="banner"
-          extra={ImageExtraLabel()}
           label="Banner"
         >
           <Upload
@@ -432,7 +431,7 @@ export const EventCreatingPage = () => {
             accept={ACCEPT_IMAGE}
             beforeUpload={beforeUpload}
           >
-            <Button icon={<UploadOutlined />}>Upload</Button>
+            <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
           </Upload>
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
