@@ -309,7 +309,7 @@ const routes: Route[] = [
     authen: true,
     layout:AuthenLayout,
     breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER,ROLE_ADMIN]
   },
 ];
 
