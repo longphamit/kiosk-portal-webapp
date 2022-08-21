@@ -69,6 +69,7 @@ import {
 } from "../../../../@app/constants/message";
 import { ImageExtraLabel } from "../../../../@app/components/image/image_extra_label";
 
+const COMMISSION_FEE = "* Commission Fee: "
 const ApplicationTable = ({ partyId }) => {
   const navigator = useNavigate();
   const { Option } = Select;
@@ -98,7 +99,8 @@ const ApplicationTable = ({ partyId }) => {
   const [formUploadBanner] = Form.useForm();
   const [formAdvanceSearch] = Form.useForm();
   const [isCheck, setIsCheck] = useState(true);
-  const [categoryCommission, setCategoryCommission] = useState(0);
+  const [commissionText, setCommissionText] = useState('');
+  const [commissionTextVisible, setCommissionTextVisible] = useState('hidden');
   const getListApplicationFunction = async (
     Name,
     PartyName,
@@ -127,7 +129,6 @@ const ApplicationTable = ({ partyId }) => {
         numInPage,
         currentPageToGetList
       );
-      console.log(res.data.data);
       setTotalApplication(res.data.metadata.total);
       setListApplication(res.data.data);
     } catch (error) {
@@ -472,6 +473,15 @@ const ApplicationTable = ({ partyId }) => {
     }
   };
 
+  const getCommissionPercentage = (id) => {
+    let commission = -1;
+    listCategories.map((e) => {
+      if (e.id === id) {
+        commission = e.commissionPercentage;
+      }
+    })
+    setCommissionText(COMMISSION_FEE + commission + '%');
+  }
   const types = [
     {
       name: "name",
@@ -858,18 +868,28 @@ const ApplicationTable = ({ partyId }) => {
               },
             ]}
           >
-            <Select placeholder="Select your categories">
+            <Select placeholder="Select your categories" onChange={(value) => getCommissionPercentage(value)}>
               {listCategories.map((item) => {
-                return <Option value={item.id}>{item.name} <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>( {item.commissionPercentage}% - Referral fee )</span></Option>;
+                return <Option value={item.id}>{item.name}
+                </Option>;
               })}
             </Select>
           </Form.Item>
-          <Form.Item name="isAffiliate" label="Is Affiliate">
-            <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
+          <Form.Item
+            name="isAffiliate"
+            label="Is Affiliate"
+          >
+            <Checkbox.Group style={{ width: "100%" }} >
               <Row>
-                <Col span={8}>
-                  <Checkbox value="isAffiliate"></Checkbox>
-                </Col>
+                <Checkbox value="isAffiliate"
+                  onChange={(e) => {
+                    e.target.checked ? setCommissionTextVisible('visible') : setCommissionTextVisible('hidden')
+                  }}
+                ></Checkbox>
+                {
+                  commissionTextVisible === 'visible' ?
+                    <label style={{ fontStyle: 'italic', fontSize: 16, color: 'red', marginLeft: 20 }}>{commissionText}</label> : null
+                }
               </Row>
             </Checkbox.Group>
           </Form.Item>
@@ -946,221 +966,223 @@ const ApplicationTable = ({ partyId }) => {
           </Form.Item>
         </Form>
       </Modal>
-      {currentItem ? (
-        <Modal
-          key={currentItem.id}
-          title={t("edit")}
-          visible={isEditApplicationModalVisible}
-          onCancel={handleCancelEditApplication}
-          footer={null}
-          width={1000}
-        >
-          <Card title="Basic information">
-            <Form
-              style={{
-                marginRight: 80,
-              }}
-              key={currentItem.id}
-              {...formItemLayout}
-              form={form}
-              name="edit"
-              onFinish={onFinishUpdateApplication}
-              scrollToFirstError
-              initialValues={{
-                id: currentItem.id,
-                name: currentItem.name,
-                description: currentItem.description ?? "",
-                logo: currentItem.logo,
-                link: currentItem.link,
-                partyId: localStorageGetUserIdService(),
-                appCategoryId: currentItem.appCategoryId,
-              }}
-            >
-              <Form.Item name="id" hidden={true}>
-                <Input type="hidden" />
-              </Form.Item>
-              <Form.Item name="partyId" hidden={true}>
-                <Input type="hidden" />
-              </Form.Item>
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_NAME,
-                  },
-                ]}
+      {
+        currentItem ? (
+          <Modal
+            key={currentItem.id}
+            title={t("edit")}
+            visible={isEditApplicationModalVisible}
+            onCancel={handleCancelEditApplication}
+            footer={null}
+            width={1000}
+          >
+            <Card title="Basic information">
+              <Form
+                style={{
+                  marginRight: 80,
+                }}
+                key={currentItem.id}
+                {...formItemLayout}
+                form={form}
+                name="edit"
+                onFinish={onFinishUpdateApplication}
+                scrollToFirstError
+                initialValues={{
+                  id: currentItem.id,
+                  name: currentItem.name,
+                  description: currentItem.description ?? "",
+                  logo: currentItem.logo,
+                  link: currentItem.link,
+                  partyId: localStorageGetUserIdService(),
+                  appCategoryId: currentItem.appCategoryId,
+                }}
               >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="description"
-                label="Description"
-                value={description}
-              >
-                <Editor
-                  style={{ height: "250px" }}
-                  onTextChange={(e) => {
-                    setDescription(e.htmlValue);
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                name="link"
-                label="Link"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_LINK,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="logo"
-                extra={ImageExtraLabel()}
-                label="Logo"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_UPLOAD_LOGO_CATE,
-                  },
-                ]}
-              >
-                <Upload
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  listType="picture"
-                  maxCount={1}
-                  accept=".png"
-                  beforeUpload={beforeUpload}
-                  defaultFileList={[
+                <Form.Item name="id" hidden={true}>
+                  <Input type="hidden" />
+                </Form.Item>
+                <Form.Item name="partyId" hidden={true}>
+                  <Input type="hidden" />
+                </Form.Item>
+                <Form.Item
+                  name="name"
+                  label="Name"
+                  rules={[
                     {
-                      uid: "abc",
-                      name: "image.png",
-                      status: "done",
-                      url: currentItem.logo,
+                      required: true,
+                      message: ERROR_INPUT_NAME,
                     },
                   ]}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                name="appCategoryId"
-                label="Category"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_SELECT_CATEGORY,
-                  },
-                ]}
-              >
-                <Select placeholder="Select your categories">
-                  {listCategories
-                    ? listCategories.map((item) => {
-                      return <Option value={item.id}>{item.name} <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>( {item.commissionPercentage}% - Referral fee )</span></Option>;
-                    })
-                    : null}
-                </Select>
-              </Form.Item>
-              <Form.Item name="isAffiliate" label="Is Affiliate">
-                {currentItem.isAffiliate ? (
-                  <Checkbox
-                    defaultChecked
-                    value="isAffiliate"
-                    onChange={() => {
-                      if (isCheck) {
-                        setIsCheck(false);
-                      } else {
-                        setIsCheck(true);
-                      }
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  label="Description"
+                  value={description}
+                >
+                  <Editor
+                    style={{ height: "250px" }}
+                    onTextChange={(e) => {
+                      setDescription(e.htmlValue);
                     }}
                   />
-                ) : (
-                  <Checkbox
-                    defaultChecked={false}
-                    value="isAffiliate"
-                    onChange={() => {
-                      if (isCheck) {
-                        setIsCheck(false);
-                      } else {
-                        setIsCheck(true);
-                      }
-                    }}
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item {...tailFormItemLayout}>
-                {isLoading ? (
-                  <Spin />
-                ) : (
-                  <Button type="primary" htmlType="submit">
-                    Update Application
-                  </Button>
-                )}
-              </Form.Item>
-            </Form>
-          </Card>
-          <Card title="Banner">
-            <Form
-              {...formItemLayout}
-              form={formUploadBanner}
-              name="banner"
-              onFinish={onFinishUpdateBanner}
-              scrollToFirstError
-            >
-              <Form.Item
-                name="banner"
-                extra={ImageExtraLabel()}
-                label="Banner"
-              >
-                {currentItem.banner ? (
+                </Form.Item>
+                <Form.Item
+                  name="link"
+                  label="Link"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_INPUT_LINK,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  name="logo"
+                  extra={ImageExtraLabel()}
+                  label="Logo"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_UPLOAD_LOGO_CATE,
+                    },
+                  ]}
+                >
                   <Upload
-                    action={FILE_UPLOAD_URL}
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     listType="picture"
                     maxCount={1}
-                    accept={ACCEPT_IMAGE}
+                    accept=".png"
                     beforeUpload={beforeUpload}
                     defaultFileList={[
                       {
                         uid: "abc",
-                        name: "thumbnail",
+                        name: "image.png",
                         status: "done",
-                        url: currentItem.banner,
+                        url: currentItem.logo,
                       },
                     ]}
                   >
                     <Button icon={<UploadOutlined />}>Upload</Button>
                   </Upload>
-                ) : (
-                  <Upload
-                    action={FILE_UPLOAD_URL}
-                    listType="picture"
-                    maxCount={1}
-                    accept={ACCEPT_IMAGE}
-                    beforeUpload={beforeUpload}
-                  >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
-                  </Upload>
-                )}
-              </Form.Item>
+                </Form.Item>
+                <Form.Item
+                  name="appCategoryId"
+                  label="Category"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_SELECT_CATEGORY,
+                    },
+                  ]}
+                >
+                  <Select placeholder="Select your categories" onChange={(value) => getCommissionPercentage(value)}>
+                    {listCategories
+                      ? listCategories.map((item) => {
+                        return <Option value={item.id}>{item.name} </Option>;
+                      })
+                      : null}
+                  </Select>
+                </Form.Item>
+                <Form.Item name="isAffiliate" label="Is Affiliate">
+                  {currentItem.isAffiliate ? (
+                    <Checkbox
+                      defaultChecked
+                      value="isAffiliate"
+                      onChange={() => {
+                        if (isCheck) {
+                          setIsCheck(false);
+                        } else {
+                          setIsCheck(true);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <Checkbox
+                      defaultChecked={false}
+                      value="isAffiliate"
+                      onChange={() => {
+                        if (isCheck) {
+                          setIsCheck(false);
+                        } else {
+                          setIsCheck(true);
+                        }
+                      }}
+                    />
+                  )}
+                </Form.Item>
+                <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>{commissionText}</span>
+                <Form.Item {...tailFormItemLayout}>
+                  {isLoading ? (
+                    <Spin />
+                  ) : (
+                    <Button type="primary" htmlType="submit">
+                      Update Application
+                    </Button>
+                  )}
+                </Form.Item>
+              </Form>
+            </Card>
+            <Card title="Banner">
+              <Form
+                {...formItemLayout}
+                form={formUploadBanner}
+                name="banner"
+                onFinish={onFinishUpdateBanner}
+                scrollToFirstError
+              >
+                <Form.Item
+                  name="banner"
+                  extra={ImageExtraLabel()}
+                  label="Banner"
+                >
+                  {currentItem.banner ? (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                      defaultFileList={[
+                        {
+                          uid: "abc",
+                          name: "thumbnail",
+                          status: "done",
+                          url: currentItem.banner,
+                        },
+                      ]}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  ) : (
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={1}
+                      accept={ACCEPT_IMAGE}
+                      beforeUpload={beforeUpload}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  )}
+                </Form.Item>
 
-              <Form.Item {...tailFormItemLayout}>
-                {isLoadingBanner === false ? (
-                  <Button type="primary" htmlType="submit">
-                    Update
-                  </Button>
-                ) : (
-                  <Spin />
-                )}
-              </Form.Item>
-            </Form>
-          </Card>
-        </Modal>
-      ) : null}
+                <Form.Item {...tailFormItemLayout}>
+                  {isLoadingBanner === false ? (
+                    <Button type="primary" htmlType="submit">
+                      Update
+                    </Button>
+                  ) : (
+                    <Spin />
+                  )}
+                </Form.Item>
+              </Form>
+            </Card>
+          </Modal>
+        ) : null
+      }
     </>
   );
 };
