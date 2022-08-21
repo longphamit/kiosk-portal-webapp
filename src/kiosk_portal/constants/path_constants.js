@@ -27,3 +27,15 @@ export const APPLICATION_MARKET_PATH = "/application-market"
 export const MY_APPLICATION_PATH ="/my-application"
 
 export const KIOSK_LOCATION_MANAGER_PATH = "/kiosk-location"
+
+export const EVENT_PATH = "/event"
+
+export const POI_PATH = "/poi"
+
+export const KIOSK_LOCATION_PATH = "/kiosk-location"
+
+export const LOCATION_PATH = "/location"
+
+export const PROFILE_PATH = "/profile"
+
+export const EDIT_TEMPLATE_PATH = "/edit-template"

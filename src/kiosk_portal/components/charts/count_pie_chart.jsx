@@ -1,7 +1,6 @@
-import { Col, Row } from 'antd';
+import { Row } from 'antd';
 import { Chart } from 'primereact/chart';
 import { useState } from 'react';
-import { randomColor } from '../../../@app/utils/chart_util';
 const CountPieChart = ({ count, labels }) => {
     const [chartData] = useState({
         labels: labels,

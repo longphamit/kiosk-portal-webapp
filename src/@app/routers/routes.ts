@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import {
   ACCOUNT_MANAGER_PATH, APPLICATION_MARKET_PATH, APP_CATEGORY_MANAGER_PATH,
-  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
-  KIOSK_MANAGER_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH,
+  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EDIT_TEMPLATE_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, EVENT_PATH, HOME_PAGE_PATH,
+  KIOSK_LOCATION_PATH,
+  KIOSK_MANAGER_PATH, LOCATION_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, POI_PATH, PROFILE_PATH, SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH
 } from "../../kiosk_portal/constants/path_constants";
 import AccountManagerPage from "../../kiosk_portal/pages/account";
@@ -197,7 +198,7 @@ const routes: Route[] = [
   },
   {
     component: EditTemplatePage,
-    path: "/edit-template",
+    path: EDIT_TEMPLATE_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -224,7 +225,7 @@ const routes: Route[] = [
   },
   {
     component: EventDetailsPage,
-    path: "/event",
+    path: EVENT_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -233,7 +234,7 @@ const routes: Route[] = [
   },
   {
     component: DetailPoiPage,
-    path: "/poi",
+    path: POI_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -260,7 +261,7 @@ const routes: Route[] = [
   },
   {
     component: KioskLocationPage,
-    path: "/kiosk-location",
+    path: KIOSK_LOCATION_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -269,7 +270,7 @@ const routes: Route[] = [
   },
   {
     component: DetailLocationPage,
-    path: "/location",
+    path: LOCATION_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -304,12 +305,12 @@ const routes: Route[] = [
   },
   {
     component: ProfilePage,
-    path: "/profile",
+    path: PROFILE_PATH,
     isLayout: true,
     authen: true,
-    layout:AuthenLayout,
+    layout: AuthenLayout,
     breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER]
+    roles: [ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER]
   },
 ];
 
