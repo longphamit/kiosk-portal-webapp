@@ -1,5 +1,7 @@
 import { Card, Col, Empty, List, Modal, Row, Skeleton } from "antd";
 import Meta from "antd/lib/card/Meta";
+import { PREVIOUS_PATH } from "../../../../@app/constants/key";
+import { MY_APPLICATION_HREF, MY_APPLICATION_LABEL } from "../../../components/breadcumb/breadcumb_constant";
 
 export const CategoryDetailsModal = ({
     isCategoryDetailsModalVisible,
@@ -15,6 +17,17 @@ export const CategoryDetailsModal = ({
         lg: 4,
         xl: 6,
         xxl: 3,
+    }
+    const onOpenAppDetails = (item) => {
+        let breadCumbData = [
+            {
+                href: MY_APPLICATION_HREF,
+                label: MY_APPLICATION_LABEL,
+                icon: null,
+            },
+        ]
+        localStorage.setItem(PREVIOUS_PATH, JSON.stringify({ data: breadCumbData }));
+        window.open('/app-detail/' + item.serviceApplicationId + '&&installed')
     }
     return (<>
         <Modal
@@ -42,7 +55,7 @@ export const CategoryDetailsModal = ({
                             dataSource={listApp}
                             renderItem={item => (
                                 <List.Item>
-                                    <div onClick={() => window.open('/app-detail/' + item.serviceApplicationId + '&&installed')}>
+                                    <div onClick={() => onOpenAppDetails(item)}>
                                         <Card
                                             hoverable
                                             style={{ width: 200, verticalAlign: 'center' }}
