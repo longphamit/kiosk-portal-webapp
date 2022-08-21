@@ -41,6 +41,7 @@ import {
   CREATE_SUCCESS,
   ERROR_INPUT_PROVINCE,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 const ModalCreatePoi = ({
   modalToIndex,
@@ -391,6 +392,7 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="thumbnail"
+            extra={ImageExtraLabel()}
             label="Logo"
             rules={[
               {
@@ -411,6 +413,7 @@ const ModalCreatePoi = ({
           </Form.Item>
           <Form.Item
             name="listImage"
+            extra={ImageExtraLabel()}
             label="List Image"
             rules={[
               {
@@ -430,7 +433,11 @@ const ModalCreatePoi = ({
               <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
             </Upload>
           </Form.Item>
-          <Form.Item name="banner" label="Banner">
+          <Form.Item
+            name="banner"
+            extra={ImageExtraLabel()}
+            label="Banner"
+          >
             <Upload
               action={FILE_UPLOAD_URL}
               listType="picture"

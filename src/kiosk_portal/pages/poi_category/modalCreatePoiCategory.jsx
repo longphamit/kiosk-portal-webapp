@@ -13,6 +13,7 @@ import {
   ERROR_INPUT_NAME,
   ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 const ModalCreatePoiCategory = ({
   modalToIndex,
@@ -76,6 +77,7 @@ const ModalCreatePoiCategory = ({
           </Form.Item>
           <Form.Item
             name="logo"
+            extra={ImageExtraLabel()}
             label="Logo"
             rules={[
               {

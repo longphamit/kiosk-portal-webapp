@@ -67,6 +67,7 @@ import {
   CREATE_SUCCESS,
   ERROR_UPLOAD_LOGO_CATE,
 } from "../../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../../@app/components/image/image_extra_label";
 
 const ApplicationTable = ({ partyId }) => {
   const navigator = useNavigate();
@@ -828,6 +829,7 @@ const ApplicationTable = ({ partyId }) => {
           </Form.Item>
           <Form.Item
             name="logo"
+            extra={ImageExtraLabel()}
             label="Logo"
             rules={[
               {
@@ -1018,6 +1020,7 @@ const ApplicationTable = ({ partyId }) => {
               </Form.Item>
               <Form.Item
                 name="logo"
+                extra={ImageExtraLabel()}
                 label="Logo"
                 rules={[
                   {
@@ -1109,7 +1112,11 @@ const ApplicationTable = ({ partyId }) => {
               onFinish={onFinishUpdateBanner}
               scrollToFirstError
             >
-              <Form.Item name="banner" label="Banner">
+              <Form.Item
+                name="banner"
+                extra={ImageExtraLabel()}
+                label="Banner"
+              >
                 {currentItem.banner ? (
                   <Upload
                     action={FILE_UPLOAD_URL}

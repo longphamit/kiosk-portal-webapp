@@ -38,6 +38,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 const DetailLocationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -268,6 +269,7 @@ const DetailLocationPage = () => {
                 {fileListImage ? (
                   <Form.Item
                     name="listImage"
+                    extra={ImageExtraLabel()}
                     label="List Image"
                     rules={[
                       {

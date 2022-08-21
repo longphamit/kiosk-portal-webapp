@@ -49,6 +49,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   CREATE_SUCCESS,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
 
 export const EventCreatingPage = () => {
@@ -359,6 +360,7 @@ export const EventCreatingPage = () => {
 
         <Form.Item
           name="thumbnail"
+          extra={ImageExtraLabel()}
           label="Logo"
           rules={[
             {
@@ -417,7 +419,11 @@ export const EventCreatingPage = () => {
             style={{ height: "300px" }}
           />
         </Form.Item>
-        <Form.Item name="banner" label="Banner">
+        <Form.Item
+          name="banner"
+          extra={ImageExtraLabel()}
+          label="Banner"
+        >
           <Upload
             action={FILE_UPLOAD_URL}
             listType="picture"

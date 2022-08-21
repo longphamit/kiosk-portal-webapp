@@ -62,6 +62,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -600,6 +601,7 @@ export const EventDetailsPage = () => {
 
               <Form.Item
                 name="thumbnail"
+                extra={ImageExtraLabel()}
                 label="Logo"
                 getValueFromEvent={normFile}
               >
@@ -658,6 +660,7 @@ export const EventDetailsPage = () => {
               <Form.Item
                 name="listImage"
                 label="List Image"
+                extra={ImageExtraLabel()}
                 rules={[
                   {
                     required: true,
@@ -666,19 +669,21 @@ export const EventDetailsPage = () => {
                 ]}
               >
                 {fileListImage ? (
-                  <Upload
-                    action={FILE_UPLOAD_URL}
-                    listType="picture"
-                    maxCount={5}
-                    accept={ACCEPT_IMAGE}
-                    multiple
-                    disabled={isDisbale}
-                    beforeUpload={beforeUpload}
-                    onChange={() => setUpdateListImage(true)}
-                    defaultFileList={[...fileListImage]}
-                  >
-                    <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
-                  </Upload>
+                  <>
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={5}
+                      accept={ACCEPT_IMAGE}
+                      extra={ImageExtraLabel()}
+                      multiple
+                      disabled={isDisbale}
+                      beforeUpload={beforeUpload}
+                      onChange={() => setUpdateListImage(true)}
+                      defaultFileList={[...fileListImage]}
+                    >
+                      <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+                    </Upload> </>
                 ) : null}
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
@@ -717,6 +722,7 @@ export const EventDetailsPage = () => {
               <Form.Item
                 name="banner"
                 label="Banner"
+                extra={ImageExtraLabel()}
                 getValueFromEvent={normFile}
               >
                 {currentEvent.banner ? (

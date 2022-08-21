@@ -57,6 +57,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -584,7 +585,11 @@ const DetailPoiPage = () => {
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item name="thumbnail" label="Logo">
+                <Form.Item
+                  name="thumbnail"
+                  extra={ImageExtraLabel()}
+                  label="Logo"
+                >
                   <Upload
                     action={FILE_UPLOAD_URL}
                     listType="picture"
@@ -628,6 +633,7 @@ const DetailPoiPage = () => {
                 {fileListImage ? (
                   <Form.Item
                     name="listImage"
+                    extra={ImageExtraLabel()}
                     label="List Image"
                     rules={[
                       {
@@ -673,7 +679,11 @@ const DetailPoiPage = () => {
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 20 }}
               >
-                <Form.Item name="banner" label="Banner">
+                <Form.Item
+                  name="banner"
+                  extra={ImageExtraLabel()}
+                  label="Banner"
+                >
                   {currentItem.banner ? (
                     <Upload
                       action={FILE_UPLOAD_URL}

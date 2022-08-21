@@ -13,6 +13,7 @@ import {
   ERROR_REGREX_COMMISSION_PERCENTAGE,
   ERROR_UPLOAD_LOGO_CATE,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 const FormCreateCategory = ({ visible }) => {
   const [form] = Form.useForm();
@@ -62,6 +63,7 @@ const FormCreateCategory = ({ visible }) => {
         </Form.Item>
         <Form.Item
           name="logo"
+          extra={ImageExtraLabel()}
           label="Logo"
           rules={[
             {

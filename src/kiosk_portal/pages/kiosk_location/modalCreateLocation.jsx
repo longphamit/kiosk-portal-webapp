@@ -16,6 +16,7 @@ import {
   ERROR_REGREX_HOT_LINE,
   ERROR_UPLOAD_LIST_IMG,
 } from "../../../@app/constants/message";
+import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
 export const formItemLayout = {
   labelCol: {
@@ -140,6 +141,7 @@ const ModalCreateLocation = ({
           </Form.Item>
           <Form.Item
             name="listImage"
+            extra={ImageExtraLabel()}
             label="List Image "
             rules={[
               {
