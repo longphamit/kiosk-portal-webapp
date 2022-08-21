@@ -842,7 +842,7 @@ const ApplicationTable = ({ partyId }) => {
               action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
               listType="picture"
               maxCount={1}
-              accept=".png,.jpeg"
+              accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>

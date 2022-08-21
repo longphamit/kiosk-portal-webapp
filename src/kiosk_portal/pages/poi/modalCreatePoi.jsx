@@ -40,6 +40,7 @@ import {
   ERROR_UPLOAD_LIST_IMG,
   CREATE_SUCCESS,
   ERROR_INPUT_PROVINCE,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
 import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
@@ -430,7 +431,7 @@ const ModalCreatePoi = ({
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+              <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
             </Upload>
           </Form.Item>
           <Form.Item

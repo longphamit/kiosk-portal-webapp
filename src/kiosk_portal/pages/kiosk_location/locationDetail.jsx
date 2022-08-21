@@ -37,6 +37,7 @@ import {
   ERROR_REGREX_PHONE_NUMBER,
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
 import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 
@@ -290,7 +291,7 @@ const DetailLocationPage = () => {
                     >
 
                       <Button icon={<UploadOutlined />}>
-                        Upload ( Max:5 )
+                       {UPLOAD_MAXIUM_5_IMAGES}
                       </Button>
                     </Upload>
                   </Form.Item>

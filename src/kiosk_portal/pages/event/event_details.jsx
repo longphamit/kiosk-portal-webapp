@@ -61,6 +61,7 @@ import {
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
 import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
