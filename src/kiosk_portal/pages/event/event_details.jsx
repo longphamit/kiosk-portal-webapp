@@ -63,6 +63,7 @@ import {
   UPDATE_SUCCESS,
   UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
+import { customSort } from "../../../@app/utils/sort";
 import { ImageExtraLabel } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
@@ -106,8 +107,8 @@ export const EventDetailsPage = () => {
 
       (res.data.type === TYPE_LOCAL &&
         localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) ||
-      (res.data.type === TYPE_SERVER &&
-        localStorageGetReduxState().auth.role === ROLE_ADMIN)
+        (res.data.type === TYPE_SERVER &&
+          localStorageGetReduxState().auth.role === ROLE_ADMIN)
         ? setDisable(false)
         : setDisable(true);
 
@@ -115,19 +116,19 @@ export const EventDetailsPage = () => {
       console.log(res.data);
       setDescription(res.data.description);
       const resProvinces = await getListProvinceService();
-      setProviceOptions(resProvinces.data);
+      setProviceOptions(customSort(resProvinces.data));
       //set up init list district
       let codeProvince = resProvinces.data.find(
         (element) => element.name === res.data.city
       ).code;
       const resDistrict = await getListDistrictService(codeProvince);
-      setDistrictOptions(resDistrict.data);
+      setDistrictOptions(customSort(resDistrict.data));
       //set up init list ward
       let codeDistrict = resDistrict.data.find(
         (element) => element.name === res.data.district
       ).code;
       const resWard = await getListWardService(codeDistrict);
-      setWardOptions(resWard.data);
+      setWardOptions(customSort(resWard.data));
 
       let list = [];
       await Promise.all(
@@ -627,8 +628,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -658,6 +659,7 @@ export const EventDetailsPage = () => {
               wrapperCol={{ span: 20 }}
               layout="horizontal"
             >
+
               <Form.Item
                 name="listImage"
                 label="List Image"
@@ -689,8 +691,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -760,8 +762,8 @@ export const EventDetailsPage = () => {
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
