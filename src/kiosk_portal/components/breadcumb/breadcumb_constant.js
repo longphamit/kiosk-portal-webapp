@@ -48,7 +48,7 @@ export const TEMPLATE_DETAILS_HREF = ''
 export const TEMPLATE_DETAILS_LABEL = 'Template Editing'
 
 export const TEMPLATE_CREATE_HREF = ''
-export const TEMPLATE_CREATE_LABEL = 'Template Creating'
+export const TEMPLATE_CREATE_LABEL = 'Customize Layout'
 
 export const APPLICATION_MARKET_HREF = APPLICATION_MARKET_PATH
 export const APPLICATION_MARKET_LABEL = 'Application Market'
