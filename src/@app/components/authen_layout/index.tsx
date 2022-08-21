@@ -29,7 +29,7 @@ import {
 } from "../../services/localstorage_service";
 
 import { useTranslation } from "react-i18next";
-import { ACCOUNT_MANAGER_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from "../../../kiosk_portal/constants/path_constants";
+import { ACCOUNT_MANAGER_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH, POI_MANAGER_PATH, PROFILE_PATH, SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from "../../../kiosk_portal/constants/path_constants";
 
 import TimeView from "./time";
 import NotificationView from "./notification";
@@ -249,17 +249,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                 </Menu.Item>
               </>
             ) : null}
-            {role == ROLE_LOCATION_OWNER || role == ROLE_SERVICE_PROVIDER ? (
-              <Menu.Item
-                icon={<UserOutlined />}
-                key="profile"
-                onClick={() => {
-                  navigate("/profile");
-                }}
-              >
-                Profile
-              </Menu.Item>
-            ) : null}
+            <Menu.Item
+              icon={<UserOutlined />}
+              key="profile"
+              onClick={() => {
+                navigate(PROFILE_PATH);
+              }}
+            >
+              Profile
+            </Menu.Item>
             <Menu.Item
               icon={<LogoutOutlined />}
               key="logout"
