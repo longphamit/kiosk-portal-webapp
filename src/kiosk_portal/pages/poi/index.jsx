@@ -29,6 +29,7 @@ import CustomBreadCumb from "../../components/breadcumb/breadcumb";
 import { toast } from "react-toastify";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { columns } from "./utils";
+import { POI_CREATING_PATH } from "../../constants/path_constants";
 
 const PoiPage = () => {
   const { t } = useTranslation();
@@ -36,9 +37,6 @@ const PoiPage = () => {
   const [totalUnit, setTotalUnit] = useState(0);
   const [numUnitInPage, setNumUnitInPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
-  const [listPoiCategories, setListPoiCategories] = useState([]);
-  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
-  const [listProvinces, setListProvinces] = useState([]);
   let role = localStorageGetReduxState().auth.role;
   let navigate = useNavigate();
 
@@ -82,10 +80,6 @@ const PoiPage = () => {
   ];
   useEffect(async () => {
     getListPoiFunction("", "", "", "", "", "", "", currentPage, numUnitInPage);
-    const resProvinces = await getListProvinceService();
-    setListProvinces(resProvinces.data);
-    const resPoiCategories = await getListPoiCategoriesService("", 10000, 1);
-    setListPoiCategories(resPoiCategories.data.data);
   }, []);
 
   const onNavigate = (url) => {
@@ -110,52 +104,6 @@ const PoiPage = () => {
       numUnitInPage
     );
     setTotalUnit(res.data.metadata.total);
-  };
-
-  const showModal = (type) => {
-    if (type === "create") {
-      setIsCreateModalVisible(true);
-    }
-  };
-
-  const onFinishModal = async (type, data) => {
-    if (type === "create") {
-      setIsCreateModalVisible(false);
-    }
-    if (data === null) {
-      setCurrentPage(1);
-      const res = await getListPoiFunction(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        1,
-        numUnitInPage
-      );
-      setTotalUnit(res.data.metadata.total);
-    } else {
-      setCurrentPage(1);
-      await getListPoiFunction(
-        data.Name,
-        data.ward,
-        data.district,
-        data.city,
-        data.address,
-        data.poicategoryId,
-        "",
-        currentPage,
-        numUnitInPage
-      );
-    }
-  };
-
-  const handleCancelModalPoi = (type) => {
-    if (type === "create") {
-      setIsCreateModalVisible(false);
-    }
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
@@ -227,10 +175,11 @@ const PoiPage = () => {
             className="success-button"
             size={"large"}
             onClick={() => {
-              showModal("create");
+              navigate(POI_CREATING_PATH);
+              // showModal("create");
             }}
           >
-            <PlusOutlined /> Poi
+            <PlusOutlined /> POI
           </Button>
         </Col>
       </Row>
@@ -260,13 +209,7 @@ const PoiPage = () => {
       ) : (
         <Skeleton />
       )}
-      <ModalCreatePoi
-        modalToIndex={onFinishModal}
-        listProvinces={listProvinces}
-        isCreatePoiModalVisible={isCreateModalVisible}
-        handleCancelPoiModal={handleCancelModalPoi}
-        listPoiCategories={listPoiCategories}
-      />
+      
     </>
   );
 };

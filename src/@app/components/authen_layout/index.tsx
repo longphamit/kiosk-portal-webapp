@@ -11,14 +11,12 @@ import {
   CalendarOutlined,
   EnvironmentOutlined,
   NotificationOutlined,
-  TableOutlined,
   CloudOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { ReactNode } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { USER_FRIST_NAME } from "../../constants/key";
 
 import {
@@ -27,16 +25,15 @@ import {
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
 import {
-  localStorageClearService,
   localStorageGetReduxState,
 } from "../../services/localstorage_service";
 
 import { useTranslation } from "react-i18next";
-import { signOutService } from "../../services/auth_service";
-import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
+import { ACCOUNT_MANAGER_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH, POI_MANAGER_PATH, PROFILE_PATH, SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from "../../../kiosk_portal/constants/path_constants";
 
 import TimeView from "./time";
 import NotificationView from "./notification";
+import { logout } from "./components/logout_confirmation.jsx";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -46,12 +43,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
   const { t } = useTranslation();
 
   let navigate = useNavigate();
-  const logout = async () => {
-    await signOutService();
-    localStorageClearService();
-    navigate("/signin");
-    toast("Logout successfull");
-  };
+
   const onNavigate = (url: string) => {
     navigate(url);
   };
@@ -111,9 +103,9 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               <>
                 <Menu.Item
                   icon={<FundOutlined />}
-                  key="account_manager"
+                  key="account_management"
                   onClick={() => {
-                    onNavigate("/account-manager");
+                    onNavigate(ACCOUNT_MANAGER_PATH);
                   }}
                 >
                   {t("accountmanager")}
@@ -128,10 +120,10 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   App Category
                 </Menu.Item>
                 <Menu.Item
-                  key="poi_manager"
+                  key="poi_management"
                   icon={<ToolOutlined />}
                   onClick={() => {
-                    onNavigate("/poi-page");
+                    onNavigate(POI_MANAGER_PATH);
                   }}
                 >
                   POI
@@ -150,7 +142,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   icon={<FundOutlined />}
                   key="event_manager"
                   onClick={() => {
-                    onNavigate("/event-manager");
+                    onNavigate(EVENT_MANAGER_PATH);
                   }}
                 >
                   Event
@@ -181,7 +173,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   icon={<CalendarOutlined />}
                   key="schedule_manager"
                   onClick={() => {
-                    onNavigate("/schedule-manager");
+                    onNavigate(SCHEDULE_MANAGER_PATH);
                   }}
                 >
                   {t("schedulemanager")}
@@ -190,7 +182,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   icon={<BlockOutlined />}
                   key="template_manager"
                   onClick={() => {
-                    onNavigate("/template-manager");
+                    onNavigate(TEMPLATE_MANAGER_PATH);
                   }}
                 >
                   Template
@@ -199,7 +191,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   key="poi_page"
                   icon={<EnvironmentOutlined />}
                   onClick={() => {
-                    onNavigate("/poi-page");
+                    onNavigate(POI_MANAGER_PATH);
                   }}
                 >
                   POI
@@ -208,7 +200,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
                   icon={<NotificationOutlined />}
                   key="event_manager"
                   onClick={() => {
-                    onNavigate("/event-manager");
+                    onNavigate(EVENT_MANAGER_PATH);
                   }}
                 >
                   Event
@@ -261,7 +253,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<UserOutlined />}
               key="profile"
               onClick={() => {
-                navigate("/profile");
+                navigate(PROFILE_PATH);
               }}
             >
               Profile
@@ -270,7 +262,7 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
               icon={<LogoutOutlined />}
               key="logout"
               onClick={() => {
-                logout();
+                logout(navigate);
               }}
             >
               Logout

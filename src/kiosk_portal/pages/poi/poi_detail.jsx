@@ -55,8 +55,11 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  ERROR_UPLOAD_LOGO,
   UPDATE_SUCCESS,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const DetailPoiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -64,7 +67,7 @@ const DetailPoiPage = () => {
   const [formThumbnail] = Form.useForm();
   const [formListImg] = Form.useForm();
   const [formUploadBanner] = Form.useForm();
-  const { TextArea } = Input;
+  const [days, setDays] = useState();
   const { t } = useTranslation();
   const [listDistrictsInForm, setListDistrictsInForm] = useState([]);
   const [description, setDescription] = useState("");
@@ -121,6 +124,9 @@ const DetailPoiPage = () => {
         })
       );
       setFileListImage(list);
+
+      //days 
+      setDays(res.data.dayOfWeek.split('-'))
     } catch (error) {
       toast.error(error.response.data.message);
       setCurrentItem({});
@@ -208,7 +214,6 @@ const DetailPoiPage = () => {
           poiId: currentItem.id,
           banner: banner,
         };
-        console.log(updateBanner);
         await updateBannerPoiService(updateBanner);
         toast.success(UPDATE_SUCCESS);
       }
@@ -224,7 +229,6 @@ const DetailPoiPage = () => {
       setIsLoadingBasic(true);
       const invalidMsg = [];
       var check = true;
-      let dOW = "";
       if (values.stringOpenTime - values.stringCloseTime > 0) {
         invalidMsg.push("Time start need to before or match with time end\n");
         check = false;
@@ -233,11 +237,6 @@ const DetailPoiPage = () => {
         invalidMsg.push("Please choose logo \n");
         check = false;
       }
-      if (Array.isArray(values.dayOfWeek)) {
-        dOW = values.dayOfWeek.join("-");
-      } else {
-        dOW = values.dayOfWeek;
-      }
 
       if (check) {
         let valueLogo = "";
@@ -245,9 +244,11 @@ const DetailPoiPage = () => {
           valueLogo = "";
         } else {
           let inputLogo = [];
-          let result = await getBase64(values.thumbnail.file.originFileObj);
-          inputLogo = result.split(",");
-          valueLogo = inputLogo[1];
+          if (values.thumbnail.file !== undefined) {
+            let result = await getBase64(values.thumbnail.file.originFileObj);
+            inputLogo = result.split(",");
+            valueLogo = inputLogo[1];
+          }
         }
 
         let objCity = listProvinces.find(
@@ -291,7 +292,7 @@ const DetailPoiPage = () => {
           description: description,
           stringOpenTime: formatTimePicker(values.stringOpenTime),
           stringCloseTime: formatTimePicker(values.stringCloseTime),
-          dayOfWeek: dOW,
+          dayOfWeek: days.join('-'),
           ward: objWard,
           district: objDistrict,
           city: objCity,
@@ -368,7 +369,7 @@ const DetailPoiPage = () => {
   return (
     <>
       <CustomBreadCumb props={breadCumbData} />
-      {currentItem ? (
+      {currentItem && days ? (
         <Row style={{ padding: 10 }}>
           <Col span={24}>
             <Card title="Basic Information">
@@ -393,226 +394,281 @@ const DetailPoiPage = () => {
                     currentItem.closeTime.minutes,
                     currentItem.closeTime.seconds
                   ),
-                  dayOfWeek: currentItem.dayOfWeek,
+                  dayOfWeek: days,
                   ward: currentItem.ward,
                   district: currentItem.district,
                   city: currentItem.city,
                   address: currentItem.address,
+                  thumbnail: {
+                    uid: "abc",
+                    name: "logo",
+                    status: "done",
+                    url: currentItem.thumbnail.link,
+                  },
                   poicategoryId: currentItem.poicategoryId,
                 }}
               >
-                <Form.Item
-                  name="name"
-                  label={t("name")}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_NAME,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="description"
-                  label="Description"
-                  rules={[
-                    {
-                      validator(values) {
-                        if (description === null || description === "") {
-                          return Promise.reject("Please input description");
-                        }
-                        return Promise.resolve();
-                      },
-                    },
-                  ]}
-                >
-                  <Editor
-                    value={currentItem.description}
-                    onTextChange={(e) => setDescription(e.htmlValue)}
-                    style={{ height: "250px" }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="stringOpenTime"
-                  label={t("timestart")}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_TIME_START,
-                    },
-                  ]}
-                >
-                  <TimePicker allowClear={false} format="HH:mm" />
-                </Form.Item>
-                <Form.Item
-                  name="stringCloseTime"
-                  label={t("timeend")}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_TIME_END,
-                    },
-                  ]}
-                >
-                  <TimePicker allowClear={false} format="HH:mm" />
-                </Form.Item>
-                <Form.Item
-                  name="dayOfWeek"
-                  label={t("dayofweek")}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_CHECKBOX_DATE_OF_WEEK,
-                    },
-                  ]}
-                >
-                  <Checkbox.Group style={{ width: "100%" }} onChange={{}}>
-                    <Row>
-                      <Col span={8}>
-                        <Checkbox value="Monday">{t("monday")}</Checkbox>
+                <Row>
+                  <Col span={11}>
+                    <Form.Item
+                      labelCol={{ span: 4 }}
+                      wrapperCol={{ span: 20 }}
+                      name="name"
+                      label={t("name")}
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_INPUT_NAME,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Row style={{ marginLeft: -7 }}>
+                      <Col span={11} offset={1} >
+                        <Form.Item
+                          name="stringOpenTime"
+                          labelCol={{ span: 7 }}
+                          wrapperCol={{ span: 16 }}
+                          label={t("timestart")}
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_SELECT_TIME_START,
+                            },
+                          ]}
+                        >
+                          <TimePicker allowClear={false} format="HH:mm" style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
+                          name="poicategoryId"
+                          labelCol={{ span: 7 }}
+                          wrapperCol={{ span: 16 }}
+                          label="Category"
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_SELECT_CATEGORY,
+                            },
+                          ]}
+                        >
+                          <Select>
+                            {listPoiCategories.map((categories) => (
+                              <Option value={categories.id}>{categories.name}</Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+
                       </Col>
-                      <Col span={8}>
-                        <Checkbox value="Tuesday">{t("tuesday")}</Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="Wednesday">{t("wednesday")}</Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="Thursday">{t("thursday")}</Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="Friday">{t("friday")}</Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="Saturday">{t("saturday")}</Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="Sunday">{t("sunday")}</Checkbox>
+                      <Col span={12}>
+                        <Form.Item
+                          name="stringCloseTime"
+                          label={t("timeend")}
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_SELECT_TIME_END,
+                            },
+                          ]}
+                        >
+                          <TimePicker allowClear={false} format="HH:mm" style={{ width: "100%" }} />
+                        </Form.Item>
+
+                        <Form.Item
+                          name="dayOfWeek"
+                          label={t("dayofweek")}
+                          wrapperCol={{ span: 16 }}
+                          labelCol={{ span: 8 }}
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_CHECKBOX_DATE_OF_WEEK,
+                            },
+                          ]}
+                        >
+                          {days ?
+                            <Select
+                              mode="multiple"
+                              style={{ width: '100%' }}
+                              placeholder="Please select day"
+                              onChange={(value) => setDays(value)}
+                            >
+                              <Option key={1} value="Monday">{t("monday")}</Option>
+                              <Option key={2} value="Tuesday">{t("tuesday")}</Option>
+                              <Option key={3} value="Wednesday">{t("wednesday")}</Option>
+                              <Option key={4} value="Thursday">{t("thursday")}</Option>
+                              <Option key={5} value="Friday">{t("friday")}</Option>
+                              <Option key={6} value="Saturday">{t("saturday")}</Option>
+                              <Option key={7} value="Sunday">{t("sunday")}</Option>
+                            </Select>
+                            : <Spin />}
+                        </Form.Item>
+
                       </Col>
                     </Row>
-                  </Checkbox.Group>
-                </Form.Item>
-                <Form.Item
-                  name="address"
-                  label="Address"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_ADDRESS,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="city"
-                  label="Province"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_PROVINCE,
-                    },
-                  ]}
-                >
-                  <Select name="selectProvince" onChange={handleProvinceChange}>
-                    {listProvinces
-                      ? listProvinces.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
-                      : null}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name="district"
-                  label="District"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_DISTRICT,
-                    },
-                  ]}
-                >
-                  <Select
-                    name="selectDistricts"
-                    onChange={handleDistrictChange}
-                  >
-                    {listDistrictsInForm
-                      ? listDistrictsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
-                      : null}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name="ward"
-                  label="Ward"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_WARD,
-                    },
-                  ]}
-                >
-                  <Select name="selectWards">
-                    {listWardsInForm
-                      ? listWardsInForm.map((item) => (
-                          <Option key={item.code} value={item.code}>
-                            {item.name}
-                          </Option>
-                        ))
-                      : null}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  name="poicategoryId"
-                  label="Category"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_CATEGORY,
-                    },
-                  ]}
-                >
-                  <Select defaultValue={{}}>
-                    {listPoiCategories.map((categories) => (
-                      <Option value={categories.id}>{categories.name}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item name="thumbnail" label="Logo">
-                  <Upload
-                    action={FILE_UPLOAD_URL}
-                    listType="picture"
-                    maxCount={1}
-                    accept={ACCEPT_IMAGE}
-                    beforeUpload={beforeUpload}
-                    onChange={onChangeThumbnail}
-                    defaultFileList={[
-                      {
-                        uid: "abc",
-                        name: "thumbnail",
-                        status: "done",
-                        url: currentItem.thumbnail.link,
-                      },
-                    ]}
-                  >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
-                  </Upload>
-                </Form.Item>
-                <Form.Item {...tailFormItemLayout}>
-                  {isLoadingBasic ? (
-                    <Spin />
-                  ) : (
-                    <Button type="primary" htmlType="submit">
-                      Update
-                    </Button>
-                  )}
-                </Form.Item>
+                    <Form.Item
+                      name="address"
+                      labelCol={{ span: 4 }}
+                      wrapperCol={{ span: 20 }}
+                      label="Address"
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_INPUT_ADDRESS,
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                    <Row style={{ marginLeft: -7 }}>
+                      <Col span={11} offset={1}>
+                        <Form.Item
+                          name="city"
+                          labelCol={{ span: 7 }}
+                          wrapperCol={{ span: 18 }}
+                          label="Province"
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_INPUT_PROVINCE,
+                            },
+                          ]}
+                        >
+                          <Select name="selectProvince" onChange={handleProvinceChange}>
+                            {listProvinces
+                              ? listProvinces.map((item) => (
+                                <Option key={item.code} value={item.code}>
+                                  {item.name}
+                                </Option>
+                              ))
+                              : null}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item
+                          name="thumbnail"
+                          labelCol={{ span: 7 }}
+                          wrapperCol={{ span: 16 }}
+                          label="Logo"
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_UPLOAD_LOGO,
+                            },
+                          ]}
+                        >
+                          <Upload
+                            action={FILE_UPLOAD_URL}
+                            listType="picture"
+                            maxCount={1}
+                            accept={ACCEPT_IMAGE}
+                            beforeUpload={beforeUpload}
+                            onChange={onChangeThumbnail}
+                            defaultFileList={[
+                              {
+                                uid: "abc",
+                                name: "thumbnail",
+                                status: "done",
+                                url: currentItem.thumbnail.link,
+                              },
+                            ]}
+                          >
+                            <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                          </Upload>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item
+                          name="district"
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label="District"
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_INPUT_DISTRICT,
+                            },
+                          ]}
+                        >
+                          <Select name="selectDistricts" onChange={handleDistrictChange}>
+                            {listDistrictsInForm
+                              ? listDistrictsInForm.map((item) => (
+                                <Option key={item.code} value={item.code}>
+                                  {item.name}
+                                </Option>
+                              ))
+                              : null}
+                          </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                          name="ward"
+                          labelCol={{ span: 8 }}
+                          wrapperCol={{ span: 16 }}
+                          label="Ward"
+                          rules={[
+                            {
+                              required: true,
+                              message: ERROR_INPUT_WARD,
+                            },
+                          ]}
+                        >
+                          <Select name="selectWards">
+                            {listWardsInForm
+                              ? listWardsInForm.map((item) => (
+                                <Option key={item.code} value={item.code}>
+                                  {item.name}
+                                </Option>
+                              ))
+                              : null}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="description"
+                      labelCol={{ span: 4 }}
+                      wrapperCol={{ span: 20 }}
+                      label="Description"
+                      required
+                      rules={[
+                        {
+                          validator(values) {
+                            if (description === null || description === "") {
+                              return Promise.reject("Please input description");
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <div style={{ marginLeft: 10 }}>
+                        <Editor
+                          value={currentItem.description}
+                          onTextChange={(e) => setDescription(e.htmlValue)}
+                          style={{ height: "370px" }}
+                        />
+                      </div>
+
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row align="middle" justify="center">
+                  <Form.Item >
+                    {isLoadingBasic ? (
+                      <Spin />
+                    ) : (
+                      <Button type="primary" htmlType="submit">
+                        Update
+                      </Button>
+                    )}
+                  </Form.Item>
+                </Row>
+
               </Form>
             </Card>
             <Card title="List Image">
@@ -647,20 +703,22 @@ const DetailPoiPage = () => {
                       defaultFileList={[...fileListImage]}
                     >
                       <Button icon={<UploadOutlined />}>
-                        Upload ( Max:5 )
-                      </Button>
+                        {UPLOAD_MAXIUM_5_IMAGES}
+                      </Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   </Form.Item>
                 ) : null}
-                <Form.Item {...tailFormItemLayout}>
-                  {isLoadingListImg ? (
-                    <Spin />
-                  ) : (
-                    <Button type="primary" htmlType="submit">
-                      Update
-                    </Button>
-                  )}
-                </Form.Item>
+                <Row align="middle" justify="center">
+                  <Form.Item >
+                    {isLoadingListImg ? (
+                      <Spin />
+                    ) : (
+                      <Button type="primary" htmlType="submit">
+                        Update
+                      </Button>
+                    )}
+                  </Form.Item>
+                </Row>
               </Form>
             </Card>
             <Card title="Banner">
@@ -673,7 +731,10 @@ const DetailPoiPage = () => {
                 labelCol={{ span: 2 }}
                 wrapperCol={{ span: 20 }}
               >
-                <Form.Item name="banner" label="Banner">
+                <Form.Item
+                  name="banner"
+                  label="Banner"
+                >
                   {currentItem.banner ? (
                     <Upload
                       action={FILE_UPLOAD_URL}
@@ -690,7 +751,7 @@ const DetailPoiPage = () => {
                         },
                       ]}
                     >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
+                      <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   ) : (
                     <Upload
@@ -704,16 +765,17 @@ const DetailPoiPage = () => {
                     </Upload>
                   )}
                 </Form.Item>
-
-                <Form.Item {...tailFormItemLayout}>
-                  {isLoadingBanner === false ? (
-                    <Button type="primary" htmlType="submit">
-                      Update
-                    </Button>
-                  ) : (
-                    <Spin />
-                  )}
-                </Form.Item>
+                <Row align="middle" justify="center">
+                  <Form.Item >
+                    {isLoadingBanner === false ? (
+                      <Button type="primary" htmlType="submit">
+                        Update
+                      </Button>
+                    ) : (
+                      <Spin />
+                    )}
+                  </Form.Item>
+                </Row>
               </Form>
             </Card>
           </Col>

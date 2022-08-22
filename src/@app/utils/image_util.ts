@@ -1,14 +1,17 @@
 import { toast } from "react-toastify";
+import { ACCEPT_IMAGE } from "../../kiosk_portal/constants/accept_file";
 
-export const  beforeUpload = (file:any) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-    if (!isJpgOrPng) {
-      toast.error("You can only upload JPG/PNG file!");
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      toast.error("Image must smaller than 2MB!");
-    }
+export const beforeUpload = (file: any) => {
+  let imageType = file.type.replace("image/", '');
+  let isAcceptedType = ACCEPT_IMAGE.includes(imageType);
+  if (!isAcceptedType) {
+    toast.error("You can only upload JPG/PNG file!");
+  }
+  const isLt5M = file.size / 1024 / 1024 < 5;
+  if (!isLt5M) {
+    toast.error("Image must smaller than 5MB!");
+  }
 
-    return isJpgOrPng && isLt2M;
-  };
+  return isAcceptedType && isLt5M;
+};
+

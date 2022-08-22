@@ -144,8 +144,9 @@ const ProfilePage = () => {
                   form={formProfile}
                   name="register"
                   scrollToFirstError
-                  labelCol={{ span: 2 }}
-                  wrapperCol={{ span: 22 }}
+                  labelCol={{ span: 2, offset: 7 }}
+                  wrapperCol={{ span: 6 }}
+                  offs
                   onFinish={onFinishUpdateProfile}
                   initialValues={{
                     firstName: party.firstName,
@@ -256,8 +257,8 @@ const ProfilePage = () => {
                   validateMessages={validateMessages}
                   {...formItemLayout}
                   onFinish={onFinishUpdatePassword}
-                  labelCol={{ span: 2 }}
-                  wrapperCol={{ span: 22 }}
+                  labelCol={{ span: 2, offset: 7 }}
+                  wrapperCol={{ span: 6 }}
                 >
                   <Form.Item
                     label="Old Password"

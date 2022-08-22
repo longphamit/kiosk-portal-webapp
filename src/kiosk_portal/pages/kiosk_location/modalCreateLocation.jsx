@@ -15,7 +15,9 @@ import {
   ERROR_INPUT_NAME,
   ERROR_REGREX_HOT_LINE,
   ERROR_UPLOAD_LIST_IMG,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 export const formItemLayout = {
   labelCol: {
@@ -169,7 +171,7 @@ const ModalCreateLocation = ({
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
+              <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>{ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
           <Form.Item

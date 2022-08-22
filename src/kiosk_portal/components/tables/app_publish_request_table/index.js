@@ -112,13 +112,13 @@ const AppPublishRequestTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === PUBLISH_APPROVED ? (
-          <Tag color={"green"}>AVAILABLE</Tag>
+          <Tag color={"green"}>Approved</Tag>
         ) : record.status === PUBLISH_IN_PROGRESS ? (
-          <Tag color={"blue"}>PENDING</Tag>
+          <Tag color={"blue"}>Pending</Tag>
         ) : record.status === PUBLISH_DENIED ? (
-          <Tag color={"red"}>UNAVAILABLE</Tag>
+          <Tag color={"red"}>Denied</Tag>
         ) : record.status === PUBLISH_CANCEL ? (
-          <Tag color={"grey"}>CANCELED</Tag>
+          <Tag color={"grey"}>Cancelled</Tag>
         ) :
           (
             <></>
