@@ -23,6 +23,8 @@ export const EVENT_MANAGER_LABEL = 'Event'
 
 export const EVENT_CREATING_LABEL = 'Event Creating'
 
+export const POI_CREATING_LABEL = "POI Creating"
+
 export const EVENT_DETAILS_HREF = ''
 export const EVENT_DETAILS_LABEL = 'Event Details'
 

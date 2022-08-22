@@ -32,6 +32,8 @@ export const EVENT_PATH = "/event"
 
 export const POI_PATH = "/poi"
 
+export const POI_CREATING_PATH = '/poi/create'
+
 export const KIOSK_LOCATION_PATH = "/kiosk-location"
 
 export const LOCATION_PATH = "/location"
