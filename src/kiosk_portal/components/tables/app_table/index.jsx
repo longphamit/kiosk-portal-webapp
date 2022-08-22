@@ -542,11 +542,11 @@ const ApplicationTable = ({ partyId }) => {
       key: "status",
       render: (text, record, dataIndex) =>
         record.status === "available" ? (
-          <Tag color="green">Available</Tag>
+          <Tag color="green">Approved</Tag>
         ) : record.status === "pending" ? (
           <Tag color="blue">Pending</Tag>
         ) : (
-          <Tag color="red">Unavailable</Tag>
+          <Tag color="red">Denied</Tag>
         ),
     },
 
@@ -715,8 +715,8 @@ const ApplicationTable = ({ partyId }) => {
                 <Form.Item name="status" style={{ marginTop: 5 }}>
                   <Select defaultValue="">
                     <Option value="">All status</Option>
-                    <Option value="available">Available</Option>
-                    <Option value="unavailable">Unavailable</Option>
+                    <Option value="available">Approved</Option>
+                    <Option value="unavailable">Denied</Option>
                   </Select>
                 </Form.Item>
               </Col>
