@@ -170,7 +170,7 @@ const PoiCategory = () => {
             size={"large"}
             onClick={() => showModal("create")}
           >
-            <PlusOutlined /> Poi category
+            <PlusOutlined /> POI category
           </Button>
         </Col>
       </Row>

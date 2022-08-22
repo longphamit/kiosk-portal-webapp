@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import {
   ACCOUNT_MANAGER_PATH, APPLICATION_MARKET_PATH, APP_CATEGORY_MANAGER_PATH,
-  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH,
-  KIOSK_MANAGER_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_MANAGER_PATH, SCHEDULE_MANAGER_PATH,
+  APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EDIT_TEMPLATE_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, EVENT_PATH, HOME_PAGE_PATH,
+  KIOSK_LOCATION_PATH,
+  KIOSK_MANAGER_PATH, LOCATION_PATH, MY_APPLICATION_PATH, POI_CATEGORY_MANAGER_PATH, POI_CREATING_PATH, POI_MANAGER_PATH, POI_PATH, PROFILE_PATH, SCHEDULE_MANAGER_PATH,
   TEMPLATE_MANAGER_PATH
 } from "../../kiosk_portal/constants/path_constants";
 import AccountManagerPage from "../../kiosk_portal/pages/account";
@@ -22,6 +23,7 @@ import KioskLocationPage from "../../kiosk_portal/pages/kiosk_location";
 import DetailLocationPage from "../../kiosk_portal/pages/kiosk_location/locationDetail";
 import MyApplicationPage from "../../kiosk_portal/pages/my_application";
 import PoiPage from "../../kiosk_portal/pages/poi";
+import { POICreatePage } from "../../kiosk_portal/pages/poi/poi_create";
 import DetailPoiPage from "../../kiosk_portal/pages/poi/poi_detail";
 import PoiCategory from "../../kiosk_portal/pages/poi_category";
 import ProfilePage from "../../kiosk_portal/pages/profile";
@@ -197,7 +199,7 @@ const routes: Route[] = [
   },
   {
     component: EditTemplatePage,
-    path: "/edit-template",
+    path: EDIT_TEMPLATE_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -224,7 +226,7 @@ const routes: Route[] = [
   },
   {
     component: EventDetailsPage,
-    path: "/event",
+    path: EVENT_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -233,7 +235,7 @@ const routes: Route[] = [
   },
   {
     component: DetailPoiPage,
-    path: "/poi",
+    path: POI_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -260,7 +262,7 @@ const routes: Route[] = [
   },
   {
     component: KioskLocationPage,
-    path: "/kiosk-location",
+    path: KIOSK_LOCATION_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -269,7 +271,7 @@ const routes: Route[] = [
   },
   {
     component: DetailLocationPage,
-    path: "/location",
+    path: LOCATION_PATH,
     isLayout: true,
     layout: AuthenLayout,
     authen: true,
@@ -304,12 +306,21 @@ const routes: Route[] = [
   },
   {
     component: ProfilePage,
-    path: "/profile",
+    path: PROFILE_PATH,
     isLayout: true,
     authen: true,
-    layout:AuthenLayout,
+    layout: AuthenLayout,
     breadcrumb: "",
-    roles: [ROLE_LOCATION_OWNER,ROLE_SERVICE_PROVIDER,ROLE_ADMIN]
+    roles: [ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER, ROLE_ADMIN]
+  },
+  {
+    component: POICreatePage,
+    path: POI_CREATING_PATH,
+    isLayout: true,
+    authen: true,
+    layout: AuthenLayout,
+    breadcrumb: "",
+    roles: [ROLE_LOCATION_OWNER, ROLE_ADMIN]
   },
 ];
 

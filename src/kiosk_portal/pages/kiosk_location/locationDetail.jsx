@@ -37,7 +37,9 @@ import {
   ERROR_REGREX_PHONE_NUMBER,
   ERROR_UPLOAD_LIST_IMG,
   UPDATE_SUCCESS,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 
 const DetailLocationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -288,8 +290,8 @@ const DetailLocationPage = () => {
                     >
 
                       <Button icon={<UploadOutlined />}>
-                        Upload ( Max:5 )
-                      </Button>
+                       {UPLOAD_MAXIUM_5_IMAGES}
+                      </Button>{ImageLimitSizeTooltip()}
                     </Upload>
                   </Form.Item>
                 ) : null}

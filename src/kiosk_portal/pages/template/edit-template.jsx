@@ -1,4 +1,4 @@
-import { Col, Modal, Row, Select, Skeleton } from "antd";
+import { Col, Divider, Modal, Row, Select, Skeleton } from "antd";
 import { useState, useEffect } from "react";
 import "./styles.css"
 import { toast } from "react-toastify";
@@ -238,6 +238,7 @@ const EditTemplatePage = () => {
         {eventComponents && categoryComponents && currentTemplate && !isLoading ?
             <>
                 <TemplateBasicInfo currentTemplate={currentTemplate} />
+                <Divider style={{ height: 10}}><label style={{ fontWeight: 'bold', fontSize: 20 }}>Customize layout</label></Divider>
                 <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
                     <Row>
                         <Col span={8} >

@@ -60,8 +60,12 @@ import {
   ERROR_SELECT_TIME_END,
   ERROR_SELECT_TIME_START,
   ERROR_UPLOAD_LIST_IMG,
+  ERROR_UPLOAD_LOGO,
   UPDATE_SUCCESS,
+  UPLOAD_MAXIUM_5_IMAGES,
 } from "../../../@app/constants/message";
+import { customSort } from "../../../@app/utils/sort";
+import { ImageLimitSizeTooltip } from "../../../@app/components/image/image_extra_label";
 const { TextArea } = Input;
 const CITY_TYPE = "CITY";
 const WARD_TYPE = "WARD";
@@ -104,8 +108,8 @@ export const EventDetailsPage = () => {
 
       (res.data.type === TYPE_LOCAL &&
         localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) ||
-      (res.data.type === TYPE_SERVER &&
-        localStorageGetReduxState().auth.role === ROLE_ADMIN)
+        (res.data.type === TYPE_SERVER &&
+          localStorageGetReduxState().auth.role === ROLE_ADMIN)
         ? setDisable(false)
         : setDisable(true);
 
@@ -113,19 +117,19 @@ export const EventDetailsPage = () => {
       console.log(res.data);
       setDescription(res.data.description);
       const resProvinces = await getListProvinceService();
-      setProviceOptions(resProvinces.data);
+      setProviceOptions(customSort(resProvinces.data));
       //set up init list district
       let codeProvince = resProvinces.data.find(
         (element) => element.name === res.data.city
       ).code;
       const resDistrict = await getListDistrictService(codeProvince);
-      setDistrictOptions(resDistrict.data);
+      setDistrictOptions(customSort(resDistrict.data));
       //set up init list ward
       let codeDistrict = resDistrict.data.find(
         (element) => element.name === res.data.district
       ).code;
       const resWard = await getListWardService(codeDistrict);
-      setWardOptions(resWard.data);
+      setWardOptions(customSort(resWard.data));
 
       let list = [];
       await Promise.all(
@@ -401,231 +405,273 @@ export const EventDetailsPage = () => {
                 ],
               }}
             >
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_NAME,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                label="Time start"
-                style={{ marginBottom: 0 }}
-                rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
-              >
-                <Form.Item
-                  name="dateStart"
-                  style={{ display: "inline-block", width: "calc(50% - 8px)" }}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_DATE_START,
-                    },
-                  ]}
-                >
-                  <DatePicker
-                    placeholder="Select date"
-                    format="DD/MM/YYYY"
-                    allowClear={false}
-                    className="disable-input"
-                    style={{
-                      height: "auto",
-                      width: "100%",
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="timeStart"
-                  style={{
-                    display: "inline-block",
-                    width: "calc(50% - 8px)",
-                    margin: "0px 0px 5px 15px",
-                  }}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_TIME_START,
-                    },
-                  ]}
-                >
-                  <TimePicker
-                    allowClear={false}
-                    format="HH:mm"
-                    style={{ width: "100%" }}
-                    className="disable-input"
-                  />
-                </Form.Item>
-              </Form.Item>
-              <Form.Item
-                label="Time end"
-                style={{ marginBottom: 0 }}
-                rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
-              >
-                <Form.Item
-                  name="dateEnd"
-                  style={{ display: "inline-block", width: "calc(50% - 8px)" }}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_DATE_END,
-                    },
-                  ]}
-                >
-                  <DatePicker
-                    placeholder="Select date"
-                    format="DD/MM/YYYY"
-                    allowClear={false}
-                    className="disable-input"
-                    style={{
-                      height: "auto",
-                      width: "100%",
-                    }}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="timeEnd"
-                  style={{
-                    display: "inline-block",
-                    width: "calc(50% - 8px)",
-                    margin: "0px 0px 5px 15px",
-                  }}
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_TIME_END,
-                    },
-                  ]}
-                >
-                  <TimePicker
-                    allowClear={false}
-                    format="HH:mm"
-                    style={{ width: "100%" }}
-                    className="disable-input"
-                  />
-                </Form.Item>
-              </Form.Item>
-              <Form.Item
-                name="city"
-                allowClear={false}
-                label="Province"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_PROVINCE,
-                  },
-                ]}
-              >
-                <Select
-                  defaultValue={proviceOptions[0]}
-                  onChange={loadDistrict}
-                  allowClear={false}
-                  className="disable-input"
-                >
-                  {proviceOptions.map((province) => (
-                    <Option key={province.code}>{province.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="district"
-                allowClear={false}
-                label="District"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_DISTRICT,
-                  },
-                ]}
-              >
-                <Select className="disable-input" onChange={onDistrictChange}>
-                  {districtOptions.map((district) => (
-                    <Option key={district.code}>{district.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                allowClear={false}
-                name="ward"
-                label="Ward"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_WARD,
-                  },
-                ]}
-              >
-                <Select>
-                  {wardOptions.map((ward) => (
-                    <Option key={ward.code}>{ward.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="address"
-                label="Address"
-                rules={[
-                  {
-                    required: true,
-                    message: ERROR_INPUT_ADDRESS,
-                  },
-                ]}
-              >
-                <TextArea />
-              </Form.Item>
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  {
-                    validator(values) {
-                      if (description === null || description === "") {
-                        return Promise.reject("Please input description");
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <Editor
-                  value={currentEvent.description}
-                  onTextChange={(e) => setDescription(e.htmlValue)}
-                  style={{ height: "250px" }}
-                />
-              </Form.Item>
+              <Row>
+                <Col span={11}>
+                  <Form.Item
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 20 }}
+                    name="name"
+                    label={'Name'}
+                    rules={[
+                      {
+                        required: true,
+                        message: ERROR_INPUT_NAME,
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    label="Time start"
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 20 }}
+                    style={{ marginBottom: 0 }}
+                    rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
+                  >
+                    <Form.Item
+                      name="dateStart"
+                      style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_SELECT_DATE_START,
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        placeholder="Select date"
+                        format="DD/MM/YYYY"
+                        allowClear={false}
+                        className="disable-input"
+                        style={{
+                          height: "auto",
+                          width: "100%",
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="timeStart"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(50% - 8px)",
+                        margin: "0px 0px 5px 15px",
+                      }}
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_SELECT_TIME_START,
+                        },
+                      ]}
+                    >
+                      <TimePicker
+                        allowClear={false}
+                        format="HH:mm"
+                        style={{ width: "100%" }}
+                        className="disable-input"
+                      />
+                    </Form.Item>
+                  </Form.Item>
+                  <Form.Item
+                    label="Time end"
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 20 }}
+                    style={{ marginBottom: 0 }}
+                    rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
+                  >
+                    <Form.Item
+                      name="dateEnd"
+                      style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_SELECT_DATE_END,
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        placeholder="Select date"
+                        format="DD/MM/YYYY"
+                        allowClear={false}
+                        className="disable-input"
+                        style={{
+                          height: "auto",
+                          width: "100%",
+                        }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="timeEnd"
+                      style={{
+                        display: "inline-block",
+                        width: "calc(50% - 8px)",
+                        margin: "0px 0px 5px 15px",
+                      }}
+                      rules={[
+                        {
+                          required: true,
+                          message: ERROR_SELECT_TIME_END,
+                        },
+                      ]}
+                    >
+                      <TimePicker
+                        allowClear={false}
+                        format="HH:mm"
+                        style={{ width: "100%" }}
+                        className="disable-input"
+                      />
+                    </Form.Item>
+                  </Form.Item>
+                  <Form.Item
+                    name="address"
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 20 }}
+                    label="Address"
+                    rules={[
+                      {
+                        required: true,
+                        message: ERROR_INPUT_ADDRESS,
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Row style={{ marginLeft: 0 }}>
+                    <Col span={12} >
+                      <Form.Item
+                        name="city"
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        allowClear={false}
+                        label="Province"
+                        rules={[
+                          {
+                            required: true,
+                            message: ERROR_INPUT_PROVINCE,
+                          },
+                        ]}
+                      >
+                        <Select
+                          defaultValue={proviceOptions[0]}
+                          onChange={loadDistrict}
+                          allowClear={false}
+                          className="disable-input"
+                        >
+                          {proviceOptions.map((province) => (
+                            <Option key={province.code}>{province.name}</Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
 
-              <Form.Item
-                name="thumbnail"
-                label="Logo"
-                getValueFromEvent={normFile}
-              >
-                <Upload
-                  action={FILE_UPLOAD_URL}
-                  listType="picture"
-                  maxCount={1}
-                  disabled={isDisbale}
-                  accept={ACCEPT_IMAGE}
-                  beforeUpload={beforeUpload}
-                  defaultFileList={[
-                    {
-                      uid: "abc",
-                      name: "thumbnail",
-                      status: "done",
-                      url: currentEvent.thumbnail.link,
-                    },
-                  ]}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </Form.Item>
+                      <Form.Item
+                        name="thumbnail"
+                        label="Logo"
+                        rules={[
+                          {
+                            required: true,
+                            message: ERROR_UPLOAD_LOGO,
+                          },
+                        ]}
+                        labelCol={{ span: 8 }}
+                        wrapperCol={{ span: 16 }}
+                        getValueFromEvent={normFile}
+                      >
+                        <Upload
+                          action={FILE_UPLOAD_URL}
+                          listType="picture"
+                          maxCount={1}
+                          disabled={isDisbale}
+                          accept={ACCEPT_IMAGE}
+                          beforeUpload={beforeUpload}
+                          defaultFileList={[
+                            {
+                              uid: "abc",
+                              name: "thumbnail",
+                              status: "done",
+                              url: currentEvent.thumbnail.link,
+                            },
+                          ]}
+                        >
+                          <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                        </Upload>
+                      </Form.Item>
+                    </Col>
+                    <Col span={11} offset={1}>
+                      <Form.Item
+                        name="district"
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
+                        allowClear={false}
+                        label="District"
+                        rules={[
+                          {
+                            required: true,
+                            message: ERROR_INPUT_DISTRICT,
+                          },
+                        ]}
+                      >
+                        <Select className="disable-input" onChange={onDistrictChange}>
+                          {districtOptions.map((district) => (
+                            <Option key={district.code}>{district.name}</Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                      <Form.Item
+                        allowClear={false}
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
+                        name="ward"
+                        label="Ward"
+                        rules={[
+                          {
+                            required: true,
+                            message: ERROR_INPUT_WARD,
+                          },
+                        ]}
+                      >
+                        <Select>
+                          {wardOptions.map((ward) => (
+                            <Option key={ward.code}>{ward.name}</Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="description"
+                    labelCol={{ span: 4 }}
+                    wrapperCol={{ span: 20 }}
+                    label="Description"
+                    rules={[
+                      {
+                        validator(values) {
+                          if (description === null || description === "") {
+                            return Promise.reject("Please input description");
+                          }
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    <div style={{ marginLeft: 10 }}>
+                      <Editor
+                        value={currentEvent.description}
+                        onTextChange={(e) => setDescription(e.htmlValue)}
+                        style={{ height: "250px" }}
+                      />
+                    </div>
+                  </Form.Item>
+
+                </Col>
+              </Row>
+
+
+
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -655,6 +701,7 @@ export const EventDetailsPage = () => {
               wrapperCol={{ span: 20 }}
               layout="horizontal"
             >
+
               <Form.Item
                 name="listImage"
                 label="List Image"
@@ -666,25 +713,27 @@ export const EventDetailsPage = () => {
                 ]}
               >
                 {fileListImage ? (
-                  <Upload
-                    action={FILE_UPLOAD_URL}
-                    listType="picture"
-                    maxCount={5}
-                    accept={ACCEPT_IMAGE}
-                    multiple
-                    disabled={isDisbale}
-                    beforeUpload={beforeUpload}
-                    onChange={() => setUpdateListImage(true)}
-                    defaultFileList={[...fileListImage]}
-                  >
-                    <Button icon={<UploadOutlined />}>Upload ( Max:5 )</Button>
-                  </Upload>
+                  <>
+                    <Upload
+                      action={FILE_UPLOAD_URL}
+                      listType="picture"
+                      maxCount={5}
+                      accept={ACCEPT_IMAGE}
+                      multiple
+                      disabled={isDisbale}
+                      beforeUpload={beforeUpload}
+                      onChange={() => setUpdateListImage(true)}
+                      defaultFileList={[...fileListImage]}
+                    >
+                      <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+                      {ImageLimitSizeTooltip()}
+                    </Upload> </>
                 ) : null}
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -736,7 +785,7 @@ export const EventDetailsPage = () => {
                       },
                     ]}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                   </Upload>
                 ) : (
                   <Upload
@@ -747,14 +796,14 @@ export const EventDetailsPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                   </Upload>
                 )}
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-              (currentEvent.type === TYPE_LOCAL &&
-                localStorageGetReduxState().auth.role ===
+                (currentEvent.type === TYPE_LOCAL &&
+                  localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>

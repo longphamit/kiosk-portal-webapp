@@ -8,13 +8,13 @@ import {
   countPoiService,
 } from "../../services/dashboard_service";
 import "./styles.css";
-import { Chart } from "primereact/chart";
 import DashBoardPieChartInfor from "../../components/chart_info/pie_chart_info/dashboard_piechart_info";
 import CountPieChart from "../../components/charts/count_pie_chart";
 import { ROLE_ADMIN, ROLE_LOCATION_OWNER, ROLE_SERVICE_PROVIDER } from "../../../@app/constants/role";
 import { localStorageGetReduxState } from "../../../@app/services/localstorage_service";
 import { KioskLineChartComponent } from "./components/kiosk_line_chart_component";
 import { AdminStatisticComponent } from "./components/admin_statistic_component";
+import { CountPieChartType, EmptyPieChart } from "../../../@app/components/card/empty_pie_chart";
 const initCountValue = {
   total: 0,
   active: 0,
@@ -79,7 +79,7 @@ const HomePage = () => {
                           labels={labelCountKiosk}
                           count={countKiosk}
                         />
-                      ) : null}
+                      ) : <EmptyPieChart type={CountPieChartType.kiosk} />}
                     </div>
                     <DashBoardPieChartInfor
                       activeTitle={"Working"}
@@ -99,7 +99,7 @@ const HomePage = () => {
                       countEvent.total ? <CountPieChart
                         labels={labelCountEvent}
                         count={countEvent}
-                      /> : null
+                      /> : <EmptyPieChart type={CountPieChartType.event} />
                     }
                   </div>
                   <DashBoardPieChartInfor
@@ -118,7 +118,8 @@ const HomePage = () => {
                     <div style={{ height: 200 }}>
                       {countPoi.total ? (
                         <CountPieChart labels={lableCountPoi} count={countPoi} />
-                      ) : null}
+                      ) : <EmptyPieChart type={CountPieChartType.poi} />
+                      }
 
                     </div>
                     <DashBoardPieChartInfor
@@ -138,7 +139,7 @@ const HomePage = () => {
                     <div style={{ height: 200 }}>
                       {countApp.total ? (
                         <CountPieChart labels={lableCountApp} count={countApp} />
-                      ) : null}
+                      ) : <EmptyPieChart type={CountPieChartType.my_app} />}
                     </div>
 
                     <DashBoardPieChartInfor
@@ -161,7 +162,7 @@ const HomePage = () => {
                     <div style={{ height: 200 }}>
                       {countApp.total != 0 ? (
                         <CountPieChart labels={lableCountAppSupportProvider} count={countApp} />
-                      ) : null}
+                      ) : <EmptyPieChart type={CountPieChartType.app} />}
                     </div>
 
                     <DashBoardPieChartInfor
