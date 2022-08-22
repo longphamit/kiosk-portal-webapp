@@ -298,7 +298,7 @@ const DetailPoiPage = () => {
           city: objCity,
           address: values.address,
           poicategoryId: values.poicategoryId,
-          thumbnailId: valueLogo === "" ? null : currentItem.thumbnail.id,
+          thumbnailId: currentItem.thumbnail.id,
           thumbnail: valueLogo,
         };
         await updatePoiBasicService(updatePoi).then(() => {
