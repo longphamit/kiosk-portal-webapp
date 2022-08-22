@@ -121,9 +121,9 @@ const MyApplicationPage = () => {
       key: "serviceApplicationStatus",
       render: (text, record, dataIndex) =>
         record.serviceApplicationStatus === "available" ? (
-          <Tag color={"green"}>Available</Tag>
+          <Tag color={"green"}>Installed</Tag>
         ) : (
-          <Tag color={"red"}>Unavailable</Tag>
+          <Tag color={"red"}>Uninstalled</Tag>
         ),
     },
 
