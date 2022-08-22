@@ -47,6 +47,6 @@ export const ERROR_UPLOAD_LOGO_CATE = "Please choose logo !"
 export const UPDATE_SUCCESS = "Update success"
 export const DELETE_SUCCESS = "Delete success"
 export const CREATE_SUCCESS = "Create success"
-export const UPLOAD_MAXIUM_5_IMAGES = "Upload (Maximum 5 images)"
+export const UPLOAD_MAXIUM_5_IMAGES = "Upload (Max 5 images)"
 
 

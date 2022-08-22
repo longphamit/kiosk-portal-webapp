@@ -796,7 +796,7 @@ export const EventDetailsPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
                   </Upload>
                 )}
               </Form.Item>
