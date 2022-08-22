@@ -7,6 +7,8 @@ import {
   TimePicker,
   Upload,
   Spin,
+  Row,
+  Col,
 } from "antd";
 
 import { Option } from "antd/lib/mentions";
@@ -189,260 +191,298 @@ export const EventCreatingPage = () => {
         labelCol={{ span: 2 }}
         wrapperCol={{ span: 20 }}
       >
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[
-            {
-              required: true,
-              message: ERROR_INPUT_NAME,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Time start"
-          rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
-          style={{ marginBottom: 0 }}
-        >
-          <Form.Item
-            name="dateStart"
-            style={{ display: "inline-block", width: "calc(50% - 8px)" }}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_DATE_START,
-              },
-            ]}
-          >
-            <DatePicker
-              placeholder="Select date"
-              format="DD/MM/YYYY"
-              allowClear={false}
-              style={{
-                height: "auto",
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="timeStart"
-            style={{
-              display: "inline-block",
-              width: "calc(50% - 8px)",
-              margin: "0px 0px 5px 15px",
-            }}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_TIME_START,
-              },
-            ]}
-          >
-            <TimePicker
-              allowClear={false}
-              format="HH:mm"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-        </Form.Item>
-        <Form.Item
-          label="Time end"
-          rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
-          style={{ marginBottom: 0 }}
-        >
-          <Form.Item
-            name="dateEnd"
-            style={{ display: "inline-block", width: "calc(50% - 8px)" }}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_DATE_END,
-              },
-            ]}
-          >
-            <DatePicker
-              placeholder="Select date"
-              format="DD/MM/YYYY"
-              allowClear={false}
-              style={{
-                height: "auto",
-                width: "100%",
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="timeEnd"
-            style={{
-              display: "inline-block",
-              width: "calc(50% - 8px)",
-              margin: "0px 0px 5px 15px",
-            }}
-            rules={[
-              {
-                required: true,
-                message: ERROR_SELECT_TIME_END,
-              },
-            ]}
-          >
-            <TimePicker
-              allowClear={false}
-              format="HH:mm"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-        </Form.Item>
+        <Row>
+          <Col span={11}>
+            <Form.Item
+              name="name"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              label="Name"
+              rules={[
+                {
+                  required: true,
+                  message: ERROR_INPUT_NAME,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Time start"
+              labelCol={{ span: 4 }}
+              style={{ marginBottom: 0 }}
+              wrapperCol={{ span: 20 }}
+              rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
+            >
+              <Form.Item
+                name="dateStart"
+                style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_DATE_START,
+                  },
+                ]}
+              >
+                <DatePicker
+                  placeholder="Select date"
+                  format="DD/MM/YYYY"
+                  allowClear={false}
+                  style={{
+                    height: "auto",
+                    width: "100%",
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="timeStart"
+                style={{
+                  display: "inline-block",
+                  width: "calc(50% - 8px)",
+                  margin: "0px 0px 0px 15px",
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_TIME_START,
+                  },
+                ]}
+              >
+                <TimePicker
+                  allowClear={false}
+                  format="HH:mm"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Form.Item>
+            <Form.Item
+              label="Time end"
+              labelCol={{ span: 4 }}
+              style={{ marginBottom: 0 }}
+              wrapperCol={{ span: 20 }}
+              rules={[{ required: true, message: ERROR_SELECT_TIME_END }]}
+            >
+              <Form.Item
+                name="dateEnd"
+                style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_DATE_END,
+                  },
+                ]}
+              >
+                <DatePicker
+                  placeholder="Select date"
+                  format="DD/MM/YYYY"
+                  allowClear={false}
+                  style={{
+                    height: "auto",
+                    width: "100%",
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="timeEnd"
+                style={{
+                  display: "inline-block",
+                  width: "calc(50% - 8px)",
+                  margin: "0px 0px 0px 15px",
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_TIME_END,
+                  },
+                ]}
+              >
+                <TimePicker
+                  allowClear={false}
+                  format="HH:mm"
+                  style={{ width: "100%" }}
+                />
+              </Form.Item>
+            </Form.Item>
+            <Form.Item
+              name="address"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              label="Address"
+              rules={[
+                {
+                  required: true,
+                  message: ERROR_INPUT_ADDRESS,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Row style={{ marginLeft: 0 }}>
+              <Col span={12}  >
+                <Form.Item
+                  name="provice"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  label="Province"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_INPUT_PROVINCE,
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue={proviceOptions[0]}
+                    onChange={loadDistrict}
+                    allowClear
+                  >
+                    {proviceOptions.map((province) => (
+                      <Option key={province.code}>{province.name}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="thumbnail"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  label="Logo"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_UPLOAD_THUMBNAIL,
+                    },
+                  ]}
+                >
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={1}
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  name="listImage"
+                  labelCol={{ span: 7 }}
+                  wrapperCol={{ span: 17 }}
+                  label="List Image"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_UPLOAD_LIST_IMG,
+                    },
+                  ]}
+                >
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={5}
+                    multiple
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+                    {ImageLimitSizeTooltip()}
+                  </Upload>
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  name="district"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  label="District"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_INPUT_DISTRICT,
+                    },
+                  ]}
+                >
+                  <Select id="district-select" onChange={onDistrictChange}>
+                    {districtOptions.map((district) => (
+                      <Option key={district.code}>{district.name}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="ward"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  label="Ward"
+                  rules={[
+                    {
+                      required: true,
+                      message: ERROR_INPUT_WARD,
+                    },
+                  ]}
+                >
+                  <Select>
+                    {wardOptions.map((ward) => (
+                      <Option key={ward.code}>{ward.name}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="banner"
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  label="Banner"
+                >
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={1}
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                  </Upload>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="description"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              label="Description"
+              required
+              rules={[
+                {
+                  validator(values) {
+                    if (description === null || description === "") {
+                      return Promise.reject("Please input description");
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
+            >
+              <div style={{ marginLeft: 10 }}>
+                <Editor
+                  onTextChange={(e) => setDescription(e.htmlValue)}
+                  style={{ height: "370px" }}
+                />
+              </div>
 
-        <Form.Item
-          name="provice"
-          label="Province"
-          rules={[
-            {
-              required: true,
-              message: ERROR_INPUT_PROVINCE,
-            },
-          ]}
-        >
-          <Select
-            defaultValue={proviceOptions[0]}
-            onChange={loadDistrict}
-            allowClear
-          >
-            {proviceOptions.map((province) => (
-              <Option key={province.code}>{province.name}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="district"
-          label="District"
-          rules={[
-            {
-              required: true,
-              message: ERROR_INPUT_DISTRICT,
-            },
-          ]}
-        >
-          <Select id="district-select" onChange={onDistrictChange}>
-            {districtOptions.map((district) => (
-              <Option key={district.code}>{district.name}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="ward"
-          label="Ward"
-          rules={[
-            {
-              required: true,
-              message: ERROR_INPUT_WARD,
-            },
-          ]}
-        >
-          <Select>
-            {wardOptions.map((ward) => (
-              <Option key={ward.code}>{ward.name}</Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="address"
-          label="Address"
-          rules={[
-            {
-              required: true,
-              message: ERROR_INPUT_ADDRESS,
-            },
-          ]}
-        >
-          <TextArea />
-        </Form.Item>
-
-        <Form.Item
-          name="thumbnail"
-          label="Logo"
-          rules={[
-            {
-              required: true,
-              message: ERROR_UPLOAD_THUMBNAIL,
-            },
-          ]}
-        >
-          <Upload
-            action={FILE_UPLOAD_URL}
-            listType="picture"
-            maxCount={1}
-            accept={ACCEPT_IMAGE}
-            beforeUpload={beforeUpload}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
-          </Upload>
-        </Form.Item>
-        <Form.Item
-          name="listImage"
-          label="List Image"
-          rules={[
-            {
-              required: true,
-              message: ERROR_UPLOAD_LIST_IMG,
-            },
-          ]}
-        >
-          <Upload
-            action={FILE_UPLOAD_URL}
-            listType="picture"
-            maxCount={5}
-            multiple
-            accept={ACCEPT_IMAGE}
-            beforeUpload={beforeUpload}
-          >
-            <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
-            {ImageLimitSizeTooltip()}
-          </Upload>
-        </Form.Item>
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[
-            {
-              validator(values) {
-                if (description === null || description === "") {
-                  return Promise.reject("Please input description");
-                }
-                return Promise.resolve();
-              },
-            },
-          ]}
-        >
-          <Editor
-            onTextChange={(e) => setDescription(e.htmlValue)}
-            style={{ height: "300px" }}
-          />
-        </Form.Item>
-        <Form.Item
-          name="banner"
-          label="Banner"
-        >
-          <Upload
-            action={FILE_UPLOAD_URL}
-            listType="picture"
-            maxCount={1}
-            accept={ACCEPT_IMAGE}
-            beforeUpload={beforeUpload}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
-          </Upload>
-        </Form.Item>
-        <Form.Item {...tailFormItemLayout}>
-          {isLoading === false ? (
-            <Button type="primary" htmlType="submit">
-              Create Event
-            </Button>
-          ) : (
-            <Spin />
-          )}
-        </Form.Item>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row justify="center" align="middle">
+          <Form.Item >
+            {isLoading === false ? (
+              <Button type="primary" htmlType="submit">
+                Create Event
+              </Button>
+            ) : (
+              <Spin />
+            )}
+          </Form.Item>
+        </Row>
       </Form>
     </>
   );
