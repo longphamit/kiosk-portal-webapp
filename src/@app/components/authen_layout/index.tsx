@@ -24,16 +24,23 @@ import {
   ROLE_LOCATION_OWNER,
   ROLE_SERVICE_PROVIDER,
 } from "../../constants/role";
-import {
-  localStorageGetReduxState,
-} from "../../services/localstorage_service";
+import { localStorageGetReduxState } from "../../services/localstorage_service";
 
 import { useTranslation } from "react-i18next";
-import { ACCOUNT_MANAGER_PATH, EVENT_MANAGER_PATH, HOME_PAGE_PATH, POI_MANAGER_PATH, PROFILE_PATH, SCHEDULE_MANAGER_PATH, TEMPLATE_MANAGER_PATH } from "../../../kiosk_portal/constants/path_constants";
+import {
+  ACCOUNT_MANAGER_PATH,
+  EVENT_MANAGER_PATH,
+  HOME_PAGE_PATH,
+  POI_MANAGER_PATH,
+  PROFILE_PATH,
+  SCHEDULE_MANAGER_PATH,
+  TEMPLATE_MANAGER_PATH,
+} from "../../../kiosk_portal/constants/path_constants";
 
 import TimeView from "./time";
 import NotificationView from "./notification";
 import { logout } from "./components/logout_confirmation.jsx";
+import { Footer } from "antd/lib/layout/layout";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -290,6 +297,15 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
           </Content>
         </Layout>
       </Layout>
+      <Footer className="header">
+        <Row>
+          <Col span={18} />
+
+          <Col span={6}>
+            Copyright © 2022 IKFTS teams, https://tikap.cf:9930/
+          </Col>
+        </Row>
+      </Footer>
     </Layout>
   );
 };
