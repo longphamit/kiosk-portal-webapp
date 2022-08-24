@@ -25,6 +25,7 @@ import {
 import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 import { useEffect, useState } from "react";
 import { HOME_PAGE_PATH } from "../../../kiosk_portal/constants/path_constants";
+import { Footer } from "antd/lib/layout/layout";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
@@ -163,6 +164,15 @@ const LoginPage: React.FC = () => {
           </Form>
         </Col>
       </Row>
+      <Footer className="header">
+        <Row>
+          <Col span={18} />
+
+          <Col span={6}>
+            Copyright © 2022 IKFTS teams, https://tikap.cf:9930/
+          </Col>
+        </Row>
+      </Footer>
     </div>
   );
 };
