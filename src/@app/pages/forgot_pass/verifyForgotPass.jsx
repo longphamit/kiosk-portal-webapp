@@ -14,15 +14,19 @@ const VerifyForgotPassPage = () => {
   const [form] = Form.useForm();
   const [newPassword, setNewPassword] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(async () => {
     try {
       let partyId = searchParams.get("partyId");
-      let verifyCode = searchParams.get("verifyCode");
+      let verifyCode = searchParams.get("verifyCode").split("-")[0];
+      console.log(verifyCode);
+      console.log("aaaaaaaaaaaa");
       const res = await resetPasswordService(partyId, verifyCode);
       setNewPassword(res.data.newPassword);
       toast.success("Success");
     } catch (error) {
       toast.error(error.response.data.message);
+      setErrorMessage(error.response.data.message);
       setIsSuccess(false);
     }
   }, []);
@@ -83,7 +87,53 @@ const VerifyForgotPassPage = () => {
           <Col span={8} />
         </Row>
       ) : (
-        <Skeleton />
+        <Row
+          justify="center"
+          align="middle"
+          style={{ minHeight: "100vh", backgroundColor: PRIMARY_COLOR }}
+        >
+          <Col span={8} />
+          <Col span={8} className="login-form">
+            <h2
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+                fontSize: 30,
+              }}
+            >
+              Change password error
+            </h2>
+
+            {errorMessage ===
+            "Code has expired, please get another code and try again." ? (
+              <h3 style={{ textAlign: "center" }}>
+                The code only worked for five minutes. Currently the code has
+                expired, please get a new code to perform the function again
+              </h3>
+            ) : (
+              <h3 style={{ textAlign: "center" }}>{errorMessage}</h3>
+            )}
+
+            <Row span={8}>
+              <Col span={8} />
+              <Col span={8}>
+                <Form form={form} name="search">
+                  <Form.Item name="searchString" style={{ marginTop: 5 }}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      onClick={() => navigator(`/signin/`)}
+                    >
+                      Back to sign in page
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Col>
+              <Col span={8} />
+            </Row>
+          </Col>
+          <Col span={8} />
+        </Row>
       )}
     </div>
   );
