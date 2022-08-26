@@ -156,27 +156,51 @@ const EditTemplatePage = () => {
     const onSelectedTypeChange = (value) => {
         if (isChanging) {
             Modal.confirm({
-                title: "It looks like you have been editing something. \nDo you want to save it ?",
+                title: "It looks like you have been editing something.\n\nDo you want to save it ?",
                 okText: "Yes",
                 cancelText: "No",
                 onOk: async () => {
                     {
-                        try {
+                        let checkMsg = checkEmptyRow();
+                        if (checkMsg.length !== 0) {
+                            toast.warn('Save failed!\n' + checkMsg);
+                            setLoading(false);
+                            selectedType(value === SELECTED_TYPE_CATEGORY ? SELECTED_TYPE_EVENT : SELECTED_TYPE_CATEGORY);
+                        } else {
                             await save()
-                        } catch (e) {
-
                         }
                     }
                 },
             });
+            setChanging(false)
         }
-        setChanging(false)
         setSelectedType(value);
+    }
+    const checkEmptyRow = () => {
+        if (selectedType === SELECTED_TYPE_EVENT) {
+            if (eventComponents['2'].length === 0 && eventComponents['1'] === 0) {
+                return "Please add an event !";
+            }
+            if (eventComponents['1'].length === 0 && eventComponents['2'].length !== 0) {
+                return 'Do not leave the row 1 empty!\n\nMove event from the "Row 2" to the "Row 1"';
+            }
+        } else {
+            if (categoryComponents['1'].length === 0) {
+                return "Please add an application category !"
+            }
+        }
+
+        return '';
     }
 
     const save = async () => {
         setLoading(true);
-
+        let checkMsg = checkEmptyRow();
+        if (checkMsg.length !== 0) {
+            toast.warn(checkMsg);
+            setLoading(false);
+            return;
+        }
         let request = buildPositionsModelRequest(
             selectedType === SELECTED_TYPE_CATEGORY ? categoryComponents : eventComponents,
             currentTemplate.id, selectedType);
@@ -238,7 +262,7 @@ const EditTemplatePage = () => {
         {eventComponents && categoryComponents && currentTemplate && !isLoading ?
             <>
                 <TemplateBasicInfo currentTemplate={currentTemplate} />
-                <Divider style={{ height: 10}}><label style={{ fontWeight: 'bold', fontSize: 20 }}>Customize layout</label></Divider>
+                <Divider style={{ height: 10 }}><label style={{ fontWeight: 'bold', fontSize: 20 }}>Customize layout</label></Divider>
                 <div style={{ marginTop: 10, marginBottom: 10, height: 40, textTransform: 'capitalize' }} >
                     <Row>
                         <Col span={8} >
