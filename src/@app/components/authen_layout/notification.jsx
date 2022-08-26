@@ -1,23 +1,12 @@
 import { useEffect, useState } from "react";
-import {
-  List,
-  Avatar,
-  Badge,
-  Popover,
-  Divider,
-  Col,
-  Row,
-  Modal,
-} from "antd";
+import { List, Avatar, Badge, Popover, Divider, Col, Row, Modal } from "antd";
 import moment from "moment";
 import "./notification_styles.css";
 import {
   getPartyNotificationService,
   updateStatusNotificationService,
 } from "../../../kiosk_portal/services/party_notification_service";
-import {
-  BellFilled,
-} from "@ant-design/icons";
+import { BellFilled } from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
 import CustomRowItem from "../../../kiosk_portal/components/general/CustomRowItem";
 const labelCol = 4;
@@ -33,7 +22,7 @@ const NotificationView = () => {
   const [detailNotiModalVisible, setDetailNotiModalVisible] = useState(false);
   const [currentNoti, setCurrentNoti] = useState();
   useEffect(() => {
-    fetchData();
+    setInterval(() => fetchData(), 1000);
   }, []);
 
   const fetchData = async () => {
