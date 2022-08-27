@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import ApplicationPolicy from "../../kiosk_portal/components/tables/app_table/applicationPolicy";
 import {
   ACCOUNT_MANAGER_PATH, APPLICATION_MARKET_PATH, APP_CATEGORY_MANAGER_PATH,
   APP_MANAGER_PATH, APP_PUBLISH_REQUEST_PATH, EDIT_TEMPLATE_PATH, EVENT_CREATING_PATH, EVENT_MANAGER_PATH, EVENT_PATH, HOME_PAGE_PATH,
@@ -321,6 +322,15 @@ const routes: Route[] = [
     layout: AuthenLayout,
     breadcrumb: "",
     roles: [ROLE_LOCATION_OWNER, ROLE_ADMIN]
+  },
+  {
+    component: ApplicationPolicy,
+    path: "/application-policy",
+    isLayout: false,
+    layout: AuthenLayout,
+    authen: false,
+    breadcrumb: "",
+    roles: []
   },
 ];
 
