@@ -14,7 +14,7 @@ import {
   CloudOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import "./styles.css";
 import { useNavigate } from "react-router-dom";
 import { USER_FRIST_NAME } from "../../constants/key";
@@ -41,11 +41,18 @@ import TimeView from "./time";
 import NotificationView from "./notification";
 import { logout } from "./components/logout_confirmation.jsx";
 import { Footer } from "antd/lib/layout/layout";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HOST_SIGNALR } from "../../constants/host";
+import { setReceiveNotifyChangeTemplate } from "../../redux/slices/home_view";
+import useDispatch from "../../hooks/use_dispatch";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
+  useEffect(() => {
+    joinRoom();
+  }, []);
+  const dispatch = useDispatch();
   const role = localStorageGetReduxState().auth.role;
-
   const { children } = props;
   const { t } = useTranslation();
 
@@ -53,6 +60,27 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
 
   const onNavigate = (url: string) => {
     navigate(url);
+  };
+
+  const joinRoom = async () => {
+    try {
+      const KioskId = localStorage.getItem("USER_ID");
+      const RoomId = KioskId;
+      const connection = new HubConnectionBuilder()
+        .withUrl(HOST_SIGNALR)
+        .configureLogging(LogLevel.Information)
+        .build();
+      connection.on(
+        "PARTY_NOTIFICATION_CONNECTION_CHANNEL",
+        (partyId: any, message: any) => {
+          dispatch(setReceiveNotifyChangeTemplate(JSON.parse(message)));
+        }
+      );
+      await connection.start();
+      await connection.invoke("joinRoom", { KioskId, RoomId });
+    } catch (e: any) {
+      console.log(e);
+    }
   };
 
   return (

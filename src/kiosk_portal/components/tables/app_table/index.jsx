@@ -15,6 +15,7 @@ import {
   Spin,
   Table,
   Tag,
+  Tooltip,
   Upload,
 } from "antd";
 import {
@@ -26,6 +27,7 @@ import {
   DownloadOutlined,
   LinkOutlined,
   StopOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -69,7 +71,7 @@ import {
 } from "../../../../@app/constants/message";
 import { ImageLimitSizeTooltip } from "../../../../@app/components/image/image_extra_label";
 
-const COMMISSION_FEE = "* Commission Fee: "
+const COMMISSION_FEE = "* Commission Fee: ";
 const ApplicationTable = ({ partyId }) => {
   const navigator = useNavigate();
   const { Option } = Select;
@@ -99,8 +101,8 @@ const ApplicationTable = ({ partyId }) => {
   const [formUploadBanner] = Form.useForm();
   const [formAdvanceSearch] = Form.useForm();
   const [isCheck, setIsCheck] = useState(true);
-  const [commissionText, setCommissionText] = useState('');
-  const [commissionTextVisible, setCommissionTextVisible] = useState('hidden');
+  const [commissionText, setCommissionText] = useState("");
+  const [isAffiliateVisible, setIsAffiliateVisible] = useState(false);
   const getListApplicationFunction = async (
     Name,
     PartyName,
@@ -112,13 +114,6 @@ const ApplicationTable = ({ partyId }) => {
     numInPage
   ) => {
     try {
-      // if (isSearch) {
-      //   querySearch.page = currentPageToGetList;
-      //   const res = await searchAccountService(querySearch)
-      //   setTotalApplication(res.data.metadata.total);
-      //   setListApplication(res.data.data);
-      //   return;
-      // }
       const res = await getListApplicationService(
         Name,
         PartyName,
@@ -307,6 +302,7 @@ const ApplicationTable = ({ partyId }) => {
 
   const handleCancelCreateApplication = () => {
     setIsCreateApplicationModalVisible(false);
+    setIsAffiliateVisible(false);
   };
   const showModalAdvancedSearch = () => {
     setIsAdvancedSearchModalVisible(true);
@@ -479,9 +475,9 @@ const ApplicationTable = ({ partyId }) => {
       if (e.id === id) {
         commission = e.commissionPercentage;
       }
-    })
-    setCommissionText(COMMISSION_FEE + commission + '%');
-  }
+    });
+    setCommissionText(COMMISSION_FEE + commission + "%");
+  };
   const types = [
     {
       name: "name",
@@ -545,6 +541,8 @@ const ApplicationTable = ({ partyId }) => {
           <Tag color="green">Approved</Tag>
         ) : record.status === "pending" ? (
           <Tag color="blue">Pending</Tag>
+        ) : record.status === "unavailable" ? (
+          <Tag color="red">Unavailable</Tag>
         ) : (
           <Tag color="red">Denied</Tag>
         ),
@@ -854,7 +852,8 @@ const ApplicationTable = ({ partyId }) => {
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+              <Button icon={<UploadOutlined />}>Upload</Button>
+              {ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
           <Form.Item
@@ -867,31 +866,52 @@ const ApplicationTable = ({ partyId }) => {
               },
             ]}
           >
-            <Select placeholder="Select your categories" onChange={(value) => getCommissionPercentage(value)}>
+            <Select
+              placeholder="Select your categories"
+              onChange={(value) => {
+                getCommissionPercentage(value);
+                setIsAffiliateVisible(true);
+              }}
+            >
               {listCategories.map((item) => {
-                return <Option value={item.id}>{item.name}
-                </Option>;
+                return <Option value={item.id}>{item.name}</Option>;
               })}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="isAffiliate"
-            label="Is Affiliate"
-          >
-            <Checkbox.Group style={{ width: "100%" }} >
-              <Row>
-                <Checkbox value="isAffiliate"
-                  onChange={(e) => {
-                    e.target.checked ? setCommissionTextVisible('visible') : setCommissionTextVisible('hidden')
-                  }}
-                ></Checkbox>
-                {
-                  commissionTextVisible === 'visible' ?
-                    <label style={{ fontStyle: 'italic', fontSize: 16, color: 'red', marginLeft: 20 }}>{commissionText}</label> : null
-                }
-              </Row>
-            </Checkbox.Group>
-          </Form.Item>
+          {isAffiliateVisible ? (
+            <Form.Item name="isAffiliate" label="Is Affiliate">
+              <Checkbox.Group style={{ width: "100%" }}>
+                <Row>
+                  <Checkbox value="isAffiliate"></Checkbox>
+                  <>
+                    <label
+                      style={{
+                        fontStyle: "italic",
+                        fontSize: 16,
+                        color: "red",
+                        marginLeft: 20,
+                      }}
+                    >
+                      {commissionText}
+                    </label>
+                    <Tooltip
+                      title={
+                        "Click to view all of commision and policy of affiliate"
+                      }
+                    >
+                      <InfoCircleOutlined
+                        style={{ color: "blue", marginLeft: 4, marginTop: 6 }}
+                        onClick={() => {
+                          window.open("../application-policy", "_blank");
+                        }}
+                      />
+                    </Tooltip>
+                  </>
+                </Row>
+              </Checkbox.Group>
+            </Form.Item>
+          ) : null}
+
           <Form.Item name="banner" label="Banner">
             <Upload
               action={FILE_UPLOAD_URL}
@@ -966,224 +986,226 @@ const ApplicationTable = ({ partyId }) => {
           </Form.Item>
         </Form>
       </Modal>
-      {
-        currentItem ? (
-          <Modal
-            key={currentItem.id}
-            title={t("edit")}
-            visible={isEditApplicationModalVisible}
-            onCancel={handleCancelEditApplication}
-            footer={null}
-            width={1000}
-          >
-            <Card title="Basic information">
-              <Form
-                style={{
-                  marginRight: 80,
-                }}
-                key={currentItem.id}
-                {...formItemLayout}
-                form={form}
-                name="edit"
-                onFinish={onFinishUpdateApplication}
-                scrollToFirstError
-                initialValues={{
-                  id: currentItem.id,
-                  name: currentItem.name,
-                  description: currentItem.description ?? "",
-                  logo: currentItem.logo,
-                  link: currentItem.link,
-                  partyId: localStorageGetUserIdService(),
-                  appCategoryId: currentItem.appCategoryId,
-                }}
+      {currentItem ? (
+        <Modal
+          key={currentItem.id}
+          title={t("edit")}
+          visible={isEditApplicationModalVisible}
+          onCancel={handleCancelEditApplication}
+          footer={null}
+          width={1000}
+        >
+          <Card title="Basic information">
+            <Form
+              style={{
+                marginRight: 80,
+              }}
+              key={currentItem.id}
+              {...formItemLayout}
+              form={form}
+              name="edit"
+              onFinish={onFinishUpdateApplication}
+              scrollToFirstError
+              initialValues={{
+                id: currentItem.id,
+                name: currentItem.name,
+                description: currentItem.description ?? "",
+                logo: currentItem.logo,
+                link: currentItem.link,
+                partyId: localStorageGetUserIdService(),
+                appCategoryId: currentItem.appCategoryId,
+              }}
+            >
+              <Form.Item name="id" hidden={true}>
+                <Input type="hidden" />
+              </Form.Item>
+              <Form.Item name="partyId" hidden={true}>
+                <Input type="hidden" />
+              </Form.Item>
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_INPUT_NAME,
+                  },
+                ]}
               >
-                <Form.Item name="id" hidden={true}>
-                  <Input type="hidden" />
-                </Form.Item>
-                <Form.Item name="partyId" hidden={true}>
-                  <Input type="hidden" />
-                </Form.Item>
-                <Form.Item
-                  name="name"
-                  label="Name"
-                  rules={[
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="description"
+                label="Description"
+                value={description}
+              >
+                <Editor
+                  style={{ height: "250px" }}
+                  onTextChange={(e) => {
+                    setDescription(e.htmlValue);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="link"
+                label="Link"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_INPUT_LINK,
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="logo"
+                label="Logo"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_UPLOAD_LOGO_CATE,
+                  },
+                ]}
+              >
+                <Upload
+                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                  listType="picture"
+                  maxCount={1}
+                  accept=".png"
+                  beforeUpload={beforeUpload}
+                  defaultFileList={[
                     {
-                      required: true,
-                      message: ERROR_INPUT_NAME,
+                      uid: "abc",
+                      name: "image.png",
+                      status: "done",
+                      url: currentItem.logo,
                     },
                   ]}
                 >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="description"
-                  label="Description"
-                  value={description}
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  {ImageLimitSizeTooltip()}
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                name="appCategoryId"
+                label="Category"
+                rules={[
+                  {
+                    required: true,
+                    message: ERROR_SELECT_CATEGORY,
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select your categories"
+                  onChange={(value) => getCommissionPercentage(value)}
                 >
-                  <Editor
-                    style={{ height: "250px" }}
-                    onTextChange={(e) => {
-                      setDescription(e.htmlValue);
+                  {listCategories
+                    ? listCategories.map((item) => {
+                        return <Option value={item.id}>{item.name} </Option>;
+                      })
+                    : null}
+                </Select>
+              </Form.Item>
+              <Form.Item name="isAffiliate" label="Is Affiliate">
+                {currentItem.isAffiliate ? (
+                  <Checkbox
+                    defaultChecked
+                    value="isAffiliate"
+                    onChange={() => {
+                      if (isCheck) {
+                        setIsCheck(false);
+                      } else {
+                        setIsCheck(true);
+                      }
                     }}
                   />
-                </Form.Item>
-                <Form.Item
-                  name="link"
-                  label="Link"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_INPUT_LINK,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  name="logo"
-                  label="Logo"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_UPLOAD_LOGO_CATE,
-                    },
-                  ]}
-                >
+                ) : (
+                  <Checkbox
+                    defaultChecked={false}
+                    value="isAffiliate"
+                    onChange={() => {
+                      if (isCheck) {
+                        setIsCheck(false);
+                      } else {
+                        setIsCheck(true);
+                      }
+                    }}
+                  />
+                )}
+              </Form.Item>
+              <span
+                style={{ fontStyle: "italic", fontSize: 12, color: "#202124" }}
+              >
+                {commissionText}
+              </span>
+              <Form.Item {...tailFormItemLayout}>
+                {isLoading ? (
+                  <Spin />
+                ) : (
+                  <Button type="primary" htmlType="submit">
+                    Update Application
+                  </Button>
+                )}
+              </Form.Item>
+            </Form>
+          </Card>
+          <Card title="Banner">
+            <Form
+              {...formItemLayout}
+              form={formUploadBanner}
+              name="banner"
+              onFinish={onFinishUpdateBanner}
+              scrollToFirstError
+            >
+              <Form.Item name="banner" label="Banner">
+                {currentItem.banner ? (
                   <Upload
-                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    action={FILE_UPLOAD_URL}
                     listType="picture"
                     maxCount={1}
-                    accept=".png"
+                    accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                     defaultFileList={[
                       {
                         uid: "abc",
-                        name: "image.png",
+                        name: "thumbnail",
                         status: "done",
-                        url: currentItem.logo,
+                        url: currentItem.banner,
                       },
                     ]}
                   >
                     <Button icon={<UploadOutlined />}>Upload</Button>
                     {ImageLimitSizeTooltip()}
                   </Upload>
-                </Form.Item>
-                <Form.Item
-                  name="appCategoryId"
-                  label="Category"
-                  rules={[
-                    {
-                      required: true,
-                      message: ERROR_SELECT_CATEGORY,
-                    },
-                  ]}
-                >
-                  <Select placeholder="Select your categories" onChange={(value) => getCommissionPercentage(value)}>
-                    {listCategories
-                      ? listCategories.map((item) => {
-                        return <Option value={item.id}>{item.name} </Option>;
-                      })
-                      : null}
-                  </Select>
-                </Form.Item>
-                <Form.Item name="isAffiliate" label="Is Affiliate">
-                  {currentItem.isAffiliate ? (
-                    <Checkbox
-                      defaultChecked
-                      value="isAffiliate"
-                      onChange={() => {
-                        if (isCheck) {
-                          setIsCheck(false);
-                        } else {
-                          setIsCheck(true);
-                        }
-                      }}
-                    />
-                  ) : (
-                    <Checkbox
-                      defaultChecked={false}
-                      value="isAffiliate"
-                      onChange={() => {
-                        if (isCheck) {
-                          setIsCheck(false);
-                        } else {
-                          setIsCheck(true);
-                        }
-                      }}
-                    />
-                  )}
-                </Form.Item>
-                <span style={{ fontStyle: 'italic', fontSize: 12, color: '#202124' }}>{commissionText}</span>
-                <Form.Item {...tailFormItemLayout}>
-                  {isLoading ? (
-                    <Spin />
-                  ) : (
-                    <Button type="primary" htmlType="submit">
-                      Update Application
-                    </Button>
-                  )}
-                </Form.Item>
-              </Form>
-            </Card>
-            <Card title="Banner">
-              <Form
-                {...formItemLayout}
-                form={formUploadBanner}
-                name="banner"
-                onFinish={onFinishUpdateBanner}
-                scrollToFirstError
-              >
-                <Form.Item
-                  name="banner"
-                  label="Banner"
-                >
-                  {currentItem.banner ? (
-                    <Upload
-                      action={FILE_UPLOAD_URL}
-                      listType="picture"
-                      maxCount={1}
-                      accept={ACCEPT_IMAGE}
-                      beforeUpload={beforeUpload}
-                      defaultFileList={[
-                        {
-                          uid: "abc",
-                          name: "thumbnail",
-                          status: "done",
-                          url: currentItem.banner,
-                        },
-                      ]}
-                    >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                      {ImageLimitSizeTooltip()}
-                    </Upload>
-                  ) : (
-                    <Upload
-                      action={FILE_UPLOAD_URL}
-                      listType="picture"
-                      maxCount={1}
-                      accept={ACCEPT_IMAGE}
-                      beforeUpload={beforeUpload}
-                    >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                      {ImageLimitSizeTooltip()}
-                    </Upload>
-                  )}
-                </Form.Item>
+                ) : (
+                  <Upload
+                    action={FILE_UPLOAD_URL}
+                    listType="picture"
+                    maxCount={1}
+                    accept={ACCEPT_IMAGE}
+                    beforeUpload={beforeUpload}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    {ImageLimitSizeTooltip()}
+                  </Upload>
+                )}
+              </Form.Item>
 
-                <Form.Item {...tailFormItemLayout}>
-                  {isLoadingBanner === false ? (
-                    <Button type="primary" htmlType="submit">
-                      Update
-                    </Button>
-                  ) : (
-                    <Spin />
-                  )}
-                </Form.Item>
-              </Form>
-            </Card>
-          </Modal>
-        ) : null
-      }
+              <Form.Item {...tailFormItemLayout}>
+                {isLoadingBanner === false ? (
+                  <Button type="primary" htmlType="submit">
+                    Update
+                  </Button>
+                ) : (
+                  <Spin />
+                )}
+              </Form.Item>
+            </Form>
+          </Card>
+        </Modal>
+      ) : null}
     </>
   );
 };

@@ -9,6 +9,7 @@ import {
 import { BellFilled } from "@ant-design/icons";
 import VirtualList from "rc-virtual-list";
 import CustomRowItem from "../../../kiosk_portal/components/general/CustomRowItem";
+import useSelector from "../../hooks/use_selector";
 const labelCol = 4;
 const wrapperCol = 20;
 const ContainerHeight = 450;
@@ -21,9 +22,10 @@ const NotificationView = () => {
   const [unseen, setUnseen] = useState(0);
   const [detailNotiModalVisible, setDetailNotiModalVisible] = useState(false);
   const [currentNoti, setCurrentNoti] = useState();
+  const { listNotification } = useSelector((state) => state.home_view);
   useEffect(() => {
-    setInterval(() => fetchData(), 1000);
-  }, []);
+    fetchData();
+  }, [listNotification]);
 
   const fetchData = async () => {
     try {
