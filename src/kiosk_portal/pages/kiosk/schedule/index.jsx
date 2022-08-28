@@ -230,13 +230,13 @@ const KioskSchedulingPage = ({ currentKioskId }) => {
     <>
       {currentKioskId ? (
         <Row style={{ paddingBottom: 15, paddingRight: 100 }}>
-          <Col justify="right" align="right" span={2} offset={21}>
+          <Col justify="right" align="right" span={2} offset={22}>
             <Button
               className="success-button"
               size={"large"}
               onClick={() => onOpenCreateModal()}
             >
-              <PlusOutlined /> Kiosk Schedule
+              <PlusOutlined /> Kiosk Scenario
             </Button>
           </Col>
         </Row>
