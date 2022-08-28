@@ -1,6 +1,6 @@
 import { Col, Empty, Pagination, Row, Skeleton, Table, Tag } from "antd";
-import Column from "antd/lib/table/Column";
 import { useEffect, useState } from "react";
+import { FooterCard } from "../../../../@app/components/card/footer_card";
 import { getListCategoriesService } from "../../../services/categories_service";
 
 const currentTime = new Date();
@@ -23,24 +23,27 @@ const ApplicationPolicy = () => {
 
   const columns = [
     {
-      title: "Name",
+      title: <p style={{ fontSize: 20, fontWeight: 'bold' }}>Application Category</p>,
       dataIndex: "name",
       key: "name",
-      render: (text) => <p>{text}</p>,
+      render: (text) => <p style={{ fontSize: 18 }}>{text}</p>,
     },
     {
-      title: "commissionPercentage",
+      title: <p style={{ fontSize: 20, fontWeight: 'bold' }}>Commission Fee</p>,
       dataIndex: "commissionPercentage",
       key: "commissionPercentage",
-      render: (text) => <Tag color="green">{text}</Tag>,
+      render: (text) => <Tag color="green" style={{ fontSize: 18 }}>{text}%</Tag>,
     },
   ];
 
   return (
     <>
-      <div style={{ padding: 100, fontFamily: "Arial", fontSize: 20 }}>
+      <div style={{ padding: '100px 300px 0px 300px', fontFamily: "Arial", fontSize: 20 }}>
         <Row>
-          <Col>
+          <Col span={10}>
+            <img src="https://cdn.dribbble.com/users/1537480/screenshots/5299696/media/3133577255030afcbbef57bb914651c8.jpg" style={{ width: 500 }} />
+          </Col>
+          <Col span={14}>
             <h1
               style={{
                 textAlign: "center",
@@ -62,6 +65,12 @@ const ApplicationPolicy = () => {
               here. We are committed to keeping our community safe with
               everybody's effort.
             </p>
+          </Col>
+        </Row>
+        <br />
+        <Row>
+          <Col>
+
             <h2
               style={{
                 textAlign: "center",
@@ -214,30 +223,18 @@ const ApplicationPolicy = () => {
               hear from you!
             </p>
 
-            <h3
+            <h2
               style={{
                 textAlign: "center",
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
                 lineHeight: "100px",
-                fontSize: 80,
+                fontSize: 50,
               }}
             >
-              Here is the price list of all our affiliate marketing currently
-            </h3>
-            {/* <View style={{ flex: 1, flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
-                <Text>4 Views 0 Comments</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ textAlign: "right" }}>Solve This</Text>
-              </View>
-            </View> */}
-            {/* <Text></Text> style={{ textAlign: "center" }}>
-              abcasdasdsda asdasd sad setDescriptionsad asd
-            </h1>
-            <p>asdsadasasasasasasasasasasasas</p> */}
+              Here is the price list of all our affiliate marketing {currentTime.getMonth() + 1 + '/' + currentTime.getFullYear()}
+            </h2>
           </Col>
         </Row>
         {listCategories ? (
@@ -251,24 +248,31 @@ const ApplicationPolicy = () => {
             </>
           ) : (
             <>
-              <Table
-                columns={columns}
-                dataSource={listCategories}
-                pagination={false}
-              />
-              <Pagination
-                style={{ textAlign: "center" }}
-                defaultCurrent={1}
-                total={totalCategory}
-                pageSize={5}
-                current={currentPage}
-                onChange={handleChangeNumberOfPaging}
-              />
+              <Row justify="center" align="center" style={{ marginTop: 0 }}>
+                <Col span={15}>
+                  <Table
+                    columns={columns}
+                    dataSource={listCategories}
+                    pagination={false}
+                  />
+                  <Pagination
+                    style={{ textAlign: "center" }}
+                    defaultCurrent={1}
+                    total={totalCategory}
+                    pageSize={5}
+                    current={currentPage}
+                    onChange={handleChangeNumberOfPaging}
+                  />
+                </Col>
+              </Row>
+
             </>
           )
         ) : (
           <Skeleton />
         )}
+        <FooterCard isBackgroud={false} />
+
       </div>
     </>
   );

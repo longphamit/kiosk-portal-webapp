@@ -40,11 +40,11 @@ import {
 import TimeView from "./time";
 import NotificationView from "./notification";
 import { logout } from "./components/logout_confirmation.jsx";
-import { Footer } from "antd/lib/layout/layout";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { HOST_SIGNALR } from "../../constants/host";
 import { setReceiveNotifyChangeTemplate } from "../../redux/slices/home_view";
 import useDispatch from "../../hooks/use_dispatch";
+import { FooterCard } from "../card/footer_card";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
@@ -314,26 +314,13 @@ const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {
             }}
           >
             <div style={{ marginBottom: 10 }}>
-              {/* <Fragment>
-                {breadcrumbs.map((e: any) => (
-                  <a href={e.key}>{e.breadcrumb}</a>
-                ))}
-              </Fragment> */}
             </div>
 
             {children}
           </Content>
         </Layout>
       </Layout>
-      <Footer className="header">
-        <Row>
-          <Col span={18} />
-
-          <Col span={6}>
-            Copyright © 2022 IKFTS teams, https://tikap.cf:9930/
-          </Col>
-        </Row>
-      </Footer>
+      <FooterCard />
     </Layout>
   );
 };
