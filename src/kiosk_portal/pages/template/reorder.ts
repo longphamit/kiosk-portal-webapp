@@ -37,11 +37,19 @@ export const reorderComponent = (
     // insert into next
     next.splice(destination.index, 0, target);
 
-    return {
+    //check if have underdefined item in components
+    let temp = {
         ...components,
         [source.droppableId]: current,
         [destination.droppableId]: next,
     };
+    Object.entries(temp).map((e, i) => {
+        console.log(temp[`${e[0]}`]);
+        console.log(i)
+        temp[`${i}`] = temp[`${i}`].filter((element) => element !== undefined)
+    })
+
+    return temp
 
 };
 
