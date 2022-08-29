@@ -37,7 +37,7 @@ const MyApplicationPage = () => {
     try {
       const res = await getListMyAppService(
         "",
-        "installed",
+        "",
         numInPage,
         currentPageToGetList
       );
@@ -120,10 +120,14 @@ const MyApplicationPage = () => {
       dataIndex: "serviceApplicationStatus",
       key: "serviceApplicationStatus",
       render: (text, record, dataIndex) =>
-        record.serviceApplicationStatus === "available" ? (
+        record.serviceApplicationStatus === "available" &&
+        record.status === "installed" ? (
           <Tag color={"green"}>Installed</Tag>
+        ) : record.serviceApplicationStatus === "unavailable" &&
+          record.status === "installed" ? (
+          <Tag color={"warning"}>Unavailable</Tag>
         ) : (
-          <Tag color={"red"}>Unavailable</Tag>
+          <Tag color={"red"}>Unstalled</Tag>
         ),
     },
 
