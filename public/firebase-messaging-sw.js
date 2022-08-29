@@ -4,7 +4,6 @@ importScripts("https://www.gstatic.com/firebasejs/8.9.0/firebase-analytics.js");
 importScripts("https://www.gstatic.com/firebasejs/8.9.0/firebase-messaging.js");
 
 if ("serviceWorker" in navigator) {
-  console.log("hellooooooo");
   navigator.serviceWorker
     .register("../firebase-messaging-sw.js")
     .then(function (registration) {

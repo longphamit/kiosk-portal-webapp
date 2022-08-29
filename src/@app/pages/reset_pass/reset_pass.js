@@ -10,7 +10,6 @@ const ResetPassPage = () => {
   let navigate = useNavigate();
   const onResetPassword = async (values) => {
     resetPasswordService({ newPassword: values.password, oldPassword: 'abc@123' }).then((response) => {
-      console.log(response)
       toast.success(response.message)
       navigate("/signin")
     }).catch(error => {
@@ -50,7 +49,6 @@ const ResetPassPage = () => {
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    console.log(value)
                     if (!value || getFieldValue("password") === value) {
                       return Promise.resolve();
                     }

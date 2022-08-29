@@ -291,7 +291,6 @@ const KioskTable = ({ partyId }) => {
     }
   };
   const onFinishSearchKiosk = (values) => { 
-    console.log(values)
     if(values.type==="Name"){
       getListKiosk(values.searchString,partyId,"","","","",kioskPageSize, 1 );
     }
@@ -308,7 +307,6 @@ const KioskTable = ({ partyId }) => {
   );
 
   const handleCancelModal = (type) => {
-    console.log(type);
     if (type === "addLocation") {
       setIsModalAddLocationVisible(false);
     } else if (type === "changeNameKiosk") {
@@ -318,7 +316,6 @@ const KioskTable = ({ partyId }) => {
   };
 
   const showModal = async (type) => {
-    console.log(type)
     if (type === "addLocation") {
       setIsModalAddLocationVisible(true);
       const res = await getListKioskLocationService("", 1, -1);

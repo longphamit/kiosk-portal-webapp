@@ -25,7 +25,12 @@ import {
   getListScheduleService,
   updateScheduleService,
 } from "../../services/schedule_service";
-import { PlusOutlined, EditFilled, SyncOutlined, EyeFilled } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  EditFilled,
+  SyncOutlined,
+  EyeFilled,
+} from "@ant-design/icons";
 import {
   formatTimePicker,
   splitTimeString,
@@ -82,12 +87,12 @@ const ScheduleManagerPage = () => {
   const handleCloseDetailsModal = () => {
     setSelectedItem(null);
     setDetailModalVisible(false);
-  }
+  };
 
   const handleOpenDetailsModal = (item) => {
     setSelectedItem(item);
     setDetailModalVisible(true);
-  }
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -138,7 +143,7 @@ const ScheduleManagerPage = () => {
         const updateSchedule = {
           id: currentItem.id,
           name: values.name,
-          stringTimeStart: moment(values.timeStart).format('HH'),
+          stringTimeStart: moment(values.timeStart).format("HH"),
           stringTimeEnd: timeEnd,
           dayOfWeek: dOW,
           status: currentItem.status,
@@ -204,6 +209,7 @@ const ScheduleManagerPage = () => {
         toast.error(errormsg);
       }
     } catch (error) {
+      toast.error(error.response.data.message);
       console.error(error);
     }
   };
@@ -308,7 +314,6 @@ const ScheduleManagerPage = () => {
                 setIsEndDay(false);
                 setIsCheckEdit(false);
               }
-              console.log(isCheckEdit);
               showModalEditSchedule();
             }}
           >
@@ -644,14 +649,13 @@ const ScheduleManagerPage = () => {
           </Form>
         </Modal>
       ) : null}
-      {
-        selectedItem ?
-          <ScheduleDetailsComponent
-            schedule={selectedItem}
-            onClose={handleCloseDetailsModal}
-            visible={detailsModalVisible}
-          /> : null
-      }
+      {selectedItem ? (
+        <ScheduleDetailsComponent
+          schedule={selectedItem}
+          onClose={handleCloseDetailsModal}
+          visible={detailsModalVisible}
+        />
+      ) : null}
     </>
   );
 };

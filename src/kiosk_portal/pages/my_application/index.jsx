@@ -42,7 +42,6 @@ const MyApplicationPage = () => {
         numInPage,
         currentPageToGetList
       );
-      console.log(res);
       setTotalMyApplication(res.data.metadata.total);
       setListMyApplication(res.data.data);
     } catch (error) {

@@ -44,6 +44,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { HOST_SIGNALR } from "../../constants/host";
 import { setReceiveNotifyChangeTemplate } from "../../redux/slices/home_view";
 import useDispatch from "../../hooks/use_dispatch";
+import { toast } from "react-toastify";
 import { FooterCard } from "../card/footer_card";
 const { Header, Content, Sider } = Layout;
 

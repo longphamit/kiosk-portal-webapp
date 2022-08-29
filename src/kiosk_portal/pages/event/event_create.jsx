@@ -81,7 +81,6 @@ export const EventCreatingPage = () => {
     }
   };
   const onFinishCreateEvent = async (values) => {
-    console.log(values);
     const invalidMsg = [];
     let check = true;
     setIsLoading(true);
@@ -138,7 +137,6 @@ export const EventCreatingPage = () => {
           listImage: listImage,
           banner: banner[1],
         };
-        console.log(data);
         await createEventService(data);
         toast.success(CREATE_SUCCESS);
         navigate(EVENT_MANAGER_PATH);
