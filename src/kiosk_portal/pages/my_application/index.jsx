@@ -123,7 +123,7 @@ const MyApplicationPage = () => {
         record.serviceApplicationStatus === "available" ? (
           <Tag color={"green"}>Installed</Tag>
         ) : (
-          <Tag color={"red"}>Uninstalled</Tag>
+          <Tag color={"red"}>Unavailable</Tag>
         ),
     },
 
