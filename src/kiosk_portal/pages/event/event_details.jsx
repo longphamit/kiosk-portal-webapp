@@ -108,13 +108,12 @@ export const EventDetailsPage = () => {
 
       (res.data.type === TYPE_LOCAL &&
         localStorageGetReduxState().auth.role === ROLE_LOCATION_OWNER) ||
-        (res.data.type === TYPE_SERVER &&
-          localStorageGetReduxState().auth.role === ROLE_ADMIN)
+      (res.data.type === TYPE_SERVER &&
+        localStorageGetReduxState().auth.role === ROLE_ADMIN)
         ? setDisable(false)
         : setDisable(true);
 
       setCurrentEvent(res.data);
-      console.log(res.data);
       setDescription(res.data.description);
       const resProvinces = await getListProvinceService();
       setProviceOptions(customSort(resProvinces.data));
@@ -411,7 +410,7 @@ export const EventDetailsPage = () => {
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 20 }}
                     name="name"
-                    label={'Name'}
+                    label={"Name"}
                     rules={[
                       {
                         required: true,
@@ -426,11 +425,16 @@ export const EventDetailsPage = () => {
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 20 }}
                     style={{ marginBottom: 0 }}
-                    rules={[{ required: true, message: ERROR_SELECT_TIME_START }]}
+                    rules={[
+                      { required: true, message: ERROR_SELECT_TIME_START },
+                    ]}
                   >
                     <Form.Item
                       name="dateStart"
-                      style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                      style={{
+                        display: "inline-block",
+                        width: "calc(50% - 8px)",
+                      }}
                       rules={[
                         {
                           required: true,
@@ -480,7 +484,10 @@ export const EventDetailsPage = () => {
                   >
                     <Form.Item
                       name="dateEnd"
-                      style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+                      style={{
+                        display: "inline-block",
+                        width: "calc(50% - 8px)",
+                      }}
                       rules={[
                         {
                           required: true,
@@ -536,7 +543,7 @@ export const EventDetailsPage = () => {
                     <Input />
                   </Form.Item>
                   <Row style={{ marginLeft: 0 }}>
-                    <Col span={12} >
+                    <Col span={12}>
                       <Form.Item
                         name="city"
                         labelCol={{ span: 8 }}
@@ -591,7 +598,8 @@ export const EventDetailsPage = () => {
                             },
                           ]}
                         >
-                          <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                          <Button icon={<UploadOutlined />}>Upload</Button>
+                          {ImageLimitSizeTooltip()}
                         </Upload>
                       </Form.Item>
                     </Col>
@@ -609,7 +617,10 @@ export const EventDetailsPage = () => {
                           },
                         ]}
                       >
-                        <Select className="disable-input" onChange={onDistrictChange}>
+                        <Select
+                          className="disable-input"
+                          onChange={onDistrictChange}
+                        >
                           {districtOptions.map((district) => (
                             <Option key={district.code}>{district.name}</Option>
                           ))}
@@ -662,16 +673,13 @@ export const EventDetailsPage = () => {
                       />
                     </div>
                   </Form.Item>
-
                 </Col>
               </Row>
 
-
-
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -701,7 +709,6 @@ export const EventDetailsPage = () => {
               wrapperCol={{ span: 20 }}
               layout="horizontal"
             >
-
               <Form.Item
                 name="listImage"
                 label="List Image"
@@ -725,15 +732,18 @@ export const EventDetailsPage = () => {
                       onChange={() => setUpdateListImage(true)}
                       defaultFileList={[...fileListImage]}
                     >
-                      <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+                      <Button icon={<UploadOutlined />}>
+                        {UPLOAD_MAXIUM_5_IMAGES}
+                      </Button>
                       {ImageLimitSizeTooltip()}
-                    </Upload> </>
+                    </Upload>{" "}
+                  </>
                 ) : null}
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>
@@ -785,7 +795,8 @@ export const EventDetailsPage = () => {
                       },
                     ]}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    {ImageLimitSizeTooltip()}
                   </Upload>
                 ) : (
                   <Upload
@@ -796,14 +807,15 @@ export const EventDetailsPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    {ImageLimitSizeTooltip()}
                   </Upload>
                 )}
               </Form.Item>
               {(currentEvent.type === TYPE_SERVER &&
                 localStorageGetReduxState().auth.role === ROLE_ADMIN) ||
-                (currentEvent.type === TYPE_LOCAL &&
-                  localStorageGetReduxState().auth.role ===
+              (currentEvent.type === TYPE_LOCAL &&
+                localStorageGetReduxState().auth.role ===
                   ROLE_LOCATION_OWNER) ? (
                 <Row justify="center" align="middle">
                   <Col>

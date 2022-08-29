@@ -69,7 +69,6 @@ const AppPublishRequestTable = ({ partyId }) => {
       onOk: async () => {
         {
           try {
-            console.log(record)
             await cancelPublishRequestService(JSON.stringify(record.id))
             await getListAppPublishRequest(appPublishRequestPage, appPublishRequestPageSize);
             toast.success("Cancel request success")

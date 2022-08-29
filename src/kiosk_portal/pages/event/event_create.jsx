@@ -81,7 +81,6 @@ export const EventCreatingPage = () => {
     }
   };
   const onFinishCreateEvent = async (values) => {
-    console.log(values);
     const invalidMsg = [];
     let check = true;
     setIsLoading(true);
@@ -138,7 +137,6 @@ export const EventCreatingPage = () => {
           listImage: listImage,
           banner: banner[1],
         };
-        console.log(data);
         await createEventService(data);
         toast.success(CREATE_SUCCESS);
         navigate(EVENT_MANAGER_PATH);
@@ -318,7 +316,7 @@ export const EventCreatingPage = () => {
               <Input />
             </Form.Item>
             <Row style={{ marginLeft: 0 }}>
-              <Col span={12}  >
+              <Col span={12}>
                 <Form.Item
                   name="provice"
                   labelCol={{ span: 8 }}
@@ -360,7 +358,8 @@ export const EventCreatingPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    {ImageLimitSizeTooltip()}
                   </Upload>
                 </Form.Item>
                 <Form.Item
@@ -383,7 +382,9 @@ export const EventCreatingPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>
+                    <Button icon={<UploadOutlined />}>
+                      {UPLOAD_MAXIUM_5_IMAGES}
+                    </Button>
                     {ImageLimitSizeTooltip()}
                   </Upload>
                 </Form.Item>
@@ -438,7 +439,8 @@ export const EventCreatingPage = () => {
                     accept={ACCEPT_IMAGE}
                     beforeUpload={beforeUpload}
                   >
-                    <Button icon={<UploadOutlined />}>Upload</Button>{ImageLimitSizeTooltip()}
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                    {ImageLimitSizeTooltip()}
                   </Upload>
                 </Form.Item>
               </Col>
@@ -468,12 +470,11 @@ export const EventCreatingPage = () => {
                   style={{ height: "370px" }}
                 />
               </div>
-
             </Form.Item>
           </Col>
         </Row>
         <Row justify="center" align="middle">
-          <Form.Item >
+          <Form.Item>
             {isLoading === false ? (
               <Button type="primary" htmlType="submit">
                 Create Event

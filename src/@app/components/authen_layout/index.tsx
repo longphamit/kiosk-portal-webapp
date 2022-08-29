@@ -45,6 +45,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { HOST_SIGNALR } from "../../constants/host";
 import { setReceiveNotifyChangeTemplate } from "../../redux/slices/home_view";
 import useDispatch from "../../hooks/use_dispatch";
+import { toast } from "react-toastify";
 const { Header, Content, Sider } = Layout;
 
 const AuthenLayout: React.FC<{ children: ReactNode }> = (props) => {

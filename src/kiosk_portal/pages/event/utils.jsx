@@ -104,7 +104,6 @@ export const adminColumns = (handleDeleteEvent, navigate) => [
             shape="default"
             name={record}
             onClick={() => {
-              console.log(record);
               handleDeleteEvent(record);
             }}
           >

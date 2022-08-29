@@ -153,13 +153,9 @@ const ModalCreateLocation = ({
                   if (!value || value.fileList.length !== 0) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(
-                    new Error(
-                      ERROR_UPLOAD_LIST_IMG
-                    )
-                  );
+                  return Promise.reject(new Error(ERROR_UPLOAD_LIST_IMG));
                 },
-              })
+              }),
             ]}
           >
             <Upload
@@ -167,11 +163,13 @@ const ModalCreateLocation = ({
               listType="picture"
               maxCount={5}
               multiple
-              onChange={(value) => console.log(value)}
               accept={ACCEPT_IMAGE}
               beforeUpload={beforeUpload}
             >
-              <Button icon={<UploadOutlined />}>{UPLOAD_MAXIUM_5_IMAGES}</Button>{ImageLimitSizeTooltip()}
+              <Button icon={<UploadOutlined />}>
+                {UPLOAD_MAXIUM_5_IMAGES}
+              </Button>
+              {ImageLimitSizeTooltip()}
             </Upload>
           </Form.Item>
           <Form.Item

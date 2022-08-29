@@ -29,7 +29,6 @@ const ModalUpdateAppCategory = ({
   }, [form]);
 
   const onFinishUpdateAppCaterogy = async (values) => {
-    console.log(values);
     try {
       if (
         typeof values.logo === "undefined" ||
@@ -102,10 +101,7 @@ const ModalUpdateAppCategory = ({
             >
               <Input />
             </Form.Item>
-            <Form.Item
-              name="logo"
-              label="Logo"
-            >
+            <Form.Item name="logo" label="Logo">
               <Upload
                 action={FILE_UPLOAD_URL}
                 listType="picture"

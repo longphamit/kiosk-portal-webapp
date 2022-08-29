@@ -63,7 +63,7 @@ import {
 } from "../../../@app/constants/message";
 import { PHONE_NUMBER_REGEX } from "../../../@app/constants/regex";
 
-const currentTime = new Date()
+const currentTime = new Date();
 const AccountManagerPage = () => {
   const [isListAccountLoading, setListAccountLoading] = useState(false);
   const [isCreateAccountLoading, setCreateAccountLoading] = useState();
@@ -116,7 +116,6 @@ const AccountManagerPage = () => {
       setUpdateAccountLoading(true);
       let isCheck = true;
       const today = new Date();
-      console.log(values.dateOfBirth - today);
       if (values.dateOfBirth - today > 0) {
         isCheck = false;
         toast.error("Date of birth need to soon form now");
@@ -185,7 +184,6 @@ const AccountManagerPage = () => {
     };
   };
   const onFinishSearch = async (values) => {
-    console.log(values);
     const search = buildPartyParamSearch(values.searchString);
     search["status"] = values.status;
     search["size"] = numAccountInPage;
@@ -276,7 +274,6 @@ const AccountManagerPage = () => {
   };
 
   const handleChangeNumberOfPaging = async (page, pageSize) => {
-    console.log(page);
     setCurrentPage(page);
     const res = await getListAccountService(page, 5);
     setTotalAccount(res.data.metadata.total);
@@ -419,11 +416,14 @@ const AccountManagerPage = () => {
       },
       ({ getFieldValue }) => ({
         validator(_, value) {
-          console.log(parseInt(moment(value).format('YYYY')) )
-          if (!value || currentTime.getFullYear() - parseInt(moment(value).format('YYYY')) > 18) {
+          if (
+            !value ||
+            currentTime.getFullYear() - parseInt(moment(value).format("YYYY")) >
+              18
+          ) {
             return Promise.resolve();
           }
-          return Promise.reject(new Error('The age must be over 18'));
+          return Promise.reject(new Error("The age must be over 18"));
         },
       }),
     ],
