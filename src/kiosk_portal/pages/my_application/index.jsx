@@ -9,8 +9,9 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
 } from "antd";
-import { EyeFilled, CloseCircleFilled, LinkOutlined } from "@ant-design/icons";
+import { EyeFilled, CloseCircleFilled, LinkOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -37,7 +38,7 @@ const MyApplicationPage = () => {
     try {
       const res = await getListMyAppService(
         "",
-        "installed",
+        "",
         numInPage,
         currentPageToGetList
       );
@@ -119,10 +120,19 @@ const MyApplicationPage = () => {
       dataIndex: "serviceApplicationStatus",
       key: "serviceApplicationStatus",
       render: (text, record, dataIndex) =>
-        record.serviceApplicationStatus === "available" ? (
+        record.serviceApplicationStatus === "available" &&
+          record.status === "installed" ? (
           <Tag color={"green"}>Installed</Tag>
+        ) : record.serviceApplicationStatus === "unavailable" &&
+          record.status === "installed" ? (
+          <>
+            <Tag color={"warning"}>Unavailable</Tag>
+            <Tooltip placement="topLeft" title={'Sorry! This application is temporary stopped'}>
+              <InfoCircleOutlined />
+            </Tooltip>
+          </>
         ) : (
-          <Tag color={"red"}>Uninstalled</Tag>
+          <Tag color={"red"}>Unistalled</Tag>
         ),
     },
 
