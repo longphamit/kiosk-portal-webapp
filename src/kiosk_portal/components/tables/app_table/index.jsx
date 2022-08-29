@@ -183,7 +183,6 @@ const ApplicationTable = ({ partyId }) => {
             isAffiliate: isCheck,
           };
         }
-        console.log(updateApplication);
         let res = await updateApplicationService(updateApplication);
         getListApplicationFunction(
           "",
@@ -273,7 +272,6 @@ const ApplicationTable = ({ partyId }) => {
         isAffiliate: isCheck,
         banner: banner[1],
       };
-      console.log(newApplication);
       await createApplicationService(newApplication);
       getListApplicationFunction(
         "",
@@ -428,7 +426,6 @@ const ApplicationTable = ({ partyId }) => {
   };
 
   const onFinishUpdateBanner = async (values) => {
-    console.log(values.banner);
     try {
       setIsLoadingBanner(true);
       let banner = "";
@@ -683,7 +680,6 @@ const ApplicationTable = ({ partyId }) => {
                     defaultValue="name"
                     onChange={(e) => {
                       setApplicationSearchType(e);
-                      console.log(e);
                     }}
                   >
                     {partyId ? (

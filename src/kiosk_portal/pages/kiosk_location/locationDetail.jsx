@@ -125,7 +125,6 @@ const DetailLocationPage = () => {
   };
 
   const onFinishUpdateListImage = async (values) => {
-    console.log(values);
     setIsLoadingListImg(true);
     let isCheck = true;
     try {
@@ -150,7 +149,6 @@ const DetailLocationPage = () => {
           removeFields: listRemoveImg,
           addFields: listImage,
         };
-        console.log(updateListImage);
         await updateLocationListImgService(updateListImage).then(() => {
           toast.success(UPDATE_SUCCESS);
           setListRemoveImg([]);
@@ -288,10 +286,10 @@ const DetailLocationPage = () => {
                       onChange={onChangeListImage}
                       defaultFileList={[...fileListImage]}
                     >
-
                       <Button icon={<UploadOutlined />}>
-                       {UPLOAD_MAXIUM_5_IMAGES}
-                      </Button>{ImageLimitSizeTooltip()}
+                        {UPLOAD_MAXIUM_5_IMAGES}
+                      </Button>
+                      {ImageLimitSizeTooltip()}
                     </Upload>
                   </Form.Item>
                 ) : null}

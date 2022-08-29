@@ -33,7 +33,6 @@ const RegistPage: React.FC = () => {
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
     setIsLoading(true);
-    console.log(values);
     const dobDate = new Date(values.dob);
     await signUpService(
       values.firstName,
@@ -52,7 +51,6 @@ const RegistPage: React.FC = () => {
         navigate("/signin");
       })
       .catch((error: any) => {
-        console.error(error.response);
         toast(error.response.data.message);
       })
       .finally(() => {

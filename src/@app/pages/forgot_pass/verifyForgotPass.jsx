@@ -19,8 +19,6 @@ const VerifyForgotPassPage = () => {
     try {
       let partyId = searchParams.get("partyId");
       let verifyCode = searchParams.get("verifyCode").split("-")[0];
-      console.log(verifyCode);
-      console.log("aaaaaaaaaaaa");
       const res = await resetPasswordService(partyId, verifyCode);
       setNewPassword(res.data.newPassword);
       toast.success("Success");

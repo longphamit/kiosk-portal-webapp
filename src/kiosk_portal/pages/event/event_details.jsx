@@ -114,7 +114,6 @@ export const EventDetailsPage = () => {
         : setDisable(true);
 
       setCurrentEvent(res.data);
-      console.log(res.data);
       setDescription(res.data.description);
       const resProvinces = await getListProvinceService();
       setProviceOptions(customSort(resProvinces.data));

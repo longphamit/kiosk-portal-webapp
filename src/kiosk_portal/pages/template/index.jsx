@@ -124,14 +124,12 @@ const TemplateManagerPage = () => {
     },
   };
   const onFinishEditTemplate = async (values) => {
-    console.log(values);
     setEditLoading(true);
     let data = {
       id: values.id,
       name: values.Name ?? "",
       description: values.description ?? "",
     };
-    console.log(data);
     try {
       const res = await updateTemplateService(data);
       toast(UPDATE_SUCCESS);
