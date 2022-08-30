@@ -12,10 +12,7 @@ import {
   Skeleton,
   Table,
 } from "antd";
-import {
-  PlusOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import { Option } from "antd/lib/mentions";
 import {
@@ -107,12 +104,13 @@ const EventManagerPage = () => {
         }}
         defaultValue="Name"
       >
-        {role === ROLE_ADMIN ?
+        {role === ROLE_ADMIN ? (
           typesForAdmin.map((item) => {
             return <Option value={item.name}>{item.label}</Option>;
           })
-          : <Option value={'name'}>{'Name'}</Option>
-        }
+        ) : (
+          <Option value={"name"}>{"Name"}</Option>
+        )}
       </Select>
     </Form.Item>
   );
@@ -223,8 +221,6 @@ const EventManagerPage = () => {
     });
   };
 
-
-
   const breadCumbData = [
     {
       href: EVENT_MANAGER_HREF,
@@ -313,10 +309,14 @@ const EventManagerPage = () => {
                   record.status === STATUS_END
                     ? "tb-row-event-end"
                     : record.status === STATUS_ON_GOING
-                      ? "tb-row-event-ongoing"
-                      : ""
+                    ? "tb-row-event-ongoing"
+                    : ""
                 }
-                columns={role === ROLE_ADMIN ? adminColumns(handleDeleteEvent, onNavigate) : locationOwnerColumns(handleDeleteEvent, onNavigate)}
+                columns={
+                  role === ROLE_ADMIN
+                    ? adminColumns(handleDeleteEvent, onNavigate)
+                    : locationOwnerColumns(handleDeleteEvent, onNavigate)
+                }
                 dataSource={listEvent}
                 pagination={false}
               />
@@ -324,6 +324,7 @@ const EventManagerPage = () => {
                 defaultCurrent={1}
                 total={totalEvent}
                 pageSize={numEventInPage}
+                current={currentPage}
                 onChange={handleChangeNumberOfPaging}
               />
             </>
