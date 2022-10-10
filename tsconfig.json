@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "src/kiosk_portal/pages/poi/.jsx"  ]
 }

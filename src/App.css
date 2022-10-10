@@ -36,3 +36,41 @@
     transform: rotate(360deg);
   }
 }
+.success-button{
+  background-color: #32a832;
+  color: #ffff;
+  font-weight: bold;
+}
+.warn-button{
+  background-color: #eb8f34;
+  color: #ffff;
+  font-weight: bold;
+}
+.danger-button{
+  background-color: #f25c5c;
+  color: #fff;
+  font-weight: bold;
+}
+.infor-button{
+  background-color: #61bfed;
+  color: #fff;
+  font-weight: bold;
+}
+.change-status-button{
+  background-color: #f5c105;
+  color: #fff;
+  font-weight: bold;
+}
+.infor-temp-1-button{
+  background-color: #3464a3;
+  color: #fff;
+  font-weight: bold;
+}
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+}
+.ql-align-justify img{
+  text-align: center;
+}

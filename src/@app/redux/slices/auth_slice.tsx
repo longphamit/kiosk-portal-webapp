@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginAction } from "../actions/login_action";
 
 interface State {
-  roles: [] | null;
+  role: string ;
   isLoading: boolean;
 }
 const initialState: State = {
-  roles: null,
+  role: "",
   isLoading: false,
 };
 
@@ -15,7 +15,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.roles = null;
+      state.role = "";
     },
   },
   extraReducers: (builder) => {
@@ -27,7 +27,7 @@ const authSlice = createSlice({
       return {
         ...state,
         isLoading: false,
-        roles: payload.data.roles,
+        role:payload.data.roleName
       };
     });
   },

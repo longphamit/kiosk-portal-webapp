@@ -1,0 +1,22 @@
+.div-description img {
+    max-width: 950px;
+}
+
+.div-description .ql-align-center {
+    text-align: center;
+}
+
+.div-description .ql-align-right {
+    text-align: right;
+}
+
+.div-description .ql-align-left {
+    text-align: left;
+}
+
+.card-info {
+    margin-bottom: 20px;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+}

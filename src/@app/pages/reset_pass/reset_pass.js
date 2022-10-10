@@ -1,19 +1,18 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { resetPasswordService } from "../../../kiosk_portal/services/account_service";
 import { PRIMARY_COLOR } from "../../constants/colors";
-import { forgotPasswordService } from "../../services/auth_service";
-import { resetPasswordService } from "../../services/user_service";
+import { ERROR_INPUT_CONFIRM_PASSWORD } from "../../constants/message";
+import { LENGTH_PASSWORD_REQUIRED } from "../../constants/number_constants";
 
 const ResetPassPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
   let navigate = useNavigate();
-  console.log(searchParams.get("email"))
-  const onResetPassword=async(values)=>{
-    resetPasswordService(searchParams.get("email"),searchParams.get("uuid"), {password:values.password}).then((response)=>{
+  const onResetPassword = async (values) => {
+    resetPasswordService({ newPassword: values.password, oldPassword: 'abc@123' }).then((response) => {
       toast.success(response.message)
       navigate("/signin")
-    }).catch(error=>{
+    }).catch(error => {
       toast.error(error.response.data.message)
     })
   }
@@ -34,7 +33,7 @@ const ResetPassPage = () => {
               label="Password"
               name="password"
               hasFeedback
-              rules={[{ required: true, type: "string", min: 8 }]}
+              rules={[{ required: true, type: "string", min: LENGTH_PASSWORD_REQUIRED }]}
             >
               <Input.Password />
             </Form.Item>
@@ -46,7 +45,7 @@ const ResetPassPage = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please confirm your password!",
+                  message: ERROR_INPUT_CONFIRM_PASSWORD,
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {

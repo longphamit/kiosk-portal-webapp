@@ -3,7 +3,6 @@ import { Layout, Menu, Breadcrumb, Row } from "antd";
 import { Fragment, ReactNode, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { USER_NAME } from "../../constants/key";
 
 import useSelector from "../../hooks/use_selector";
 import { AppState } from "../../redux/stores";

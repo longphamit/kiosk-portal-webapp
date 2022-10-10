@@ -8,6 +8,14 @@ import { ValidateMessages } from "rc-field-form/lib/interface";
 import { signUpService } from "../../services/auth_service";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import {
+  ERROR_SELECT_GENDER,
+  ERROR_INPUT_CONFIRM_PASSWORD,
+  ERROR_INPUT_FIRST_NAME,
+  ERROR_INPUT_IDENTITY_NUM,
+  ERROR_INPUT_LAST_NAME,
+  ERROR_SELECT_TIME,
+} from "../../constants/message";
 const validateMessages: ValidateMessages = {
   required: "${label} is required!",
   string: {
@@ -19,12 +27,12 @@ const validateMessages: ValidateMessages = {
 };
 const RegistPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const form = Form.useForm();
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const onFinish = async (values: any) => {
-    setIsLoading(true)
-    console.log(values);
+    setIsLoading(true);
     const dobDate = new Date(values.dob);
     await signUpService(
       values.firstName,
@@ -43,10 +51,10 @@ const RegistPage: React.FC = () => {
         navigate("/signin");
       })
       .catch((error: any) => {
-        console.log(error.response);
         toast(error.response.data.message);
-      }).finally(()=>{
-        setIsLoading(false)
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -54,7 +62,7 @@ const RegistPage: React.FC = () => {
     console.log("Failed:", errorInfo);
   };
   const configTime = {
-    rules: [{ type: "object" as const, message: "Please select time!" }],
+    rules: [{ type: "object" as const, message: ERROR_SELECT_TIME }],
   };
 
   return (
@@ -62,12 +70,12 @@ const RegistPage: React.FC = () => {
       <Row
         justify="center"
         align="middle"
-        style={{ minHeight: "100vh",padding:40, backgroundColor: "#93dbbd" }}
+        style={{ minHeight: "100vh", padding: 40, backgroundColor: "#93dbbd" }}
       >
         <Col span={4} />
         <Col span={16} className="login-form">
           <h2 style={{ textAlign: "center", fontWeight: "bold" }}>Sign up</h2>
-          
+
           <Form
             className="admin-login-form"
             name="basic"
@@ -89,18 +97,14 @@ const RegistPage: React.FC = () => {
             <Form.Item
               label="Last name"
               name="lastName"
-              rules={[
-                { required: true, message: "Please input your last name!" },
-              ]}
+              rules={[{ required: true, message: ERROR_INPUT_LAST_NAME }]}
             >
               <Input />
             </Form.Item>
             <Form.Item
               label="First name"
               name="firstName"
-              rules={[
-                { required: true, message: "Please input your first name!" },
-              ]}
+              rules={[{ required: true, message: ERROR_INPUT_FIRST_NAME }]}
             >
               <Input />
             </Form.Item>
@@ -126,7 +130,7 @@ const RegistPage: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your identity card number!",
+                  message: ERROR_INPUT_IDENTITY_NUM,
                 },
               ]}
             >
@@ -135,7 +139,7 @@ const RegistPage: React.FC = () => {
             <Form.Item
               name="gender"
               label="Gender"
-              rules={[{ required: true, message: "Please select gender!" }]}
+              rules={[{ required: true, message: ERROR_SELECT_GENDER }]}
             >
               <Select placeholder="select your gender">
                 <Option value="male">Male</Option>
@@ -162,7 +166,7 @@ const RegistPage: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please confirm your password!",
+                  message: ERROR_INPUT_CONFIRM_PASSWORD,
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
@@ -207,7 +211,7 @@ const RegistPage: React.FC = () => {
           </Form>
           {isLoading ? (
             <Row justify="center" align="middle">
-              <Spin style={{marginBottom:20}} />
+              <Spin style={{ marginBottom: 20 }} />
             </Row>
           ) : null}
         </Col>

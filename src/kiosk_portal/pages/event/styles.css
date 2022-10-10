@@ -1,0 +1,10 @@
+.disable-input{
+    background: #ffff !important;
+    color: #000 !important;
+}
+.tb-row-event-end{
+    background: #dadce0;
+}
+.tb-row-event-ongoing{
+    background-color: #d7fadf;
+}
